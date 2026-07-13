@@ -1,7 +1,7 @@
 import { useOS, type AppId } from "../store";
-import { PixelGlyph, GLYPHS } from "./Pixel";
+import { ThemedIcon, type IconName } from "./ThemedIcon";
 
-const DOCK_ITEMS: { app: AppId; glyph: keyof typeof GLYPHS; label: string; title: string }[] = [
+const DOCK_ITEMS: { app: AppId; glyph: IconName; label: string; title: string }[] = [
   { app: "projects", glyph: "folder", label: "PROJECTS", title: "PROJECTS.DIR" },
   { app: "about", glyph: "doc", label: "ABOUT", title: "ABOUT.TXT" },
   { app: "snake", glyph: "snake", label: "SNAKE.SYS", title: "SNAKE.SYS" },
@@ -23,7 +23,7 @@ export function Dock() {
             aria-label={`打开 ${item.label}`}
           >
             <span className="tip">{item.label}</span>
-            <PixelGlyph name={item.glyph} size={38} />
+            <ThemedIcon name={item.glyph} size={40} />
             <span className="dot" aria-hidden />
           </button>
         </span>

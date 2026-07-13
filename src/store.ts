@@ -23,12 +23,14 @@ export interface WinInstance {
 }
 
 export type Wallpaper = "snake" | "clean" | "noir";
+export type IconSet = "a" | "d";
 
 interface OSState {
   windows: Record<string, WinInstance>;
   order: string[]; // z-order, last = front
   iconPos: Record<string, { x: number; y: number }>;
   wallpaper: Wallpaper;
+  iconSet: IconSet;
   snakeBest: number;
   booted: boolean;
   seq: number;
@@ -41,6 +43,7 @@ interface OSState {
   toggleMax: (id: string) => void;
   setIconPos: (key: string, x: number, y: number) => void;
   setWallpaper: (w: Wallpaper) => void;
+  setIconSet: (s: IconSet) => void;
   setSnakeBest: (n: number) => void;
   setBooted: () => void;
   resetDesktop: () => void;
@@ -63,6 +66,7 @@ export const useOS = create<OSState>()(
       order: [],
       iconPos: {},
       wallpaper: "snake",
+      iconSet: "d",
       snakeBest: 0,
       booted: false,
       seq: 1,
@@ -130,6 +134,7 @@ export const useOS = create<OSState>()(
         set({ iconPos: { ...get().iconPos, [key]: { x, y } } }),
 
       setWallpaper: (wallpaper) => set({ wallpaper }),
+      setIconSet: (iconSet) => set({ iconSet }),
       setSnakeBest: (snakeBest) => set({ snakeBest }),
       setBooted: () => set({ booted: true }),
 
@@ -143,6 +148,7 @@ export const useOS = create<OSState>()(
         order: s.order,
         iconPos: s.iconPos,
         wallpaper: s.wallpaper,
+        iconSet: s.iconSet,
         snakeBest: s.snakeBest,
         seq: s.seq,
       }),

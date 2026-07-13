@@ -1,11 +1,12 @@
 import { useMemo, useRef, useState } from "react";
 import { useOS, type AppId } from "../store";
-import { PixelGlyph, snakeWallpaperURI, GLYPHS } from "./Pixel";
+import { snakeWallpaperURI } from "./Pixel";
+import { ThemedIcon, type IconName } from "./ThemedIcon";
 
 interface IconDef {
   key: string;
   label: string;
-  glyph: keyof typeof GLYPHS;
+  glyph: IconName;
   app: AppId;
   title: string;
   defaultPos: { x: number; y: number };
@@ -72,7 +73,7 @@ function DesktopIcon({ def }: { def: IconDef }) {
       onDoubleClick={() => open(def.app, { title: def.title })}
       aria-label={`${def.label},双击打开`}
     >
-      <PixelGlyph name={def.glyph} size={52} />
+      <ThemedIcon name={def.glyph} size={52} />
       <span className="label">{def.label}</span>
     </button>
   );

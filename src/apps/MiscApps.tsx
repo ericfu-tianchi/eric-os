@@ -1,5 +1,5 @@
-import { useOS, type Wallpaper } from "../store";
-import { PixelGlyph } from "../components/Pixel";
+import { useOS, type Wallpaper, type IconSet } from "../store";
+import { ThemedIcon } from "../components/ThemedIcon";
 
 export function ResumeApp() {
   return (
@@ -19,7 +19,7 @@ export function ResumeApp() {
           gap: 10,
         }}
       >
-        <PixelGlyph name="pdf" size={54} />
+        <ThemedIcon name="pdf" size={54} />
         <span style={{ fontWeight: 800, fontSize: 15 }}>简历 · 2026 版整理中</span>
         <span style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, color: "var(--muted)", textAlign: "center", lineHeight: 1.8 }}>
           正在把 Opus / AI PM 的新篇章写进去
@@ -73,12 +73,33 @@ const WALLPAPERS: { id: Wallpaper; label: string; desc: string }[] = [
   { id: "noir", label: "NOIR", desc: "老站同款暗色棋盘,夜场模式" },
 ];
 
+const ICON_SETS: { id: IconSet; label: string; desc: string }[] = [
+  { id: "a", label: "SET A · CONSOLE", desc: "经典 16-bit,描边+三阶明暗" },
+  { id: "d", label: "SET D · INK", desc: "粗墨版画,单 accent" },
+];
+
 export function PrefsApp() {
-  const { wallpaper, setWallpaper, resetDesktop } = useOS();
+  const { wallpaper, setWallpaper, iconSet, setIconSet, resetDesktop } = useOS();
   return (
     <div className="win-pad">
       <p className="mono-label">SYSTEM PREFERENCES</p>
       <h1 style={{ fontSize: 24, fontWeight: 900, margin: "6px 0 16px" }}>系统偏好设置</h1>
+
+      <div className="prefs-group">
+        <b style={{ fontSize: 14 }}>图标风格</b>
+        <div className="options">
+          {ICON_SETS.map((s) => (
+            <button
+              key={s.id}
+              className={`tab ${iconSet === s.id ? "active" : ""}`}
+              onClick={() => setIconSet(s.id)}
+              title={s.desc}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="prefs-group">
         <b style={{ fontSize: 14 }}>桌面壁纸</b>
