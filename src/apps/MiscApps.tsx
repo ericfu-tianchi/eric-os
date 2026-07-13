@@ -3,33 +3,64 @@ import { ThemedIcon } from "../components/ThemedIcon";
 
 export function ResumeApp() {
   return (
-    <div className="win-pad" style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "flex-start" }}>
-      <p className="mono-label">RESUME.PDF</p>
-      <div
-        style={{
-          alignSelf: "stretch",
-          border: "var(--border-thick)",
-          borderRadius: "var(--radius-m)",
-          boxShadow: "var(--shadow-s)",
-          background: "var(--surface-2)",
-          padding: "34px 20px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 10,
-        }}
-      >
-        <ThemedIcon name="pdf" size={54} />
-        <span style={{ fontWeight: 800, fontSize: 15 }}>简历 · 2026 版整理中</span>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, color: "var(--muted)", textAlign: "center", lineHeight: 1.8 }}>
-          正在把 Opus / AI PM 的新篇章写进去
-          <br />
-          更新完成后这里一键下载
-        </span>
+    <div className="win-pad">
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 14, flexWrap: "wrap" }}>
+        <div style={{ flex: 1, minWidth: 200 }}>
+          <p className="mono-label">RESUME · v2023(2026 版更新中)</p>
+          <h1 style={{ fontSize: 28, fontWeight: 900, margin: "4px 0 2px", letterSpacing: "-0.02em" }}>Tianchi (Eric) Fu</h1>
+          <p className="small" style={{ margin: "2px 0 0" }}>Product Manager · UX Designer · Builder</p>
+        </div>
+        <button className="btn" disabled>DOWNLOAD PDF · SOON</button>
       </div>
-      <button className="arcade-btn" disabled>
-        DOWNLOAD PDF — SOON
-      </button>
+
+      <div className="cv-block" style={{ marginTop: 20 }}>
+        <p className="mono-label">EXPERIENCE</p>
+        <div className="cv-item">
+          <span className="role">UX Design Intern <span className="org">— Huawei,深圳</span></span>
+          <span className="when">2022.05–09</span>
+          <span className="what">折叠屏 PC 窗口管理机制设计;专利申请中。</span>
+        </div>
+        <div className="cv-item">
+          <span className="role">Game UX Designer <span className="org">— WolverineSoft Studio</span></span>
+          <span className="when">2022</span>
+          <span className="what">40 人团队,2D 潜艇 RTS《SubTension》:教程/商店/背包 UI。</span>
+        </div>
+        <div className="cv-item">
+          <span className="role">UX Designer <span className="org">— Backyard Brains(客户项目)</span></span>
+          <span className="when">2022</span>
+          <span className="what">Neurobot 重设计:高危可用性问题 13→1,HCI Expo 一等奖。</span>
+        </div>
+        <div className="cv-item">
+          <span className="role">Product Manager Intern <span className="org">— JYI,上海</span></span>
+          <span className="when">2021</span>
+          <span className="what">AI 面试 SaaS:引导流程重设计,学生满意度 +20%,两月 30+ 付费企业。</span>
+        </div>
+      </div>
+
+      <div className="cv-block">
+        <p className="mono-label">EDUCATION</p>
+        <div className="cv-item">
+          <span className="role">M.S. Human-Computer Interaction <span className="org">— University of Michigan</span></span>
+          <span className="when">2021–23 · GPA 3.8</span>
+        </div>
+        <div className="cv-item">
+          <span className="role">B.A. ECE + Data Science Minor <span className="org">— Shanghai Jiao Tong University</span></span>
+          <span className="when">–2021</span>
+        </div>
+      </div>
+
+      <div className="cv-block">
+        <p className="mono-label">SKILLS</p>
+        <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginTop: 8 }}>
+          {["AI PRODUCT", "UX RESEARCH", "FIGMA", "PYTHON", "REACT", "SQL", "PRD", "VIBE CODING"].map((s) => (
+            <span key={s} className="chip">{s}</span>
+          ))}
+        </div>
+      </div>
+
+      <p style={{ margin: 0, fontFamily: "var(--font-mono)", fontSize: 10.5, color: "var(--faint)", letterSpacing: "0.06em" }}>
+        // Opus / AI PM 篇章正在写入 2026 版
+      </p>
     </div>
   );
 }

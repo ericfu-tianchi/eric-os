@@ -8,6 +8,8 @@ export type AppId =
   | "readme"
   | "prefs"
   | "snake"
+  | "life"
+  | "playground"
   | "project-detail";
 
 export interface WinInstance {
@@ -50,13 +52,15 @@ interface OSState {
 }
 
 const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
-  projects: { w: 660, h: 520 },
-  about: { w: 500, h: 420 },
-  resume: { w: 460, h: 400 },
+  projects: { w: 680, h: 540 },
+  about: { w: 500, h: 430 },
+  resume: { w: 620, h: 560 },
   readme: { w: 540, h: 470 },
-  prefs: { w: 460, h: 430 },
+  prefs: { w: 470, h: 470 },
   snake: { w: 424, h: 434 },
-  "project-detail": { w: 480, h: 380 },
+  life: { w: 560, h: 500 },
+  playground: { w: 600, h: 520 },
+  "project-detail": { w: 700, h: 520 },
 };
 
 export const useOS = create<OSState>()(

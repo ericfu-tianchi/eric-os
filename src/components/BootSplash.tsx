@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { PixelGlyph, PixelWordmark } from "./Pixel";
+import { PixelWordmark } from "./Pixel";
+import ericLogo from "../assets/eric-logo.svg";
 
 export function BootSplash({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
@@ -17,8 +18,8 @@ export function BootSplash({ onDone }: { onDone: () => void }) {
   };
   return (
     <div className={`boot ${leaving ? "leaving" : ""}`} onClick={skip} role="status" aria-label="ERIC OS 启动中">
-      <span className="wordmark" style={{ display: "flex", alignItems: "center", gap: 16 }}>
-        <PixelGlyph name="logo" size={52} />
+      <span className="wordmark" style={{ display: "flex", alignItems: "center", gap: 18 }}>
+        <img src={ericLogo} alt="" style={{ height: 54, width: "auto" }} draggable={false} />
         <PixelWordmark text="ERIC OS" cell={7} />
       </span>
       <div className="bar"><i /></div>

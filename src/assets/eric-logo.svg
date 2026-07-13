@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-bbox="0.009 0 81.731 137.33" viewBox="0 0 81.73 137.33" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" data-type="ugc">
+    <g>
+        <defs>
+            <linearGradient gradientUnits="userSpaceOnUse" y2="43.03" x2="68.99" y1="51.51" x1="12" id="d7fc74ef-1cd5-4f3e-99dc-07340800ccbb">
+                <stop stop-color="#6ac7e4" offset=".01"/>
+                <stop stop-color="#71bfdf" offset=".28"/>
+                <stop stop-color="#85a8d3" offset=".71"/>
+                <stop stop-color="#9595c9" offset="1"/>
+            </linearGradient>
+            <linearGradient xlink:href="#d7fc74ef-1cd5-4f3e-99dc-07340800ccbb" y2="127.96" x2="17.49" y1="127.96" x1="0" id="a06eeec9-60c4-455e-8890-aa4f693d3fe5"/>
+            <linearGradient xlink:href="#d7fc74ef-1cd5-4f3e-99dc-07340800ccbb" y2="88.28" x2="64.56" y1="88.28" x1="14.07" id="daab639a-3e45-4f82-9c03-44262260bfc1"/>
+        </defs>
+        <g>
+            <g>
+                <path d="M65.62 0a50.12 50.12 0 0 1-2.71 18c-5.46 15.73-17.69 23.06-28.72 33.25-8.76 8.1-20.88 21.41-28.14 44.68 7.11-8.56 20.39-19.65 28-23.53 8-4.09 16.69-5.74 24.82-8.64 8.32-3 20.59-11.06 22.64-24.88C82.86 29.76 78.36 9.92 65.62 0Z" fill="url(#d7fc74ef-1cd5-4f3e-99dc-07340800ccbb)"/>
+                <path d="M17.48 124.63c-.37 7.45-7.4 12.73-12.21 12.7C.68 137.3-1 131.07.6 126.79c1.52-4 6.85-8.72 11.57-8.16a5.63 5.63 0 0 1 5.31 6Z" fill="url(#a06eeec9-60c4-455e-8890-aa4f693d3fe5)"/>
+                <path d="M56.92 69.16c-2.12 4.64-7.46 12.16-13.24 18.26C34 97.62 20.14 101.37 14.07 103a48.49 48.49 0 0 0 22.1 4.36c6.94-.3 20.37-4.88 25.57-12.55 5.06-7.48 3.2-15.55-4.82-25.65Z" fill="url(#daab639a-3e45-4f82-9c03-44262260bfc1)"/>
+            </g>
+        </g>
+    </g>
+</svg>

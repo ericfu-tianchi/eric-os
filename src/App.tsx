@@ -10,6 +10,7 @@ import { AboutApp } from "./apps/AboutApp";
 import { ProjectsApp, ProjectDetailApp } from "./apps/ProjectsApp";
 import { SnakeApp } from "./apps/SnakeApp";
 import { ResumeApp, ReadmeApp, PrefsApp } from "./apps/MiscApps";
+import { LifeApp, PlaygroundApp } from "./apps/LifeApp";
 
 /** App registry — add an app: one component + one entry here. */
 const APP_VIEWS: Record<AppId, (w: WinInstance) => React.ReactNode> = {
@@ -19,13 +20,16 @@ const APP_VIEWS: Record<AppId, (w: WinInstance) => React.ReactNode> = {
   readme: () => <ReadmeApp />,
   prefs: () => <PrefsApp />,
   snake: () => <SnakeApp />,
+  life: () => <LifeApp />,
+  playground: () => <PlaygroundApp />,
   "project-detail": (w) => <ProjectDetailApp slug={w.payload} />,
 };
 
 const APP_BADGES: Partial<Record<AppId, string>> = {
-  projects: "6 items",
+  projects: "3 folders",
   snake: "v1.0",
   readme: "manual",
+  resume: "v2023",
 };
 
 function useIsMobile() {
@@ -54,6 +58,23 @@ export default function App() {
     if (Object.keys(useOS.getState().windows).length === 0 && !localStorage.getItem("eric-os-welcomed")) {
       open("about", { title: "ABOUT.TXT" });
       localStorage.setItem("eric-os-welcomed", "1");
+    }
+    // deep link: ?open=projects,life or ?open=project-detail:twist-solver
+    const m = new URLSearchParams(window.location.search).get("open");
+    if (m) {
+      const TITLES: Partial<Record<AppId, string>> = {
+        projects: "PROJECTS.DIR", about: "ABOUT.TXT", resume: "RESUME.PDF",
+        readme: "README.MD", prefs: "SYSTEM PREFS", snake: "SNAKE.SYS",
+        life: "LIFE.APP", playground: "PLAYGROUND",
+      };
+      m.split(",").forEach((tok) => {
+        const [app, payload] = tok.split(":") as [AppId, string?];
+        if (app === "project-detail" && payload) {
+          open("project-detail", { title: payload.toUpperCase(), payload });
+        } else if (TITLES[app]) {
+          open(app, { title: TITLES[app] });
+        }
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMobile]);

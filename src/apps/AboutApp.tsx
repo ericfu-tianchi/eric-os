@@ -33,14 +33,14 @@ export function AboutApp() {
       </p>
 
       <div className="contact-row">
-        <a className="arcade-btn" href="https://github.com/ericfu-tianchi" target="_blank" rel="noopener noreferrer">
-          GITHUB
+        <a className="btn" href="https://github.com/ericfu-tianchi" target="_blank" rel="noopener noreferrer">
+          GitHub
         </a>
-        <a className="arcade-btn" href="https://www.linkedin.com/in/tianchi-fu-60821b228" target="_blank" rel="noopener noreferrer">
-          LINKEDIN
+        <a className="btn" href="https://www.linkedin.com/in/tianchi-fu-60821b228" target="_blank" rel="noopener noreferrer">
+          LinkedIn
         </a>
-        <a className="arcade-btn primary" href="mailto:ericfu-tianchi@outlook.com">
-          EMAIL ME
+        <a className="btn primary" href="mailto:ericfu-tianchi@outlook.com">
+          Email me
         </a>
       </div>
     </div>

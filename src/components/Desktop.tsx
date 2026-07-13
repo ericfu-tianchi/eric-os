@@ -1,22 +1,25 @@
 import { useMemo, useRef, useState } from "react";
 import { useOS, type AppId } from "../store";
-import { snakeWallpaperURI } from "./Pixel";
+import { snakeWallpaperURI, PixelGlyph, GLYPHS } from "./Pixel";
 import { ThemedIcon, type IconName } from "./ThemedIcon";
 
 interface IconDef {
   key: string;
   label: string;
-  glyph: IconName;
+  glyph?: IconName; // themed PNG icon
+  pixel?: keyof typeof GLYPHS; // fallback hand-drawn glyph (awaiting themed asset)
   app: AppId;
   title: string;
   defaultPos: { x: number; y: number };
 }
 
 const ICONS: IconDef[] = [
-  { key: "projects", label: "PROJECTS.DIR", glyph: "folder", app: "projects", title: "PROJECTS.DIR", defaultPos: { x: -110, y: 24 } },
-  { key: "about", label: "ABOUT.TXT", glyph: "doc", app: "about", title: "ABOUT.TXT", defaultPos: { x: -110, y: 148 } },
-  { key: "resume", label: "RESUME.PDF", glyph: "pdf", app: "resume", title: "RESUME.PDF", defaultPos: { x: -110, y: 272 } },
-  { key: "snake", label: "SNAKE.SYS", glyph: "snake", app: "snake", title: "SNAKE.SYS", defaultPos: { x: -110, y: 396 } },
+  { key: "projects", label: "PROJECTS.DIR", glyph: "folder", app: "projects", title: "PROJECTS.DIR", defaultPos: { x: -110, y: 20 } },
+  { key: "about", label: "ABOUT.TXT", glyph: "doc", app: "about", title: "ABOUT.TXT", defaultPos: { x: -110, y: 138 } },
+  { key: "resume", label: "RESUME.PDF", glyph: "pdf", app: "resume", title: "RESUME.PDF", defaultPos: { x: -110, y: 256 } },
+  { key: "snake", label: "SNAKE.SYS", glyph: "snake", app: "snake", title: "SNAKE.SYS", defaultPos: { x: -110, y: 374 } },
+  { key: "life", label: "LIFE.APP", pixel: "heart", app: "life", title: "LIFE.APP", defaultPos: { x: -110, y: 492 } },
+  { key: "playground", label: "PLAYGROUND", pixel: "star", app: "playground", title: "PLAYGROUND", defaultPos: { x: -224, y: 20 } },
 ];
 
 function DesktopIcon({ def }: { def: IconDef }) {
@@ -73,7 +76,7 @@ function DesktopIcon({ def }: { def: IconDef }) {
       onDoubleClick={() => open(def.app, { title: def.title })}
       aria-label={`${def.label},双击打开`}
     >
-      <ThemedIcon name={def.glyph} size={52} />
+      {def.glyph ? <ThemedIcon name={def.glyph} size={52} /> : <PixelGlyph name={def.pixel!} size={44} />}
       <span className="label">{def.label}</span>
     </button>
   );

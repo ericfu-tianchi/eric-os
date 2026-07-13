@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useOS } from "../store";
 import { PixelGlyph, PixelWordmark } from "./Pixel";
+import ericLogo from "../assets/eric-logo.svg";
 
 function useClock() {
   const [now, setNow] = useState(new Date());
@@ -39,7 +40,7 @@ export function MenuBar() {
     <div ref={ref}>
       <nav className="menubar">
         <button className={`brand ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(!menuOpen)}>
-          <PixelGlyph name="logo" size={24} title="ERIC OS logo" />
+          <img src={ericLogo} alt="Eric Fu logo" style={{ height: 21, width: "auto" }} draggable={false} />
           <PixelWordmark text="ERIC OS" cell={2.6} />
         </button>
         <div className="right">
