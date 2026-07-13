@@ -22,7 +22,7 @@ export interface WinInstance {
   maximized: boolean;
 }
 
-export type Wallpaper = "snake" | "clean" | "sunset";
+export type Wallpaper = "snake" | "clean" | "noir";
 
 interface OSState {
   windows: Record<string, WinInstance>;
@@ -37,6 +37,7 @@ interface OSState {
   close: (id: string) => void;
   focus: (id: string) => void;
   move: (id: string, x: number, y: number) => void;
+  resize: (id: string, w: number, h: number) => void;
   toggleMax: (id: string) => void;
   setIconPos: (key: string, x: number, y: number) => void;
   setWallpaper: (w: Wallpaper) => void;
@@ -110,6 +111,12 @@ export const useOS = create<OSState>()(
         const w = get().windows[id];
         if (!w) return;
         set({ windows: { ...get().windows, [id]: { ...w, x, y } } });
+      },
+
+      resize: (id, w, h) => {
+        const win = get().windows[id];
+        if (!win) return;
+        set({ windows: { ...get().windows, [id]: { ...win, w, h } } });
       },
 
       toggleMax: (id) => {

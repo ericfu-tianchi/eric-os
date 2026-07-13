@@ -3,8 +3,8 @@ export function AboutApp() {
     <div className="win-pad">
       <div className="about-card">
         <div className="portrait-slot" aria-label="头像位,等待像素化照片">
-          <span style={{ fontSize: 26 }}>🎸</span>
-          <span>PORTRAIT<br />SLOT</span>
+          <span>PORTRAIT</span>
+          <span style={{ opacity: 0.55 }}>128 × 128</span>
         </div>
         <div style={{ flex: 1, minWidth: 220 }}>
           <p className="mono-label">USER PROFILE</p>

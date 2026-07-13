@@ -302,31 +302,46 @@ export function PixelWordmark({
   );
 }
 
-/** Wallpaper snake, exported as a data-URI so CSS can paint it. */
-export function snakeWallpaperURI(): string {
-  const cells: [number, number, string][] = [];
-  // a calm snake winding through the grid — body path (x, y)
+/**
+ * Wallpaper snake, exported as a data-URI so CSS can paint it.
+ * Modeled after the snake board of tianchi-fu.com: a slim snake of
+ * rounded cells winding along the grid, dreaming of a star, an apple
+ * waiting one move ahead. Cell size = 24 to lock onto the CSS grid.
+ */
+export function snakeWallpaperURI(bright = false): string {
+  const C = 24; // must match --grid-size in CSS
   const path: [number, number][] = [
-    [0, 9], [1, 9], [2, 9], [3, 9], [3, 8], [3, 7], [4, 7], [5, 7],
-    [6, 7], [6, 6], [6, 5], [6, 4], [7, 4], [8, 4], [9, 4], [9, 3],
-    [9, 2], [10, 2], [11, 2],
+    [0, 12], [1, 12], [2, 12], [3, 12], [4, 12], [4, 11], [4, 10],
+    [5, 10], [6, 10], [7, 10], [7, 9], [7, 8], [7, 7], [8, 7],
+    [9, 7], [10, 7], [10, 6], [10, 5], [11, 5], [12, 5], [13, 5],
+    [13, 4], [13, 3],
   ];
-  path.forEach(([x, y], i) => cells.push([x, y, i === path.length - 1 ? "#23bd5f" : "#23bd5f"]));
   const head = path[path.length - 1];
-  const rects = cells
-    .map(
-      ([x, y, c], i) =>
-        `<rect x='${x * 10 + 1}' y='${y * 10 + 1}' width='8' height='8' rx='1.5' fill='${c}' opacity='${(0.35 + (i / cells.length) * 0.65).toFixed(2)}'/>`
-    )
+  const green = bright ? "#2ed573" : "#23bd5f";
+  const baseOp = bright ? 0.42 : 0.34;
+  const rects = path
+    .map(([x, y], i) => {
+      const op = baseOp * (0.32 + (i / path.length) * 0.68);
+      return `<rect x='${x * C + 3}' y='${y * C + 3}' width='${C - 6}' height='${C - 6}' rx='3' fill='${green}' opacity='${op.toFixed(2)}'/>`;
+    })
     .join("");
-  // eye + tongue on head, apple ahead of the snake
+  const hx = head[0] * C;
+  const hy = head[1] * C;
   const extras =
-    `<rect x='${head[0] * 10 + 3}' y='${head[1] * 10 + 3}' width='2' height='2' fill='#1b1a15'/>` +
-    `<rect x='${(head[0] + 1) * 10 + 1}' y='${head[1] * 10 + 4}' width='4' height='2' fill='#ff3b77'/>` +
-    `<circle cx='${(head[0] + 3) * 10 + 5}' cy='${head[1] * 10 + 5}' r='4' fill='#ff5347'/>` +
-    `<rect x='${(head[0] + 3) * 10 + 4}' y='${head[1] * 10 - 1}' width='2' height='3' fill='#158f46'/>`;
+    // eyes
+    `<rect x='${hx + 7}' y='${hy + 8}' width='3' height='3' fill='#1b1a15' opacity='${baseOp + 0.25}'/>` +
+    `<rect x='${hx + 14}' y='${hy + 8}' width='3' height='3' fill='#1b1a15' opacity='${baseOp + 0.25}'/>` +
+    // apple one move ahead
+    `<rect x='${hx + 5}' y='${hy - C * 2 + 6}' width='${C - 10}' height='${C - 10}' rx='6' fill='#ff5347' opacity='${baseOp + 0.1}'/>` +
+    `<rect x='${hx + 10}' y='${hy - C * 2 + 2}' width='3' height='5' fill='#158f46' opacity='${baseOp + 0.1}'/>` +
+    // the star it dreams of
+    `<g opacity='${(baseOp * 0.9).toFixed(2)}' fill='#f5c84c'>` +
+    `<rect x='${hx + C * 2 + 6}' y='${hy - C * 3}' width='4' height='12' /><rect x='${hx + C * 2 + 2}' y='${hy - C * 3 + 4}' width='12' height='4' />` +
+    `</g>`;
+  const w = 15 * C;
+  const h = 14 * C;
   const svg =
-    `<svg xmlns='http://www.w3.org/2000/svg' width='160' height='110' viewBox='0 0 160 110'>` +
-    `<g opacity='0.30'>${rects}${extras}</g></svg>`;
+    `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'>` +
+    rects + extras + `</svg>`;
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 }

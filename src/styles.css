@@ -68,13 +68,15 @@ button { font-family: inherit; color: inherit; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 7px 15px;
   background: var(--surface);
   border: var(--border);
-  border-radius: var(--radius-s);
+  border-radius: 5px;
   box-shadow: var(--shadow-s);
+  font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 13.5px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
   cursor: pointer;
   transition: transform 60ms steps(2, end), box-shadow 60ms steps(2, end);
   user-select: none;
@@ -88,22 +90,33 @@ button { font-family: inherit; color: inherit; }
 .arcade-btn.primary:hover { background: var(--green-deep); }
 .arcade-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
+/* chips: outline + colored pixel dot — quieter, more adult than candy fills */
 .chip {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  padding: 2px 8px;
+  letter-spacing: 0.08em;
+  padding: 2.5px 9px;
+  background: var(--surface);
   border: 1.5px solid var(--ink);
-  border-radius: 999px;
+  border-radius: 4px;
   box-shadow: 2px 2px 0 var(--ink);
   white-space: nowrap;
 }
-.chip.ai { background: var(--green); color: #fff; }
-.chip.design { background: var(--pink); color: #fff; }
-.chip.play { background: var(--teal); color: #fff; }
-.chip.life { background: var(--blue); color: #fff; }
+.chip::before {
+  content: "";
+  width: 7px; height: 7px;
+  border-radius: 2px;
+  border: 1px solid var(--ink);
+  background: var(--faint);
+}
+.chip.ai::before { background: var(--green); }
+.chip.design::before { background: var(--pink); }
+.chip.play::before { background: var(--teal); }
+.chip.life::before { background: var(--blue); }
 
 /* ============ boot splash ============ */
 .boot {
@@ -201,29 +214,37 @@ button { font-family: inherit; color: inherit; }
   top: var(--menubar-h); left: 0; right: 0; bottom: 0;
   overflow: hidden;
 }
+/* board grid = fine lines, a light-theme descendant of tianchi-fu.com's dark board */
 .desktop.wp-snake {
   background-color: var(--paper);
   background-image:
-    radial-gradient(rgba(27, 26, 21, 0.075) 1.2px, transparent 1.2px),
+    linear-gradient(rgba(27, 26, 21, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(27, 26, 21, 0.055) 1px, transparent 1px),
     var(--wp-snake);
-  background-size: 24px 24px, auto 46%;
-  background-position: 0 0, right -30px bottom -20px;
-  background-repeat: repeat, no-repeat;
+  background-size: 24px 24px, 24px 24px, auto;
+  background-position: 0 0, 0 0, right 8px bottom 4px;
+  background-repeat: repeat, repeat, no-repeat;
 }
 .desktop.wp-clean {
   background-color: var(--paper);
-  background-image: radial-gradient(rgba(27, 26, 21, 0.075) 1.2px, transparent 1.2px);
-  background-size: 24px 24px;
-}
-.desktop.wp-sunset {
-  background-color: #f5a623;
   background-image:
-    radial-gradient(rgba(27, 26, 21, 0.1) 1.2px, transparent 1.2px),
-    var(--wp-snake);
-  background-size: 24px 24px, auto 46%;
-  background-position: 0 0, right -30px bottom -20px;
-  background-repeat: repeat, no-repeat;
+    linear-gradient(rgba(27, 26, 21, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(27, 26, 21, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px;
 }
+/* NOIR — the original tianchi-fu.com board: dark stage, lit windows */
+.desktop.wp-noir {
+  background-color: #17181a;
+  background-image:
+    linear-gradient(rgba(46, 213, 115, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46, 213, 115, 0.07) 1px, transparent 1px),
+    var(--wp-snake-bright);
+  background-size: 24px 24px, 24px 24px, auto;
+  background-position: 0 0, 0 0, right 8px bottom 4px;
+  background-repeat: repeat, repeat, no-repeat;
+}
+.desktop.wp-noir .dicon .label { background: #232323; color: #efe9d8; border-color: #000; box-shadow: 2px 2px 0 #000; }
+.desktop.wp-noir .dicon.selected { background: rgba(46, 213, 115, 0.18); border-color: #2ed573; }
 
 /* ============ desktop icons ============ */
 .dicon {
@@ -239,12 +260,11 @@ button { font-family: inherit; color: inherit; }
 }
 .dicon .label {
   font-family: var(--font-mono);
-  font-size: 10.5px; font-weight: 700; letter-spacing: 0;
-  padding: 1.5px 6px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.02em;
+  padding: 1.5px 7px;
   background: var(--surface);
   border: 1.5px solid var(--ink);
-  border-radius: 5px;
-  box-shadow: 2px 2px 0 var(--ink);
+  border-radius: 4px;
   max-width: 100%; overflow: hidden;
   text-overflow: ellipsis; white-space: nowrap;
 }
@@ -274,7 +294,7 @@ button { font-family: inherit; color: inherit; }
 
 .titlebar {
   display: flex; align-items: center; gap: 10px;
-  height: 40px; flex: none;
+  height: 37px; flex: none;
   padding: 0 12px;
   background: var(--surface);
   border-bottom: var(--border);
@@ -298,7 +318,7 @@ button { font-family: inherit; color: inherit; }
 .titlebar .ctrl.max { background: var(--green); }
 .titlebar .title {
   font-family: var(--font-mono);
-  font-size: 12.5px; font-weight: 700; letter-spacing: 0.09em;
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.13em;
   text-transform: uppercase;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
@@ -309,7 +329,20 @@ button { font-family: inherit; color: inherit; }
 }
 
 .win-body { flex: 1; overflow: auto; }
-.win-pad { padding: 22px 26px 26px; }
+.win-pad { padding: 24px 30px 30px; }
+
+.resize-grip {
+  position: absolute;
+  right: 0; bottom: 0;
+  width: 22px; height: 22px;
+  cursor: nwse-resize;
+  display: flex; align-items: flex-end; justify-content: flex-end;
+  padding: 0 5px 5px 0;
+  touch-action: none;
+  z-index: 5;
+}
+.resize-grip svg { width: 11px; height: 11px; fill: var(--faint); opacity: 0.55; }
+.resize-grip:hover svg { fill: var(--ink); opacity: 1; }
 
 /* ============ dock ============ */
 .dock {
@@ -399,7 +432,7 @@ button { font-family: inherit; color: inherit; }
   cursor: pointer;
   border-radius: var(--radius-s);
 }
-.proj-row:hover { background: var(--lime); }
+.proj-row:hover { background: rgba(205, 232, 74, 0.45); }
 .proj-row:last-child { border-bottom: 0; }
 .proj-row .name { font-weight: 800; font-size: 15.5px; }
 .proj-row .desc { color: var(--muted); font-size: 12.5px; margin-top: 1px; }

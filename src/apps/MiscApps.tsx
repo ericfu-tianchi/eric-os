@@ -68,9 +68,9 @@ export function ReadmeApp() {
 }
 
 const WALLPAPERS: { id: Wallpaper; label: string; desc: string }[] = [
-  { id: "snake", label: "SNAKE GRID", desc: "点阵 + 贪吃蛇(默认)" },
-  { id: "clean", label: "CLEAN", desc: "纯点阵,极简" },
-  { id: "sunset", label: "SUNSET", desc: "落日黄,大胆模式" },
+  { id: "snake", label: "SNAKE BOARD", desc: "棋盘网格 + 贪吃蛇(默认)" },
+  { id: "clean", label: "CLEAN", desc: "纯网格,极简" },
+  { id: "noir", label: "NOIR", desc: "老站同款暗色棋盘,夜场模式" },
 ];
 
 export function PrefsApp() {

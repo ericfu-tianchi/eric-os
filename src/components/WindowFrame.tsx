@@ -18,9 +18,10 @@ export function WindowFrame({
   badge?: string;
   children: ReactNode;
 }) {
-  const { close, focus, move, toggleMax, order } = useOS();
+  const { close, focus, move, resize, toggleMax, order } = useOS();
   const [closing, setClosing] = useState(false);
   const drag = useRef<{ dx: number; dy: number; pid: number } | null>(null);
+  const grip = useRef<{ pid: number } | null>(null);
 
   const z = 20 + order.indexOf(win.id);
 
@@ -82,6 +83,36 @@ export function WindowFrame({
         {badge && <span className="badge">{badge}</span>}
       </header>
       <div className="win-body">{children}</div>
+      {!win.maximized && (
+        <div
+          className="resize-grip"
+          aria-label="拖拽调整窗口大小"
+          onPointerDown={(e) => {
+            e.stopPropagation();
+            grip.current = { pid: e.pointerId };
+            (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+            focus(win.id);
+          }}
+          onPointerMove={(e) => {
+            if (grip.current?.pid !== e.pointerId) return;
+            const w = Math.max(320, Math.min(e.clientX - win.x + 8, window.innerWidth - win.x - 8));
+            const h = Math.max(200, Math.min(e.clientY - win.y + 8, window.innerHeight - win.y - 8));
+            resize(win.id, w, h);
+          }}
+          onPointerUp={(e) => {
+            if (grip.current?.pid === e.pointerId) grip.current = null;
+          }}
+        >
+          <svg viewBox="0 0 10 10" aria-hidden>
+            <rect x="7" y="1" width="2" height="2" />
+            <rect x="4" y="4" width="2" height="2" />
+            <rect x="7" y="4" width="2" height="2" />
+            <rect x="1" y="7" width="2" height="2" />
+            <rect x="4" y="7" width="2" height="2" />
+            <rect x="7" y="7" width="2" height="2" />
+          </svg>
+        </div>
+      )}
     </section>
   );
 }

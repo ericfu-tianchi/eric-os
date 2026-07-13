@@ -80,7 +80,14 @@ function DesktopIcon({ def }: { def: IconDef }) {
 
 export function Desktop({ children }: { children?: React.ReactNode }) {
   const wallpaper = useOS((s) => s.wallpaper);
-  const wpVar = useMemo(() => ({ "--wp-snake": snakeWallpaperURI() }) as React.CSSProperties, []);
+  const wpVar = useMemo(
+    () =>
+      ({
+        "--wp-snake": snakeWallpaperURI(false),
+        "--wp-snake-bright": snakeWallpaperURI(true),
+      }) as React.CSSProperties,
+    []
+  );
   return (
     <main className={`desktop wp-${wallpaper}`} style={wpVar}>
       {ICONS.map((d) => (
