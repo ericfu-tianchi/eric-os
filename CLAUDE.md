@@ -3,29 +3,33 @@
 Eric Fu 的个人网站:一个桌面操作系统形状的作品集。
 **任何 AI/人在此仓库动工前,先读完本文件。**
 
+## ⚠️ 视觉方向 v2(2026-07-15 定调,取代旧的暖 cream/硬阴影方向)
+
+现有代码(v0.4)仍是旧视觉(暖 cream + 绿 + 硬阴影),**已被 Eric 否**。新锁定方向:
+- **炭灰暗台 × 彩色像素图标的现代反差**:近黑炭底(非纯黑)+ 亮白窗口 + UI 全程黑白灰**零用色**;**唯一彩色来自精致彩色像素图标**(宝石色 16-bit,参考 Diverse sprites + '90s Artist Pack)。
+- **窗口要精致**:柔和真实投影(soft shadow,**不再是硬阴影**)+ 1px 发丝边 + 顶边极淡高光;大圆角。
+- **明暗双模式**:同一套 chrome,一个 theme token 切炭灰↔浅冷灰,浅色也要精致。
+- **像素度稍低档**(更干净不吵)。现代高级是绝对主角,像素是"克制的第二基因",比例绝不能反。
+- 排除项:❌暖黄/米色/纸感/复古印刷 ❌纯像素/幼稚 ❌蓝色蓝灰底 ❌粗黑描边/大硬阴影。
+
 ## 北极星(违反即打回)
 
 1. **现代为体,街机为佐料**——比例绝不能反。像素只允许出现在:图标、字标、壁纸、贴纸点缀;正文排版、布局结构永远是现代的。
-2. **每个浮起的元素都带硬阴影**:`box-shadow: Npx Npx 0 var(--ink)`,无模糊。参考 Eric 的 Twist Solver primary button。
+2. **窗口/卡片用柔和真实投影**(soft shadow + 发丝边),不用硬阴影。~~旧规则(硬阴影)已作废~~。
 3. **拒绝廉价感、拒绝低幼/二次元**。怀疑时,问"这像不像一个有品位的成年人做的?"
-4. 大标题敢大(font-weight 900),留白敢留;色彩每屏 2-3 个主角。
+4. 大标题敢大(font-weight 800+),留白敢留;UI 零用色,颜色只给图标。
 5. 少即是多:不加没被要求的配置项、抽象层、依赖。
 
-## 设计 tokens(源:`src/styles.css` :root)
+## 设计 tokens(源:`src/styles.css` :root — 以代码为准)
 
-| token | 值 | 用途 |
-|---|---|---|
-| `--paper` | #f4f0e6 | 桌面暖白 |
-| `--surface` | #fffdf7 | 窗口面 |
-| `--ink` | #1b1a15 | 描边与正文 |
-| `--green` | #23bd5f | 最大化键 · 蛇 · AI chip(老站 #06C268 后代) |
-| `--red` | #ff5347 | 关闭键 |
-| `--lime` | #cde84a | 选中/hover 高亮 |
-| `--pink` | #ff3b77 | 稀有强调 · DESIGN chip(老站 #FF1256 后代) |
-| `--teal` / `--blue` | #17bebb / #3e6de8 | PLAY / LIFE chip |
-| `--shadow-s/m/l` | 3/4/7px 硬阴影 | 一切浮起元素 |
+v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(明暗模式只翻转台面)· 圆角 4px · 柔投影+发丝边 · chrome 黑白灰零用色,仅红绿窗控键。字体自托管:Montserrat(标题)/Source Sans Pro(正文,老站原件)/JetBrains Mono(标签)。品牌绿 `#06C268`(蛇/强调),老站粉 `#FF1256`(About 照片偏移)。分类色:AI=green,DESIGN=pink,PLAY=teal,LIFE=blue。
 
-内容四分类固定映射:AI=green,DESIGN=pink,PLAY=teal,LIFE=blue。
+## 贪吃蛇壁纸系统(核心彩蛋,别破坏)
+
+- 网格 44px **双向自适应**(`gridSpec`:行列都整除屏幕,零半格);桌面图标一格一个。
+- 壁纸 = Eric 手绘草书 "hello" 蛇(`DesktopSnake.tsx` 的 `ERIC_POSE`,原稿 `pose-drafts/`);`<DesktopSnake frozen>` 静止+眼睛跟鼠标,双击 SNAKE.SYS 同帧唤醒。
+- 吃桌面图标 = 图标**原样**骑在蛇身(最新贴头后);蛇头装饰在系统设置(俯视视角)。
+- 换姿态流程:Eric 在 `public/spec.html` 自绘 → 导出 JSON 存 `pose-drafts/` → 人工推链序 + python 验证(无重访/相邻/头朝右) → 替换 `ERIC_POSE`。
 
 ## 架构(ryOS 验证过的最小内核)
 
@@ -63,4 +67,7 @@ Eric Fu 的个人网站:一个桌面操作系统形状的作品集。
 - 不做:账户/云同步/多主题切换/真 Terminal/聊天室/3D/i18n(调研结论,见项目记忆)。
 - 窗口控制键只有红绿两个,在左上,方形。
 - Dock 无放大效果,hover = `steps()` 像素跳 + 黑底 tip。
-- 字体零外链:像素感靠 SVG 网格,不靠像素字体(Fusion Pixel 支持中文,留作未来选项)。
+- 字体零外链(woff2 自托管)。
+- 吃掉的图标保持**原样**(绿色化方案已否)。蛇=贴格无描边+缝隙;眼中大;编辑器画布渲染全量格子(勿用链追踪渲染)。
+- **一切文件只进本仓库/系统 scratchpad,严禁在 ~/Desktop 根目录建文件**(Eric 明令)。
+- HANDOFF.md 不提交(.gitignore)。

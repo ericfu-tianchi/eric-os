@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ERIC OS · Bonus sound study</title>
+    <style>
+      :root { color-scheme: dark; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: #1c1d21; color: #f7f7f8; }
+      * { box-sizing: border-box; }
+      body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 28px; background: radial-gradient(circle at 50% 0, #2c2e35, #1c1d21 62%); }
+      main { width: min(680px, 100%); }
+      .eyebrow { color: #9a9ca5; font-size: 11px; letter-spacing: .12em; }
+      h1 { margin: 9px 0 10px; font: 800 clamp(28px, 6vw, 46px)/1.05 system-ui, sans-serif; letter-spacing: -.05em; }
+      p { margin: 0 0 24px; color: #b7bac2; font: 15px/1.6 system-ui, sans-serif; }
+      .list { display: grid; gap: 10px; }
+      button { width: 100%; display: grid; grid-template-columns: 34px 1fr auto; gap: 14px; align-items: center; text-align: left; padding: 16px 18px; color: inherit; background: rgba(30,31,37,.94); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; box-shadow: 0 14px 34px rgba(0,0,0,.24), inset 0 1px rgba(255,255,255,.06); cursor: pointer; }
+      button:hover { background: #33353d; border-color: rgba(255,255,255,.3); }
+      button:focus-visible { outline: 2px solid #f5cb58; outline-offset: 3px; }
+      .no { color: #f5cb58; font-size: 12px; }
+      .name { font: 750 17px system-ui, sans-serif; }
+      .desc { margin-top: 3px; color: #a8abb4; font: 13px/1.45 system-ui, sans-serif; }
+      .play { border: 1px solid rgba(255,255,255,.16); border-radius: 6px; padding: 6px 8px; color: #dfe1e6; font-size: 10px; letter-spacing: .08em; }
+      footer { margin-top: 18px; color: #777a84; font-size: 10px; line-height: 1.6; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="eyebrow">SNAKE.SYS / ICON BONUS</div>
+      <h1>Bonus sound study</h1>
+      <p>三种都是“吃到桌面 Icon”的 5 分音效；苹果仍保留轻巧的两音 chirp。戴耳机或打开扬声器后逐个点一下。</p>
+      <div class="list">
+        <button data-sound="spark"><span class="no">01</span><span><span class="name">Arcade Spark</span><span class="desc">干净的三音上行，最像精致的小型奖励。</span></span><span class="play">PLAY</span></button>
+        <button data-sound="power"><span class="no">02</span><span><span class="name">Power Up</span><span class="desc">低音起跳、快速升高，最有“吃到大 Bonus”的感觉。</span></span><span class="play">PLAY</span></button>
+        <button data-sound="prize"><span class="no">03</span><span><span class="name">Glass Prize</span><span class="desc">短促亮响和尾部回弹，更现代、较少街机感。</span></span><span class="play">PLAY</span></button>
+      </div>
+      <footer>这是试听页，不会写入游戏设置。选好编号后，我会只将对应音色接入游戏。</footer>
+    </main>
+    <script>
+      let ctx;
+      function getContext() { ctx ||= new AudioContext(); if (ctx.state === 'suspended') ctx.resume(); return ctx; }
+      function tone(from, to, at, duration, volume, wave) {
+        const c = getContext(), o = c.createOscillator(), g = c.createGain();
+        o.type = wave; o.frequency.setValueAtTime(from, at); o.frequency.exponentialRampToValueAtTime(to, at + duration);
+        g.gain.setValueAtTime(.0001, at); g.gain.exponentialRampToValueAtTime(volume, at + .012); g.gain.exponentialRampToValueAtTime(.0001, at + duration);
+        o.connect(g).connect(c.destination); o.start(at); o.stop(at + duration + .025);
+      }
+      function play(name) {
+        const now = getContext().currentTime;
+        if (name === 'spark') {
+          tone(440, 520, now, .075, .06, 'square'); tone(630, 720, now + .075, .085, .055, 'square'); tone(890, 980, now + .15, .12, .045, 'triangle');
+        } else if (name === 'power') {
+          tone(150, 230, now, .12, .09, 'triangle'); tone(280, 520, now + .065, .13, .07, 'square'); tone(630, 1180, now + .14, .22, .065, 'square');
+        } else {
+          tone(740, 1320, now, .105, .055, 'sine'); tone(1020, 800, now + .07, .17, .05, 'triangle'); tone(1560, 1720, now + .09, .075, .025, 'sine');
+        }
+      }
+      document.querySelectorAll('button').forEach((button) => button.addEventListener('click', () => play(button.dataset.sound)));
+    </script>
+  </body>
+</html>

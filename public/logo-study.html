@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tianchintosh · Brand lockup study</title>
+    <style>
+      @font-face { font-family: Geist; src: url("/src/assets/fonts/geist-sans-variable.woff2") format("woff2"); font-weight: 100 900; }
+      @font-face { font-family: Montserrat; src: url("/src/assets/fonts/montserrat-700.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: Montserrat; src: url("/src/assets/fonts/montserrat-800.woff2") format("woff2"); font-weight: 800; }
+      @font-face { font-family: Source Sans Pro; src: url("/src/assets/fonts/sourcesanspro-600.woff2") format("woff2"); font-weight: 600; }
+      :root { color-scheme: dark; background: #1c1d21; color: #f4f4f6; }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #1c1d21; font-family: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      main { width: min(1120px, calc(100% - 48px)); margin: 0 auto; padding: 54px 0 72px; }
+      header { display: flex; justify-content: space-between; align-items: end; gap: 28px; margin-bottom: 30px; }
+      .eyebrow { margin: 0 0 10px; color: #9698a1; font: 600 11px/1 Geist, sans-serif; letter-spacing: .13em; }
+      h1 { margin: 0; font-size: clamp(30px, 4vw, 46px); letter-spacing: -.055em; line-height: .98; }
+      header p { max-width: 350px; margin: 0; color: #a9abb3; font-size: 13px; line-height: 1.5; }
+      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+      .card { overflow: hidden; min-height: 174px; border: 1px solid rgba(255,255,255,.12); border-radius: 15px; background: #24252b; box-shadow: inset 0 1px rgba(255,255,255,.035); }
+      .caption { display: flex; align-items: baseline; gap: 9px; padding: 14px 16px 12px; color: #9597a0; font-size: 11px; letter-spacing: .075em; }
+      .caption b { color: #e9e9eb; font-weight: 650; letter-spacing: .01em; }
+      .bar { position: relative; display: flex; align-items: center; height: 78px; padding: 0 20px; border-top: 1px solid rgba(255,255,255,.08); border-bottom: 1px solid rgba(255,255,255,.075); background: #1a1b1f; }
+      .bar::after { position: absolute; right: 18px; content: "MON 10:08 PM"; color: #7f8189; font-size: 10px; font-weight: 580; letter-spacing: .045em; }
+      .lockup { display: inline-flex; align-items: center; color: #f3f3f4; white-space: nowrap; }
+      .mark { display: block; width: auto; height: 29px; object-fit: contain; }
+      .sep { width: 1px; height: 22px; margin: 0 12px; background: rgba(255,255,255,.24); }
+      .os { color: #bfc0c6; }
+      .v1 { gap: 10px; font: 610 20px/1 Geist, sans-serif; letter-spacing: -.045em; }
+      .v1 .mark { height: 27px; }
+      .v2 { gap: 8px; font: 620 20px/1 -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif; letter-spacing: -.035em; }
+      .v2 .mark { height: 26px; }
+      .v2 .os { font-weight: 480; }
+      .v3 { gap: 9px; font: 650 19px/1 Geist, sans-serif; letter-spacing: -.035em; }
+      .v3 .os { align-self: flex-start; margin-top: -6px; padding: 3px 5px 2px; border: 1px solid rgba(255,255,255,.34); border-radius: 4px; color: #d9dade; font-size: 9px; font-weight: 720; letter-spacing: .1em; }
+      .v4 { gap: 10px; font: 660 20px/1 Geist, sans-serif; letter-spacing: -.05em; }
+      .v4 .os { position: relative; top: -8px; margin-left: -5px; color: #b6b8c0; font-size: 10px; font-weight: 720; letter-spacing: .12em; }
+      .v5 { gap: 9px; font: 700 19px/1 Montserrat, Geist, sans-serif; letter-spacing: -.055em; }
+      .v5 .os { font: 610 18px/1 Geist, sans-serif; letter-spacing: -.045em; }
+      .v6 { gap: 10px; font: 650 20px/1 Geist, sans-serif; letter-spacing: -.045em; }
+      .v6 .os { display: inline-grid; width: 24px; height: 24px; place-items: center; border-radius: 50%; background: #f0f0f1; color: #1b1c20; font-size: 10px; font-weight: 800; letter-spacing: -.04em; }
+      .v7 { gap: 10px; font: 650 19px/1 "Source Sans Pro", Geist, sans-serif; letter-spacing: -.022em; }
+      .v7 .os { margin-left: -3px; padding: 3px 6px; border-radius: 4px; background: #35363d; color: #f1f1f2; font: 700 10px/1 Geist, sans-serif; letter-spacing: .12em; }
+      .v8 { gap: 10px; font: 700 20px/1 Geist, sans-serif; letter-spacing: -.055em; }
+      .v8 .tianchi { font-weight: 520; }
+      .v8 .os { margin-left: -4px; color: #f4f4f5; font-size: 24px; font-weight: 790; letter-spacing: -.09em; }
+      .v9 { gap: 11px; font: 700 19px/1 Montserrat, Geist, sans-serif; letter-spacing: -.065em; }
+      .v9 .mark { height: 31px; }
+      .v9 .os { position: relative; margin-left: 1px; padding-left: 9px; color: #bec0c7; font: 700 11px/1 Geist, sans-serif; letter-spacing: .16em; }
+      .v9 .os::before { position: absolute; left: 0; top: -2px; bottom: -2px; width: 1px; content: ""; background: rgba(255,255,255,.34); }
+      .v10 { gap: 9px; font: 640 20px/1 Geist, sans-serif; letter-spacing: -.05em; }
+      .v10 .os { align-self: flex-start; margin: -9px 0 0 -3px; padding: 3px 6px; border: 1px solid rgba(255,255,255,.27); border-radius: 3px 3px 3px 0; color: #e5e5e7; font-size: 9px; font-weight: 750; letter-spacing: .1em; }
+      footer { margin-top: 22px; color: #898b94; font-size: 12px; line-height: 1.5; }
+      @media (max-width: 720px) { main { width: min(100% - 28px, 520px); padding-top: 34px; } header { display: block; } header p { margin-top: 14px; } .grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div><p class="eyebrow">TIANCHINTOSH / BRAND LOCKUP STUDY</p><h1>Modern, not pixel.</h1></div>
+        <p>All ten directions use the real F wing. The difference is only in modern type choice, weight, and how “OS” behaves.</p>
+      </header>
+      <section class="grid" aria-label="Tianchi OS logo lockup options">
+        <article class="card"><div class="caption"><span>01</span><b>Quiet Geist</b></div><div class="bar"><div class="lockup v1"><img class="mark" src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi <span class="os">OS</span></span></div></div></article>
+        <article class="card"><div class="caption"><span>02</span><b>System Native</b></div><div class="bar"><div class="lockup v2"><img class="mark" src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi <span class="os">OS</span></span></div></div></article>
+        <article class="card"><div class="caption"><span>03</span><b>OS Badge</b></div><div class="bar"><div class="lockup v3"><img class="mark" src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi</span><span class="os">OS</span></div></div></article>
+        <article class="card"><div class="caption"><span>04</span><b>Superscript OS</b></div><div class="bar"><div class="lockup v4"><img class="mark" src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi</span><span class="os">OS</span></div></div></article>
+        <article class="card"><div class="caption"><span>05</span><b>Heritage Split</b></div><div class="bar"><div class="lockup v5"><img class="mark" src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi</span><span class="os">OS</span></div></div></article>
+        <article class="card"><div class="caption"><span>06</span><b>OS Medallion</b></div><div class="bar"><div class="lockup v6"><img class="mark" src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi</span><span class="os">OS</span></div></div></article>
+        <article class="card"><div class="caption"><span>07</span><b>Interface Tab</b></div><div class="bar"><div class="lockup v7"><img class="mark" src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi</span><span class="os">OS</span></div></div></article>
+        <article class="card"><div class="caption"><span>08</span><b>OS Emphasis</b></div><div class="bar"><div class="lockup v8"><img class="mark" src="/src/assets/fu-wing-mark.png" alt="" /><span class="tianchi">Tianchi</span><span class="os">OS</span></div></div></article>
+        <article class="card"><div class="caption"><span>09</span><b>Divided Mark</b></div><div class="bar"><div class="lockup v9"><img class="mark" src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi</span><span class="os">OS</span></div></div></article>
+        <article class="card"><div class="caption"><span>10</span><b>Corner Flag</b></div><div class="bar"><div class="lockup v10"><img class="mark" src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi</span><span class="os">OS</span></div></div></article>
+      </section>
+      <footer>Preview only. Once you choose a direction, I will turn it into the actual top-bar lockup and retain the same rendering at every size.</footer>
+    </main>
+  </body>
+</html>

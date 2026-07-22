@@ -1,5 +1,5 @@
-import { useOS, type Wallpaper, type IconSet } from "../store";
-import { ThemedIcon } from "../components/ThemedIcon";
+import { useOS, type Wallpaper, type IconSet, type Theme, type SnakeHat, type AppId } from "../store";
+import { PixIcon, type PixIconName } from "../components/Pixel";
 
 export function ResumeApp() {
   return (
@@ -65,35 +65,44 @@ export function ResumeApp() {
   );
 }
 
+type DiskItem = { name: string; kind: string; icon: PixIconName; app: AppId };
+
+const DISK_ITEMS: DiskItem[] = [
+  { name: "Projects", kind: "Folder · portfolio work", icon: "folder", app: "projects" },
+  { name: "About_Me.md", kind: "Markdown document", icon: "doc", app: "about" },
+  { name: "resume.pdf", kind: "PDF document", icon: "pdf", app: "resume" },
+  { name: "Snake", kind: "Playable application", icon: "snake", app: "snake" },
+  { name: "Settings", kind: "System preferences", icon: "gear", app: "prefs" },
+];
+
+/** Tianchintosh HD is the disk; this app is its lightweight Finder-style root. */
 export function ReadmeApp() {
+  const open = useOS((s) => s.open);
+  const setSnakeMode = useOS((s) => s.setSnakeMode);
   return (
-    <div className="win-pad readme">
-      <p className="mono-label">SYSTEM MANUAL</p>
-      <h1 style={{ fontSize: 26, fontWeight: 900, margin: "6px 0 2px" }}>README.md</h1>
-      <h3>这是什么?</h3>
-      <p>
-        <b>ERIC OS</b> 是 Eric Fu 的个人网站——一个桌面操作系统形状的作品集。
-        项目是文件,双击打开;简历在桌面上;贪吃蛇是真的可以玩的。
-      </p>
-      <h3>怎么用?</h3>
-      <p>
-        像用电脑一样用它:拖动图标和窗口、双击打开、绿键最大化、红键关闭。
-        Dock 在底部,菜单在左上角。所有状态自动保存,刷新不丢。
-      </p>
-      <h3>造物志(Colophon)</h3>
-      <ul>
-        <li>内核:<code>React</code> + <code>TypeScript</code> + <code>zustand</code>,四件套窗口管理</li>
-        <li>像素图标与字标:手绘网格,SVG 渲染,一个字体文件都没加载</li>
-        <li>设计语言:现代为体,街机为佐料;每个浮起的元素都有一块硬阴影</li>
-        <li>由 AI 结对 vibe-code,人类负责品味与否决</li>
-      </ul>
-      <h3>路线图</h3>
-      <ul>
-        <li>像素化真人头像(照片处理中)</li>
-        <li>ASK-ERIC.AI:能开窗口的 AI 分身</li>
-        <li>SNAKE.SYS 2.0:果实=项目,吃到哪个开哪个</li>
-        <li>项目详情页装入真实截图与 Case Study</li>
-      </ul>
+    <div className="disk-browser">
+      <div className="disk-browser-head">
+        <div>
+          <p className="mono-label">VOLUME · 5 ITEMS</p>
+          <h1>Tianchintosh HD</h1>
+        </div>
+        <span className="disk-free">11 GB AVAILABLE</span>
+      </div>
+      <div className="disk-list" role="list">
+        {DISK_ITEMS.map((item) => (
+          <button
+            key={item.name}
+            className="disk-row"
+            role="listitem"
+            onClick={() => (item.app === "snake" ? setSnakeMode(true) : open(item.app, { title: item.name }))}
+          >
+            <PixIcon name={item.icon} size={34} />
+            <span className="disk-name">{item.name}</span>
+            <span className="disk-kind">{item.kind}</span>
+            <span className="disk-open">OPEN ↗</span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -109,12 +118,42 @@ const ICON_SETS: { id: IconSet; label: string; desc: string }[] = [
   { id: "d", label: "SET D · INK", desc: "粗墨版画,单 accent" },
 ];
 
+const HATS: { id: SnakeHat; label: string; desc: string }[] = [
+  { id: "none", label: "无", desc: "素颜蛇" },
+  { id: "glasses", label: "眼镜", desc: "Tech 味" },
+  { id: "cap", label: "学士帽", desc: "School 味" },
+  { id: "phones", label: "耳机", desc: "听歌的蛇" },
+  { id: "bow", label: "蝴蝶结", desc: "精致的蛇" },
+  { id: "bubble", label: "星星泡泡", desc: "梦见星星(老站彩蛋)" },
+];
+
+const THEMES: { id: Theme; label: string; desc: string }[] = [
+  { id: "dark", label: "DARK", desc: "炭灰暗台 + 白窗(默认)" },
+  { id: "light", label: "LIGHT", desc: "浅色底 + 白窗孪生" },
+];
+
 export function PrefsApp() {
-  const { wallpaper, setWallpaper, iconSet, setIconSet, resetDesktop } = useOS();
+  const { wallpaper, setWallpaper, iconSet, setIconSet, theme, setTheme, snakeHat, setSnakeHat, resetDesktop } = useOS();
   return (
     <div className="win-pad">
       <p className="mono-label">SYSTEM PREFERENCES</p>
       <h1 style={{ fontSize: 24, fontWeight: 900, margin: "6px 0 16px" }}>系统偏好设置</h1>
+
+      <div className="prefs-group">
+        <b style={{ fontSize: 14 }}>外观(明暗)</b>
+        <div className="options">
+          {THEMES.map((t) => (
+            <button
+              key={t.id}
+              className={`tab ${theme === t.id ? "active" : ""}`}
+              onClick={() => setTheme(t.id)}
+              title={t.desc}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="prefs-group">
         <b style={{ fontSize: 14 }}>图标风格</b>
@@ -143,6 +182,22 @@ export function PrefsApp() {
               title={w.desc}
             >
               {w.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="prefs-group">
+        <b style={{ fontSize: 14 }}>蛇头装饰</b>
+        <div className="options">
+          {HATS.map((h) => (
+            <button
+              key={h.id}
+              className={`tab ${snakeHat === h.id ? "active" : ""}`}
+              onClick={() => setSnakeHat(h.id)}
+              title={h.desc}
+            >
+              {h.label}
             </button>
           ))}
         </div>

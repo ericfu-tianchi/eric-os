@@ -7,6 +7,30 @@
  * readable at 16px, give every object a darker "shade" row/edge.
  */
 
+import folderRaster from "../assets/icons/b/folder.png";
+import docRaster from "../assets/icons/b/doc.png";
+import pdfRaster from "../assets/icons/b/pdf.png";
+import snakeRaster from "../assets/icons/b/snake.png";
+import heartRaster from "../assets/icons/b/heart.png";
+import starRaster from "../assets/icons/b/star.png";
+import gearRaster from "../assets/icons/b/gear.png";
+import computerRaster from "../assets/icons/b/computer.png";
+
+/** AI pixel-art icon set (v0.5, "Balanced"): crisp true-pixel + tidy shading, vivid on the charcoal
+ *  stage. These rasters override the hand-drawn vector PixIcons below. Flip USE_RASTER_ICONS to
+ *  false to fall back to the vector grids (fully reversible). */
+const USE_RASTER_ICONS = true;
+const RASTER_ICONS: Record<string, string> = {
+  folder: folderRaster, doc: docRaster, pdf: pdfRaster,
+  snake: snakeRaster, heart: heartRaster, star: starRaster,
+  gear: gearRaster, computer: computerRaster,
+};
+
+/** raster URL for an icon (so the snake game can draw eaten icons as the real art, not the vector). */
+export function rasterIconUrl(name: string): string | undefined {
+  return USE_RASTER_ICONS ? RASTER_ICONS[name] : undefined;
+}
+
 const PALETTE: Record<string, string> = {
   K: "#1b1a15", // ink outline
   W: "#fffdf7", // white
@@ -185,13 +209,11 @@ export const GLYPHS: Record<string, string[]> = {
     "....KK....",
   ],
   battery: [
-    "KKKKKKKKKKKK..",
-    "KWWWWWWWWWWK..",
-    "KWGGGGGGGWWKKK",
-    "KWGGGGGGGWWKgK",
-    "KWGGGGGGGWWKKK",
-    "KWWWWWWWWWWK..",
-    "KKKKKKKKKKKK..",
+    ".SSSSSSSSSSSS....",
+    ".SGGGGGGGGWWS.SS.",
+    ".SGGGGGGGGWWS.Ss.",
+    ".SGGGGGGGGWWS.SS.",
+    ".SSSSSSSSSSSS....",
   ],
   logo: [
     ".KKKKKKKKK..",
@@ -264,7 +286,7 @@ export function PixelGlyph({
 export function PixelWordmark({
   text = "ERIC OS",
   cell = 3,
-  color = "#1b1a15",
+  color = "currentColor",
 }: {
   text?: string;
   cell?: number;
@@ -302,46 +324,158 @@ export function PixelWordmark({
   );
 }
 
+export const GRID_TARGET = 44; // desired cell size (Eric's final spec)
+
+/** The grid: cells flex a little on BOTH axes so width and height divide into
+    whole cells exactly — no partial cells anywhere, on any screen. */
+export function gridSpec(vw: number, vh: number) {
+  const rows = Math.max(8, Math.round(vh / GRID_TARGET));
+  const cellH = vh / rows;
+  const cols = Math.max(8, Math.round(vw / cellH));
+  const cellW = vw / cols;
+  return { cellW, cellH, cols, rows };
+}
+
+/** An icon's pixel cells, content-cropped, in its original (outline-treatment) colors.
+    Used by the snake game to render swallowed icons riding the body. */
+export function iconCellData(name: PixIconName): { w: number; h: number; cells: [number, number, string][] } {
+  const { hue, g } = I_GRID[name];
+  const [body, shade, , acc] = I_HUE[hue];
+  const map: Record<string, string> = { K: I_INK, B: body, S: shade, H: I_CREAM, A: acc };
+  const cells: [number, number, string][] = [];
+  g.forEach((row, y) => {
+    for (let x = 0; x < row.length; x++) if (row[x] !== ".") cells.push([x, y, map[row[x]]]);
+  });
+  const xs = cells.map((c) => c[0]);
+  const ys = cells.map((c) => c[1]);
+  const x0 = Math.min(...xs);
+  const y0 = Math.min(...ys);
+  return {
+    w: Math.max(...xs) - x0 + 1,
+    h: Math.max(...ys) - y0 + 1,
+    cells: cells.map(([x, y, c]) => [x - x0, y - y0, c]),
+  };
+}
+
+/* ============================================================
+   PixIcon — v2 icon set (DevDay-flavored, moderate pixelation).
+   Cell roles: '.' empty · K outline · B body · S shade ·
+   H highlight · A accent. Crisp SVG rects, self-drawn grids,
+   restrained gem palette. treatment="outline" ships as default;
+   the others are kept so the whole set restyles from one prop.
+   ============================================================ */
+export type PixIconName =
+  | "folder" | "doc" | "pdf" | "snake" | "heart" | "star" | "gear" | "computer";
+export type IconTreatment = "outline" | "flat" | "duotone" | "tile" | "dissolve";
+
+const I_INK = "#26262b";
+const I_CREAM = "#f4f0e6";
+const I_SLATE = "#2f3a46";
+// [body, shade, highlight, accent, tileDark]
+const I_HUE: Record<string, [string, string, string, string, string]> = {
+  gold: ["#d9a441", "#a9781f", "#f0d38a", "#8a5f16", "#a9781f"],
+  paper: ["#eef1f6", "#c3ccda", "#ffffff", "#4a74d6", "#3a5bb0"],
+  pdf: ["#eef1f6", "#c3ccda", "#ffffff", "#e0483a", "#b23a2f"],
+  green: ["#43a066", "#237a43", "#bfe6c8", "#155e33", "#237a43"],
+  rose: ["#d76a97", "#ad4570", "#f2b8cf", "#8f2f57", "#ad4570"],
+  amber: ["#e0a93f", "#b3812a", "#f5d98f", "#8a6015", "#b3812a"],
+  steel: ["#9aa2ae", "#6a727e", "#d9dee5", "#535a66", "#5b6470"],
+  screen: ["#9aa2ae", "#6a727e", "#d9dee5", "#1fb0ab", "#5b6470"],
+};
+const I_GRID: Record<PixIconName, { hue: string; g: string[] }> = {
+  folder: { hue: "gold", g: [
+    "................", "...KKKKKK.......", "..KBBBBBBK......", "..KBBBBBBKKKKKK.",
+    ".KBBBBBBBBBBBBK.", ".KBHHBBBBBBBBBK.", ".KBBBBBBBBBBBBK.", ".KBBBBBBBBBBBBK.",
+    ".KBBBBBBBBBBBBK.", ".KSSSSSSSSSSSBK.", ".KSSSSSSSSSSSSK.", "..KKKKKKKKKKKK..",
+    "................", "................" ] },
+  doc: { hue: "paper", g: [
+    "................", "..KKKKKKKKK.....", "..KBBBBBBKK.....", "..KBBBBBBBK.....",
+    "..KBAAAABBK.....", "..KBBBBBBBK.....", "..KBAAAAABK.....", "..KBBBBBBBK.....",
+    "..KBAAAABBK.....", "..KBBBBBBBK.....", "..KBAAAAABK.....", "..KBBBBBBBK.....",
+    "..KKKKKKKKK.....", "................" ] },
+  pdf: { hue: "pdf", g: [
+    "................", "..KKKKKKKKK.....", "..KBBBBBBKK.....", "..KBBBBBBBK.....",
+    "..KBBBBBBBK.....", "..KAAAAAAAK.....", "..KAAAAAAAK.....", "..KAAAAAAAK.....",
+    "..KBBBBBBBK.....", "..KBBBBBBBK.....", "..KBBBBBBBK.....", "..KBBBBBBBK.....",
+    "..KKKKKKKKK.....", "................" ] },
+  snake: { hue: "green", g: [
+    "................", "....KKKKKK......", "...KBBBBBBK.....", "...KBHKBBBK.KK..",
+    "...KBBBBBBKKKAK.", "...KKKKKBBBK.KK.", ".KKKKK.KBBBK....", "KBBBBBKKBBBK....",
+    "KBSSSBBBBBBK....", "KBBBBBBBBBBBK...", "KBSSSSSSSSSBK...", "KKKKKKKKKKKKK...",
+    "................", "................" ] },
+  heart: { hue: "rose", g: [
+    "................", "..KKK....KKK....", ".KBBBKKKBBBBK...", ".KBHBBBBBBBBK...",
+    ".KBBBBBBBBBBK...", "..KBBBBBBBBK....", "...KBBBBBBK.....", "....KBBBBK......",
+    ".....KBBK.......", "......KK........", "................", "................",
+    "................", "................" ] },
+  star: { hue: "amber", g: [
+    "................", ".......KK.......", "......KBBK......", "......KBBK......",
+    "..KKKKKBBKKKKK..", "..KBBBBBBBBBBK..", "...KBBBBBBBBK...", "....KBBBBBBK....",
+    "...KBBBKKBBBK...", "..KBBBK..KBBBK..", "..KBK......KBK..", "................",
+    "................", "................" ] },
+  gear: { hue: "steel", g: [
+    "................", "......KKKK......", "...KK.KBBK.KK...", "...KBKKBBKKBK...",
+    "...KBBBBBBBBK...", "..KKBBBKKBBBKK..", "..KBBBK..KBBBK..", "..KBBBK..KBBBK..",
+    "..KKBBBKKBBBKK..", "...KBBBBBBBBK...", "...KBKKBBKKBK...", "...KK.KSSK.KK...",
+    "......KKKK......", "................" ] },
+  computer: { hue: "screen", g: [
+    "................", ".KKKKKKKKKKKKK..", ".KBBBBBBBBBBBK..", ".KBAAAAAAAAABK..",
+    ".KBAAAAAAAAABK..", ".KBAAAAAAAAABK..", ".KBAAAAAAAAABK..", ".KBBBBBBBBBBBK..",
+    ".KKKKKKKKKKKKK..", "......KKK......", ".....KBSBK.....", "....KKKKKKK....",
+    "....KBBBBBK....", "....KKKKKKK...." ] },
+};
+
+export function PixIcon({
+  name, size = 48, className, treatment = "outline", swallow = false,
+}: { name: PixIconName; size?: number; className?: string; treatment?: IconTreatment; swallow?: boolean }) {
+  if (USE_RASTER_ICONS && !swallow && RASTER_ICONS[name]) {
+    return (
+      <span className={`glyph-wrap ${className ?? ""}`} style={{ display: "inline-flex", lineHeight: 0 }}>
+        <img src={RASTER_ICONS[name]} width={size} height={size} draggable={false}
+          style={{ objectFit: "contain", pointerEvents: "none", userSelect: "none" }} alt="" aria-hidden />
+      </span>
+    );
+  }
+  const { hue, g } = I_GRID[name];
+  const [body, shade, hi, acc, tdark] = I_HUE[hue];
+  const W = Math.max(...g.map((r) => r.length));
+  const H = g.length;
+  const map = (ch: string): string | null => {
+    if (ch === ".") return null;
+    // "swallow" = the icon's SILHOUETTE, solid green — shape and size only, no pixel detail
+    if (swallow) return "#3fbf6e";
+    switch (treatment) {
+      case "flat": return { ".": null, K: null, B: body, S: shade, H: hi, A: acc }[ch] ?? null;
+      case "duotone": return { ".": null, K: null, B: body, S: I_SLATE, H: hi, A: I_SLATE }[ch] ?? null;
+      case "tile": return { ".": null, K: null, B: I_CREAM, S: "#d8d2c2", H: "#ffffff", A: I_CREAM }[ch] ?? null;
+      default: return { ".": null, K: I_INK, B: body, S: shade, H: I_CREAM, A: acc }[ch] ?? null; // outline & dissolve
+    }
+  };
+  const rects: unknown[] = [];
+  g.forEach((row, y) => {
+    for (let x = 0; x < row.length; x++) {
+      const c = map(row[x]);
+      if (c) rects.push(<rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={c} />);
+    }
+  });
+  if (treatment === "dissolve") {
+    [[W, 2], [W + 1, 3], [W, 5], [W + 2, 4], [W + 1, 6]].forEach(([x, y], i) =>
+      rects.push(<rect key={`d${i}`} x={x} y={y} width={1} height={1} fill={body} />));
+  }
+  const vw = W + (treatment === "dissolve" ? 3 : 0);
+  return (
+    <span className={`glyph-wrap ${className ?? ""}`} style={{ display: "inline-flex", lineHeight: 0 }}>
+      <svg width={size} height={(size * H) / vw} viewBox={`0 0 ${vw} ${H}`} shapeRendering="crispEdges" aria-hidden>
+        {treatment === "tile" && <rect x={0} y={0} width={W} height={H} rx={1.6} fill={tdark} />}
+        {rects as React.ReactNode}
+      </svg>
+    </span>
+  );
+}
+
 /**
  * Wallpaper snake, exported as a data-URI so CSS can paint it.
  * Modeled after the snake board of tianchi-fu.com: a slim snake of
  * rounded cells winding along the grid, dreaming of a star, an apple
  * waiting one move ahead. Cell size = 24 to lock onto the CSS grid.
  */
-export function snakeWallpaperURI(bright = false): string {
-  const C = 24; // must match --grid-size in CSS
-  const path: [number, number][] = [
-    [0, 12], [1, 12], [2, 12], [3, 12], [4, 12], [4, 11], [4, 10],
-    [5, 10], [6, 10], [7, 10], [7, 9], [7, 8], [7, 7], [8, 7],
-    [9, 7], [10, 7], [10, 6], [10, 5], [11, 5], [12, 5], [13, 5],
-    [13, 4], [13, 3],
-  ];
-  const head = path[path.length - 1];
-  const green = bright ? "#2ed573" : "#23bd5f";
-  const baseOp = bright ? 0.42 : 0.34;
-  const rects = path
-    .map(([x, y], i) => {
-      const op = baseOp * (0.32 + (i / path.length) * 0.68);
-      return `<rect x='${x * C + 3}' y='${y * C + 3}' width='${C - 6}' height='${C - 6}' rx='3' fill='${green}' opacity='${op.toFixed(2)}'/>`;
-    })
-    .join("");
-  const hx = head[0] * C;
-  const hy = head[1] * C;
-  const extras =
-    // eyes
-    `<rect x='${hx + 7}' y='${hy + 8}' width='3' height='3' fill='#1b1a15' opacity='${baseOp + 0.25}'/>` +
-    `<rect x='${hx + 14}' y='${hy + 8}' width='3' height='3' fill='#1b1a15' opacity='${baseOp + 0.25}'/>` +
-    // apple one move ahead
-    `<rect x='${hx + 5}' y='${hy - C * 2 + 6}' width='${C - 10}' height='${C - 10}' rx='6' fill='#ff5347' opacity='${baseOp + 0.1}'/>` +
-    `<rect x='${hx + 10}' y='${hy - C * 2 + 2}' width='3' height='5' fill='#158f46' opacity='${baseOp + 0.1}'/>` +
-    // the star it dreams of
-    `<g opacity='${(baseOp * 0.9).toFixed(2)}' fill='#f5c84c'>` +
-    `<rect x='${hx + C * 2 + 6}' y='${hy - C * 3}' width='4' height='12' /><rect x='${hx + C * 2 + 2}' y='${hy - C * 3 + 4}' width='12' height='4' />` +
-    `</g>`;
-  const w = 15 * C;
-  const h = 14 * C;
-  const svg =
-    `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'>` +
-    rects + extras + `</svg>`;
-  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
-}

@@ -14,12 +14,12 @@ export function MobileShell() {
           <PixelWordmark text="ERIC OS" cell={2.4} />
         </span>
         <div className="right">
-          <span style={{ fontSize: 11 }}>MOBILE</span>
+          <span style={{ fontSize: 11 }}>PORTFOLIO</span>
         </div>
       </nav>
 
       <section className="m-card">
-        <div className="m-head">ABOUT.TXT</div>
+        <div className="m-head">About Eric</div>
         <div className="m-body">
           <h1 style={{ margin: "0 0 4px", fontSize: 26, fontWeight: 900 }}>Eric Fu</h1>
           <p style={{ margin: "0 0 10px", fontWeight: 700, color: "var(--muted)", fontSize: 12.5 }}>
@@ -36,7 +36,7 @@ export function MobileShell() {
       </section>
 
       <section className="m-card">
-        <div className="m-head">PROJECTS.DIR</div>
+        <div className="m-head">Selected Projects</div>
         <div className="m-body" style={{ padding: "6px 8px 10px" }}>
           {PROJECTS.map((p) => (
             <div key={p.slug} className="proj-row" style={{ cursor: "default" }}>
@@ -53,9 +53,7 @@ export function MobileShell() {
       </section>
 
       <p className="m-note">
-        // 完整的 ERIC OS(可拖拽窗口 + 可玩的 SNAKE.SYS)
-        <br />
-        请用桌面浏览器打开体验
+        // 为当前屏幕优化的内容视图
       </p>
     </div>
   );

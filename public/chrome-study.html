@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tianchi OS · Chrome study</title>
+    <style>
+      @font-face { font-family: Geist; src: url("/src/assets/fonts/geist-sans-variable.woff2") format("woff2"); font-weight: 100 900; }
+      :root { color-scheme: dark; background: #1c1d21; color: #f1f1f3; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #1c1d21; }
+      main { width: min(1240px, calc(100% - 48px)); margin: 0 auto; padding: 54px 0 72px; }
+      header { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 29px; }
+      .eyebrow { margin: 0 0 10px; color: #9698a1; font-size: 11px; font-weight: 650; letter-spacing: .13em; }
+      h1 { margin: 0; font-size: clamp(30px, 4vw, 46px); letter-spacing: -.055em; line-height: 1; }
+      header p { max-width: 380px; margin: 0; color: #aaaCB4; font-size: 13px; line-height: 1.5; }
+      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+      .card { min-width: 0; overflow: hidden; border: 1px solid rgba(255,255,255,.12); border-radius: 16px; background: #24252b; box-shadow: inset 0 1px rgba(255,255,255,.045); }
+      .caption { display: flex; align-items: baseline; gap: 9px; padding: 14px 15px 13px; color: #92949d; font-size: 11px; letter-spacing: .075em; }
+      .caption b { color: #e9e9eb; font-weight: 650; letter-spacing: .01em; }
+      .screen { position: relative; aspect-ratio: 1.33; overflow: hidden; background: #1c1d21; }
+      .screen::before { position: absolute; inset: 34px 0 0; content: ""; opacity: .55; background-image: linear-gradient(rgba(255,255,255,.038) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.038) 1px, transparent 1px); background-size: 18px 18px; }
+      .topbar { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; height: 34px; padding: 0 12px; border-bottom: 1px solid rgba(255,255,255,.09); background: #232429; color: #f3f3f5; box-shadow: inset 0 1px rgba(255,255,255,.045); }
+      .brand { display: flex; align-items: center; gap: 7px; min-width: 0; font-size: 11px; font-weight: 670; letter-spacing: -.025em; }
+      .brand img { display: block; width: auto; height: 18px; }
+      .meta { color: rgba(255,255,255,.54); font-size: 8px; font-weight: 630; letter-spacing: .05em; }
+      .topbar.ink { background: #111216; }
+      .topbar.black-glass { background: linear-gradient(180deg, #1b1c21, #15161a); }
+      .topbar.charcoal { background: #292a30; }
+      .topbar.slate { background: #3a3b42; }
+      .topbar.gray { background: #54555c; }
+      .dock { position: absolute; z-index: 2; bottom: 15px; left: 50%; display: flex; align-items: center; justify-content: center; gap: 12px; width: 56%; height: 37px; transform: translateX(-50%); border: 1px solid rgba(255,255,255,.1); border-radius: 10px; background: linear-gradient(180deg, #2d2e34, #1b1c20 66%, #18191d); box-shadow: 0 12px 22px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.06); }
+      .dock::before { position: absolute; top: -1px; left: 8%; width: 84%; height: 1px; content: ""; background: linear-gradient(90deg, transparent, rgba(255,255,255,.06) 10%, rgba(255,255,255,.84) 50%, rgba(255,255,255,.06) 90%, transparent); filter: blur(.15px); }
+      .glyph { width: 12px; height: 12px; border: 1.3px solid #e7e7e9; border-radius: 3px; opacity: .92; }
+      .glyph.round { border-radius: 50%; } .glyph.line { width: 1px; height: 15px; border: 0; background: rgba(255,255,255,.19); }
+      .micro-snake { position: absolute; z-index: 1; top: 48%; left: 18%; width: 47%; height: 20px; border-top: 5px solid #06c268; border-radius: 52% 48% 42% 56%; transform: rotate(-7deg); opacity: .86; filter: drop-shadow(0 2px 2px rgba(0,0,0,.55)); }
+      .note { margin: 23px 0 0; color: #8d8f98; font-size: 12px; line-height: 1.5; }
+      @media (max-width: 800px) { main { width: min(100% - 28px, 520px); padding-top: 34px; } header { display: block; } header p { margin-top: 14px; } .grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header><div><p class="eyebrow">TIANCHI OS / CHROME STUDY</p><h1>White logo, darker home.</h1></div><p>The original white-gradient F stays untouched. These five bars explore only the neutral gray surface directly behind it, while Canvas and Dock preserve the option 4 hierarchy.</p></header>
+      <section class="grid" aria-label="Light top bar and logo treatments">
+        <article class="card"><div class="caption"><span>01</span><b>Ink</b></div><div class="screen"><div class="topbar ink"><div class="brand"><img src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi OS</span></div><span class="meta">MON 10:08 PM</span></div><i class="micro-snake"></i><div class="dock"><i class="glyph"></i><i class="glyph round"></i><i class="glyph"></i><i class="glyph line"></i><i class="glyph round"></i></div></div></article>
+        <article class="card"><div class="caption"><span>02</span><b>Black Glass</b></div><div class="screen"><div class="topbar black-glass"><div class="brand"><img src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi OS</span></div><span class="meta">MON 10:08 PM</span></div><i class="micro-snake"></i><div class="dock"><i class="glyph"></i><i class="glyph round"></i><i class="glyph"></i><i class="glyph line"></i><i class="glyph round"></i></div></div></article>
+        <article class="card"><div class="caption"><span>03</span><b>Raised Charcoal</b></div><div class="screen"><div class="topbar charcoal"><div class="brand"><img src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi OS</span></div><span class="meta">MON 10:08 PM</span></div><i class="micro-snake"></i><div class="dock"><i class="glyph"></i><i class="glyph round"></i><i class="glyph"></i><i class="glyph line"></i><i class="glyph round"></i></div></div></article>
+        <article class="card"><div class="caption"><span>04</span><b>Soft Slate</b></div><div class="screen"><div class="topbar slate"><div class="brand"><img src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi OS</span></div><span class="meta">MON 10:08 PM</span></div><i class="micro-snake"></i><div class="dock"><i class="glyph"></i><i class="glyph round"></i><i class="glyph"></i><i class="glyph line"></i><i class="glyph round"></i></div></div></article>
+        <article class="card"><div class="caption"><span>05</span><b>Light Gray Limit</b></div><div class="screen"><div class="topbar gray"><div class="brand"><img src="/src/assets/fu-wing-mark.png" alt="" /><span>Tianchi OS</span></div><span class="meta">MON 10:08 PM</span></div><i class="micro-snake"></i><div class="dock"><i class="glyph"></i><i class="glyph round"></i><i class="glyph"></i><i class="glyph line"></i><i class="glyph round"></i></div></div></article>
+      </section>
+      <p class="note">My first instinct is 03 or 04. They make the bar visibly separate from the Canvas, but leave enough darkness for the F mark to feel intentional instead of pasted on.</p>
+    </main>
+  </body>
+</html>

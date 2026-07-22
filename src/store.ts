@@ -8,6 +8,9 @@ export type AppId =
   | "readme"
   | "prefs"
   | "snake"
+  | "filesystem"
+  | "soul-blade"
+  | "twist-solver"
   | "life"
   | "playground"
   | "project-detail";
@@ -26,38 +29,56 @@ export interface WinInstance {
 
 export type Wallpaper = "snake" | "clean" | "noir";
 export type IconSet = "a" | "d";
+export type Theme = "dark" | "light";
+export type SnakeHat = "none" | "glasses" | "cap" | "phones" | "bow" | "bubble";
+/**
+ * Desktop files are anchored to the right edge, independently of the
+ * left-anchored "hello" wallpaper. `col` is retained only for old persisted
+ * positions; free drags store their exact `rightPx` offset and Sort stores
+ * `right` as a one-based cell coordinate.
+ */
+export type IconPosition = { x: number; y: number; col?: number; row?: number; right?: number; rightPx?: number };
 
 interface OSState {
   windows: Record<string, WinInstance>;
   order: string[]; // z-order, last = front
-  iconPos: Record<string, { x: number; y: number }>;
+  iconPos: Record<string, IconPosition>;
   wallpaper: Wallpaper;
   iconSet: IconSet;
+  theme: Theme;
   snakeBest: number;
+  snakeHat: SnakeHat; // wallpaper snake's head accessory (set in Prefs)
+  snakeMode: boolean; // desktop-wide snake takeover (transient, not persisted)
   booted: boolean;
   seq: number;
 
-  open: (app: AppId, opts?: Partial<Pick<WinInstance, "title" | "payload" | "w" | "h">>) => void;
+  open: (app: AppId, opts?: Partial<Pick<WinInstance, "title" | "payload" | "w" | "h" | "maximized">>) => void;
   close: (id: string) => void;
   focus: (id: string) => void;
   move: (id: string, x: number, y: number) => void;
   resize: (id: string, w: number, h: number) => void;
   toggleMax: (id: string) => void;
-  setIconPos: (key: string, x: number, y: number) => void;
+  setIconPos: (key: string, x: number, y: number, cell?: { row?: number; col?: number; right?: number; rightPx?: number }) => void;
   setWallpaper: (w: Wallpaper) => void;
   setIconSet: (s: IconSet) => void;
+  setTheme: (t: Theme) => void;
   setSnakeBest: (n: number) => void;
+  setSnakeHat: (h: SnakeHat) => void;
+  setSnakeMode: (on: boolean) => void;
   setBooted: () => void;
   resetDesktop: () => void;
 }
 
 const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
   projects: { w: 680, h: 540 },
-  about: { w: 500, h: 430 },
+  about: { w: 600, h: 560 },
   resume: { w: 620, h: 560 },
   readme: { w: 540, h: 470 },
   prefs: { w: 470, h: 470 },
   snake: { w: 424, h: 434 },
+  filesystem: { w: 860, h: 590 },
+  "soul-blade": { w: 1120, h: 720 },
+  "twist-solver": { w: 1120, h: 720 },
   life: { w: 560, h: 500 },
   playground: { w: 600, h: 520 },
   "project-detail": { w: 700, h: 520 },
@@ -71,15 +92,19 @@ export const useOS = create<OSState>()(
       iconPos: {},
       wallpaper: "snake",
       iconSet: "d",
+      theme: "dark",
       snakeBest: 0,
+      snakeHat: "none",
+      snakeMode: false,
       booted: false,
       seq: 1,
 
       open: (app, opts) => {
         const s = get();
-        // single-instance apps: focus if already open (project-detail keyed by payload)
+        // File-system windows and project detail windows are keyed by location;
+        // every other app remains single-instance.
         const existing = Object.values(s.windows).find(
-          (w) => w.app === app && (app !== "project-detail" || w.payload === opts?.payload)
+          (w) => w.app === app && (!["project-detail", "filesystem"].includes(app) || w.payload === opts?.payload)
         );
         if (existing) return s.focus(existing.id);
         const id = `${app}-${s.seq}`;
@@ -95,7 +120,7 @@ export const useOS = create<OSState>()(
           h: opts?.h ?? size.h,
           x: Math.max(12, Math.min(90 + n * 34, vw - size.w - 60)),
           y: 64 + ((n * 30) % 180),
-          maximized: false,
+          maximized: opts?.maximized ?? false,
         };
         set({
           windows: { ...s.windows, [id]: win },
@@ -134,12 +159,15 @@ export const useOS = create<OSState>()(
         get().focus(id);
       },
 
-      setIconPos: (key, x, y) =>
-        set({ iconPos: { ...get().iconPos, [key]: { x, y } } }),
+      setIconPos: (key, x, y, cell) =>
+        set({ iconPos: { ...get().iconPos, [key]: { x, y, ...cell } } }),
 
       setWallpaper: (wallpaper) => set({ wallpaper }),
       setIconSet: (iconSet) => set({ iconSet }),
+      setTheme: (theme) => set({ theme }),
       setSnakeBest: (snakeBest) => set({ snakeBest }),
+      setSnakeHat: (snakeHat) => set({ snakeHat }),
+      setSnakeMode: (snakeMode) => set({ snakeMode }),
       setBooted: () => set({ booted: true }),
 
       resetDesktop: () =>
@@ -153,7 +181,9 @@ export const useOS = create<OSState>()(
         iconPos: s.iconPos,
         wallpaper: s.wallpaper,
         iconSet: s.iconSet,
+        theme: s.theme,
         snakeBest: s.snakeBest,
+        snakeHat: s.snakeHat,
         seq: s.seq,
       }),
     }

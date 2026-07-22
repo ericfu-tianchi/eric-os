@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useOS } from "../store";
 
 /**
- * SNAKE.SYS — the soul of ERIC OS, fully playable.
+ * Snake — the soul of ERIC OS, fully playable.
  * Arrow keys / WASD. Eat apples, don't eat walls or yourself.
  */
 const COLS = 22;
@@ -190,22 +190,22 @@ export function SnakeApp() {
         <canvas ref={canvasRef} width={COLS * CELL} height={ROWS * CELL} />
         {phase !== "playing" && (
           <div className="snake-overlay">
-            <span className="big">{phase === "over" ? "GAME OVER" : "SNAKE.SYS"}</span>
+            <span className="big">{phase === "over" ? "GAME OVER" : "Snake"}</span>
             {phase === "over" && (
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 700 }}>
+              <span style={{ fontFamily: "var(--font-system)", fontSize: 13, fontWeight: 700 }}>
                 得分 {score}{score >= snakeBest && score > 0 ? " · 新纪录!" : ""}
               </span>
             )}
             <button className="arcade-btn primary" onClick={start}>
               {phase === "over" ? "再来一局" : "开始游戏"}
             </button>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, color: "var(--muted)", letterSpacing: "0.08em" }}>
+            <span style={{ fontFamily: "var(--font-system)", fontSize: 10.5, color: "var(--muted)", letterSpacing: "0.08em" }}>
               方向键 / WASD 控制
             </span>
           </div>
         )}
       </div>
-      <p style={{ margin: 0, fontFamily: "var(--font-mono)", fontSize: 10.5, color: "var(--faint)", letterSpacing: "0.06em" }}>
+      <p style={{ margin: 0, fontFamily: "var(--font-system)", fontSize: 10.5, color: "var(--faint)", letterSpacing: "0.06em" }}>
         // 未来版本:果实=项目图标,吃到哪个开哪个
       </p>
     </div>

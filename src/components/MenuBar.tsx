@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useOS } from "../store";
-import { PixelGlyph, PixelWordmark } from "./Pixel";
-import ericLogo from "../assets/eric-logo.svg";
+import batteryIcon from "../assets/icons/b/battery-v2.png";
+import fuWingMark from "../assets/fu-wing-mark.png";
 
 function useClock() {
   const [now, setNow] = useState(new Date());
@@ -9,7 +9,7 @@ function useClock() {
     const t = window.setInterval(() => setNow(new Date()), 15_000);
     return () => window.clearInterval(t);
   }, []);
-  const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const hh = now.getHours();
   const mm = now.getMinutes().toString().padStart(2, "0");
   const h12 = hh % 12 === 0 ? 12 : hh % 12;
@@ -40,13 +40,12 @@ export function MenuBar() {
     <div ref={ref}>
       <nav className="menubar">
         <button className={`brand ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(!menuOpen)}>
-          <img src={ericLogo} alt="Eric Fu logo" style={{ height: 21, width: "auto" }} draggable={false} />
-          <PixelWordmark text="ERIC OS" cell={2.6} />
+          <img className="fu-wing-mark" src={fuWingMark} alt="Fu Tianchi logo" draggable={false} />
+          <span className="os-name"><span className="os-name-main">Tianchi</span> <span className="os-name-suffix">OS</span></span>
         </button>
         <div className="right">
           <span className="status-icons">
-            <PixelGlyph name="wifi" size={15} title="wifi" />
-            <PixelGlyph name="battery" size={22} title="battery" />
+            <img className="top-battery" src={batteryIcon} alt="Battery at 80%" draggable={false} />
           </span>
           <span>{clock}</span>
         </div>
@@ -54,17 +53,17 @@ export function MenuBar() {
 
       {menuOpen && (
         <div className="menu-pop" role="menu">
-          <button onClick={item(() => open("about", { title: "ABOUT.TXT" }))}>
+          <button onClick={item(() => open("about", { title: "About_Me.md" }))}>
             关于 ERIC OS <span className="k">ABOUT</span>
           </button>
-          <button onClick={item(() => open("readme", { title: "README.MD" }))}>
-            系统说明书 <span className="k">README</span>
+          <button onClick={item(() => open("filesystem", { title: "Tianchintosh HD", payload: "tianchintosh" }))}>
+            文件系统 <span className="k">DISK</span>
           </button>
-          <button onClick={item(() => open("prefs", { title: "SYSTEM PREFS" }))}>
-            系统偏好设置 <span className="k">PREFS</span>
+          <button onClick={item(() => open("prefs", { title: "Settings" }))}>
+            系统偏好设置 <span className="k">SETTINGS</span>
           </button>
           <hr />
-          <button onClick={item(() => open("resume", { title: "RESUME.PDF" }))}>
+          <button onClick={item(() => open("resume", { title: "resume.pdf" }))}>
             简历 <span className="k">PDF</span>
           </button>
           <button

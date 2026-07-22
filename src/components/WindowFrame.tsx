@@ -1,5 +1,8 @@
-import { useRef, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { useOS, type WinInstance } from "../store";
+import { TOPBAR } from "./desktopGrid";
+import { WindowChromeProvider, type WindowChromeState } from "./WindowChrome";
+import { PROJECTS } from "../data/projects";
 
 /**
  * WindowFrame — the single chrome for every window in ERIC OS.
@@ -11,11 +14,13 @@ export function WindowFrame({
   win,
   focused,
   badge,
+  flyout,
   children,
 }: {
   win: WinInstance;
   focused: boolean;
   badge?: string;
+  flyout?: { x: number; y: number }; // set = animate off-screen along this vector (SNAKE.SYS takeover)
   children: ReactNode;
 }) {
   const { close, focus, move, resize, toggleMax, order } = useOS();
@@ -46,21 +51,42 @@ export function WindowFrame({
     window.setTimeout(() => close(win.id), 110);
   };
 
-  const style = win.maximized
+  const style: React.CSSProperties = win.maximized
     ? { left: 0, top: 0, width: "100%", height: "100%", zIndex: z }
     : { left: win.x, top: win.y, width: win.w, height: win.h, zIndex: z };
+  if (flyout) {
+    style.zIndex = 800 + order.indexOf(win.id); // sail above EVERYTHING (menubar 500 / snake 560 / hud 600) on the way out
+    (style as Record<string, string | number>)["--fly-x"] = `${flyout.x}px`;
+    (style as Record<string, string | number>)["--fly-y"] = `${flyout.y}px`;
+  }
 
-  const title = win.title ?? win.id;
+  // Existing windows persist across refreshes, so normalize former v0.4 names
+  // here too instead of requiring Eric to close every restored window once.
+  const canonicalTitle: Partial<Record<WinInstance["app"], string>> = {
+    projects: "Projects",
+    about: "About_Me.md",
+    resume: "resume.pdf",
+    snake: "Snake",
+    readme: "Tianchintosh HD",
+    prefs: "Settings",
+  };
+  const title = win.app === "project-detail"
+    ? PROJECTS.find((project) => project.slug === win.payload)?.name ?? win.title ?? win.id
+    : canonicalTitle[win.app] ?? win.title ?? win.id;
+  const defaultChrome = useMemo<WindowChromeState>(() => ({ trail: [{ label: title }], meta: badge }), [badge, title]);
+  const [chrome, setChrome] = useState<WindowChromeState | null>(defaultChrome);
+  const trail = chrome?.trail?.length ? chrome.trail : defaultChrome.trail;
+  const meta = chrome?.meta ?? defaultChrome.meta;
 
   return (
     <section
-      className={`window ${focused ? "focused" : ""} ${win.maximized ? "maximized" : ""} ${closing ? "closing" : ""}`}
+      className={`window ${focused ? "focused" : ""} ${win.maximized ? "maximized" : ""} ${closing ? "closing" : ""} ${flyout ? "flyout" : ""}`}
       style={style}
       onPointerDown={() => focus(win.id)}
       aria-label={title}
     >
       <header
-        className="titlebar"
+        className={`titlebar ${chrome?.centeredTitle ? "finder-titlebar" : ""}`}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -69,20 +95,57 @@ export function WindowFrame({
         <div className="controls">
           <button className="ctrl close" aria-label="关闭窗口" onClick={requestClose}>
             <svg viewBox="0 0 8 8" aria-hidden>
-              <path d="M1 1l6 6M7 1L1 7" stroke="#1b1a15" strokeWidth="1.8" strokeLinecap="square" />
+              <path d="M1 1l6 6M7 1L1 7" stroke="rgba(0,0,0,0.5)" strokeWidth="1.8" strokeLinecap="square" />
             </svg>
           </button>
           <button className="ctrl max" aria-label="最大化窗口" onClick={() => toggleMax(win.id)}>
             <svg viewBox="0 0 8 8" aria-hidden>
-              <path d="M1.4 1.4h5.2v5.2H1.4z" fill="none" stroke="#1b1a15" strokeWidth="1.6" />
+              <path d="M1.4 1.4h5.2v5.2H1.4z" fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="1.6" />
             </svg>
           </button>
         </div>
-        <span className="title">{title}</span>
+        {chrome?.navigation && (
+          <div className="finder-nav" onPointerDown={(e) => e.stopPropagation()}>
+            <button type="button" aria-label="后退" disabled={!chrome.navigation.canGoBack} onClick={chrome.navigation.onBack}>
+              <svg viewBox="0 0 12 12" aria-hidden><path d="M7.6 2.2 3.8 6l3.8 3.8" /></svg>
+            </button>
+            <button type="button" aria-label="前进" disabled={!chrome.navigation.canGoForward} onClick={chrome.navigation.onForward}>
+              <svg viewBox="0 0 12 12" aria-hidden><path d="M4.4 2.2 8.2 6l-3.8 3.8" /></svg>
+            </button>
+          </div>
+        )}
+        {chrome?.centeredTitle ? (
+          <span className="finder-title" aria-label="当前位置">{chrome.centeredTitle}</span>
+        ) : (
+          <nav className="window-crumb" aria-label="当前位置" onPointerDown={(e) => e.stopPropagation()}>
+            {trail.map((crumb, index) => (
+              <span className="crumb-part" key={`${crumb.label}-${index}`}>
+                {index > 0 && <span className="crumb-sep">/</span>}
+                {crumb.onClick && index < trail.length - 1 ? (
+                  <button type="button" onClick={crumb.onClick}>{crumb.label}</button>
+                ) : (
+                  <span>{crumb.label}</span>
+                )}
+              </span>
+            ))}
+          </nav>
+        )}
         <span className="spacer" />
-        {badge && <span className="badge">{badge}</span>}
+        {chrome?.viewControls && (
+          <div className="finder-views" onPointerDown={(e) => e.stopPropagation()} aria-label="视图切换">
+            <button type="button" className={chrome.viewControls.mode === "icon" ? "active" : ""} aria-label="图标视图" onClick={() => chrome.viewControls?.onChange("icon")}>
+              <svg viewBox="0 0 12 12" aria-hidden><path d="M1.5 1.5h3v3h-3zM7.5 1.5h3v3h-3zM1.5 7.5h3v3h-3zM7.5 7.5h3v3h-3z" /></svg>
+            </button>
+            <button type="button" className={chrome.viewControls.mode === "list" ? "active" : ""} aria-label="列表视图" onClick={() => chrome.viewControls?.onChange("list")}>
+              <svg viewBox="0 0 12 12" aria-hidden><path d="M1.5 2.2h1.4v1.4H1.5zM4.2 2.6h6.3M1.5 5.3h1.4v1.4H1.5zM4.2 5.7h6.3M1.5 8.4h1.4v1.4H1.5zM4.2 8.8h6.3" /></svg>
+            </button>
+          </div>
+        )}
+        {meta && <span className="badge">{meta}</span>}
       </header>
-      <div className="win-body">{children}</div>
+      <WindowChromeProvider setChrome={setChrome}>
+        <div className="win-body">{children}</div>
+      </WindowChromeProvider>
       {!win.maximized && (
         <div
           className="resize-grip"
@@ -95,21 +158,17 @@ export function WindowFrame({
           }}
           onPointerMove={(e) => {
             if (grip.current?.pid !== e.pointerId) return;
+            const top = TOPBAR + win.y; // window's viewport-space top (the window layer sits below the menubar)
             const w = Math.max(320, Math.min(e.clientX - win.x + 8, window.innerWidth - win.x - 8));
-            const h = Math.max(200, Math.min(e.clientY - win.y + 8, window.innerHeight - win.y - 8));
+            const h = Math.max(200, Math.min(e.clientY - top + 8, window.innerHeight - top - 8)); // bottom edge can't pass the screen bottom
             resize(win.id, w, h);
           }}
           onPointerUp={(e) => {
             if (grip.current?.pid === e.pointerId) grip.current = null;
           }}
         >
-          <svg viewBox="0 0 10 10" aria-hidden>
-            <rect x="7" y="1" width="2" height="2" />
-            <rect x="4" y="4" width="2" height="2" />
-            <rect x="7" y="4" width="2" height="2" />
-            <rect x="1" y="7" width="2" height="2" />
-            <rect x="4" y="7" width="2" height="2" />
-            <rect x="7" y="7" width="2" height="2" />
+          <svg viewBox="0 0 12 12" aria-hidden>
+            <path d="M9.2 4.55 L9.2 8.05 Q9.2 9.2 8.05 9.2 L4.55 9.2 Q3.4 9.2 4.21 8.39 L8.39 4.21 Q9.2 3.4 9.2 4.55 Z" />
           </svg>
         </div>
       )}

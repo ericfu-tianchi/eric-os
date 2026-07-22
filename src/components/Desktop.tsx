@@ -1,102 +1,347 @@
-import { useMemo, useRef, useState } from "react";
-import { useOS, type AppId } from "../store";
-import { snakeWallpaperURI, PixelGlyph, GLYPHS } from "./Pixel";
-import { ThemedIcon, type IconName } from "./ThemedIcon";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { useOS } from "../store";
+import { PixIcon } from "./Pixel";
+import {
+  ICON_BOX_H,
+  ICON_BOX_W,
+  ICONS,
+  TOPBAR,
+  clampIconPosition,
+  iconCellAtPosition,
+  iconDefaultPos,
+  iconGlyph,
+  iconPosForCell,
+  iconVisiblePos,
+  useGridSpec,
+  type IconDef,
+  type GridSpec,
+} from "./desktopGrid";
+import { DesktopSnake } from "./DesktopSnake";
 
-interface IconDef {
-  key: string;
-  label: string;
-  glyph?: IconName; // themed PNG icon
-  pixel?: keyof typeof GLYPHS; // fallback hand-drawn glyph (awaiting themed asset)
-  app: AppId;
-  title: string;
-  defaultPos: { x: number; y: number };
+type Point = { x: number; y: number };
+type Marquee = { start: Point; end: Point };
+type ContextMenu = { x: number; y: number; kind: "desktop" | "selection" };
+type IconDrag = {
+  pointerId: number;
+  start: Point;
+  origins: Record<string, Point>;
+  moved: boolean;
+};
+
+const MENU_W = 150;
+const MENU_H = 82;
+
+function rectOf(m: Marquee) {
+  return {
+    left: Math.min(m.start.x, m.end.x),
+    top: Math.min(m.start.y, m.end.y),
+    right: Math.max(m.start.x, m.end.x),
+    bottom: Math.max(m.start.y, m.end.y),
+  };
 }
 
-const ICONS: IconDef[] = [
-  { key: "projects", label: "PROJECTS.DIR", glyph: "folder", app: "projects", title: "PROJECTS.DIR", defaultPos: { x: -110, y: 20 } },
-  { key: "about", label: "ABOUT.TXT", glyph: "doc", app: "about", title: "ABOUT.TXT", defaultPos: { x: -110, y: 138 } },
-  { key: "resume", label: "RESUME.PDF", glyph: "pdf", app: "resume", title: "RESUME.PDF", defaultPos: { x: -110, y: 256 } },
-  { key: "snake", label: "SNAKE.SYS", glyph: "snake", app: "snake", title: "SNAKE.SYS", defaultPos: { x: -110, y: 374 } },
-  { key: "life", label: "LIFE.APP", pixel: "heart", app: "life", title: "LIFE.APP", defaultPos: { x: -110, y: 492 } },
-  { key: "playground", label: "PLAYGROUND", pixel: "star", app: "playground", title: "PLAYGROUND", defaultPos: { x: -224, y: 20 } },
-];
+function intersects(a: { left: number; top: number; right: number; bottom: number }, b: { left: number; top: number; right: number; bottom: number }) {
+  return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+}
 
-function DesktopIcon({ def }: { def: IconDef }) {
-  const { open, iconPos, setIconPos } = useOS();
-  const [selected, setSelected] = useState(false);
-  const [dragging, setDragging] = useState(false);
-  const moved = useRef(false);
-  const drag = useRef<{ dx: number; dy: number } | null>(null);
-  const elRef = useRef<HTMLButtonElement>(null);
+function DesktopIcon({
+  def,
+  spec,
+  selected,
+  dragging,
+  dockInvalid,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
+  onContextMenu,
+}: {
+  def: IconDef;
+  spec: GridSpec;
+  selected: boolean;
+  dragging: boolean;
+  dockInvalid: boolean;
+  onPointerDown: (event: React.PointerEvent, key: string) => void;
+  onPointerMove: (event: React.PointerEvent) => void;
+  onPointerUp: (event: React.PointerEvent) => void;
+  onContextMenu: (event: React.MouseEvent, key: string) => void;
+}) {
+  const { open, iconPos, setIconPos, setSnakeMode } = useOS();
+  const ref = useRef<HTMLButtonElement>(null);
+  const savedPos = iconPos[def.key];
+  const pos = dragging && savedPos ? savedPos : iconVisiblePos(def, savedPos, spec);
+  const iconArt = <><PixIcon name={def.icon} size={iconGlyph(spec)} /><span className="label">{def.label}</span></>;
 
-  // negative default x means "offset from the right edge"
-  const vw = typeof window !== "undefined" ? window.innerWidth : 1200;
-  const fallback = {
-    x: def.defaultPos.x < 0 ? vw + def.defaultPos.x : def.defaultPos.x,
-    y: def.defaultPos.y,
-  };
-  const pos = iconPos[def.key] ?? fallback;
-  const x = pos.x;
-  const y = pos.y;
-
-  const onPointerDown = (e: React.PointerEvent) => {
-    setSelected(true);
-    moved.current = false;
-    drag.current = { dx: e.clientX - x, dy: e.clientY - y };
-    elRef.current?.setPointerCapture(e.pointerId);
-  };
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!drag.current) return;
-    const nx = e.clientX - drag.current.dx;
-    const ny = e.clientY - drag.current.dy;
-    if (!moved.current && Math.hypot(nx - x, ny - y) < 5) return;
-    moved.current = true;
-    setDragging(true);
-    setIconPos(
-      def.key,
-      Math.min(Math.max(nx, 4), window.innerWidth - 96),
-      Math.min(Math.max(ny, 4), window.innerHeight - 160)
-    );
-  };
-  const onPointerUp = () => {
-    drag.current = null;
-    setDragging(false);
-  };
+  // Existing absolute placements become right-anchored the first time they are seen.
+  useEffect(() => {
+    if (!savedPos || savedPos.right !== undefined || savedPos.rightPx !== undefined || dragging) return;
+    const [col, row] = iconCellAtPosition(savedPos, spec);
+    const snapped = iconPosForCell([col, row], spec);
+    setIconPos(def.key, snapped.x, snapped.y, { right: spec.cols - col, row });
+  }, [def.key, dragging, savedPos, setIconPos, spec]);
 
   return (
+    <>
     <button
-      ref={elRef}
-      className={`dicon ${selected ? "selected" : ""} ${dragging ? "dragging" : ""}`}
-      style={{ left: x, top: y, background: "none" }}
-      onPointerDown={onPointerDown}
+      ref={ref}
+      className={`dicon ${selected ? "selected" : ""} ${dragging ? "dragging" : ""} ${dockInvalid ? "dock-drop-invalid" : ""}`}
+      style={{ left: pos.x, top: pos.y, background: "none" }}
+      onPointerDown={(event) => {
+        if (event.button !== 0) return;
+        ref.current?.setPointerCapture(event.pointerId);
+        onPointerDown(event, def.key);
+      }}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
-      onBlur={() => setSelected(false)}
-      onDoubleClick={() => open(def.app, { title: def.title })}
+      onContextMenu={(event) => onContextMenu(event, def.key)}
+      onDoubleClick={() => (
+        def.app === "snake"
+          ? setSnakeMode(true)
+          : open(def.app, { title: def.title, payload: def.payload, maximized: def.maximized })
+      )}
       aria-label={`${def.label},双击打开`}
     >
-      {def.glyph ? <ThemedIcon name={def.glyph} size={52} /> : <PixelGlyph name={def.pixel!} size={44} />}
-      <span className="label">{def.label}</span>
+      {iconArt}
     </button>
+    {dragging && createPortal(
+      <div
+        className={`dicon dicon-drag-preview dragging ${dockInvalid ? "dock-drop-invalid" : ""}`}
+        style={{ left: pos.x, top: pos.y + TOPBAR, background: "none" }}
+        aria-hidden="true"
+      >
+        {iconArt}
+      </div>,
+      document.body
+    )}
+    </>
   );
 }
 
 export function Desktop({ children }: { children?: React.ReactNode }) {
-  const wallpaper = useOS((s) => s.wallpaper);
-  const wpVar = useMemo(
-    () =>
-      ({
-        "--wp-snake": snakeWallpaperURI(false),
-        "--wp-snake-bright": snakeWallpaperURI(true),
-      }) as React.CSSProperties,
-    []
-  );
+  const { wallpaper, snakeMode, iconPos, setIconPos, open, setSnakeMode } = useOS();
+  const spec = useGridSpec();
+  const desktopRef = useRef<HTMLElement>(null);
+  const iconDrag = useRef<IconDrag | null>(null);
+  const marqueeRef = useRef<Marquee | null>(null);
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const [draggingKeys, setDraggingKeys] = useState<string[]>([]);
+  const [dockDropKeys, setDockDropKeys] = useState<string[]>([]);
+  const [marquee, setMarquee] = useState<Marquee | null>(null);
+  const [context, setContext] = useState<ContextMenu | null>(null);
+  const vars = { "--cell-w": `${spec.cellW}px`, "--cell-h": `${spec.cellH}px` } as React.CSSProperties;
+
+  const pointInDesktop = (event: { clientX: number; clientY: number }): Point => {
+    const rect = desktopRef.current?.getBoundingClientRect();
+    return { x: event.clientX - (rect?.left ?? 0), y: event.clientY - (rect?.top ?? 0) };
+  };
+
+  const showContext = (event: { clientX: number; clientY: number }, kind: ContextMenu["kind"]) => {
+    const x = Math.max(10, Math.min(event.clientX, window.innerWidth - MENU_W - 10));
+    const y = Math.max(10, Math.min(event.clientY, window.innerHeight - MENU_H - 10));
+    setContext({ x, y, kind });
+  };
+
+  const storeFreePosition = (key: string, pos: Point) => {
+    const free = clampIconPosition(pos, spec);
+    const desktopWidth = spec.cellW * spec.cols;
+    // Preserve the exact visual offset from the right — no invisible grid snap.
+    setIconPos(key, free.x, free.y, { rightPx: Math.round(desktopWidth - free.x - ICON_BOX_W) });
+  };
+
+  const dockHitKeys = (origins: Record<string, Point>, dx: number, dy: number) => {
+    const dock = document.querySelector(".dock")?.getBoundingClientRect();
+    const desktop = desktopRef.current?.getBoundingClientRect();
+    if (!dock || !desktop) return [];
+    return Object.entries(origins).flatMap(([key, origin]) => {
+      const pos = clampIconPosition({ x: origin.x + dx, y: origin.y + dy }, spec);
+      const rect = {
+        left: desktop.left + pos.x,
+        top: desktop.top + pos.y,
+        right: desktop.left + pos.x + ICON_BOX_W,
+        bottom: desktop.top + pos.y + ICON_BOX_H,
+      };
+      return intersects(rect, dock) ? [key] : [];
+    });
+  };
+
+  const sortDesktop = () => {
+    ICONS.forEach((icon) => {
+      const pos = iconDefaultPos(icon, spec);
+      setIconPos(icon.key, pos.x, pos.y, { right: icon.cellRight, row: icon.row });
+    });
+    setSelectedKeys([]);
+    setContext(null);
+  };
+
+  const openSelection = () => {
+    const selected = ICONS.filter((icon) => selectedKeys.includes(icon.key));
+    if (selected.length === 0) return;
+    const snake = selected.find((icon) => icon.app === "snake");
+    selected
+      .filter((icon) => icon.app !== "snake")
+      .forEach((icon) => open(icon.app, { title: icon.title, payload: icon.payload, maximized: icon.maximized }));
+    // Snake is inherently full-screen. Opening it on the next frame lets every
+    // other chosen file register first, then deliberately clears the desktop.
+    if (snake) window.requestAnimationFrame(() => setSnakeMode(true));
+    setContext(null);
+  };
+
+  const onIconPointerDown = (event: React.PointerEvent, key: string) => {
+    setContext(null);
+    const keys = selectedKeys.includes(key) ? selectedKeys : [key];
+    if (!selectedKeys.includes(key)) setSelectedKeys(keys);
+    const origins: Record<string, Point> = {};
+    keys.forEach((selectedKey) => {
+      const icon = ICONS.find((item) => item.key === selectedKey);
+      if (icon) origins[selectedKey] = iconVisiblePos(icon, iconPos[selectedKey], spec);
+    });
+    iconDrag.current = { pointerId: event.pointerId, start: pointInDesktop(event), origins, moved: false };
+  };
+
+  const onIconPointerMove = (event: React.PointerEvent) => {
+    const drag = iconDrag.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const point = pointInDesktop(event);
+    const dx = point.x - drag.start.x;
+    const dy = point.y - drag.start.y;
+    if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+    drag.moved = true;
+    const keys = Object.keys(drag.origins);
+    setDraggingKeys(keys);
+    keys.forEach((key) => {
+      const origin = drag.origins[key];
+      const pos = clampIconPosition({ x: origin.x + dx, y: origin.y + dy }, spec);
+      setIconPos(key, pos.x, pos.y);
+    });
+    setDockDropKeys(dockHitKeys(drag.origins, dx, dy));
+  };
+
+  const onIconPointerUp = (event: React.PointerEvent) => {
+    const drag = iconDrag.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    if (drag.moved) {
+      const point = pointInDesktop(event);
+      const dx = point.x - drag.start.x;
+      const dy = point.y - drag.start.y;
+      const invalidKeys = dockHitKeys(drag.origins, dx, dy);
+      Object.entries(drag.origins).forEach(([key, origin]) => {
+        // A dock overlap cancels the whole grouped drop, keeping its original layout intact.
+        storeFreePosition(key, invalidKeys.length > 0 ? origin : { x: origin.x + dx, y: origin.y + dy });
+      });
+    }
+    iconDrag.current = null;
+    setDraggingKeys([]);
+    setDockDropKeys([]);
+  };
+
+  const onDesktopPointerDown = (event: React.PointerEvent<HTMLElement>) => {
+    if (event.button !== 0 || (event.target as HTMLElement).closest(".dicon, .desktop-context")) return;
+    setContext(null);
+    setSelectedKeys([]);
+    const point = pointInDesktop(event);
+    const next = { start: point, end: point };
+    marqueeRef.current = next;
+    setMarquee(next);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const onDesktopPointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    const active = marqueeRef.current;
+    if (!active) return;
+    const next = { ...active, end: pointInDesktop(event) };
+    marqueeRef.current = next;
+    setMarquee(next);
+    const selection = rectOf(next);
+    setSelectedKeys(ICONS.filter((icon) => {
+      const pos = iconVisiblePos(icon, iconPos[icon.key], spec);
+      return intersects(selection, { left: pos.x, top: pos.y, right: pos.x + ICON_BOX_W, bottom: pos.y + ICON_BOX_H });
+    }).map((icon) => icon.key));
+  };
+
+  const onDesktopPointerUp = () => {
+    marqueeRef.current = null;
+    setMarquee(null);
+  };
+
+  const onDesktopContext = (event: React.MouseEvent<HTMLElement>) => {
+    if ((event.target as HTMLElement).closest(".dicon")) return;
+    event.preventDefault();
+    setSelectedKeys([]);
+    showContext(event, "desktop");
+  };
+
+  // A display resize may move a right-pinned file onto the dock. Only the dock's
+  // actual rectangle is protected — bottom-left and bottom-right remain usable.
+  useEffect(() => {
+    if (draggingKeys.length > 0) return;
+    const dock = document.querySelector(".dock")?.getBoundingClientRect();
+    const desktop = desktopRef.current?.getBoundingClientRect();
+    if (!dock || !desktop) return;
+    ICONS.forEach((icon) => {
+      const pos = iconVisiblePos(icon, iconPos[icon.key], spec);
+      const fileRect = {
+        left: desktop.left + pos.x,
+        top: desktop.top + pos.y,
+        right: desktop.left + pos.x + ICON_BOX_W,
+        bottom: desktop.top + pos.y + ICON_BOX_H,
+      };
+      if (!intersects(fileRect, dock)) return;
+      storeFreePosition(icon.key, { x: pos.x, y: dock.top - desktop.top - ICON_BOX_H - 8 });
+    });
+  }, [draggingKeys.length, iconPos, spec]);
+
+  const onIconContext = (event: React.MouseEvent, key: string) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!selectedKeys.includes(key)) setSelectedKeys([key]);
+    showContext(event, "selection");
+  };
+
+  const selectionBox = marquee ? rectOf(marquee) : null;
   return (
-    <main className={`desktop wp-${wallpaper}`} style={wpVar}>
-      {ICONS.map((d) => (
-        <DesktopIcon key={d.key} def={d} />
+    <main
+      ref={desktopRef}
+      className={`desktop wp-${wallpaper}`}
+      style={vars}
+      onPointerDown={onDesktopPointerDown}
+      onPointerMove={onDesktopPointerMove}
+      onPointerUp={onDesktopPointerUp}
+      onContextMenu={onDesktopContext}
+    >
+      <div className="gridlayer" aria-hidden />
+      {!snakeMode && wallpaper !== "clean" && <DesktopSnake frozen />}
+      {!snakeMode && ICONS.map((icon) => (
+        <DesktopIcon
+          key={icon.key}
+          def={icon}
+          spec={spec}
+          selected={selectedKeys.includes(icon.key)}
+          dragging={draggingKeys.includes(icon.key)}
+          dockInvalid={dockDropKeys.includes(icon.key)}
+          onPointerDown={onIconPointerDown}
+          onPointerMove={onIconPointerMove}
+          onPointerUp={onIconPointerUp}
+          onContextMenu={onIconContext}
+        />
       ))}
+      {selectionBox && (
+        <div
+          className="selection-marquee"
+          style={{ left: selectionBox.left, top: selectionBox.top, width: selectionBox.right - selectionBox.left, height: selectionBox.bottom - selectionBox.top }}
+          aria-hidden
+        />
+      )}
+      {context?.kind === "desktop" && (
+        <div className="desktop-context" style={{ left: context.x, top: context.y }} role="menu">
+          <button type="button" onClick={sortDesktop}>Sort</button>
+          <button type="button" onClick={() => { open("prefs", { title: "Settings" }); setContext(null); }}>Settings</button>
+        </div>
+      )}
+      {context?.kind === "selection" && (
+        <div className="desktop-context" style={{ left: context.x, top: context.y }} role="menu">
+          <button type="button" onClick={openSelection}>Open</button>
+        </div>
+      )}
       {children}
     </main>
   );
