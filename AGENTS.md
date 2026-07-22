@@ -3,9 +3,9 @@
 Eric Fu 的个人网站:一个桌面操作系统形状的作品集。
 **任何 AI/人在此仓库动工前,先读完本文件。**
 
-## ⚠️ 视觉方向 v2(2026-07-15 定调,取代旧的暖 cream/硬阴影方向)
+## ⚠️ 视觉方向 v2（V0.5 已实装，取代旧的暖 cream/硬阴影方向）
 
-现有代码(v0.4)仍是旧视觉(暖 cream + 绿 + 硬阴影),**已被 Eric 否**。新锁定方向:
+旧的暖 cream / 硬阴影方向**已被 Eric 否决**。新锁定方向:
 - **炭灰暗台 × 彩色像素图标的现代反差**:近黑炭底(非纯黑)+ 亮白窗口 + UI 全程黑白灰**零用色**;**唯一彩色来自精致彩色像素图标**(宝石色 16-bit,参考 Diverse sprites + '90s Artist Pack)。
 - **窗口要精致**:柔和真实投影(soft shadow,**不再是硬阴影**)+ 1px 发丝边 + 顶边极淡高光;大圆角。
 - **明暗双模式**:同一套 chrome,一个 theme token 切炭灰↔浅冷灰,浅色也要精致。
@@ -33,24 +33,41 @@ v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(明暗�
 
 ## 架构(ryOS 验证过的最小内核)
 
-- **栈**:Vite + React 19 + TypeScript(strict) + Tailwind v4(@tailwindcss/vite) + zustand persist。无路由、无 UI 库、无动画库——CSS `steps()` 就是我们的动画语言。
+- **栈**:Vite + React 19 + TypeScript(strict) + zustand persist。Tailwind v4 已接入构建，但主视觉由 `src/styles.css` 的自定义 CSS 提供；无路由、无 UI 库、无动画库。
 - **四件套**:
   1. `WindowFrame`(src/components)= 唯一窗口 chrome:左上红(关闭)/绿(最大化)方块,hover 才出图标;标题栏拖拽;双击标题栏最大化。
   2. `App.tsx` 里的 `APP_VIEWS` = app 注册表。
   3. `store.ts` zustand + persist = 窗口/图标位/壁纸/蛇最高分,刷新不丢。
   4. z-index = `order` 数组下标,聚焦=挪到数组尾。
-- **像素系统**:`src/components/Pixel.tsx`。所有图标都是字符网格手绘 → SVG rect(crispEdges),零字体文件、零图片资源。新图标=画一个网格。字标用内置 5 行像素字体(`PixelWordmark`)。
-- **移动端**(<820px):`MobileShell` 卡片流,内容层独立于 OS 隐喻。`?forceDesktop=1` 可在窄屏强制桌面(调试用)。
+- **像素系统**:`src/components/Pixel.tsx` 提供网格 SVG 图标与 `PixelWordmark`；当前选用的精致像素 Icon 是 `src/assets/icons/b/` 下的 PNG 资产。新 Icon 优先复用 / 替换该资产集，除非 Eric 明确要求回到代码绘制。
+- **移动端**:由 `gridSpec` 决定；少于 27 列或 13 行即显示 `MobileShell`。`?forceDesktop=1` 可在窄屏强制桌面调试。
 
-## 施工配方:新增一个应用(5 步)
+## V0.5 文件系统、内容与游戏（长期约定）
+
+- **统一 Finder**:`src/apps/FileSystemApp.tsx` 是所有文件夹的唯一窗口；左栏根目录为 Tianchintosh HD / Applications / Desktop / Documents / Images / Videos，右侧支持图标 / 列表、前进 / 后退。不要为普通文件夹另造不一致的窗口。
+- **文件树真相源**:`src/data/filesystem.ts` 定义节点、根目录、外部游戏 URL 与 ID。每个 `FileNode.id` 必须全局唯一；Desktop 的 11 项由 `src/components/desktopGrid.tsx` 作为桌面入口映射，新增桌面顶级目录时目前需同时检查两处。
+- **真实内容入口**:项目 case 以 `src/data/projects.ts`、`cases.ts`、`casesContent.ts` 为主；未来批量引入 HTML / Markdown / PDF / 视频前，先建立统一 content manifest + renderer registry，不要把每个类型的判断散落在各 App 内。
+- **Snake 主实现**:当前游戏在 `src/components/DesktopSnake.tsx`；`src/apps/SnakeApp.tsx` 是历史窗口版 / 深链遗留，勿误把它当当前主游戏。Snake 从桌面或 Finder 启动时走 `setSnakeMode(true)`。
+- **外部应用**:Soul Blade / Twist Solver 的 URL 与 Icon 在 `filesystem.ts` 的 `EXTERNAL_GAMES`；通过 `ExternalGameApp.tsx` 最大化 iframe 打开。目标站若未来拒绝 iframe，需实现新标签页降级。
+- **Record 边界**:`src/data/snakeRecord.ts` 仍是 localStorage 预览，不是跨用户全站排行；正式发布前接 Worker / 数据库，并移除 `App.tsx` 的一次性 QA reset。
+
+## 施工配方：新增一个应用 / 内容（按情况选用）
 
 1. `src/apps/XxxApp.tsx` 写内容组件(用 `.win-pad` 包内边距)。
 2. `store.ts`:`AppId` 加 id,`DEFAULT_SIZE` 加尺寸。
 3. `App.tsx`:`APP_VIEWS` 注册。
-4. 入口:桌面图标(`Desktop.tsx` ICONS)或 Dock(`Dock.tsx` DOCK_ITEMS),需要新图标就在 `Pixel.tsx` 画网格。
-5. 手测:开窗/拖拽/最大化/关闭/刷新恢复,五项全过才算完。
+4. 应用入口放 `filesystem.ts` 的 Applications；需要桌面入口再同步 `desktopGrid.tsx`，需要 Dock 入口再同步 `Dock.tsx`。
+5. 需要新图标时优先复用 / 更新 `src/assets/icons/b/`；保持当前精致彩色像素风，不要临时混入不一致的 SVG。
+6. 手测:开窗/拖拽/最大化/关闭/刷新恢复；Finder 内容还要测后退 / 前进与图标 / 列表视图。每次改动至少运行 `npm run build`。
 
-新增一个项目 = 只改 `src/data/projects.ts`,其余全自动。
+新增一个项目 case = 更新 `projects.ts` / case 内容，并在需要被 Finder 看见时更新 `filesystem.ts`；不是“只改一个文件”了。
+
+## 双 Agent 协作规则
+
+- `AGENTS.md` 是 Codex 与 Claude Code 共用的**长期规范真相源**；`CLAUDE.md` 可保存 Claude 侧补充，但与此冲突时以 `AGENTS.md` 和实际代码为准。
+- 每次动工前：完整阅读 `AGENTS.md`，执行 `git status -sb`，不要覆盖另一位 agent 的未提交改动。
+- 跨 session 当前状态写入根目录 `HANDOFF.md`；它被忽略，永远不提交。长期设计 / 架构决策才写回本文件。
+- 完成实现后：运行 `npm run build`；涉及交互时再在 `http://localhost:5173/?forceDesktop=1` 做核心流程手测。
 
 ## 路线图(按优先级)
 

@@ -22,7 +22,7 @@ Eric Fu 的个人网站:一个桌面操作系统形状的作品集。
 
 ## 设计 tokens(源:`src/styles.css` :root — 以代码为准)
 
-v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(明暗模式只翻转台面)· 圆角 4px · 柔投影+发丝边 · chrome 黑白灰零用色,仅红绿窗控键。字体自托管:Montserrat(标题)/Source Sans Pro(正文,老站原件)/JetBrains Mono(标签)。品牌绿 `#06C268`(蛇/强调),老站粉 `#FF1256`(About 照片偏移)。分类色:AI=green,DESIGN=pink,PLAY=teal,LIFE=blue。
+v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(明暗模式只翻转台面)· 圆角 4px · 柔投影+发丝边 · chrome 黑白灰零用色,仅红绿窗控键。字体自托管:Geist Sans(OS chrome、桌面文件名、Snake HUD)/Montserrat(标题与大数字)/Source Sans Pro(正文,老站原件)/JetBrains Mono(技术性项目元数据)。品牌绿 `#06C268`(蛇/强调),老站粉 `#FF1256`(About 照片偏移)。分类色:AI=green,DESIGN=pink,PLAY=teal,LIFE=blue。
 
 ## 贪吃蛇壁纸系统(核心彩蛋,别破坏)
 
@@ -39,8 +39,16 @@ v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(明暗�
   2. `App.tsx` 里的 `APP_VIEWS` = app 注册表。
   3. `store.ts` zustand + persist = 窗口/图标位/壁纸/蛇最高分,刷新不丢。
   4. z-index = `order` 数组下标,聚焦=挪到数组尾。
-- **像素系统**:`src/components/Pixel.tsx`。所有图标都是字符网格手绘 → SVG rect(crispEdges),零字体文件、零图片资源。新图标=画一个网格。字标用内置 5 行像素字体(`PixelWordmark`)。
-- **移动端**(<820px):`MobileShell` 卡片流,内容层独立于 OS 隐喻。`?forceDesktop=1` 可在窄屏强制桌面(调试用)。
+- **像素系统**:`src/components/Pixel.tsx` 仍提供网格 SVG 图标与 `PixelWordmark`；当前选用的精致像素 Icon 是 `src/assets/icons/b/` 下的 PNG 资产。新 Icon 先复用 / 替换这套资产，除非 Eric 明确要求回到代码绘制。
+- **移动端**:由 `gridSpec` 决定；少于 27 列或 13 行即显示 `MobileShell`，`?forceDesktop=1` 可在窄屏强制桌面调试。
+
+## V0.5 文件系统与内容入口
+
+- **Finder 真相源**:`src/data/filesystem.ts` 定义 Tianchintosh HD 的所有节点、外部游戏 URL、根目录与 ID。`FileSystemApp.tsx` 是所有文件夹共用的左右分栏 Finder，支持后退 / 前进、图标 / 列表视图。
+- **桌面映射**:`src/components/desktopGrid.tsx` 控制桌面上显示的 11 个入口与右侧锚定位置；它与 `filesystem.ts` 目前有少量平行配置，新增顶级桌面目录时要同时检查两处。
+- **真实游戏**:桌面 Snake 的主实现是 `DesktopSnake.tsx`。Soul Blade / Twist Solver 定义在 `filesystem.ts` 的 `EXTERNAL_GAMES`，通过 `ExternalGameApp.tsx` 最大化 iframe 打开。
+- **内容扩展**:新增 case 仍以 `src/data/projects.ts` / `cases*.ts` 为主；在批量引入 HTML、Markdown、PDF、视频前，应先建立统一 content manifest + renderer registry，避免分散的 app 判断。
+- **Record 边界**:`src/data/snakeRecord.ts` 现在只是 localStorage 预览适配器；上线前换成 Worker / 数据库。`App.tsx` 中存在一次性 QA reset，正式发布前移除。
 
 ## 施工配方:新增一个应用(5 步)
 
