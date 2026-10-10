@@ -15,6 +15,8 @@ import heartRaster from "../assets/icons/b/heart.png";
 import starRaster from "../assets/icons/b/star.png";
 import gearRaster from "../assets/icons/b/gear.png";
 import computerRaster from "../assets/icons/b/computer.png";
+import soulBladeRaster from "../assets/icons/b/soul-blade.png";
+import legoWorldRaster from "../assets/icons/b/lego-world.svg";
 
 /** AI pixel-art icon set (v0.5, "Balanced"): crisp true-pixel + tidy shading, vivid on the charcoal
  *  stage. These rasters override the hand-drawn vector PixIcons below. Flip USE_RASTER_ICONS to
@@ -24,6 +26,7 @@ const RASTER_ICONS: Record<string, string> = {
   folder: folderRaster, doc: docRaster, pdf: pdfRaster,
   snake: snakeRaster, heart: heartRaster, star: starRaster,
   gear: gearRaster, computer: computerRaster,
+  "soul-blade": soulBladeRaster, "lego-world": legoWorldRaster,
 };
 
 /** raster URL for an icon (so the snake game can draw eaten icons as the real art, not the vector). */
@@ -339,7 +342,7 @@ export function gridSpec(vw: number, vh: number) {
 /** An icon's pixel cells, content-cropped, in its original (outline-treatment) colors.
     Used by the snake game to render swallowed icons riding the body. */
 export function iconCellData(name: PixIconName): { w: number; h: number; cells: [number, number, string][] } {
-  const { hue, g } = I_GRID[name];
+  const { hue, g } = I_GRID[name in I_GRID ? (name as VectorIconName) : "doc"];
   const [body, shade, , acc] = I_HUE[hue];
   const map: Record<string, string> = { K: I_INK, B: body, S: shade, H: I_CREAM, A: acc };
   const cells: [number, number, string][] = [];
@@ -364,8 +367,10 @@ export function iconCellData(name: PixIconName): { w: number; h: number; cells: 
    restrained gem palette. treatment="outline" ships as default;
    the others are kept so the whole set restyles from one prop.
    ============================================================ */
-export type PixIconName =
+type VectorIconName =
   | "folder" | "doc" | "pdf" | "snake" | "heart" | "star" | "gear" | "computer";
+/** App icons exist only as raster art; their vector fallback is the plain document. */
+export type PixIconName = VectorIconName | "soul-blade" | "lego-world";
 export type IconTreatment = "outline" | "flat" | "duotone" | "tile" | "dissolve";
 
 const I_INK = "#26262b";
@@ -382,7 +387,7 @@ const I_HUE: Record<string, [string, string, string, string, string]> = {
   steel: ["#9aa2ae", "#6a727e", "#d9dee5", "#535a66", "#5b6470"],
   screen: ["#9aa2ae", "#6a727e", "#d9dee5", "#1fb0ab", "#5b6470"],
 };
-const I_GRID: Record<PixIconName, { hue: string; g: string[] }> = {
+const I_GRID: Record<VectorIconName, { hue: string; g: string[] }> = {
   folder: { hue: "gold", g: [
     "................", "...KKKKKK.......", "..KBBBBBBK......", "..KBBBBBBKKKKKK.",
     ".KBBBBBBBBBBBBK.", ".KBHHBBBBBBBBBK.", ".KBBBBBBBBBBBBK.", ".KBBBBBBBBBBBBK.",
@@ -436,7 +441,7 @@ export function PixIcon({
       </span>
     );
   }
-  const { hue, g } = I_GRID[name];
+  const { hue, g } = I_GRID[name in I_GRID ? (name as VectorIconName) : "doc"];
   const [body, shade, hi, acc, tdark] = I_HUE[hue];
   const W = Math.max(...g.map((r) => r.length));
   const H = g.length;

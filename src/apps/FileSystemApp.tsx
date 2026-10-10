@@ -102,6 +102,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
       const game = EXTERNAL_GAMES[node.gameId];
       return open(node.gameId, { title: game.name, maximized: true });
     }
+    if (node.html) return open("html-doc", { title: node.name, payload: node.id });
     if (node.app === "snake") return setSnakeMode(true);
     if (node.app) return open(node.app, { title: node.name });
   };
