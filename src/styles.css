@@ -274,7 +274,7 @@ button { font-family: inherit; color: inherit; }
   border-color: rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.06);
 }
-.fu-wing-mark { display: block; width: auto; height: 18px; user-select: none; }
+.fu-wing-mark { display: block; width: auto; height: 20px; user-select: none; }
 .menubar .os-name {
   /* OS wordmark: one notch larger than status chrome, optically balanced to the mark. */
   font-family: var(--font-system); font-size: var(--os-size-brand); font-weight: 630; letter-spacing: -.032em; line-height: 1;
