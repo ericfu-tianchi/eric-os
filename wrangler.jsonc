@@ -1,0 +1,9 @@
+{
+  "name": "tianchi-os",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./dist" },
+  "routes": [
+    { "pattern": "tianchifu.com", "custom_domain": true },
+    { "pattern": "www.tianchifu.com", "custom_domain": true }
+  ]
+}
