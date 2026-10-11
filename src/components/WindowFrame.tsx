@@ -5,7 +5,7 @@ import { WindowChromeProvider, type WindowChromeState } from "./WindowChrome";
 import { PROJECTS } from "../data/projects";
 
 /**
- * WindowFrame — the single chrome for every window in ERIC OS.
+ * WindowFrame — the single chrome for every window in Tianchi OS.
  * Controls live TOP-LEFT: red square = close, green square = maximize.
  * Plain color blocks at rest; glyphs appear on hover.
  * Drag by titlebar; double-click titlebar toggles maximize.

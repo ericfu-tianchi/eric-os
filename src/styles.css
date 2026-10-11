@@ -14,7 +14,7 @@
 @font-face { font-family:"JetBrains Mono"; font-weight:700; font-style:normal; font-display:swap; src:url("./assets/fonts/jbmono-700.woff2") format("woff2"); }
 
 /* ============================================================
-   ERIC OS · Design tokens — VISUAL v2 (2026-07-15)
+   Tianchi OS · Design tokens — VISUAL v2 (2026-07-15)
    Reference: REFINE.4 variant 01 (a loose reference, not a spec).
 
    THE LOOK: a near-black charcoal STAGE with BRIGHT WHITE windows
@@ -226,6 +226,7 @@ button { font-family: inherit; color: inherit; }
   cursor: pointer;
 }
 .boot .wordmark { animation: boot-pop 240ms steps(3, end) both; }
+:root[data-theme="light"] .boot-mark { filter: invert(1); }
 .boot .tagline {
   font-family: var(--font-system);
   font-size: 12px; letter-spacing: 0.3em; color: var(--stage-muted);

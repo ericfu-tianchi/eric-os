@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useOS } from "../store";
 
 /**
- * Snake — the soul of ERIC OS, fully playable.
+ * Snake — the soul of Tianchi OS, fully playable.
  * Arrow keys / WASD. Eat apples, don't eat walls or yourself.
  */
 const COLS = 22;

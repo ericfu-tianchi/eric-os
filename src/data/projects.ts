@@ -106,7 +106,7 @@ export const PROJECTS: Project[] = [
     statusLabel: "LIVE",
     link: "https://twist-solver.pages.dev/",
     overview: "从零 vibe-code 的魔方求解器:输入打乱状态,生成最短/新手两种解法。",
-    process: "3D 跟练动画逐步演示;ERIC OS 的『现代为体』审美基线就来自这个项目。",
+    process: "3D 跟练动画逐步演示;Tianchi OS 的『现代为体』审美基线就来自这个项目。",
     outcome: "已上线 Cloudflare Pages,点左侧 LIVE 直达。",
   },
   {
@@ -120,7 +120,7 @@ export const PROJECTS: Project[] = [
     statusLabel: "BETA",
     overview: "手写游戏循环、碰撞检测、连招系统的像素格斗游戏。",
     process: "无引擎纯 Canvas;角色状态机 + 帧数据驱动的打击感调教。",
-    outcome: "可玩 Beta;ERIC OS 的像素审美一部分是在这里练出来的。",
+    outcome: "可玩 Beta;Tianchi OS 的像素审美一部分是在这里练出来的。",
   },
   {
     slug: "homesoffcampus",
@@ -145,7 +145,7 @@ export const PROJECTS: Project[] = [
     link: "https://ericfu666.github.io/portfolio/index.html",
     overview: "2021-2022 年间手写的第一版个人网站。",
     process: "原生三件套,AOS 滚动动画,自制交互彩蛋(马里奥砖块点击出星星)。",
-    outcome: "ERIC OS 的史前史;源码在 GitHub 存档。",
+    outcome: "Tianchi OS 的史前史;源码在 GitHub 存档。",
   },
   // ---------- SCHOOL PROJECTS ----------
   {

@@ -1,5 +1,5 @@
 /**
- * Pixel — the hand-drawn pixel-art system of ERIC OS.
+ * Pixel — the hand-drawn pixel-art system of Tianchi OS.
  *
  * Every glyph is a character grid; each char maps to a palette color.
  * Rendered as crisp SVG rects so icons stay sharp at any scale.
@@ -232,6 +232,10 @@ export const GLYPHS: Record<string, string[]> = {
 
 /** 5-row pixel letterforms for the wordmark */
 const PIX_FONT: Record<string, string[]> = {
+  T: ["KKK", ".K.", ".K.", ".K.", ".K."],
+  A: [".KK.", "K..K", "KKKK", "K..K", "K..K"],
+  N: ["K..K", "KK.K", "K.KK", "K..K", "K..K"],
+  H: ["K..K", "K..K", "KKKK", "K..K", "K..K"],
   E: ["KKKK", "K...", "KKK.", "K...", "KKKK"],
   R: ["KKK.", "K..K", "KKK.", "K.K.", "K..K"],
   I: ["KKK", ".K.", ".K.", ".K.", "KKK"],
@@ -287,7 +291,7 @@ export function PixelGlyph({
 }
 
 export function PixelWordmark({
-  text = "ERIC OS",
+  text = "TIANCHI OS",
   cell = 3,
   color = "currentColor",
 }: {

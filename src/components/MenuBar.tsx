@@ -54,7 +54,7 @@ export function MenuBar() {
       {menuOpen && (
         <div className="menu-pop" role="menu">
           <button onClick={item(() => open("about", { title: "About_Me.md" }))}>
-            关于 ERIC OS <span className="k">ABOUT</span>
+            关于 Tianchi OS <span className="k">ABOUT</span>
           </button>
           <button onClick={item(() => open("filesystem", { title: "Tianchintosh HD", payload: "tianchintosh" }))}>
             文件系统 <span className="k">DISK</span>

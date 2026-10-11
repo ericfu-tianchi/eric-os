@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { PixelWordmark } from "./Pixel";
-import ericLogo from "../assets/eric-logo.svg";
+import fuWingMark from "../assets/fu-wing-mark.png";
 
 export function BootSplash({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
@@ -17,10 +17,10 @@ export function BootSplash({ onDone }: { onDone: () => void }) {
     window.setTimeout(onDone, 120);
   };
   return (
-    <div className={`boot ${leaving ? "leaving" : ""}`} onClick={skip} role="status" aria-label="ERIC OS 启动中">
+    <div className={`boot ${leaving ? "leaving" : ""}`} onClick={skip} role="status" aria-label="Tianchi OS 启动中">
       <span className="wordmark" style={{ display: "flex", alignItems: "center", gap: 18 }}>
-        <img src={ericLogo} alt="" style={{ height: 54, width: "auto" }} draggable={false} />
-        <PixelWordmark text="ERIC OS" cell={7} />
+        <img className="boot-mark" src={fuWingMark} alt="" style={{ height: 54, width: "auto" }} draggable={false} />
+        <PixelWordmark text="TIANCHI OS" cell={7} />
       </span>
       <div className="bar"><i /></div>
       <span className="tagline">PRODUCT · DESIGN · BUILD</span>
