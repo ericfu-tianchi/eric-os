@@ -99,7 +99,7 @@ export const FILE_NODES: FileNode[] = [
   { id: "twist-solver-how", parent: "twist-solver-app", name: "How I Built It", kind: "project", projectSlug: "twist-solver" },
   { id: "lego-world-folder", parent: "ai", name: "My Lego World", kind: "folder", description: "2 items" },
   { id: "lego-world", parent: "lego-world-folder", name: "My Lego World", kind: "game", gameId: "lego-world", description: "Playable app" },
-  { id: "lego-world-how", parent: "lego-world-folder", name: "How I Built It", kind: "document", html: "/how-i-built/lego-world.html", description: "HTML document" },
+  { id: "lego-world-how", parent: "lego-world-folder", name: "How I Built It", kind: "project", projectSlug: "lego-world" },
   { id: "how-i-ai", parent: "ai", name: "How I AI", kind: "placeholder", description: "Coming soon" },
 
   { id: "desktop-soul-blade", parent: "desktop", name: "Soul Blade", kind: "shortcut", targetId: "soul-blade", description: "Playable game" },

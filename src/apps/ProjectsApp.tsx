@@ -88,7 +88,7 @@ function Rich({ text }: { text: string }) {
   );
 }
 
-function CaseBlockView({ b, flip }: { b: CaseBlock; flip: boolean }) {
+function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number }) {
   if (b.t === "p") return <p className="cs-p"><Rich text={b.text} /></p>;
   if (b.t === "h") return <h3 className="cs-label">{b.text}</h3>;
   if (b.t === "sub") return <h4 className="cs-sub">&gt;&gt; {b.text}</h4>;
@@ -97,6 +97,8 @@ function CaseBlockView({ b, flip }: { b: CaseBlock; flip: boolean }) {
   if (b.t === "quote") return <blockquote className="cs-quote"><Rich text={b.text} /></blockquote>;
   if (b.t === "list")
     return <ul className="cs-list">{b.items.map((item, i) => <li key={i}><Rich text={item} /></li>)}</ul>;
+  if (b.t === "step")
+    return <div className="cs-step"><span className="n">{String(n).padStart(2, "0")}</span><div><h4>{b.title}</h4><p><Rich text={b.text} /></p></div></div>;
   if (b.t === "stat")
     return <div className="cs-stat"><span className="n">{b.value}</span><span className="l">{b.label}</span></div>;
   if (b.t === "link")
@@ -105,7 +107,7 @@ function CaseBlockView({ b, flip }: { b: CaseBlock; flip: boolean }) {
     const src = detailImg(b.src);
     return (
       <div className={`cs-feature ${flip ? "flip" : ""}`}>
-        {src && <img src={src} alt={b.title} draggable={false} />}
+        {src && <img src={src} alt={b.title} loading="lazy" decoding="async" draggable={false} />}
         <div><h4>{b.title}</h4><p><Rich text={b.text} /></p></div>
       </div>
     );
@@ -113,7 +115,10 @@ function CaseBlockView({ b, flip }: { b: CaseBlock; flip: boolean }) {
   if (b.t === "img") {
     const src = detailImg(b.src);
     return src ? (
-      <figure className={`cs-fig ${b.size ?? ""}`}><img src={src} alt={b.caption ?? ""} draggable={false} />{b.caption && <figcaption>{b.caption}</figcaption>}</figure>
+      <figure className={`cs-fig ${b.w && b.w > 880 ? "wide" : ""}`} style={b.w ? ({ "--w": `${b.w}px` } as React.CSSProperties) : undefined}>
+        <img src={src} alt={b.caption ?? ""} loading="lazy" decoding="async" draggable={false} />
+        {b.caption && <figcaption>{b.caption}</figcaption>}
+      </figure>
     ) : null;
   }
   return null;
@@ -150,8 +155,10 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
         </nav>
       )}
       {cs.sections.map((s, si) => {
-        let features = 0;
-        const blocks = s.blocks.map((b, i) => <CaseBlockView key={i} b={b} flip={b.t === "feature" && features++ % 2 === 1} />);
+        let features = 0, steps = 0;
+        const blocks = s.blocks.map((b, i) => (
+          <CaseBlockView key={i} b={b} flip={b.t === "feature" && features++ % 2 === 1} n={b.t === "step" ? ++steps : 0} />
+        ));
         // The meta rail sits beside the opening text only; the first band/figure goes full width.
         const split = si === 0 && meta.length > 0 ? s.blocks.findIndex((b) => !["h", "sub", "p"].includes(b.t)) : 0;
         const introEnd = split === -1 ? blocks.length : split;
@@ -170,7 +177,7 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
           </section>
         );
       })}
-      {p.link && (
+      {p.link && !cs.sections.some((s) => s.blocks.some((b) => b.t === "link")) && (
         <section className="cs-section cs-end"><a className="cs-pill" href={p.link} target="_blank" rel="noopener noreferrer">Open live project</a></section>
       )}
     </div>

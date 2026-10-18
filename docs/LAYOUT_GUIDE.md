@@ -26,7 +26,15 @@ Every new page starts by stating which format it uses, and why.
 Current inventory:
 - Case studies (HomesOffCampus, Neurobot, Connectr, …) → case blocks.
 - `About_Me.md` → a hand-built React view (`AboutApp.tsx`); the ".md" is only its file name in the OS.
-- My Lego World "How I Built It" → standalone HTML copied from the Lego repo. It predates this guide (its own cream palette and Rubik font) and should be migrated to case blocks.
+- My Lego World "How I Built It" → case blocks (`lego-world` in `cases.ts`). It is the reference for non-UX pages: no research/design arc, a set gallery and numbered steps instead.
+
+### Reuse the system, shape the story
+
+The layout is fixed; the structure is not. A UX case study (HomesOffCampus) runs
+Overview → Research → Design → Evaluation. A build story (My Lego World) runs
+Overview → The Sets → Building a Set → The App. Name sections after what the reader
+gets, not after a template. Only include what exists: no role/timeline/tools → no meta
+rail; no poster → the solid accent hero; no process → no process section.
 
 ---
 
@@ -119,8 +127,9 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `quote` | Statement between corner brackets | A definition: problem statement, design principle |
 | `list` | Bullets in a tinted panel | Research findings, interview insights |
 | `stat` | Big accent number + label | A number that proves the point |
-| `feature` | Screenshot + title + text, sides alternate | Showcasing screens or features (Design Preview) |
-| `img` | Centered figure + caption; `size: small / medium / wide` | Evidence, diagrams, logos (`small`), process boards (`wide`) |
+| `feature` | Screenshot + title + text, sides alternate | Showcasing screens, features or a gallery of results |
+| `step` | Auto-numbered 01, 02 … with title + text, hairline rules | How-to sequences and pipelines |
+| `img` | Centered figure + caption; `w` = display width in px at 1440 | Evidence, diagrams, logos. Copy `w` from the old site; above 880 the figure breaks out of the column (max 1040) |
 | `link` | Accent pill button | One call to action (prototype, slides, live site) |
 
 ## 6. Writing a new page (checklist)
@@ -131,5 +140,5 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 4. Open each topic with an `h` label; use `sub` for its steps.
 5. One `callout` for the core problem. One `quote` per definition. Highlights sparingly (≤ 1 per paragraph).
 6. Screens go in `feature` rows, not stacked `img`s.
-7. Images live in `src/assets/old-site/detail/<slug>/NN.png` (or a new `detail/<slug>/` folder).
+7. Images live in `src/assets/old-site/detail/<slug>/` as WebP at 2× their display width (content may still say `NN.png`; the loader prefers the `.webp`). Never upscale a small export: re-export from the source (old-site originals: `static.wixstatic.com/media/<id>` without the `/v1/fill/...` suffix).
 8. Check the page at the default window size and maximized (1440px): measure, rhythm, nothing stretched.
