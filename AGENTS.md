@@ -46,6 +46,7 @@ v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(明暗�
 
 - **统一 Finder**:`src/apps/FileSystemApp.tsx` 是所有文件夹的唯一窗口；左栏根目录为 Tianchintosh HD / Applications / Desktop / Documents / Images / Videos，右侧支持图标 / 列表、前进 / 后退。不要为普通文件夹另造不一致的窗口。
 - **文件树真相源**:`src/data/filesystem.ts` 定义节点、根目录、外部游戏 URL 与 ID。每个 `FileNode.id` 必须全局唯一；Desktop 的 13 项由 `src/components/desktopGrid.tsx` 作为桌面入口映射，新增桌面顶级目录时目前需同时检查两处。
+- **内容页排版**:所有阅读型页面(项目详情、How I Built It、长文)**动工前先读 `docs/LAYOUT_GUIDE.md`**,并先说明用哪种格式(默认 case blocks 数据 + `ProjectDetailApp` 渲染;HTML 仅限需交互的例外;暂不用 Markdown)。
 - **真实内容入口**:项目 case 以 `src/data/projects.ts`、`cases.ts`、`casesContent.ts` 为主；未来批量引入 HTML / Markdown / PDF / 视频前，先建立统一 content manifest + renderer registry，不要把每个类型的判断散落在各 App 内。
 - **Snake 主实现**:当前游戏在 `src/components/DesktopSnake.tsx`；`src/apps/SnakeApp.tsx` 是历史窗口版 / 深链遗留，勿误把它当当前主游戏。Snake 从桌面或 Finder 启动时走 `setSnakeMode(true)`。
 - **外部应用**:Soul Blade / Twist Solver 的 URL 与 Icon 在 `filesystem.ts` 的 `EXTERNAL_GAMES`；通过 `ExternalGameApp.tsx` 最大化 iframe 打开。目标站若未来拒绝 iframe，需实现新标签页降级。

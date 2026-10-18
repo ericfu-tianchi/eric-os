@@ -215,16 +215,16 @@ export interface ProjectMeta {
 export const META: Record<string, ProjectMeta> = {
   "model-eval": { accent: "#2f9e57", sub: "评测 AI 视频模型的可复用基建", role: "AI PM", timeline: "2026 · Opus", tools: "Rubrics · Elo/WLT · Python" },
   jyi: { accent: "#17a89e", sub: "AI 面试 SaaS 的产品起源故事", role: "Product Manager & UX Designer", timeline: "Jan–Apr 2021", tools: "Figma · SQL" },
-  huawei: { accent: "#2b5672", sub: "折叠屏 PC 的窗口管理机制", role: "UX Designer", timeline: "May–Sep 2022", tools: "Figma" },
+  huawei: { accent: "#e71b23", sub: "折叠屏 PC 的窗口管理机制", role: "UX Designer", timeline: "May–Sep 2022", tools: "Figma" },
   neurobot: { accent: "#ff9d1f", sub: "让高中生爱上神经科学的机器人 App", role: "UX Designer", timeline: "Jan–Apr 2022", tools: "Figma · Miro · Matlab" },
   refugeeone: { accent: "#e0483a", sub: "为难民安置机构设计并开发的求职 App", role: "UX Designer & Developer", timeline: "2021 · Client", tools: "Figma · React" },
   "twist-solver": { accent: "#3f6fd1", sub: "跟练式三阶魔方求解器", role: "Designer who codes", timeline: "2026", tools: "React · Three.js" },
   "soul-blade": { accent: "#d76a97", sub: "纯手写 Canvas 的像素格斗", role: "Solo dev", timeline: "2026", tools: "Canvas · TS" },
-  homesoffcampus: { accent: "#2b5672", sub: "A housing website catered to and trusted by students", role: "UX Designer & Researcher, Developer", timeline: "Sep–Dec 2021", tools: "Figma · Miro · React Native + Firebase" },
-  handcoded: { accent: "#6a727e", sub: "前 Wix 时代的手写作品集", role: "Frontend Developer", timeline: "Nov 2021–Aug 2022", tools: "HTML · CSS · JS" },
+  homesoffcampus: { accent: "#4f7cac", sub: "A housing website catered to and trusted by students", role: "UX Designer & Researcher, Developer", timeline: "Sep–Dec 2021", tools: "Figma · Miro · React Native + Firebase" },
+  handcoded: { accent: "#494949", sub: "前 Wix 时代的手写作品集", role: "Frontend Developer", timeline: "Nov 2021–Aug 2022", tools: "HTML · CSS · JS" },
   subtension: { accent: "#1f9e57", sub: "受 FTL 启发的 2D 潜艇 RTS", role: "UX Designer", timeline: "Sep–Dec 2022", tools: "Figma" },
-  connectr: { accent: "#17a89e", sub: "MBTI 导向的小组制交友 App", role: "UX Design Lead + Business", timeline: "3-week jam", tools: "Figma" },
-  rutabagga: { accent: "#b3812a", sub: "素食时令饮食 App 的品牌设计", role: "UI Designer", timeline: "Mar–Apr 2022", tools: "Illustrator" },
-  ece: { accent: "#4a74d6", sub: "UMich 硕士申请流程的 UX 咨询", role: "UX Consultant", timeline: "Sep–Dec 2021", tools: "Miro" },
+  connectr: { accent: "#04dac6", sub: "MBTI 导向的小组制交友 App", role: "UX Design Lead + Business", timeline: "3-week jam", tools: "Figma" },
+  rutabagga: { accent: "#764c99", sub: "素食时令饮食 App 的品牌设计", role: "UI Designer", timeline: "Mar–Apr 2022", tools: "Illustrator" },
+  ece: { accent: "#0c2649", sub: "UMich 硕士申请流程的 UX 咨询", role: "UX Consultant", timeline: "Sep–Dec 2021", tools: "Miro" },
 };
 export const metaOf = (slug: string): ProjectMeta => META[slug] ?? { accent: "#4a74d6" };

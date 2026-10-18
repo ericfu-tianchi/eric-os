@@ -47,6 +47,7 @@ v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(明暗�
 - **Finder 真相源**:`src/data/filesystem.ts` 定义 Tianchintosh HD 的所有节点、外部游戏 URL、根目录与 ID。`FileSystemApp.tsx` 是所有文件夹共用的左右分栏 Finder，支持后退 / 前进、图标 / 列表视图。
 - **桌面映射**:`src/components/desktopGrid.tsx` 控制桌面上显示的 13 个入口与右侧锚定位置；它与 `filesystem.ts` 目前有少量平行配置，新增顶级桌面目录时要同时检查两处。
 - **真实游戏**:桌面 Snake 的主实现是 `DesktopSnake.tsx`。Soul Blade / Twist Solver 定义在 `filesystem.ts` 的 `EXTERNAL_GAMES`，通过 `ExternalGameApp.tsx` 最大化 iframe 打开。
+- **内容页排版**:所有阅读型页面(项目详情、How I Built It、长文)**动工前先读 `docs/LAYOUT_GUIDE.md`**,并先说明用哪种格式(默认 case blocks 数据 + `ProjectDetailApp` 渲染;HTML 仅限需交互的例外;暂不用 Markdown)。
 - **内容扩展**:新增 case 仍以 `src/data/projects.ts` / `cases*.ts` 为主；在批量引入 HTML、Markdown、PDF、视频前，应先建立统一 content manifest + renderer registry，避免分散的 app 判断。
 - **Record 边界**:`src/data/snakeRecord.ts` 现在只是 localStorage 预览适配器；上线前换成 Worker / 数据库。`App.tsx` 中存在一次性 QA reset，正式发布前移除。
 

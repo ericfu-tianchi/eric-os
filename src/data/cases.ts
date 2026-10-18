@@ -7,13 +7,19 @@ import { EXTRA } from "./casesContent";
  * so new projects can be authored the same way. A case = ordered sections, each
  * an ordered list of typed blocks (matches the old-site detail design system).
  */
+/** Text fields accept two inline marks: **bold** and ==highlight== (accent-tinted marker).
+    Block vocabulary and spacing rules: docs/LAYOUT_GUIDE.md. */
 export type CaseBlock =
   | { t: "p"; text: string }
-  | { t: "h"; text: string } // sub-heading (e.g. ">> Problem")
-  | { t: "callout"; label?: string; text: string } // full-width accent block
+  | { t: "h"; text: string } // label, e.g. "QUICK BACKGROUND"
+  | { t: "sub"; text: string } // sub-heading, rendered ">> Problem"
+  | { t: "callout"; label?: string; text: string } // full-width accent band
+  | { t: "quote"; text: string } // key statement between corner brackets
+  | { t: "list"; items: string[] } // findings in a tinted panel
   | { t: "stat"; value: string; label: string } // big-number highlight
-  | { t: "link"; text: string; href: string } // content link (external)
-  | { t: "img"; src: string; caption?: string }; // src = "<slug>/NN.png"
+  | { t: "feature"; src: string; title: string; text: string } // screen + caption, sides alternate
+  | { t: "link"; text: string; href: string } // accent pill button (external)
+  | { t: "img"; src: string; caption?: string; size?: "small" | "medium" | "wide" }; // src = "<slug>/NN.png"
 export interface CaseSection { id: string; label: string; blocks: CaseBlock[] }
 export interface CaseStudy {
   accent: string;
@@ -28,7 +34,7 @@ export interface CaseStudy {
 export const CASES: Record<string, CaseStudy> = {
   ...EXTRA,
   huawei: {
-    accent: "#2b5672",
+    accent: "#e71b23",
     sub: "Designing a window-management mechanism for foldable PCs.",
     role: "UX Designer",
     timeline: "May 2022 – Sep 2022",
@@ -84,7 +90,7 @@ export const CASES: Record<string, CaseStudy> = {
     ],
   },
   ece: {
-    accent: "#4a74d6",
+    accent: "#0c2649",
     sub: "Optimizing the SUGS application process for U-M's ECE department.",
     role: "UX Consultant",
     timeline: "Sep 2021 – Dec 2021",
@@ -98,7 +104,7 @@ export const CASES: Record<string, CaseStudy> = {
     ],
   },
   handcoded: {
-    accent: "#6a727e",
+    accent: "#494949",
     sub: "My first personal site — hand-coded before I moved to Wix.",
     role: "Frontend Developer",
     timeline: "Nov 2021 – Aug 2022",
