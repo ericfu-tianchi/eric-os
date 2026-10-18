@@ -45,7 +45,7 @@ const APP_BADGES: Partial<Record<AppId, string>> = {
   "soul-blade": "LIVE GAME",
   "twist-solver": "LIVE APP",
   "lego-world": "LIVE APP",
-  resume: "v2023",
+  resume: "2026",
 };
 
 const CANVAS_VARIANTS = [
