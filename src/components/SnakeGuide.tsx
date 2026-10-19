@@ -32,14 +32,13 @@ const FAST = params.has("guidefast");
 const HEAD_COL = 23;
 const headRow = (rows: number) => 11 + rows - 16;
 
+// gap = start to start. Every page load starts fresh; nothing is remembered between visits.
 const SCHEDULE = FAST
-  ? { first: [2, 3], gap: [5, 6], show: 5, max: 6 }
-  : { first: [5, 10], gap: [25, 35], show: 9, max: 5 };
+  ? { first: [2, 3], gap: [6, 8], show: 5 }
+  : { first: [5, 10], gap: [20, 30], show: 9 };
 
-// Once a visitor has found the menu (hovered it for a beat, or clicked the head or a bubble),
-// the snake stops nudging for the rest of the visit, and on later visits nudges only once.
-const KNOWN_KEY = "eric-os-snake-guide-known";
-const readKnown = () => { try { return !FAST && localStorage.getItem(KNOWN_KEY) === "1"; } catch { return false; } };
+// Once the visitor has found the menu (hovered it for a beat, or clicked the head or a bubble),
+// the snake stops nudging until the next page load.
 const TOPICS: Topic[] = ["play", "dress", "ask"];
 const CAPTION: Record<Topic, string> = { play: "Play Snake", dress: "Dress me up", ask: "Ask about Eric" };
 
@@ -104,17 +103,13 @@ export function SnakeGuide() {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
-  const shown = useRef(0);
   const last = useRef<Topic | null>(null);
   const hovering = useRef(false);
   const closeTimer = useRef(0);
   const knowTimer = useRef(0);
-  const knownAtLoad = useRef(readKnown());
   const knownNow = useRef(false);
   const markKnown = () => {
-    if (FAST || knownNow.current) return;
-    knownNow.current = true;
-    try { localStorage.setItem(KNOWN_KEY, "1"); } catch { /* private mode: just this visit */ }
+    if (!FAST) knownNow.current = true;
   };
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -136,12 +131,11 @@ export function SnakeGuide() {
     let t = 0, hide = 0;
     const next = (ms: number) => { t = window.setTimeout(fire, ms); };
     function fire() {
-      if (knownNow.current || shown.current >= (knownAtLoad.current ? 1 : SCHEDULE.max)) return;
+      if (knownNow.current) return;
       const L = live.current;
       if (document.hidden || L.covered || L.panel || L.menu) return next(5000); // try again shortly
       const pool = TOPICS.filter((x) => x !== last.current && !(x === "dress" && L.hat !== "none"));
       const topic = pool[Math.floor(Math.random() * pool.length)];
-      shown.current += 1;
       last.current = topic;
       setNudge(topic);
       const autoHide = () => {
@@ -149,7 +143,7 @@ export function SnakeGuide() {
         setNudge(null);
       };
       hide = window.setTimeout(autoHide, SCHEDULE.show * 1000);
-      next(SCHEDULE.show * 1000 + rand(SCHEDULE.gap));
+      next(rand(SCHEDULE.gap));
     }
     next(rand(SCHEDULE.first));
     return () => { window.clearTimeout(t); window.clearTimeout(hide); };
