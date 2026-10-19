@@ -2,10 +2,15 @@ import soulBladeIcon from "../assets/icons/b/soul-blade.png";
 import twistSolverIcon from "../assets/icons/b/twist-solver.png";
 import legoWorldIcon from "../assets/icons/b/lego-world.svg";
 import applicationsIcon from "../assets/icons/b/sidebar-applications.png";
+import applicationsSideIcon from "../assets/icons/b/sidebar-applications-bold.png";
 import desktopIcon from "../assets/icons/b/sidebar-desktop.png";
+import desktopSideIcon from "../assets/icons/b/sidebar-desktop-bold.png";
 import documentsIcon from "../assets/icons/b/sidebar-documents.png";
+import documentsSideIcon from "../assets/icons/b/sidebar-documents-bold.png";
 import imagesIcon from "../assets/icons/b/sidebar-images.png";
+import imagesSideIcon from "../assets/icons/b/sidebar-images-bold.png";
 import videosIcon from "../assets/icons/b/sidebar-videos.png";
+import videosSideIcon from "../assets/icons/b/sidebar-videos-bold.png";
 
 export type ExternalGameId = "soul-blade" | "twist-solver" | "lego-world";
 export type FileNodeKind = "folder" | "project" | "game" | "document" | "app" | "shortcut" | "placeholder";
@@ -23,6 +28,8 @@ export interface FileNode {
   html?: string;
   /** Finder-only pixel art for the five root locations. */
   icon?: string;
+  /** The same folder with a bigger, darker glyph, readable at the sidebar's 20px. */
+  sidebarIcon?: string;
   /** A Desktop / Applications alias that resolves to a canonical node. */
   targetId?: string;
 }
@@ -60,11 +67,11 @@ export const EXTERNAL_GAMES: Record<ExternalGameId, {
 export const FILE_NODES: FileNode[] = [
   { id: "tianchintosh", name: "Tianchintosh HD", kind: "folder", description: "Portfolio volume" },
 
-  { id: "applications", parent: "tianchintosh", name: "Applications", kind: "folder", description: "4 apps", icon: applicationsIcon },
-  { id: "desktop", parent: "tianchintosh", name: "Desktop", kind: "folder", description: "13 items", icon: desktopIcon },
-  { id: "documents", parent: "tianchintosh", name: "Documents", kind: "folder", description: "0 items", icon: documentsIcon },
-  { id: "images", parent: "tianchintosh", name: "Images", kind: "folder", description: "0 items", icon: imagesIcon },
-  { id: "videos", parent: "tianchintosh", name: "Videos", kind: "folder", description: "0 items", icon: videosIcon },
+  { id: "applications", parent: "tianchintosh", name: "Applications", kind: "folder", description: "4 apps", icon: applicationsIcon, sidebarIcon: applicationsSideIcon },
+  { id: "desktop", parent: "tianchintosh", name: "Desktop", kind: "folder", description: "13 items", icon: desktopIcon, sidebarIcon: desktopSideIcon },
+  { id: "documents", parent: "tianchintosh", name: "Documents", kind: "folder", description: "0 items", icon: documentsIcon, sidebarIcon: documentsSideIcon },
+  { id: "images", parent: "tianchintosh", name: "Images", kind: "folder", description: "0 items", icon: imagesIcon, sidebarIcon: imagesSideIcon },
+  { id: "videos", parent: "tianchintosh", name: "Videos", kind: "folder", description: "0 items", icon: videosIcon, sidebarIcon: videosSideIcon },
 
   { id: "snake", parent: "applications", name: "Snake", kind: "app", app: "snake", description: "Playable game" },
   { id: "soul-blade-app", parent: "applications", name: "Soul Blade", kind: "shortcut", targetId: "soul-blade", description: "Playable game" },

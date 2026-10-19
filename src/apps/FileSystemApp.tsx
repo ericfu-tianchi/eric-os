@@ -141,7 +141,9 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
                 className={`finder-side-item ${activeSidebarId === id ? "active" : ""}`}
                 onClick={() => navigate(id)}
               >
-                <FinderNodeIcon node={node} size={20} />
+                {node.sidebarIcon
+                  ? <img className="finder-thumb-icon" src={node.sidebarIcon} width={20} height={20} alt="" draggable={false} />
+                  : <FinderNodeIcon node={node} size={20} />}
                 <span>{node.name}</span>
               </button>
             );
