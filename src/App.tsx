@@ -41,7 +41,6 @@ const APP_VIEWS: Record<AppId, (w: WinInstance) => React.ReactNode> = {
 const APP_BADGES: Partial<Record<AppId, string>> = {
   projects: "3 folders",
   snake: "v1.0",
-  filesystem: "Finder",
   "soul-blade": "LIVE GAME",
   "twist-solver": "LIVE APP",
   "lego-world": "LIVE APP",

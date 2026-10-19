@@ -89,8 +89,8 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
     : trail.find((node) => (FINDER_ROOT_IDS as readonly string[]).includes(node.id))?.id ?? "tianchintosh";
 
   const chrome = useMemo(() => ({
-    trail: [{ label: current.name }],
-    centeredTitle: current.name,
+    trail: trail.map((node) => ({ label: node.name, onClick: () => navigate(node.id) })),
+    meta: "",
     navigation: {
       canGoBack: historyIndex > 0,
       canGoForward: historyIndex < history.length - 1,
@@ -98,7 +98,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
       onForward: goForward,
     },
     viewControls: { mode: view, onChange: setView },
-  }), [current.name, history.length, historyIndex, view]);
+  }), [current.id, history.length, historyIndex, view]);
   useWindowChrome(chrome);
 
   const openNode = (node: FileNode) => {
@@ -127,7 +127,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
           className={`finder-side-root ${activeSidebarId === "tianchintosh" ? "active" : ""}`}
           onClick={() => navigate("tianchintosh")}
         >
-          <PixIcon name="computer" size={24} />
+          <PixIcon name="computer" size={20} />
           <span>Tianchintosh HD</span>
         </button>
         <div className="finder-side-rule" />
@@ -141,7 +141,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
                 className={`finder-side-item ${activeSidebarId === id ? "active" : ""}`}
                 onClick={() => navigate(id)}
               >
-                <FinderNodeIcon node={node} size={23} />
+                <FinderNodeIcon node={node} size={20} />
                 <span>{node.name}</span>
               </button>
             );
@@ -176,7 +176,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
         ) : (
           <div className="finder-list" role="list">
             <div className="finder-list-head" aria-hidden>
-              <span>Name</span><span>Kind</span><span>Items</span>
+              <span className="sorted">Name</span><span>Kind</span><span>Size</span>
             </div>
             {children.map((node) => (
               <button
@@ -187,9 +187,9 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
                 onDoubleClick={() => openNode(node)}
                 onKeyDown={(e) => { if (e.key === "Enter") openNode(node); }}
               >
-                <span className="finder-list-name"><FinderNodeIcon node={node} size={32} />{node.name}</span>
+                <span className="finder-list-name"><FinderNodeIcon node={node} size={18} /><span>{node.name}</span></span>
                 <span>{kindLabel(node)}</span>
-                <span>{node.description ?? "—"}</span>
+                <span>{/\d+ items?/.test(node.description ?? "") ? node.description : "—"}</span>
               </button>
             ))}
           </div>
