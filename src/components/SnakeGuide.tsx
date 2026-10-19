@@ -22,7 +22,7 @@ import { SnakeChat, digestAfterGame, type ChatAction } from "./SnakeChat";
 type Layout = "arc" | "cloud";
 type Topic = "play" | "dress" | "ask";
 type Panel = null | "chat" | "dress";
-type Action = Exclude<ChatAction, "email">;
+type Action = Exclude<ChatAction, "email" | "back">;
 
 const params = new URLSearchParams(window.location.search);
 const LAYOUT: Layout = (params.get("guide") ?? import.meta.env.VITE_GUIDE) === "cloud" ? "cloud" : "arc";

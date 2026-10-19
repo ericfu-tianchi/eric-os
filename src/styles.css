@@ -1426,6 +1426,8 @@ button { font-family: inherit; color: inherit; }
 .sguide-log .msg.me { align-self: flex-end; background: var(--select); color: #fff; border-bottom-right-radius: 3px; }
 .sguide-log .msg .sguide-cta { display: flex; margin-top: 8px; }
 .sguide-log .chips { padding-top: 2px; }
+.sguide-log .msg .chips.steer { margin-top: 9px; padding: 0; }
+.sguide-log .msg .chips.steer button { background: var(--surface); }
 .sguide-log .typing { display: flex; align-items: center; gap: 8px; padding: 10px 12px; }
 .sguide-log .typing .dots { display: flex; gap: 4px; }
 .sguide-log .typing .slow { font-size: 12.5px; color: var(--muted); }
@@ -1455,15 +1457,18 @@ button { font-family: inherit; color: inherit; }
 .sguide-retry span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .sguide-retry:hover:not(:disabled) { border-color: var(--ink); }
 .sguide-retry:disabled { color: var(--faint); cursor: default; }
-/* lock: a thin progress line above the input — the snake swallowing / digesting */
-.sguide-lock { height: 3px; margin: 2px 12px 0; border-radius: 2px; background: var(--surface-2); overflow: hidden; }
-.sguide-lock i { display: block; height: 100%; background: var(--gold); transition: width 0.25s linear; }
-.sguide-lock.full i { background: var(--green); }
-.sguide-skip {
-  margin: 8px 10px 0; height: 30px; border: 0; border-radius: 6px; background: rgba(46, 193, 110, 0.12);
-  color: var(--green-deep); font-size: 12.5px; font-weight: 600;
+/* lock: the input row turns into a status pill — ring + countdown (+ "Play Snake to skip" when full) */
+.sguide-wait {
+  display: flex; align-items: center; gap: 9px; margin: 8px 10px 4px; height: 40px; padding: 0 5px 0 9px;
+  border: 1px solid var(--hairline); border-radius: 20px; background: var(--surface-2);
 }
-.sguide-skip:hover { background: rgba(46, 193, 110, 0.2); }
+.sguide-wait svg { flex: none; }
+.sguide-wait svg circle + circle { stroke: var(--gold); transition: stroke-dasharray 0.25s linear; }
+.sguide-wait.full svg circle + circle { stroke: var(--green); }
+.sguide-wait .txt { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 6px; font-size: 12.5px; white-space: nowrap; }
+.sguide-wait .txt b { font-weight: 600; color: var(--ink); }
+.sguide-wait .txt span { color: var(--muted); font-variant-numeric: tabular-nums; }
+.sguide-wait .sguide-cta { flex: none; height: 30px; border-radius: 15px; padding: 0 13px; font-size: 12px; }
 /* the email card: address, copy, write — the snake's hand-off to the real Tianchi */
 .sguide-mail { margin-top: 9px; padding: 10px; border-radius: 9px; background: var(--surface); border: 1px solid var(--hairline); }
 .sguide-mail .addr { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--ink); user-select: all; }

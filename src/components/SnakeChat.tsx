@@ -17,7 +17,8 @@ import { useOS } from "../store";
  *            "write to Tianchi": Send opens a pre-filled email instead
  */
 
-export type ChatAction = "play" | "dress" | "resume" | "about" | "school" | "ai" | "email";
+export type ChatAction = "play" | "dress" | "resume" | "about" | "school" | "ai" | "email" | "back";
+type NavAction = Exclude<ChatAction, "email" | "back">;
 type Lang = "en" | "zh";
 type Msg = {
   role: "user" | "assistant";
@@ -40,15 +41,15 @@ const TIMEOUT_MS = 25_000;
 const COPY = {
   hello: { en: "Hi! I live on Tianchi's desktop and know his work inside out. Ask me anything.", zh: "嗨！我住在 Tianchi 的桌面上，他的事我门儿清。随便问吧。" },
   slow: { en: "Still chewing on that one…", zh: "还在嚼这个问题……" },
-  error: { en: "That one got stuck in my throat. 🐍 Try again, or ask Tianchi directly:", zh: "这个问题卡在我喉咙里了 🐍 再试一次，或者直接问 Tianchi：" },
-  fast: { en: "Whoa, slow down — I can only swallow one question at a time. 🐍", zh: "慢点慢点，我一口只能吞一个问题 🐍" },
-  full: { en: "I've eaten so many questions I'm too long to move. Play a round of Snake while I digest?", zh: "问题吃太多了，我已经长到动不了了。趁我消化，来一局贪吃蛇？" },
-  burp: { en: "Burp. 🐍 All digested — ask away!", zh: "嗝～消化完了，继续问吧！" },
-  quota: { en: "My brain ran out of apples for today 🍎 But the real Tianchi answers too — ask him directly:", zh: "今天的苹果吃完了 🍎 不过 Tianchi 本人也会回，直接问他吧：" },
-  offline: { en: "Looks like you're offline — my brain needs Wi-Fi. 📡", zh: "你好像断网了，我的脑子需要 Wi-Fi 📡" },
-  mailed: { en: "Envelope's ready — just hit Send in your mail app. ✉️", zh: "信封准备好了，在邮件里点发送就行 ✉️" },
+  error: { en: "That one got stuck in my throat. Try again, or ask Tianchi directly:", zh: "这个问题卡在我喉咙里了。再试一次，或者直接问 Tianchi：" },
+  fast: { en: "Whoa, slow down — I can only swallow one question at a time.", zh: "慢点慢点，我一口只能吞一个问题。" },
+  full: { en: "I've eaten so many questions I'm too long to move. Play a round of Snake while I digest?", zh: "问题吃太多了，长到动不了了。趁我消化，来一局贪吃蛇？" },
+  burp: { en: "Burp. All digested — ask away! 🐍", zh: "嗝～消化完了，继续问吧！" },
+  quota: { en: "I'm out of apples for today 🍎 But the real Tianchi answers too — ask him directly:", zh: "今天的苹果吃完了 🍎 不过 Tianchi 本人也会回，直接问他吧：" },
+  offline: { en: "Looks like you're offline — my brain needs Wi-Fi.", zh: "你好像断网了，我的脑子需要 Wi-Fi。" },
+  mailed: { en: "Envelope's ready — just hit Send in your mail app.", zh: "信封准备好了，在邮件里点发送就行。" },
 };
-const ACTION_LABEL: Record<Exclude<ChatAction, "email">, string> = {
+const ACTION_LABEL: Record<NavAction, string> = {
   play: "Play Snake",
   dress: "Dress me up",
   resume: "Open resume",
@@ -57,6 +58,16 @@ const ACTION_LABEL: Record<Exclude<ChatAction, "email">, string> = {
   ai: "See AI projects",
 };
 const STARTERS = ["What does Tianchi do?", "What is he building lately?", "Show me his AI projects"];
+// after the snake declines something (off-topic, jailbreak), two of these pull the chat back to Tianchi
+const STEER = {
+  en: ["What does Tianchi do?", "What is he building lately?", "Show me his AI projects", "Where did he study?", "What did he build at Huawei?", "What's Tianchi OS?"],
+  zh: ["Tianchi 现在在做什么？", "他做过哪些 AI 项目？", "他在哪里读书？", "他在华为做了什么？", "Tianchi OS 是什么？"],
+};
+const steerFor = (lang: Lang, seed: number) => {
+  const pool = STEER[lang];
+  const a = seed % pool.length;
+  return [pool[a], pool[(a + 1 + (seed % (pool.length - 1))) % pool.length]];
+};
 
 const langOf = (text: string): Lang => (/[一-鿿]/.test(text) ? "zh" : "en");
 
@@ -206,7 +217,7 @@ const mmss = (ms: number) => {
 
 export function SnakeChat({ style, onAct, onClose }: {
   style: React.CSSProperties;
-  onAct: (a: Exclude<ChatAction, "email">) => void;
+  onAct: (a: NavAction) => void;
   onClose: () => void;
 }) {
   const s = useSyncExternalStore(subscribe, () => state);
@@ -227,11 +238,7 @@ export function SnakeChat({ style, onAct, onClose }: {
 
   const lastQuestion = [...s.msgs].reverse().find((m) => m.role === "user")?.content;
   const left = s.lock ? s.lock.until - now : 0;
-  const placeholder = s.lock?.kind === "fast"
-    ? `Swallowing… ${Math.max(1, Math.ceil(left / 1000))}s`
-    : s.lock?.kind === "full"
-      ? `Digesting… ${mmss(left)}`
-      : s.mail
+  const placeholder = s.mail
         ? "Type it here — I'll pass it to Tianchi ✉️"
         : "Ask anything about Tianchi…";
 
@@ -253,8 +260,13 @@ export function SnakeChat({ style, onAct, onClose }: {
               </button>
             )}
             {m.action === "email" && <EmailCard question={m.retry ?? lastQuestion} />}
-            {m.action && m.action !== "email" && (
-              <button type="button" className="sguide-cta" onClick={() => onAct(m.action as Exclude<ChatAction, "email">)}>{ACTION_LABEL[m.action]} →</button>
+            {m.action === "back" && i === s.msgs.length - 1 && !s.busy && !s.lock && (
+              <div className="chips steer">
+                {steerFor(langOf(m.content), i).map((q) => <button type="button" key={q} onClick={() => void send(q)}>{q}</button>)}
+              </div>
+            )}
+            {m.action && m.action !== "email" && m.action !== "back" && (
+              <button type="button" className="sguide-cta" onClick={() => onAct(m.action as NavAction)}>{ACTION_LABEL[m.action]} →</button>
             )}
           </div>
         ))}
@@ -270,31 +282,42 @@ export function SnakeChat({ style, onAct, onClose }: {
           </div>
         )}
       </div>
-      {s.lock && (
-        <div className={`sguide-lock ${s.lock.kind}`} aria-hidden>
-          <i style={{ width: `${Math.min(100, ((now - s.lock.from) / (s.lock.until - s.lock.from)) * 100)}%` }} />
+      {s.lock ? (
+        // locked: the input row becomes a status pill — a progress ring, the countdown, and (when full) the way out
+        <div className={`sguide-wait ${s.lock.kind}`} role="status">
+          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden>
+            <circle cx="11" cy="11" r="8.5" fill="none" stroke="var(--hairline)" strokeWidth="2.5" />
+            <circle
+              cx="11" cy="11" r="8.5" fill="none" strokeWidth="2.5" strokeLinecap="round" transform="rotate(-90 11 11)"
+              strokeDasharray={`${(2 * Math.PI * 8.5 * Math.min(1, (now - s.lock.from) / (s.lock.until - s.lock.from))).toFixed(2)} 99`}
+            />
+          </svg>
+          <span className="txt">
+            <b>{s.lock.kind === "full" ? "Digesting…" : "Swallowing…"}</b>
+            <span>{s.lock.kind === "full" ? `${mmss(left)} left` : `${Math.max(1, Math.ceil(left / 1000))}s`}</span>
+          </span>
+          {s.lock.kind === "full" && (
+            <button type="button" className="sguide-cta" onClick={() => onAct("play")}>Play Snake to skip</button>
+          )}
         </div>
+      ) : (
+        <form onSubmit={(e) => { e.preventDefault(); const q = draft; setDraft(""); void send(q); }}>
+          <input
+            ref={inputRef}
+            autoFocus
+            value={draft}
+            maxLength={300}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder={placeholder}
+            aria-label="Your question"
+          />
+          <button type="submit" disabled={!draft.trim() || s.busy} aria-label={s.mail ? "Write email" : "Send"}>
+            {s.mail
+              ? <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden><rect x="1.5" y="3.5" width="13" height="9" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M2.5 4.8 8 9l5.5-4.2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
+              : "↑"}
+          </button>
+        </form>
       )}
-      {s.lock?.kind === "full" && (
-        <button type="button" className="sguide-skip" onClick={() => onAct("play")}>Skip the wait — play a round of Snake →</button>
-      )}
-      <form onSubmit={(e) => { e.preventDefault(); const q = draft; setDraft(""); void send(q); }}>
-        <input
-          ref={inputRef}
-          autoFocus
-          value={draft}
-          maxLength={300}
-          disabled={!!s.lock}
-          onChange={(e) => setDraft(e.target.value)}
-          placeholder={placeholder}
-          aria-label="Your question"
-        />
-        <button type="submit" disabled={!draft.trim() || s.busy || !!s.lock} aria-label={s.mail ? "Write email" : "Send"}>
-          {s.mail
-            ? <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden><rect x="1.5" y="3.5" width="13" height="9" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M2.5 4.8 8 9l5.5-4.2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
-            : "↑"}
-        </button>
-      </form>
       <p className="fine">
         <span>{draft.length >= 240 ? "AI answers can be wrong." : "AI answers can be wrong. Built on Cloudflare Workers AI."}</span>
         {draft.length >= 240 && <span className="count">{draft.length}/300</span>}
