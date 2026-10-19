@@ -485,6 +485,7 @@ button { font-family: inherit; color: inherit; }
   border-radius: 4px;
 }
 .titlebar .ctrl svg { position: relative; z-index: 1; opacity: 0; width: 7px; height: 7px; }
+.titlebar .ctrl.max svg { width: 9px; height: 9px; }
 .titlebar .ctrl:hover svg { opacity: 1; }
 .titlebar .ctrl:active { transform: translateY(1px); }
 .titlebar .ctrl:focus-visible { outline: 1px solid var(--ink); outline-offset: -1px; }

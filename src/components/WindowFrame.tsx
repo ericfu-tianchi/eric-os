@@ -100,7 +100,11 @@ export function WindowFrame({
           </button>
           <button className="ctrl max" aria-label="最大化窗口" onClick={() => toggleMax(win.id)}>
             <svg viewBox="0 0 8 8" aria-hidden>
-              <path d="M2.4 1.5h4.1v4.1z M1.5 2.4v4.1h4.1z" fill="rgba(0,0,0,0.55)" />
+              {/* macOS full-screen arrows: point out to enlarge, point in once maximized */}
+              <path
+                d={win.maximized ? "M3.5 3.5H0.8L3.5 0.8z M4.5 4.5h2.7L4.5 7.2z" : "M0.8 0.8h3.6L0.8 4.4z M7.2 7.2H3.6L7.2 3.6z"}
+                fill="rgba(0,0,0,0.6)"
+              />
             </svg>
           </button>
         </div>
