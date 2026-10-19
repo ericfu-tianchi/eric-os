@@ -620,13 +620,136 @@ const ROUND3: { id: string; title: string; brief: string; designs: HatDesign[] }
   },
 ];
 
+/* ═════════════════════════ Round 4 ═════════════════════════ */
+
+/* ── Cat ears, four orientations. One ear drawn pointing -y, mirrored for the other side ── */
+const CAT_EAR = "M-6.5 0 C-6.8 -4.6 -5 -9.6 -2 -12.6 Q-0.6 -13.6 0.6 -12.4 C3.8 -9.2 6.2 -4.8 6.5 0 Q0 -2 -6.5 0Z";
+const CAT_INNER = "M-3.8 -1.2 C-4 -4.4 -2.8 -7.6 -1 -9.4 C1.2 -7.4 3 -4.4 3.8 -1.2 Q0 -2.4 -3.8 -1.2Z";
+function catEars(o: { x: number; y: number; tilt: number; k?: number; bandX?: number; bandW?: number }) {
+  const k = o.k ?? 1.15, bx = o.bandX ?? o.x;
+  const ear = (s: number) => `<g transform="translate(${o.x} ${s * o.y}) scale(${k} ${-s * k}) rotate(${o.tilt})">
+      <path d="${CAT_EAR}" fill="#1E1F23" stroke="#1E1F23" stroke-width="1" stroke-linejoin="round"/><path d="${CAT_INNER}" fill="#FF8FB1"/></g>`;
+  return `<path d="M${bx} -21.5 Q${bx - 6} 0 ${bx} 21.5" fill="none" stroke="#1E1F23" stroke-width="${o.bandW ?? 3}" stroke-linecap="round"/>${ear(-1)}${ear(1)}`;
+}
+const CAT_EARS: HatDesign[] = [
+  { id: "ce1", group: "ears", label: "Alert", note: "Out to the sides, tips leaning forward — curious", svg: catEars({ x: -3, y: 20, tilt: 28 }) },
+  { id: "ce2", group: "ears", label: "Swept back", note: "Tips folded back toward the tail — relaxed, a bit sly", svg: catEars({ x: -1, y: 20, tilt: -42 }) },
+  { id: "ce3", group: "ears", label: "Front corners", note: "Perched on the front corners, angled out at 45°", svg: catEars({ x: 11.5, y: 19.4, tilt: 45, k: 1.05, bandX: 2 }) },
+  { id: "ce4", group: "ears", label: "Wide & big", note: "Straight out, bigger ears, slimmer band", svg: catEars({ x: -4, y: 20.5, tilt: 0, k: 1.4, bandW: 2.4 }) },
+];
+
+/* ── New York fitted cap, worn backwards: brim out the back, snap gap at the forehead ── */
+// interlocking N + Y monogram, ~10 units, drawn as serif strokes so it reads at 44px
+const NY_MARK = (c: string) => `<g fill="none" stroke="${c}" stroke-width="1.35" stroke-linecap="square" stroke-linejoin="miter">
+  <path d="M-4.6 3.8 V-4 L1.2 3.8 V-4"/><path d="M-5.8 3.8 H-3.4 M-5.8 -4 H-3.6 M0 -4 H2.4"/>
+  <path d="M-0.8 -1.6 L2.2 2 L5.2 -1.6 M2.2 2 V6.4"/><path d="M-1.8 -1.6 H0.2 M4.2 -1.6 H6.2 M1 6.4 H3.4"/></g>`;
+function nyCap(ang: number, o: { crown: string; seam: string; brim: string; brimEdge: string; mark: string; button?: string; sticker?: boolean }) {
+  const cx = -5;
+  const seams = [30, 90, 150, 210, 270, 330].map((d) => {
+    const a = (d * Math.PI) / 180;
+    return `<path d="M${cx} 0 L${(cx + 15 * Math.cos(a)).toFixed(2)} ${(19.5 * Math.sin(a)).toFixed(2)}" stroke="${o.seam}" stroke-width=".8"/>`;
+  }).join("");
+  return `
+    <path d="M-17 -13 C-27 -14 -34.5 -9 -34.5 0 C-34.5 9 -27 14 -17 13 Z" fill="${o.brim}" stroke="${o.brimEdge}" stroke-width="1"/>
+    ${[3.2, 6.2].map((d) => `<path d="M-17 ${-13 + d * 0.55} C${-26 + d * 0.3} ${-13 + d * 0.7} ${-33.5 + d} -8 ${-33.5 + d} 0 C${-33.5 + d} 8 ${-26 + d * 0.3} ${13 - d * 0.7} -17 ${13 - d * 0.55}" fill="none" stroke="${o.brimEdge}" stroke-width=".6" opacity=".8"/>`).join("")}
+    ${o.sticker ? `<circle cx="-28" cy="-5.5" r="2.6" fill="#D9B44A" stroke="#F2DB8C" stroke-width=".7"/><circle cx="-28" cy="-5.5" r="1.2" fill="#B88F25"/>` : ""}
+    <ellipse cx="${cx}" cy="0" rx="15" ry="19.5" fill="${o.crown}"/>
+    ${seams}
+    <path d="M${cx} 0 L${(cx + 15 * Math.cos(-2.1)).toFixed(2)} ${(19.5 * Math.sin(-2.1)).toFixed(2)} A15 19.5 0 0 1 ${(cx + 15 * Math.cos(-1.05)).toFixed(2)} ${(19.5 * Math.sin(-1.05)).toFixed(2)}Z" fill="rgba(255,255,255,.07)"/>
+    <path d="M9.4 -5.4 C5.4 -4.6 4.4 -2 4.4 0 C4.4 2 5.4 4.6 9.4 5.4 Z" fill="#06C268"/>
+    <rect x="7.6" y="-5.6" width="2.2" height="11.2" rx="1" fill="${o.brim}" stroke="${o.seam}" stroke-width=".5"/>
+    <circle cx="8.7" cy="-3" r=".7" fill="${o.mark}" opacity=".8"/><circle cx="8.7" cy="0" r=".7" fill="${o.mark}" opacity=".8"/><circle cx="8.7" cy="3" r=".7" fill="${o.mark}" opacity=".8"/>
+    <circle cx="${cx}" cy="0" r="2" fill="${o.button ?? o.crown}" stroke="${o.seam}" stroke-width=".7"/>
+    <g transform="translate(-14 0) rotate(${-ang})">${NY_MARK(o.mark)}</g>`;
+}
+const NY_NAVY = "#0C2340";
+const NY_CAPS: HatDesign[] = [
+  { id: "ny1", group: "nycap", label: "Classic navy", note: "Navy six-panel, white NY, navy brim out the back", svg: (ang) => nyCap(ang, { crown: NY_NAVY, seam: "#06152A", brim: "#102B4C", brimEdge: "#06152A", mark: "#FFFFFF" }) },
+  { id: "ny2", group: "nycap", label: "Navy + gold sticker", note: "The unpeeled gold brim sticker — streetwear detail", svg: (ang) => nyCap(ang, { crown: NY_NAVY, seam: "#06152A", brim: "#102B4C", brimEdge: "#06152A", mark: "#FFFFFF", sticker: true }) },
+  { id: "ny3", group: "nycap", label: "All black", note: "Black on black, white NY", svg: (ang) => nyCap(ang, { crown: "#17181B", seam: "#050506", brim: "#1E1F23", brimEdge: "#050506", mark: "#FFFFFF", sticker: true }) },
+  { id: "ny4", group: "nycap", label: "Cream + navy NY", note: "Summer cream cap, navy mark and button", svg: (ang) => nyCap(ang, { crown: "#F3EEE3", seam: "#CFC6B4", brim: "#ECE5D6", brimEdge: "#C7BCA6", mark: NY_NAVY, button: NY_NAVY }) },
+];
+
+/* ── Christmas ── */
+const fluff = (cx: number, cy: number, r: number, n: number, br: number, fill: string) =>
+  Array.from({ length: n }, (_, i) => {
+    const a = (i / n) * 2 * Math.PI;
+    return `<circle cx="${(cx + r * Math.cos(a)).toFixed(2)}" cy="${(cy + r * Math.sin(a)).toFixed(2)}" r="${br}" fill="${fill}"/>`;
+  }).join("");
+const XMAS: HatDesign[] = [
+  {
+    id: "x1", group: "xmas", label: "Santa hat", note: "Red crown, fluffy white band, tip flopping back to a pompom",
+    svg: `${fluff(-5, 0, 13.6, 16, 3.2, "#FFFFFF")}<circle cx="-5" cy="0" r="13.6" fill="#FFFFFF"/>
+      <circle cx="-5" cy="0" r="10.6" fill="#D7263D"/>
+      <path d="M-5 -6 C-12 -8 -20 -12 -26 -16 C-22 -9 -15 -3 -9 2 Z" fill="#B81D31"/>
+      <circle cx="-26.5" cy="-16.5" r="4.6" fill="#FFFFFF"/><circle cx="-27.6" cy="-17.6" r="1.6" fill="#EDEFF3"/>
+      <path d="M-11 -4.6 C-8 -7 -4 -7.2 -1.2 -5.6" fill="none" stroke="#F0566A" stroke-width="1.2" stroke-linecap="round"/>`,
+  },
+  {
+    id: "x2", group: "xmas", label: "Reindeer antlers", note: "Brown antlers lying out to the sides, a jingle bell on the band",
+    svg: `<path d="M-2 -21.5 Q-8 0 -2 21.5" fill="none" stroke="#D7263D" stroke-width="3" stroke-linecap="round"/>
+      ${[-1, 1].map((s) => `<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <g stroke="#7A4A25" stroke-width="3.4"><path d="M-3 ${s * 19.5} C-3.6 ${s * 25} -7 ${s * 29.5} -12.5 ${s * 32}"/><path d="M-3.8 ${s * 24.4} C-1 ${s * 26.6} 2.4 ${s * 27.4} 5.6 ${s * 26.8}"/><path d="M-6.4 ${s * 28.6} C-5 ${s * 31} -3.6 ${s * 32.4} -1.4 ${s * 33}"/><path d="M-9.4 ${s * 30.6} L-14.6 ${s * 27.4}"/></g>
+        <g stroke="#B07A4A" stroke-width="1"><path d="M-3 ${s * 20.5} C-3.6 ${s * 25} -6.6 ${s * 29} -11.6 ${s * 31.4}"/><path d="M-3 ${s * 25.2} C-0.6 ${s * 26.8} 2.2 ${s * 27.2} 4.8 ${s * 26.8}"/></g></g>`).join("")}
+      <circle cx="-4.6" cy="0" r="3" fill="#F5B027" stroke="#C98A0C" stroke-width=".8"/><path d="M-6 0.4 H-3.2" stroke="#8A5A08" stroke-width=".8"/>`,
+  },
+  {
+    id: "x3", group: "xmas", label: "Elf hat", note: "Red and white stripes, gold bell at the tip",
+    svg: `<defs><clipPath id="snk-elf"><path d="M6 -16 Q-12 -19 -20 -6 L-32 6 L-19 7 Q-12 19 6 16 Q11 0 6 -16Z"/></clipPath></defs>
+      <path d="M6 -16 Q-12 -19 -20 -6 L-32 6 L-19 7 Q-12 19 6 16 Q11 0 6 -16Z" fill="#D7263D"/>
+      <g clip-path="url(#snk-elf)">${[-28, -21, -14, -7, 0].map((x) => `<path d="M${x} -24 l-8 48" stroke="#FFFFFF" stroke-width="3"/>`).join("")}</g>
+      <path d="M6.2 -16 Q11.4 0 6.2 16" fill="none" stroke="#2E9B4F" stroke-width="3.6" stroke-linecap="round"/>
+      <circle cx="-32" cy="6" r="3.4" fill="#F5B027" stroke="#C98A0C" stroke-width=".8"/><path d="M-33.6 6.6 H-30.4" stroke="#8A5A08" stroke-width=".8"/>`,
+  },
+];
+
+/* ── Halloween ── */
+const HALLOWEEN: HatDesign[] = [
+  {
+    id: "hw1", group: "halloween", label: "Witch hat", note: "Wide black brim, purple band, the tip bent over",
+    svg: `<circle cx="-10" cy="0" r="21" fill="#1E1F23"/><circle cx="-10" cy="0" r="20.4" fill="none" stroke="#3A3B42" stroke-width="1.2"/>
+      <circle cx="-10" cy="0" r="11.5" fill="#26272C"/>
+      <circle cx="-11.4" cy="-1.6" r="8" fill="#2E2F35"/><circle cx="-12.8" cy="-3.2" r="4.6" fill="#36373E"/>
+      <circle cx="-10" cy="0" r="11.5" fill="none" stroke="#7E4FD8" stroke-width="3"/>
+      <rect x="-0.6" y="-3.2" width="4.4" height="6.4" rx=".8" fill="#26272C" stroke="#F5B027" stroke-width="1.3"/>
+      <path d="M-14 -4.4 C-18 -9.6 -23.6 -15 -31.6 -19.6 C-26.4 -12.6 -21.6 -7.6 -16.6 -1.2 Z" fill="#3E3F47" stroke="#1E1F23" stroke-width=".8" stroke-linejoin="round"/>
+      <path d="M-16.4 -6.6 C-20.4 -10.6 -24.6 -14.4 -29.4 -17.6" fill="none" stroke="#5A5B64" stroke-width=".8" stroke-linecap="round"/>`,
+  },
+  {
+    id: "hw2", group: "halloween", label: "Pumpkin", note: "A little jack-o'-lantern sat on top — ribs and a curly stem",
+    svg: `${[0, 1].map((layer) => Array.from({ length: 8 }, (_, i) => {
+        const a = (i / 8) * 2 * Math.PI + Math.PI / 8;
+        return `<circle cx="${(-4 + 9.2 * Math.cos(a)).toFixed(2)}" cy="${(9.2 * Math.sin(a)).toFixed(2)}" r="${layer ? 5.6 : 6.5}" fill="${layer ? "#FF8A1F" : "#D96A00"}"/>`;
+      }).join("") + `<circle cx="-4" cy="0" r="${layer ? 10 : 10.8}" fill="${layer ? "#FF8A1F" : "#D96A00"}"/>`).join("")}
+      ${Array.from({ length: 8 }, (_, i) => {
+        const a = (i / 8) * 2 * Math.PI;
+        return `<path d="M${(-4 + 3 * Math.cos(a)).toFixed(2)} ${(3 * Math.sin(a)).toFixed(2)} L${(-4 + 14.6 * Math.cos(a)).toFixed(2)} ${(14.6 * Math.sin(a)).toFixed(2)}" stroke="#E07400" stroke-width="1.1" stroke-linecap="round"/>`;
+      }).join("")}
+      <path d="M-14.4 -5.4 A11 11 0 0 1 -8.4 -11.6" fill="none" stroke="#FFB15E" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M-4 0 C-3 -3 -1 -4 1.6 -4.4" fill="none" stroke="#3E7F3F" stroke-width="2.6" stroke-linecap="round"/>
+      <circle cx="-4" cy="0" r="2.6" fill="#4F8F3A"/>
+      <path d="M1.6 -4.4 q3 -1 2.4 2 q-.6 2.4 -3 1.4" fill="none" stroke="#5FA35A" stroke-width=".9" stroke-linecap="round"/>`,
+  },
+  {
+    id: "hw3", group: "halloween", label: "Bat headband", note: "Black bat wings spread out to the sides",
+    svg: `<path d="M-2 -21.5 Q-8 0 -2 21.5" fill="none" stroke="#1E1F23" stroke-width="3" stroke-linecap="round"/>
+      ${[-1, 1].map((s) => `<g transform="scale(1 ${-s})">
+        <path d="M-1 -20 C2 -25 5 -30 7 -33.6 C3 -31.4 0 -31 -2.6 -32.4 C-4 -30 -7 -29.4 -9.6 -30.8 C-10.6 -28 -13 -27 -15.6 -27.4 C-13 -24 -10 -21 -7 -20Z" fill="#221C2C" stroke="#8B6CC9" stroke-width="1" stroke-linejoin="round"/>
+        <path d="M-4 -21 L-2.6 -32.4 M-5 -21 L-9.6 -30.8" stroke="#5B4785" stroke-width=".8" stroke-linecap="round"/></g>`).join("")}
+      <ellipse cx="-4.6" cy="0" rx="2.8" ry="3.6" fill="#221C2C" stroke="#8B6CC9" stroke-width=".8"/><path d="M-6 -3.4 l-1.4 -2.2 l2.2 .8 M-6 3.4 l-1.4 2.2 l2.2 -.8" fill="#1E1F23" stroke="#1E1F23" stroke-width=".8"/>`,
+  },
+];
+
 const pick = (list: HatDesign[], ids: string[]) => list.filter((d) => ids.includes(d.id));
 
 export const HAT_GROUPS: { id: string; title: string; brief: string; tag: string; designs: HatDesign[] }[] = [
-  ...ROUND3.map((g) => ({ ...g, tag: "round 3" })),
+  { id: "cat", title: "Cat ears · orientation", brief: "Same ears, four ways to wear them — pick one", tag: "round 4", designs: CAT_EARS },
+  { id: "nycap", title: "New York cap · backwards", brief: "Six-panel fitted cap, brim out the back, snap gap at the forehead, NY on the back panel", tag: "round 4", designs: NY_CAPS },
+  { id: "xmas", title: "Christmas", brief: "Pick one", tag: "round 4", designs: XMAS },
+  { id: "halloween", title: "Halloween", brief: "Pick one", tag: "round 4", designs: HALLOWEEN },
   {
     id: "locked", title: "Locked", brief: "Already chosen", tag: "locked",
     designs: [...pick(HEADPHONES, ["h4"]), ...pick(BLACK_GLASSES, ["bg2"]), ...pick(CAPS2, ["mc2"]), { id: "b1r", group: "bow", label: "Satin pink, refined", svg: BOW_B1 }, ...pick(SHADES2, ["s1a"])],
   },
-  { id: "kept", title: "Still on the table", brief: "From earlier rounds, no decision yet", tag: "kept", designs: [...pick(FLOWERS, ["f3"]), ...CROWNS, ...CENTRE] },
+  { id: "kept", title: "Still on the table", brief: "From earlier rounds, no decision yet", tag: "kept", designs: [...ROUND3.flatMap((g) => g.designs).filter((d) => d.group !== "ears"), ...pick(FLOWERS, ["f3"]), ...CROWNS, ...CENTRE] },
 ];
