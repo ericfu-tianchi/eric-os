@@ -1426,10 +1426,12 @@ button { font-family: inherit; color: inherit; }
 .sguide-log .msg.me { align-self: flex-end; background: var(--select); color: #fff; border-bottom-right-radius: 3px; }
 .sguide-log .msg .sguide-cta { display: flex; margin-top: 8px; }
 .sguide-log .chips { padding-top: 2px; }
-.sguide-log .typing { display: flex; gap: 4px; padding: 11px 12px; }
-.sguide-log .typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); animation: sguide-dot 1s infinite; }
-.sguide-log .typing i:nth-child(2) { animation-delay: 0.15s; }
-.sguide-log .typing i:nth-child(3) { animation-delay: 0.3s; }
+.sguide-log .typing { display: flex; align-items: center; gap: 8px; padding: 10px 12px; }
+.sguide-log .typing .dots { display: flex; gap: 4px; }
+.sguide-log .typing .slow { font-size: 12.5px; color: var(--muted); }
+.sguide-log .typing .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); animation: sguide-dot 1s infinite; }
+.sguide-log .typing .dots i:nth-child(2) { animation-delay: 0.15s; }
+.sguide-log .typing .dots i:nth-child(3) { animation-delay: 0.3s; }
 @keyframes sguide-dot { 0%, 60%, 100% { opacity: 0.3; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
 .sguide-chat form { display: flex; gap: 6px; padding: 8px 10px 4px; }
 .sguide-chat input {
@@ -1437,9 +1439,42 @@ button { font-family: inherit; color: inherit; }
   font: inherit; font-size: 13px; color: var(--ink); background: var(--surface); outline: none;
 }
 .sguide-chat input:focus { border-color: var(--select); }
-.sguide-chat form button {
+.sguide-chat form button { display: grid; place-items: center;
   width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%;
   background: var(--select); color: #fff; font-size: 15px; font-weight: 700;
 }
 .sguide-chat form button:disabled { background: var(--hairline); cursor: default; }
 .sguide-chat .fine { margin: 0; padding: 2px 14px 10px; font-size: 10.5px; color: var(--faint); }
+.sguide-chat .fine { display: flex; justify-content: space-between; gap: 8px; }
+.sguide-chat .fine .count { flex: none; color: var(--muted); font-variant-numeric: tabular-nums; }
+.sguide-chat input:disabled { background: var(--surface-2); color: var(--muted); }
+.sguide-retry {
+  display: flex; max-width: 100%; margin-top: 8px; height: 26px; padding: 0 10px; align-items: center; border-radius: 5px;
+  border: 1px solid var(--hairline); background: var(--surface); color: var(--ink); font-size: 12px; font-weight: 600;
+}
+.sguide-retry span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.sguide-retry:hover:not(:disabled) { border-color: var(--ink); }
+.sguide-retry:disabled { color: var(--faint); cursor: default; }
+/* lock: a thin progress line above the input — the snake swallowing / digesting */
+.sguide-lock { height: 3px; margin: 2px 12px 0; border-radius: 2px; background: var(--surface-2); overflow: hidden; }
+.sguide-lock i { display: block; height: 100%; background: var(--gold); transition: width 0.25s linear; }
+.sguide-lock.full i { background: var(--green); }
+.sguide-skip {
+  margin: 8px 10px 0; height: 30px; border: 0; border-radius: 6px; background: rgba(46, 193, 110, 0.12);
+  color: var(--green-deep); font-size: 12.5px; font-weight: 600;
+}
+.sguide-skip:hover { background: rgba(46, 193, 110, 0.2); }
+/* the email card: address, copy, write — the snake's hand-off to the real Tianchi */
+.sguide-mail { margin-top: 9px; padding: 10px; border-radius: 9px; background: var(--surface); border: 1px solid var(--hairline); }
+.sguide-mail .addr { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: var(--ink); user-select: all; }
+.sguide-mail .addr svg { flex: none; color: var(--muted); }
+.sguide-mail .row { display: flex; gap: 6px; margin-top: 9px; }
+.sguide-mail .row button, .sguide-mail .row a {
+  display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 5px;
+  font-size: 12px; font-weight: 600; text-decoration: none; cursor: pointer;
+}
+.sguide-mail .row button { border: 1px solid var(--hairline); background: var(--surface); color: var(--ink); }
+.sguide-mail .row button:hover { border-color: var(--ink); }
+.sguide-mail .row a { background: var(--ink); color: #fff; }
+.sguide-mail .row a:hover { background: #000; }
+.sguide-mail p { margin: 8px 0 0; font-size: 11.5px; color: var(--muted); line-height: 1.4; }

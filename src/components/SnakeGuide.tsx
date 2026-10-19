@@ -4,13 +4,14 @@ import { PixIcon } from "./Pixel";
 import { GREEN, Hat } from "./DesktopSnake";
 import { ASK_GLYPH } from "./snakeHats";
 import { useGridSpec } from "./desktopGrid";
+import { SnakeChat, digestAfterGame, type ChatAction } from "./SnakeChat";
 
 /**
- * SnakeGuide — the wallpaper snake as Eric's sidekick. Its head is a menu:
+ * SnakeGuide — the wallpaper snake as Tianchi's sidekick. Its head is a menu:
  * hover (or tap) it and three thought bubbles pop up — Play / Dress me up /
- * Ask about Eric. Left alone, it now and then thinks ONE of them, in that
+ * Ask about Tianchi. Left alone, it now and then thinks ONE of them, in that
  * bubble's own spot, so the idle hint and the menu are the same thing.
- * Ask opens a chat (POST /api/ask → Workers AI, see worker/).
+ * Ask opens the chat (SnakeChat.tsx).
  *
  * Two layouts on trial; pick with ?guide=arc|cloud (default from VITE_GUIDE):
  *   arc   — three separate clouds fanned over the head, each with its own trail
@@ -21,14 +22,13 @@ import { useGridSpec } from "./desktopGrid";
 type Layout = "arc" | "cloud";
 type Topic = "play" | "dress" | "ask";
 type Panel = null | "chat" | "dress";
-type Action = "play" | "dress" | "resume" | "about" | "school" | "ai" | "email";
-type Msg = { role: "user" | "assistant"; content: string; action?: Action };
+type Action = Exclude<ChatAction, "email">;
 
 const params = new URLSearchParams(window.location.search);
 const LAYOUT: Layout = (params.get("guide") ?? import.meta.env.VITE_GUIDE) === "cloud" ? "cloud" : "arc";
 const FAST = params.has("guidefast");
 
-// Head cell of Eric's "hello" pose: (23, 11) on the 18-row reference, bottom-anchored (see ericBody).
+// Head cell of the "hello" pose: (23, 11) on the 18-row reference, bottom-anchored (see ericBody).
 const HEAD_COL = 23;
 const headRow = (rows: number) => 11 + rows - 16;
 
@@ -40,7 +40,7 @@ const SCHEDULE = FAST
 // Once the visitor has found the menu (hovered it for a beat, or clicked the head or a bubble),
 // the snake stops nudging until the next page load.
 const TOPICS: Topic[] = ["play", "dress", "ask"];
-const CAPTION: Record<Topic, string> = { play: "Play Snake", dress: "Dress me up", ask: "Ask about Eric" };
+const CAPTION: Record<Topic, string> = { play: "Play Snake", dress: "Dress me up", ask: "Ask about Tianchi" };
 
 /** Bubble centres, in cell units from the head's centre (+y = down). Trail dots run from the head to each. */
 const SLOTS: Record<Layout, Record<Topic, { x: number; y: number }>> = {
@@ -48,22 +48,6 @@ const SLOTS: Record<Layout, Record<Topic, { x: number; y: number }>> = {
   cloud: { play: { x: -0.35, y: -2.2 }, dress: { x: 0.85, y: -2.55 }, ask: { x: 2.05, y: -2.2 } },
 };
 
-const ACTION_LABEL: Record<Action, string> = {
-  play: "Play Snake",
-  dress: "Dress me up",
-  resume: "Open resume",
-  about: "Open About Me",
-  school: "See school projects",
-  ai: "See AI projects",
-  email: "Email Eric",
-};
-// Per-visit cap: past this many questions the snake stops calling the model (the Worker also limits per IP).
-const ASK_CAP = 20;
-const CAP_LINE = {
-  en: "I've eaten so many questions I'm too long to move. Play a round of Snake while I digest?",
-  zh: "问题吃太多了，我已经长到动不了了。趁我消化，来一局贪吃蛇？",
-};
-const STARTERS = ["What does Eric do?", "What is he building lately?", "Show me his AI projects"];
 const HATS: { id: SnakeHat; label: string }[] = [
   { id: "none", label: "None" },
   { id: "glasses", label: "Glasses" },
@@ -106,9 +90,8 @@ export function SnakeGuide() {
   const [nudge, setNudge] = useState<Topic | null>(null);
   const [menu, setMenu] = useState(false); // all three bubbles (hover / tap on the head)
   const [panel, setPanel] = useState<Panel>(null);
-  const [msgs, setMsgs] = useState<Msg[]>([]);
-  const [draft, setDraft] = useState("");
-  const [busy, setBusy] = useState(false);
+  // back from a Snake game played while the snake was full: open the chat on the burp
+  useEffect(() => { if (digestAfterGame()) setPanel("chat"); }, []);
   const last = useRef<Topic | null>(null);
   const hovering = useRef(false);
   const closeTimer = useRef(0);
@@ -117,7 +100,6 @@ export function SnakeGuide() {
   const markKnown = () => {
     if (!FAST) knownNow.current = true;
   };
-  const listRef = useRef<HTMLDivElement>(null);
 
   const { cellW, cellH, rows } = spec;
   const hx = HEAD_COL * cellW;
@@ -156,7 +138,6 @@ export function SnakeGuide() {
   }, []);
 
   useEffect(() => { if (covered) { setNudge(null); setMenu(false); } }, [covered]);
-  useEffect(() => { listRef.current?.scrollTo({ top: listRef.current.scrollHeight }); }, [msgs, busy]);
 
   // Hover in → menu; hover out → close after a beat, so the gap between head and bubbles is forgiving.
   const enter = () => {
@@ -184,35 +165,7 @@ export function SnakeGuide() {
     if (a === "about") open("about", { title: "About_Me.md" });
     if (a === "school") open("filesystem", { title: "School Projects", payload: "school" });
     if (a === "ai") open("filesystem", { title: "AI Stuff", payload: "ai" });
-    if (a === "email") window.location.href = "mailto:ericfu-tianchi@outlook.com";
     setPanel(null);
-  }
-
-  async function send(text: string) {
-    const q = text.trim();
-    if (!q || busy) return;
-    const next: Msg[] = [...msgs, { role: "user", content: q }];
-    setMsgs(next);
-    setDraft("");
-    if (next.filter((m) => m.role === "user").length > ASK_CAP) {
-      const zh = /[\u4e00-\u9fff]/.test(q);
-      setMsgs([...next, { role: "assistant", content: zh ? CAP_LINE.zh : CAP_LINE.en, action: "play" }]);
-      return;
-    }
-    setBusy(true);
-    try {
-      const res = await fetch("/api/ask", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ messages: next.map(({ role, content }) => ({ role, content })) }),
-      });
-      const data = (await res.json()) as { reply?: string; action?: Action };
-      setMsgs([...next, { role: "assistant", content: data.reply ?? "Hmm, I lost my train of thought. Try again?", action: data.action }]);
-    } catch {
-      setMsgs([...next, { role: "assistant", content: "I can't reach my brain right now. Try again in a bit?" }]);
-    } finally {
-      setBusy(false);
-    }
   }
 
   // Cards open above the head, nudged left if the screen is narrow; the tail always points at the head.
@@ -303,46 +256,11 @@ export function SnakeGuide() {
       )}
 
       {panel === "chat" && (
-        <div
-          className="sguide-card sguide-chat"
-          style={{ ...anchor, width: cardW, maxHeight: Math.min(420, hy - 24), "--tail": `${tailX}px` } as React.CSSProperties}
-          onPointerDown={(e) => e.stopPropagation()}
-        >
-          <header>
-            <b>Ask the snake</b>
-            <span className="tag">about Eric</span>
-            <button type="button" className="sguide-x" aria-label="Close" onClick={() => setPanel(null)}>×</button>
-          </header>
-          <div className="sguide-log" ref={listRef}>
-            <div className="msg bot">Hi! I live on Eric's desktop and know his work inside out. Ask me anything.</div>
-            {msgs.map((m, i) => (
-              <div key={i} className={`msg ${m.role === "user" ? "me" : "bot"}`}>
-                {m.content}
-                {m.action && (
-                  <button type="button" className="sguide-cta" onClick={() => act(m.action!)}>{ACTION_LABEL[m.action]} →</button>
-                )}
-              </div>
-            ))}
-            {busy && <div className="msg bot typing"><i /><i /><i /></div>}
-            {msgs.length === 0 && (
-              <div className="chips">
-                {STARTERS.map((s) => <button type="button" key={s} onClick={() => send(s)}>{s}</button>)}
-              </div>
-            )}
-          </div>
-          <form onSubmit={(e) => { e.preventDefault(); void send(draft); }}>
-            <input
-              autoFocus
-              value={draft}
-              maxLength={300}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder="Ask anything about Eric…"
-              aria-label="Your question"
-            />
-            <button type="submit" disabled={!draft.trim() || busy} aria-label="Send">↑</button>
-          </form>
-          <p className="fine">AI answers can be wrong. Built on Cloudflare Workers AI.</p>
-        </div>
+        <SnakeChat
+          style={{ ...anchor, width: cardW, maxHeight: Math.min(440, hy - 24), "--tail": `${tailX}px` } as React.CSSProperties}
+          onAct={act}
+          onClose={() => setPanel(null)}
+        />
       )}
     </div>
   );
