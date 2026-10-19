@@ -1,7 +1,11 @@
 {
   "name": "tianchi-os",
   "compatibility_date": "2026-10-01",
-  "assets": { "directory": "./dist" },
+  "main": "./worker/index.ts",
+  "assets": { "directory": "./dist", "binding": "ASSETS", "run_worker_first": ["/api/*"] },
+  "ai": { "binding": "AI" },
+  // Preview URLs let each trial build live at its own *.workers.dev address without touching tianchifu.com
+  "preview_urls": true,
   "routes": [
     { "pattern": "tianchifu.com", "custom_domain": true },
     { "pattern": "www.tianchifu.com", "custom_domain": true }

@@ -18,6 +18,7 @@ import {
   type GridSpec,
 } from "./desktopGrid";
 import { DesktopSnake } from "./DesktopSnake";
+import { SnakeGuide } from "./SnakeGuide";
 
 type Point = { x: number; y: number };
 type Marquee = { start: Point; end: Point };
@@ -310,6 +311,7 @@ export function Desktop({ children }: { children?: React.ReactNode }) {
     >
       <div className="gridlayer" aria-hidden />
       {!snakeMode && wallpaper !== "clean" && <DesktopSnake frozen />}
+      {!snakeMode && wallpaper !== "clean" && <SnakeGuide />}
       {!snakeMode && ICONS.map((icon) => (
         <DesktopIcon
           key={icon.key}

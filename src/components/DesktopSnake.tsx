@@ -14,7 +14,7 @@ import { readSnakeRecord, writeSnakeRecord, type SnakeRecord } from "../data/sna
  * swallowed icons keep their original look and ride at a fixed distance
  * behind the head (newest closest). ESC exits. Dev QA: ?snakedemo=1.
  */
-const GREEN = "#06C268";
+export const GREEN = "#06C268";
 const TONGUE = "#F04E38";
 
 // Eric's hand-drawn "hello" — FINAL (pose-drafts/hello-eric-v4.json, 84 cells, verbatim).
@@ -73,7 +73,7 @@ function IconOnCell({ name, x, y, size }: { name: PixIconName; x: number; y: num
 }
 
 /** top-down hats, drawn in head-local coords (origin = head center, +x = facing) */
-function Hat({ hat, cw, ch, er }: { hat: SnakeHat; cw: number; ch: number; er: number }) {
+export function Hat({ hat, cw, ch, er }: { hat: SnakeHat; cw: number; ch: number; er: number }) {
   if (hat === "none") return null;
   if (hat === "glasses") {
     const a = cw / 2 - er * 1.5, b = ch * 0.21, r = er * 1.42, sw = Math.max(1.6, er * 0.22), dk = "#1b1c1f";
