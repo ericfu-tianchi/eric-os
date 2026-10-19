@@ -6,6 +6,7 @@ import { neurobot } from "./cases/neurobot";
 import { connectr } from "./cases/connectr";
 import { subtension } from "./cases/subtension";
 import { rutabagga } from "./cases/rutabagga";
+import { refugeeone } from "./cases/refugeeone";
 
 /**
  * Full case-study content, migrated verbatim from tianchi-fu.com, built natively
@@ -41,6 +42,7 @@ export interface CaseStudy {
 export const CASES: Record<string, CaseStudy> = {
   ...EXTRA,
   homesoffcampus, neurobot, connectr, subtension, rutabagga,
+  ...(refugeeone.sections.length ? { refugeeone } : {}),
   "lego-world": {
     accent: "#c91a09",
     sub: "Every country I've been to, rebuilt in real LEGO bricks.",
