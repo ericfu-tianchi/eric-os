@@ -75,7 +75,7 @@ rail; no poster → the solid accent hero; no process → no process section.
 |---|---|---|---|---|
 | Section title `<Overview/>` | Montserrat | 28 / 1.4 | 700 | `#494949`, centered |
 | Label `QUICK BACKGROUND` | Montserrat | 18 / 1.4, uppercase | 700 | accent |
-| Sub-heading `>> Problem` | Montserrat | 22 / 1.4 | 700 | accent |
+| Sub-heading ■ Problem | Montserrat | 22 / 1.4 | 700 | `#181818`, led by a 9px accent square (12px gap) |
 | Body | Source Sans Pro | 16 / 1.7 | 400 | `#181818` |
 | Lead / quote / callout text | Source Sans Pro | 19–20 / 1.7 | 400 | `#181818` (white in callouts) |
 | Feature title | Montserrat | 28 / 1.3 | 700 | accent |
@@ -105,10 +105,12 @@ Whitespace is the design. When unsure, add space rather than a divider line.
 
 ## 4. Color
 
+- **Every page gets an accent.** If Eric names one, use it; otherwise pick the one that best
+  fits the subject (a brand or signature color of the thing itself, e.g. LEGO brick red) and say so.
 - **One accent per project** (`accent` in the case data), taken from the old site where
   one exists: HomesOffCampus `#4f7cac`, Neurobot `#ff9d1f`, Connectr `#04dac6`,
   Rutabagga `#764c99`, Huawei `#e71b23`, ECE `#0c2649`, Hand-coded site `#494949`.
-- The accent is used only for: labels, `>>` sub-headings, meta labels, stat numbers,
+- The accent is used only for: labels, the sub-heading square, meta labels, stat numbers,
   feature titles, the callout band, the pill button, the active nav dot.
 - Highlights use a 16% tint of the accent (`--cs-tint`); findings panels use the same tint.
 - Everything else is grayscale. No second accent, no gradients.
@@ -121,11 +123,11 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | Block | Renders as | Use when |
 |---|---|---|
 | `h` | Label, uppercase accent | Starting a topic: Quick Background, Persona, Design Preview |
-| `sub` | `>> Sub-heading` | Steps inside a topic: >> Problem, >> Goal |
+| `sub` | ■ Sub-heading (pixel square + ink text) | Steps inside a topic: Problem, Goal |
 | `p` | Body paragraph | Default text. Keep to 2–4 lines in the column. |
 | `callout` | Full accent band, white 19px text | The one problem statement per page (max 1–2 per page) |
 | `quote` | Statement between corner brackets | A definition: problem statement, design principle |
-| `list` | Bullets in a tinted panel | Research findings, interview insights |
+| `list` | Bullets in a tinted panel; `plain: true` for ordinary bullets | Panel only when the findings deserve emphasis; most lists are plain |
 | `stat` | Big accent number + label | A number that proves the point |
 | `feature` | Screenshot + title + text, sides alternate | Showcasing screens, features or a gallery of results |
 | `step` | Auto-numbered 01, 02 … with title + text, hairline rules | How-to sequences and pipelines |

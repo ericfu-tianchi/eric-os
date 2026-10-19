@@ -837,7 +837,8 @@ button { font-family: inherit; color: inherit; }
 }
 
 .cs-label { margin: 64px 0 20px; font-family: var(--font-display); font-weight: 700; font-size: 18px; line-height: 1.4; text-transform: uppercase; color: var(--cs); }
-.cs-sub { margin: 48px 0 18px; font-family: var(--font-display); font-weight: 700; font-size: 22px; line-height: 1.4; color: var(--cs); }
+.cs-sub { display: flex; align-items: center; gap: 12px; margin: 48px 0 18px; font-family: var(--font-display); font-weight: 700; font-size: 22px; line-height: 1.4; color: #181818; }
+.cs-sub::before { content: ""; flex: none; width: 9px; height: 9px; background: var(--cs); transform: translateY(1px); }
 .cs-p { margin: 0 0 18px; font-family: var(--font-sans); font-size: 16px; line-height: 1.7; color: #181818; }
 .cs mark { background: var(--cs-tint); color: inherit; padding: 1px 0; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 .cs b { font-weight: 700; }
@@ -854,6 +855,7 @@ button { font-family: inherit; color: inherit; }
 
 .cs-list { list-style: disc; margin: 32px 0; padding: 28px 32px 28px 52px; background: var(--cs-tint); font-family: var(--font-sans); font-size: 16px; line-height: 1.7; color: #333; }
 .cs-list li + li { margin-top: 14px; }
+.cs-list.plain { padding: 0 0 0 22px; background: none; color: #181818; }
 .cs-list mark { background: rgba(255, 255, 255, 0.7); }
 
 .cs-stat { display: flex; align-items: baseline; gap: 16px; margin: 0 0 12px; }

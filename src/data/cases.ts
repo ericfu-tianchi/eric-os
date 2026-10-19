@@ -12,10 +12,10 @@ import { EXTRA } from "./casesContent";
 export type CaseBlock =
   | { t: "p"; text: string }
   | { t: "h"; text: string } // label, e.g. "QUICK BACKGROUND"
-  | { t: "sub"; text: string } // sub-heading, rendered ">> Problem"
+  | { t: "sub"; text: string } // sub-heading, ink with a pixel-square marker
   | { t: "callout"; label?: string; text: string } // full-width accent band
   | { t: "quote"; text: string } // key statement between corner brackets
-  | { t: "list"; items: string[] } // findings in a tinted panel
+  | { t: "list"; items: string[]; plain?: boolean } // bullets; tinted panel unless plain
   | { t: "stat"; value: string; label: string } // big-number highlight
   | { t: "feature"; src: string; title: string; text: string } // screen + caption, sides alternate
   | { t: "step"; title: string; text: string } // numbered step (01, 02 …) for how-to sequences

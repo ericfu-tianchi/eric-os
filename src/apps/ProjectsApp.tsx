@@ -91,12 +91,12 @@ function Rich({ text }: { text: string }) {
 function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number }) {
   if (b.t === "p") return <p className="cs-p"><Rich text={b.text} /></p>;
   if (b.t === "h") return <h3 className="cs-label">{b.text}</h3>;
-  if (b.t === "sub") return <h4 className="cs-sub">&gt;&gt; {b.text}</h4>;
+  if (b.t === "sub") return <h4 className="cs-sub">{b.text}</h4>;
   if (b.t === "callout")
     return <div className="cs-callout">{b.label && <p className="cs-callout-label">{b.label}</p>}<p><Rich text={b.text} /></p></div>;
   if (b.t === "quote") return <blockquote className="cs-quote"><Rich text={b.text} /></blockquote>;
   if (b.t === "list")
-    return <ul className="cs-list">{b.items.map((item, i) => <li key={i}><Rich text={item} /></li>)}</ul>;
+    return <ul className={`cs-list ${b.plain ? "plain" : ""}`}>{b.items.map((item, i) => <li key={i}><Rich text={item} /></li>)}</ul>;
   if (b.t === "step")
     return <div className="cs-step"><span className="n">{String(n).padStart(2, "0")}</span><div><h4>{b.title}</h4><p><Rich text={b.text} /></p></div></div>;
   if (b.t === "stat")
