@@ -14,7 +14,7 @@ export type CaseBlock =
   | { t: "h"; text: string } // label, e.g. "QUICK BACKGROUND"
   | { t: "sub"; text: string } // sub-heading, ink with a pixel-square marker
   | { t: "callout"; label?: string; text: string } // full-width accent band
-  | { t: "quote"; text: string } // key statement between corner brackets
+  | { t: "quote"; text: string } // pull quote: centered, between two short hairlines
   | { t: "list"; items: string[]; plain?: boolean } // bullets; tinted panel unless plain
   | { t: "stat"; value: string; label: string } // big-number highlight
   | { t: "feature"; src: string; title: string; text: string } // screen + caption, sides alternate

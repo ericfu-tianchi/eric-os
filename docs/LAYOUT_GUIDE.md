@@ -126,7 +126,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `sub` | ■ Sub-heading (pixel square + ink text) | Steps inside a topic: Problem, Goal |
 | `p` | Body paragraph | Default text. Keep to 2–4 lines in the column. |
 | `callout` | Full accent band, white 19px text | The one problem statement per page (max 1–2 per page) |
-| `quote` | Statement between corner brackets | A definition: problem statement, design principle |
+| `quote` | Pull quote: centered, 20px weight 600, two 48px hairlines above and below | A definition: problem statement, design principle |
 | `list` | Bullets in a tinted panel; `plain: true` for ordinary bullets | Panel only when the findings deserve emphasis; most lists are plain |
 | `stat` | Big accent number + label | A number that proves the point |
 | `feature` | Screenshot + title + text, sides alternate | Showcasing screens, features or a gallery of results |

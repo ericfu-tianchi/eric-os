@@ -848,10 +848,10 @@ button { font-family: inherit; color: inherit; }
 .cs-callout p:last-child { margin: 0; font-family: var(--font-sans); font-size: 19px; line-height: 1.7; }
 .cs-callout mark { background: rgba(0, 0, 0, 0.22); color: #fff; }
 
-.cs-quote { position: relative; margin: 48px auto; max-width: 680px; padding: 20px 36px; font-family: var(--font-sans); font-size: 20px; line-height: 1.7; color: #181818; }
-.cs-quote::before, .cs-quote::after { content: ""; position: absolute; width: 18px; height: 18px; border: 0 solid #494949; }
-.cs-quote::before { top: 0; left: 0; border-top-width: 5px; border-left-width: 5px; }
-.cs-quote::after { bottom: 0; right: 0; border-bottom-width: 5px; border-right-width: 5px; }
+.cs-quote { margin: 56px auto; max-width: 680px; padding: 0 8px; text-align: center; font-family: var(--font-sans); font-weight: 600; font-size: 20px; line-height: 1.6; color: #181818; text-wrap: balance; }
+.cs-quote::before, .cs-quote::after { content: ""; display: block; width: 48px; height: 1px; margin: 0 auto; background: #494949; }
+.cs-quote::before { margin-bottom: 22px; }
+.cs-quote::after { margin-top: 22px; }
 
 .cs-list { list-style: disc; margin: 32px 0; padding: 28px 32px 28px 52px; background: var(--cs-tint); font-family: var(--font-sans); font-size: 16px; line-height: 1.7; color: #333; }
 .cs-list li + li { margin-top: 14px; }
