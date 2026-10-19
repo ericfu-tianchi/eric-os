@@ -1346,50 +1346,42 @@ button { font-family: inherit; color: inherit; }
 .sguide-cta:hover { background: #000; }
 @keyframes sguide-pop { from { opacity: 0; transform: translateY(-100%) scale(0.6); } to { opacity: 1; transform: translateY(-100%) scale(1); } }
 
-/* a · Talk — speech bubble, tail down-left to the head */
-.sguide-say {
-  position: absolute; transform: translateY(-100%); transform-origin: 0 100%;
-  width: max-content; max-width: 236px; padding: 12px 30px 12px 14px;
-  background: var(--surface); color: var(--ink); border-radius: 12px 12px 12px 3px;
-  box-shadow: var(--soft-l); animation: sguide-pop 0.34s cubic-bezier(0.2, 1.5, 0.5, 1) both;
+/* the head is a menu: thought bubbles fan out from it (all three on hover, one at a time when idle) */
+.sguide-zone { position: absolute; width: 0; height: 0; }
+.sguide-zone > button.sguide-head { position: absolute; }
+.sguide-dot, .sguide-bubble { position: absolute; transform: translate(-50%, -50%); }
+.sguide-dot {
+  border-radius: 50%; background: var(--surface); box-shadow: var(--soft-m);
+  animation: sguide-in 0.22s cubic-bezier(0.2, 1.6, 0.5, 1) both;
 }
-.sguide-say::after {
-  content: ""; position: absolute; left: 0; bottom: -7px; width: 12px; height: 8px;
-  background: var(--surface); clip-path: polygon(0 0, 100% 0, 0 100%);
-}
-.sguide-say p { margin: 0 0 10px; font-size: 13.5px; line-height: 1.4; font-weight: 500; }
-
-/* b · Think — thought cloud holding one icon; caption on hover */
-.sguide-think {
-  position: absolute; transform: translateY(-100%); transform-origin: 0 100%;
-  width: 78px; height: 92px; padding: 0; border: 0; background: none;
-  animation: sguide-pop 0.36s cubic-bezier(0.2, 1.7, 0.5, 1) both;
-}
-.sguide-think i { position: absolute; border-radius: 50%; background: var(--surface); box-shadow: var(--soft-m); }
-.sguide-think .d1 { left: 2px; bottom: 2px; width: 8px; height: 8px; }
-.sguide-think .d2 { left: 12px; bottom: 14px; width: 13px; height: 13px; }
-.sguide-think .cloud {
-  position: absolute; left: 14px; top: 0; width: 64px; height: 56px; border-radius: 50%;
+.sguide-bubble {
+  width: 60px; height: 52px; padding: 0; border: 0; border-radius: 50%;
   display: grid; place-items: center; background: var(--surface); box-shadow: var(--soft-l);
-  transition: transform 0.15s;
+  animation: sguide-in 0.34s cubic-bezier(0.2, 1.7, 0.5, 1) both;
+  transition: scale 0.15s;
 }
-.sguide-think:hover .cloud { transform: scale(1.08); }
-.sguide-think .q { font-family: var(--font-display); font-weight: 800; font-size: 30px; color: var(--gold); line-height: 1; }
-.sguide-think .cycle { position: relative; width: 34px; height: 34px; }
-.sguide-think .cycle svg { position: absolute; inset: 0; opacity: 0; animation: sguide-cycle 4s steps(1) infinite; }
-.sguide-think .cycle svg:nth-child(2) { animation-delay: 0.8s; }
-.sguide-think .cycle svg:nth-child(3) { animation-delay: 1.6s; }
-.sguide-think .cycle svg:nth-child(4) { animation-delay: 2.4s; }
-.sguide-think .cycle svg:nth-child(5) { animation-delay: 3.2s; }
+.sguide-bubble:hover { scale: 1.1; z-index: 1; }
+@keyframes sguide-in { from { opacity: 0; scale: 0.3; } to { opacity: 1; scale: 1; } }
+/* cloud: the three lobes share one shadow so they read as a single thought */
+.sguide-zone.cloud { filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.22)) drop-shadow(0 14px 22px rgba(0, 0, 0, 0.35)); }
+.cloud .sguide-bubble, .cloud .sguide-dot { box-shadow: none; }
+.cloud .sguide-bubble { width: 62px; height: 56px; }
+.sguide-bubble .q { font-family: var(--font-display); font-weight: 800; font-size: 28px; color: var(--gold); line-height: 1; }
+.sguide-bubble .cycle { position: relative; width: 32px; height: 32px; }
+.sguide-bubble .cycle svg { position: absolute; inset: 0; opacity: 0; animation: sguide-cycle 4s steps(1) infinite; }
+.sguide-bubble .cycle svg:nth-child(2) { animation-delay: 0.8s; }
+.sguide-bubble .cycle svg:nth-child(3) { animation-delay: 1.6s; }
+.sguide-bubble .cycle svg:nth-child(4) { animation-delay: 2.4s; }
+.sguide-bubble .cycle svg:nth-child(5) { animation-delay: 3.2s; }
 @keyframes sguide-cycle { 0% { opacity: 1; } 20%, 100% { opacity: 0; } }
-.sguide-think .cap {
-  position: absolute; left: 46px; top: -30px; transform: translateX(-50%); white-space: nowrap;
+.sguide-bubble .cap {
+  position: absolute; left: 50%; bottom: calc(100% + 6px); translate: -50% 0; white-space: nowrap;
   padding: 3px 8px; border-radius: 4px; background: #000; color: #fff; font-size: 11.5px; font-weight: 600;
-  opacity: 0; transition: opacity 0.12s;
+  opacity: 0; transition: opacity 0.12s; pointer-events: none;
 }
-.sguide-think:hover .cap { opacity: 1; }
+.sguide-bubble:hover .cap { opacity: 1; }
 
-/* shared card (c · Hello, dress picker, chat) — opens above the head, tail at --tail */
+/* shared card (dress picker, chat) — opens above the head, tail at --tail */
 .sguide-card {
   position: absolute; transform: translateY(-100%); transform-origin: var(--tail) 100%;
   display: flex; flex-direction: column;
@@ -1409,16 +1401,13 @@ button { font-family: inherit; color: inherit; }
   background: var(--surface); color: var(--ink); font-size: 12px; font-weight: 500;
 }
 .sguide .chips button:hover { border-color: var(--ink); }
-.sguide-hello { width: 252px; padding: 14px; }
-.sguide-hello .hi { margin: 0; font-size: 14px; font-weight: 700; }
-.sguide-hello .sub { margin: 2px 0 12px; font-size: 12.5px; color: var(--muted); }
 
 .sguide-hats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 10px; }
 .sguide-hats button {
   display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px 7px;
-  border: 1px solid transparent; border-radius: 6px; background: none; color: var(--muted); font-size: 11.5px;
+  border: 1px solid transparent; border-radius: 6px; background: var(--surface-2); color: var(--muted); font-size: 11.5px;
 }
-.sguide-hats button:hover { background: var(--surface-2); }
+.sguide-hats button:hover { background: #ebebef; }
 .sguide-hats button.on { border-color: var(--select); color: var(--ink); background: rgba(10, 100, 224, 0.06); }
 .sguide-card footer {
   display: flex; justify-content: space-between; align-items: center; padding: 9px 14px 11px;
