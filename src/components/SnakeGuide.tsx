@@ -33,7 +33,7 @@ const headRow = (rows: number) => 11 + rows - 16;
 
 const SCHEDULE = FAST
   ? { first: [2, 3], gap: [5, 6], show: 5, max: 6 }
-  : { first: [5, 10], gap: [50, 60], show: 9, max: 5 };
+  : { first: [5, 10], gap: [25, 35], show: 9, max: 5 };
 
 // Once a visitor has found the menu (hovered it for a beat, or clicked the head or a bubble),
 // the snake stops nudging for the rest of the visit, and on later visits nudges only once.

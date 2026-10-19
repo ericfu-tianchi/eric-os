@@ -342,12 +342,209 @@ const FLOWERS: HatDesign[] = [
   },
 ];
 
-export const HAT_GROUPS: { id: string; title: string; brief: string; designs: HatDesign[] }[] = [
-  { id: "glasses", title: "Glasses", brief: "Art-house frames — pick one", designs: GLASSES },
-  { id: "headphones", title: "Headphones", brief: "Redesigned: real cups, cushions, a proper band", designs: HEADPHONES },
-  { id: "cap", title: "Grad cap", brief: "University of Michigan block M, nothing clipped", designs: CAPS },
-  { id: "bow", title: "Bow", brief: "Four new bows", designs: BOWS },
-  { id: "crown", title: "New · Crown", brief: "King snake", designs: CROWNS },
-  { id: "shades", title: "New · Shades", brief: "Cool eyewear — hides the eyes", designs: SHADES },
-  { id: "flower", title: "New · Flowers", brief: "Something growing on the head", designs: FLOWERS },
+/* ═════════════════════════ Round 2 ═════════════════════════ */
+
+/* ── Black glasses ── */
+const BLK = "#141416";
+const blackHi = (r: number) => [-1, 1].map((s) => `<path d="M${EYE_X - r * 0.95} ${s * EYE_Y - r * 0.3} A${r} ${r} 0 0 1 ${EYE_X - r * 0.3} ${s * EYE_Y - r * 0.95}" fill="none" stroke="rgba(255,255,255,.28)" stroke-width=".8" stroke-linecap="round"/>`).join("");
+const BLACK_GLASSES: HatDesign[] = [
+  {
+    id: "bg1", group: "glasses", label: "Black wire round", note: "Thin black wire, keyhole bridge — the quiet one",
+    svg: `${arms(BLK, 1.4, 16.6)}${lensTint(7.4)}
+      ${[-1, 1].map((s) => `<circle cx="${EYE_X}" cy="${s * EYE_Y}" r="7.4" fill="none" stroke="${BLK}" stroke-width="1.6"/>`).join("")}
+      <path d="M${EYE_X + 2.6} -2.3 q 2.6 2.3 0 4.6" fill="none" stroke="${BLK}" stroke-width="1.5" stroke-linecap="round"/>${glint(7.4)}`,
+  },
+  {
+    id: "bg2", group: "glasses", label: "Black acetate round", note: "Chunky matte round, a soft sheen on the rim",
+    svg: `${arms(BLK, 2.4, 17)}${lensTint(7)}
+      ${[-1, 1].map((s) => `<circle cx="${EYE_X}" cy="${s * EYE_Y}" r="7.5" fill="none" stroke="${BLK}" stroke-width="3"/>`).join("")}${blackHi(7.5)}
+      <rect x="${EYE_X - 1.4}" y="-2.4" width="2.8" height="4.8" rx="1.2" fill="${BLK}"/>${glint(6.6)}`,
+  },
+  {
+    id: "bg3", group: "glasses", label: "Black rounded square", note: "Soft-square optical frame, a bit studio",
+    svg: `${arms(BLK, 2.2, 17.2)}
+      ${[-1, 1].map((s) => `<rect x="${EYE_X - 7.4}" y="${s * EYE_Y - 7.4}" width="14.8" height="14.8" rx="4.6" fill="rgba(255,255,255,.16)" stroke="${BLK}" stroke-width="2.6"/>`).join("")}
+      <rect x="${EYE_X - 1.3}" y="-2.2" width="2.6" height="4.4" rx="1" fill="${BLK}"/>${glint(6.6)}`,
+  },
+  {
+    id: "bg4", group: "glasses", label: "Black octagon", note: "Faceted thin frame",
+    svg: `${arms(BLK, 1.4, 16.4)}${lensTint(7.2)}
+      ${[-1, 1].map((s) => `<polygon points="${octagon(EYE_X, s * EYE_Y, 7.8)}" fill="none" stroke="${BLK}" stroke-width="1.7" stroke-linejoin="round"/>`).join("")}
+      <path d="M${EYE_X + 1.8} -2.6 L${EYE_X + 1.8} 2.6" stroke="${BLK}" stroke-width="1.5" stroke-linecap="round"/>${glint(7)}`,
+  },
+  {
+    id: "bg5", group: "glasses", label: "Black oversized", note: "Big round lenses, thick rim — bookish",
+    svg: `${arms(BLK, 2.4, 18.4)}${lensTint(8.4)}
+      ${[-1, 1].map((s) => `<circle cx="${EYE_X - 0.4}" cy="${s * 9.8}" r="8.6" fill="none" stroke="${BLK}" stroke-width="2.6"/>`).join("")}
+      <path d="M${EYE_X - 0.4} -1.2 L${EYE_X - 0.4} 1.2" stroke="${BLK}" stroke-width="2.6"/>${glint(7.6)}`,
+  },
+];
+
+/* ── Michigan cap, round 2: diamond board, M centred, tassel kept clear of it ── */
+const capBoard = (fill: string, edge = "rgba(255,255,255,.2)") =>
+  `<polygon points="-5,-20 15,0 -5,20 -25,0" fill="${fill}" stroke="${edge}" stroke-width="1.1" stroke-linejoin="round"/>`;
+// tassel that drapes over the board's side corner (-5, 20): only a short cord shows, then it hangs off
+const sideTassel = (cord: string, hang: string, knot: string) =>
+  `<path d="M-8.5 16.5 L-5 20" stroke="${cord}" stroke-width="1.4" stroke-linecap="round"/>
+   <rect x="-6.6" y="19.6" width="3.2" height="2.2" rx="1" fill="${knot}"/><path d="M-6.4 21.6 h2.8 l.6 7.2 h-4 z" fill="${hang}"/>`;
+const M = (ang: number, x: number, s: number, fill: string) => `<path d="${BLOCK_M}" transform="translate(${x} 0) rotate(${-ang}) scale(${s})" fill="${fill}"/>`;
+const CAPS2: HatDesign[] = [
+  {
+    id: "mc1", group: "cap", label: "Black + maize M", note: "U-M caps are black; maize M dead centre, tassel over the side corner",
+    svg: (ang) => `${capBoard("#16171A")}${M(ang, -5, 0.86, MAIZE)}${sideTassel(MAIZE, MAIZE, "#E0A800")}`,
+  },
+  {
+    id: "mc2", group: "cap", label: "Navy + inset line", note: "Michigan blue board, maize keyline, M centred",
+    svg: (ang) => `${capBoard(NAVY)}<polygon points="-5,-15.6 10.6,0 -5,15.6 -20.6,0" fill="none" stroke="${MAIZE}" stroke-width=".9" stroke-linejoin="round"/>${M(ang, -5, 0.74, MAIZE)}${sideTassel(MAIZE, MAIZE, "#E0A800")}`,
+  },
+  {
+    id: "mc3", group: "cap", label: "Button + M up front", note: "Real cap layout: centre button, M in the front half, cord runs back",
+    svg: (ang) => `${capBoard("#16171A")}
+      <path d="M-5 0 L-18 0" stroke="${MAIZE}" stroke-width="1.4" stroke-linecap="round"/><circle cx="-5" cy="0" r="1.9" fill="${MAIZE}"/>
+      <rect x="-27.2" y="-1.6" width="2.2" height="3.2" rx="1" fill="#E0A800"/><path d="M-25.2 -1.4 v2.8 l-7.4 .6 v-4 z" fill="${MAIZE}"/>
+      ${M(ang, 4.6, 0.52, MAIZE)}`,
+  },
+  {
+    id: "mc4", group: "cap", label: "Maize + blue M", note: "Inverted Go Blue: maize board, navy M and tassel",
+    svg: (ang) => `${capBoard(MAIZE, "rgba(0,0,0,.18)")}${M(ang, -5, 0.86, NAVY)}${sideTassel(NAVY, NAVY, "#001B36")}`,
+  },
+];
+
+/* ── Bow B1, refined: every highlight and fold is clipped inside its loop ── */
+const LOOP = (s: number) => `M0 0 C${s * 4} -9.5 ${s * 13.5} -10.5 ${s * 13.5} -3 C${s * 13.5} 4 ${s * 4.5} 5 0 0Z`;
+const BOW_B1 = `<defs>${[-1, 1].map((s) => `<clipPath id="snk-bow${s}"><path d="${LOOP(s)}"/></clipPath>`).join("")}</defs>
+  <g transform="translate(-7 -14) rotate(-20)">
+    <path d="M-1.2 1.2 L-5.4 11.2 L-3.3 10.2 L-2.2 12.6 L1.4 2.2Z" fill="#D63A69"/>
+    <path d="M1.2 1.2 L5 11.4 L2.9 10.5 L1.9 12.8 L-1.2 2.2Z" fill="#FF5C8A"/>
+    ${[-1, 1].map((s) => `<path d="${LOOP(s)}" fill="#FF5C8A"/>
+      <g clip-path="url(#snk-bow${s})">
+        <path d="M0 0 C${s * 3} -5.4 ${s * 8.4} -6 ${s * 9} -2.2 C${s * 9} 1.6 ${s * 3.6} 2.4 0 0Z" fill="#E2477A"/>
+        <path d="M${s * 4.6} -6.4 C${s * 7.6} -7.6 ${s * 10.6} -6.8 ${s * 11.8} -4.2" fill="none" stroke="#FFB3C8" stroke-width="1.3" stroke-linecap="round"/>
+      </g>`).join("")}
+    <rect x="-2.7" y="-3.3" width="5.4" height="6.6" rx="1.9" fill="#E84677"/>
+    <path d="M-1 -2 Q0 0 -1 2" fill="none" stroke="#C72E61" stroke-width=".8" stroke-linecap="round"/>
+  </g>`;
+
+/* ── Pixel shades: drawn as front-view rows, laid across the eyes (row → back-to-front, col → across) ── */
+function memeShades(rows: string[], u: number, palette: Record<string, string>, armColor: string) {
+  const w = rows[0].length * u, x0 = 19.6 - rows.length * u; // front edge flush with the eyes' front
+  let out = "";
+  rows.forEach((row, r) => {
+    for (let c = 0; c < row.length; c++) {
+      const col = palette[row[c]];
+      if (col) out += `<rect x="${x0 + r * u}" y="${-w / 2 + c * u}" width="${u + 0.02}" height="${u + 0.02}" fill="${col}"/>`;
+    }
+  });
+  const arm = [-1, 1].map((s) => `<rect x="-5" y="${s > 0 ? w / 2 - u : -w / 2}" width="${x0 + 5}" height="${u}" fill="${armColor}"/>`).join("");
+  return `<g shape-rendering="crispEdges">${arm}${out}</g>`;
+}
+const PK = { K: "#0E0E10", W: "#ffffff", G: "#34353B" };
+const LENS = [
+  "KKKKKKKKKKKKKKKKKKKKK",
+  ".KWKKKKKKK.KWKKKKKKK.",
+  ".KKWKKKKKK.KKWKKKKKK.",
+  ".KKKKKKKKK.KKKKKKKKK.",
+  "..KKKKKKK...KKKKKKK..",
+  "...KKKKK.....KKKKK...",
+];
+const SHADES2: HatDesign[] = [
+  { id: "s1a", group: "shades", label: "Classic", note: "The meme proportions, lenses fully over the eyes", svg: memeShades(LENS, 2, PK, PK.K) },
+  {
+    id: "s1b", group: "shades", label: "Oversized", note: "Bigger pixels, a touch wider than the head — loud",
+    svg: memeShades(LENS.map((r, i) => (i === 1 ? r.replace(/KWK/g, "WWK") : r)), 2.3, PK, PK.K),
+  },
+  { id: "s1c", group: "shades", label: "Two-tone", note: "Graphite lower rows for depth", svg: memeShades(LENS.map((r, i) => (i >= 4 ? r.replace(/K/g, "G") : r)), 2, PK, PK.K) },
+  {
+    id: "s1d", group: "shades", label: "Mirror", note: "Rows fade ink → steel, like a mirrored lens",
+    svg: memeShades(LENS.map((r, i) => (i === 0 ? r : r.replace(/K/g, "KKSSTT"[i] ?? "K"))), 2, { ...PK, S: "#2B3442", T: "#4A5A70" }, PK.K),
+  },
+];
+
+/* ── Symmetric, dead-centre pieces (seen from above, mirror-symmetric) ── */
+const C0 = -3; // a touch behind centre so the eyes stay clear
+const spin = (dur: number) => `<animateTransform attributeName="transform" type="rotate" from="0 ${C0} 0" to="360 ${C0} 0" dur="${dur}s" repeatCount="indefinite"/>`;
+function propeller(wedges: string[], blade: string, hub: string, rim: string) {
+  const n = wedges.length, r = 14.5;
+  const seg = wedges.map((c, i) => {
+    const a0 = (i / n) * 2 * Math.PI - Math.PI / 2, a1 = ((i + 1) / n) * 2 * Math.PI - Math.PI / 2;
+    const p = (a: number) => `${(C0 + r * Math.cos(a)).toFixed(2)} ${(r * Math.sin(a)).toFixed(2)}`;
+    return `<path d="M${C0} 0 L${p(a0)} A${r} ${r} 0 0 1 ${p(a1)}Z" fill="${c}"/>`;
+  }).join("");
+  return `${seg}<circle cx="${C0}" cy="0" r="${r}" fill="none" stroke="${rim}" stroke-width="1.2"/>
+    <g>${spin(1.4)}<ellipse cx="${C0 - 7}" cy="0" rx="7" ry="2.5" fill="${blade}"/><ellipse cx="${C0 + 7}" cy="0" rx="7" ry="2.5" fill="${blade}"/></g>
+    <circle cx="${C0}" cy="0" r="2.6" fill="${hub}"/>`;
+}
+const leaf = (x: number, y: number, rot: number, fill: string) => `<ellipse cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" rx="3.8" ry="1.7" transform="rotate(${rot.toFixed(1)} ${x.toFixed(2)} ${y.toFixed(2)})" fill="${fill}"/>`;
+// laurel: two mirrored branches around the head, open at the front (+x) where the eyes are
+function laurel(fill: string, dark: string, R = 24) {
+  let out = "";
+  for (const s of [-1, 1]) {
+    out += `<path d="M${(C0 + R * Math.cos(Math.PI * 0.97)).toFixed(2)} ${(s * R * Math.sin(Math.PI * 0.97)).toFixed(2)} A${R} ${R} 0 0 ${s > 0 ? 0 : 1} ${(C0 + R * Math.cos(Math.PI * 0.27)).toFixed(2)} ${(s * R * Math.sin(Math.PI * 0.27)).toFixed(2)}" fill="none" stroke="${dark}" stroke-width="1.1"/>`;
+    for (let k = 0; k < 7; k++) {
+      const a = Math.PI * (0.92 - k * 0.1);
+      const x = C0 + R * Math.cos(a), y = s * R * Math.sin(a);
+      const tan = (Math.atan2(s * Math.cos(a), -Math.sin(a)) * 180) / Math.PI;
+      const off = 2.4;
+      out += leaf(x + off * Math.cos(a), y + off * s * Math.sin(a), tan + s * 30, k % 2 ? fill : dark);
+      out += leaf(x - off * Math.cos(a), y - off * s * Math.sin(a), tan - s * 30, k % 2 ? dark : fill);
+    }
+  }
+  return out;
+}
+function centreFlower(petalSvg: string, core: string) {
+  return `<g transform="translate(${C0} 0)">${petalSvg}${core}</g>`;
+}
+const CENTRE: HatDesign[] = [
+  {
+    id: "p1", group: "centre", label: "Propeller beanie", note: "Classic four-colour cap, the propeller spins",
+    svg: propeller(["#E8333A", "#F5B027", "#2F7BEA", "#F5B027"], "#2A2B30", "#F5B027", "rgba(0,0,0,.25)"),
+  },
+  {
+    id: "p2", group: "centre", label: "Propeller · Go Blue", note: "Navy and maize segments, white propeller",
+    svg: propeller([NAVY, MAIZE, NAVY, MAIZE, NAVY, MAIZE, NAVY, MAIZE], "#FFFFFF", MAIZE, "rgba(0,0,0,.3)"),
+  },
+  {
+    id: "p3", group: "centre", label: "Propeller · rainbow", note: "Six colours, white blades",
+    svg: propeller(["#E8333A", "#FF8A1F", "#F5B027", "#3BB273", "#2F7BEA", "#8E6CF0"], "#FFFFFF", "#1E1F23", "rgba(0,0,0,.25)"),
+  },
+  {
+    id: "w1", group: "centre", label: "Gold laurel", note: "A winner's wreath around the head, open at the face",
+    svg: laurel("#F2C14E", "#C9962A"),
+  },
+  {
+    id: "w2", group: "centre", label: "Olive laurel", note: "Same wreath in deep olive — calmer",
+    svg: laurel("#9CC06A", "#5E8A3A"),
+  },
+  {
+    id: "w3", group: "centre", label: "Angel halo", note: "A glowing gold ring floating over the head",
+    svg: `<circle cx="${C0}" cy="0" r="13" fill="none" stroke="rgba(255,214,90,.35)" stroke-width="5"/>
+      <circle cx="${C0}" cy="0" r="13" fill="none" stroke="#FFD65A" stroke-width="2.4"/>
+      <circle cx="${C0}" cy="0" r="13" fill="none" stroke="#FFF4C2" stroke-width=".9" stroke-dasharray="9 73" transform="rotate(200 ${C0} 0)"/>`,
+  },
+  {
+    id: "fc1", group: "centre", label: "Sakura, centred", note: "One big cherry blossom right on top",
+    svg: centreFlower(sakura("#FFC2D6", "#F08FB0").replace(/rotate\(/g, "scale(1.55) rotate("), `<circle r="2.6" fill="#E85C8C"/>${Array.from({ length: 5 }, (_, i) => `<circle cx="${(4.2 * Math.cos((i * 72 - 90) * Math.PI / 180)).toFixed(2)}" cy="${(4.2 * Math.sin((i * 72 - 90) * Math.PI / 180)).toFixed(2)}" r=".8" fill="#C2386B"/>`).join("")}`),
+  },
+  {
+    id: "fc2", group: "centre", label: "Sunflower", note: "Big, warm, unmistakable",
+    svg: centreFlower(`${petals(14, 2.6, 5.4, 9.6, "#F5B027")}${petals(14, 2.2, 4.6, 8.6, "#FFCF4A").replace(/rotate\((\S+)\)/g, (_, a) => `rotate(${Number(a) + 12.86})`)}`,
+      `<circle r="6.6" fill="#6B3E1F"/><circle r="6.6" fill="none" stroke="#4A2A12" stroke-width="1"/>${Array.from({ length: 8 }, (_, i) => `<circle cx="${(3.4 * Math.cos(i * Math.PI / 4)).toFixed(2)}" cy="${(3.4 * Math.sin(i * Math.PI / 4)).toFixed(2)}" r=".8" fill="#A0652F"/>`).join("")}`),
+  },
+  {
+    id: "fc3", group: "centre", label: "White daisy", note: "Clean white petals, golden heart",
+    svg: centreFlower(petals(12, 2.6, 6.2, 8.2, "#FFFFFF") + petals(12, 2.6, 6.2, 8.2, "none").replace(/fill="none"/g, 'fill="none" stroke="#E4E4EA" stroke-width=".6"'),
+      `<circle r="4.4" fill="#F5B027"/><circle cx="-1.2" cy="-1.2" r="1.3" fill="#FFD66B"/>`),
+  },
+];
+
+const pick = (list: HatDesign[], ids: string[]) => list.filter((d) => ids.includes(d.id));
+
+export const HAT_GROUPS: { id: string; title: string; brief: string; tag: string; designs: HatDesign[] }[] = [
+  { id: "locked", title: "Locked", brief: "Already chosen", tag: "locked", designs: pick(HEADPHONES, ["h4"]) },
+  { id: "glasses", title: "Glasses · black", brief: "Five black frames — pick one", tag: "round 2", designs: BLACK_GLASSES },
+  { id: "cap", title: "Grad cap · Michigan", brief: "Diamond board; the M sits alone in the centre and the tassel never touches it", tag: "round 2", designs: CAPS2 },
+  { id: "bow", title: "Bow · B1 refined", brief: "Sheen and folds now stay inside the loops; cleaner tails and knot", tag: "round 2", designs: [{ id: "b1r", group: "bow", label: "Satin pink, refined", note: "Was B1", svg: BOW_B1 }, ...pick(BOWS, ["b1"]).map((d) => ({ ...d, id: "b1-old", label: "B1 before", note: "For comparison" }))] },
+  { id: "shades", title: "Shades", brief: "S1 retuned in four proportions, S2 kept", tag: "round 2", designs: [...SHADES2, ...pick(SHADES, ["s2"])] },
+  { id: "centre", title: "New · Dead centre, symmetric", brief: "Like the cap, glasses and headphones: centred on the head and mirror-symmetric from above", tag: "round 2", designs: CENTRE },
+  { id: "kept", title: "Kept from round 1", brief: "You liked these — unchanged", tag: "kept", designs: [...pick(FLOWERS, ["f3"]), ...CROWNS] },
 ];
