@@ -32,7 +32,8 @@ export interface WinInstance {
 export type Wallpaper = "snake" | "clean" | "noir";
 export type IconSet = "a" | "d";
 export type Theme = "dark" | "light";
-export type SnakeHat = "none" | "glasses" | "cap" | "phones" | "bow" | "bubble";
+export const SNAKE_HAT_IDS = ["none", "glasses", "cap", "phones", "bow", "shades", "cat", "nycap"] as const;
+export type SnakeHat = (typeof SNAKE_HAT_IDS)[number];
 /**
  * Desktop files are anchored to the right edge, independently of the
  * left-anchored "hello" wallpaper. `col` is retained only for old persisted
@@ -190,6 +191,12 @@ export const useOS = create<OSState>()(
         snakeHat: s.snakeHat,
         seq: s.seq,
       }),
+      // a hat retired from the wardrobe (e.g. the old "bubble") falls back to none
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<OSState>;
+        const snakeHat = (SNAKE_HAT_IDS as readonly string[]).includes(p.snakeHat ?? "") ? p.snakeHat! : "none";
+        return { ...current, ...p, snakeHat };
+      },
     }
   )
 );

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useOS, type SnakeHat } from "../store";
+import { useOS, SNAKE_HAT_IDS, type SnakeHat } from "../store";
+import { SNAKE_HATS, hatSvg } from "./snakeHats";
 import { gridSpec, iconCellData, PixIcon, rasterIconUrl, type PixIconName } from "./Pixel";
 import { ICONS, TOPBAR, iconCellOf, iconGlyph, iconVisiblePos, useGridSpec, type GridSpec } from "./desktopGrid";
 import appleRaster from "../assets/icons/b/apple.png";
@@ -72,69 +73,10 @@ function IconOnCell({ name, x, y, size }: { name: PixIconName; x: number; y: num
   );
 }
 
-/** top-down hats, drawn in head-local coords (origin = head center, +x = facing) */
-export function Hat({ hat, cw, ch, er }: { hat: SnakeHat; cw: number; ch: number; er: number }) {
+/** head accessory from the shipped wardrobe (snakeHats.ts), drawn in 44-unit head-local coords */
+export function Hat({ hat, ang = 0 }: { hat: SnakeHat; ang?: number }) {
   if (hat === "none") return null;
-  if (hat === "glasses") {
-    const a = cw / 2 - er * 1.5, b = ch * 0.21, r = er * 1.42, sw = Math.max(1.6, er * 0.22), dk = "#1b1c1f";
-    return (
-      <g stroke={dk} strokeWidth={sw} fill="none">
-        <circle cx={a} cy={-b} r={r} />
-        <circle cx={a} cy={b} r={r} />
-        <line x1={a} y1={-b + r} x2={a} y2={b - r} />
-        <line x1={a - r * 0.5} y1={-b - r * 0.85} x2={a - cw * 0.62} y2={-b - r * 0.55} />
-        <line x1={a - r * 0.5} y1={b + r * 0.85} x2={a - cw * 0.62} y2={b + r * 0.55} />
-      </g>
-    );
-  }
-  if (hat === "cap") {
-    const bx = -cw * 0.12, s = ch * 0.62;
-    return (
-      <g>
-        <polygon points={`${bx},${-s} ${bx + s},0 ${bx},${s} ${bx - s},0`} fill="#17181b" stroke="rgba(255,255,255,.16)" strokeWidth={1.2} />
-        <circle cx={bx} cy={0} r={ch * 0.05} fill="#E0A93F" />
-        <path d={`M ${bx} 0 Q ${bx - s * 0.5} ${s * 0.55} ${bx - s * 0.92} ${s * 0.7}`} fill="none" stroke="#E0A93F" strokeWidth={2} />
-        <circle cx={bx - s * 0.92} cy={s * 0.74} r={ch * 0.06} fill="#E0A93F" />
-      </g>
-    );
-  }
-  if (hat === "phones") {
-    const dk = "#454a54", bx = -cw * 0.08;
-    return (
-      <g>
-        <path d={`M ${bx} ${-ch * 0.52} Q ${bx + cw * 0.16} 0 ${bx} ${ch * 0.52}`} fill="none" stroke={dk} strokeWidth={ch * 0.12} strokeLinecap="round" />
-        <rect x={bx - cw * 0.14} y={-ch * 0.68} width={cw * 0.3} height={ch * 0.2} rx={4} fill={dk} stroke="#8f96a3" strokeWidth={1.2} />
-        <rect x={bx - cw * 0.14} y={ch * 0.48} width={cw * 0.3} height={ch * 0.2} rx={4} fill={dk} stroke="#8f96a3" strokeWidth={1.2} />
-      </g>
-    );
-  }
-  if (hat === "bow") {
-    const bx = -cw * 0.26, lw = cw * 0.3, lh = ch * 0.24, pk = "#FF3B77";
-    return (
-      <g fill={pk}>
-        <polygon points={`${bx},0 ${bx - lw},${-lh} ${bx - lw * 0.35},${-lh * 1.35}`} />
-        <polygon points={`${bx},0 ${bx - lw},${lh} ${bx - lw * 0.35},${lh * 1.35}`} />
-        <polygon points={`${bx},0 ${bx + lw * 0.7},${-lh * 0.9} ${bx + lw * 0.28},${-lh * 1.25}`} />
-        <polygon points={`${bx},0 ${bx + lw * 0.7},${lh * 0.9} ${bx + lw * 0.28},${lh * 1.25}`} />
-        <circle cx={bx} cy={0} r={ch * 0.09} fill="#D22B60" />
-      </g>
-    );
-  }
-  if (hat === "bubble") {
-    return (
-      <g>
-        <circle cx={cw * 0.62} cy={-ch * 0.78} r={ch * 0.055} fill="#fff" />
-        <circle cx={cw * 0.82} cy={-ch * 1.1} r={ch * 0.09} fill="#fff" />
-        <ellipse cx={cw * 1.35} cy={-ch * 1.62} rx={cw * 0.56} ry={ch * 0.42} fill="#fff" />
-        <path
-          d="M0,-8 L2.2,-2.5 L8,-2.5 L3.4,1 L5,7 L0,3.4 L-5,7 L-3.4,1 L-8,-2.5 L-2.2,-2.5 Z"
-          fill="#F5B027"
-          transform={`translate(${cw * 1.35},${-ch * 1.62}) scale(${ch / 34})`}
-        />
-      </g>
-    );
-  }
-  return null;
+  return <g dangerouslySetInnerHTML={{ __html: hatSvg(SNAKE_HATS[hat], ang) }} />;
 }
 
 export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?: boolean; windowsOpen?: boolean }) {
@@ -150,7 +92,7 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
   // dev QA override: ?hat=cap
   const hat = ((): SnakeHat => {
     const q = new URLSearchParams(window.location.search).get("hat") as SnakeHat | null;
-    return q && ["none", "glasses", "cap", "phones", "bow", "bubble"].includes(q) ? q : storeHat;
+    return q && (SNAKE_HAT_IDS as readonly string[]).includes(q) ? q : storeHat;
   })();
 
   const snake = useRef<Seg[]>([]);
@@ -543,8 +485,8 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
             </g>
           );
         })}
-        <g transform={`translate(${cx},${cy}) rotate(${hat === "bubble" ? 0 : ang})`}>
-          <Hat hat={hat} cw={cellW} ch={cellH} er={er} />
+        <g transform={`translate(${cx},${cy}) rotate(${ang}) scale(${cellH / 44})`}>
+          <Hat hat={hat} ang={ang} />
         </g>
         {/* the snake spots the apple: a thought bubble ("!") pops above its head, then it moves */}
         {!frozen && (phase.current === "alert" || phase.current === "tutorial") && (

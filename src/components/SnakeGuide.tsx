@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useOS, type SnakeHat } from "../store";
 import { PixIcon } from "./Pixel";
 import { GREEN, Hat } from "./DesktopSnake";
+import { ASK_GLYPH } from "./snakeHats";
 import { useGridSpec } from "./desktopGrid";
 
 /**
@@ -64,19 +65,19 @@ const HATS: { id: SnakeHat; label: string }[] = [
   { id: "cap", label: "Grad cap" },
   { id: "phones", label: "Headphones" },
   { id: "bow", label: "Bow" },
-  { id: "bubble", label: "Daydream" },
+  { id: "shades", label: "Shades" },
+  { id: "cat", label: "Cat ears" },
+  { id: "nycap", label: "NY cap" },
 ];
 
 const rand = ([a, b]: number[]) => (a + Math.random() * (b - a)) * 1000;
 
-/** The snake's head on its own, wearing a hat — used in the picker and the dress bubble. */
+/** The snake's head on its own, wearing a hat — used in the picker and the dress bubble.
+    One viewBox for every hat (the NY brim reaches -40), so all heads render the same size. */
 function MiniHead({ hat, size = 40 }: { hat: SnakeHat; size?: number }) {
   const c = 44, er = c * 0.125, pr = er * 0.42, fa = c / 2 - er * 1.5, pb = c * 0.21;
-  // The daydream bubble floats up-right, so that head gets a larger box (and a smaller bubble) to stay the same size.
-  const dream = hat === "bubble";
-  const k = dream ? 76 / 60 : 1;
   return (
-    <svg width={size * k} height={size * k} viewBox={dream ? "-28 -50 76 76" : "-30 -30 60 60"} style={dream ? { margin: `${-size * (k - 1)}px 0 0` } : undefined} aria-hidden>
+    <svg width={size} height={size} viewBox="-40 -37 76 74" aria-hidden>
       <rect x={-21} y={-21} width={42} height={42} rx={4.4} fill={GREEN} />
       {[-1, 1].map((s) => (
         <g key={s}>
@@ -84,7 +85,7 @@ function MiniHead({ hat, size = 40 }: { hat: SnakeHat; size?: number }) {
           <circle cx={fa + pr * 0.8} cy={pb * s} r={pr} fill="#363636" />
         </g>
       ))}
-      {dream ? <Hat hat={hat} cw={24} ch={24} er={er} /> : <Hat hat={hat} cw={c} ch={c} er={er} />}
+      <Hat hat={hat} />
     </svg>
   );
 }
@@ -210,7 +211,7 @@ export function SnakeGuide() {
   }
 
   // Cards open above the head, nudged left if the screen is narrow; the tail always points at the head.
-  const cardW = panel === "chat" ? 320 : 292;
+  const cardW = panel === "chat" ? 320 : 336;
   const cardLeft = Math.max(16, Math.min(hx - 18, vw - cardW - 16));
   const tailX = hx + cellW / 2 - cardLeft;
   const anchor = { left: cardLeft, top: hy - 10 };
@@ -266,8 +267,8 @@ export function SnakeGuide() {
                 aria-label={CAPTION[t]}
               >
                 {t === "play" && <PixIcon name="snake" size={32} />}
-                {t === "dress" && <span className="cycle">{HATS.slice(1).map((h) => <MiniHead key={h.id} hat={h.id} size={32} />)}</span>}
-                {t === "ask" && <b className="q">?</b>}
+                {t === "dress" && <span className="cycle">{HATS.slice(1).map((h) => <MiniHead key={h.id} hat={h.id} size={40} />)}</span>}
+                {t === "ask" && <svg width={30} height={30} viewBox="0 0 32 32" aria-hidden dangerouslySetInnerHTML={{ __html: ASK_GLYPH.svg }} />}
                 <span className="cap">{CAPTION[t]}</span>
               </button>
             </span>
@@ -284,7 +285,7 @@ export function SnakeGuide() {
           <div className="sguide-hats">
             {HATS.map((h) => (
               <button type="button" key={h.id} className={hat === h.id ? "on" : ""} onClick={() => setSnakeHat(h.id)}>
-                <MiniHead hat={h.id} />
+                <MiniHead hat={h.id} size={56} />
                 <span>{h.label}</span>
               </button>
             ))}

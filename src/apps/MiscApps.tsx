@@ -85,11 +85,13 @@ const ICON_SETS: { id: IconSet; label: string; desc: string }[] = [
 
 const HATS: { id: SnakeHat; label: string; desc: string }[] = [
   { id: "none", label: "无", desc: "素颜蛇" },
-  { id: "glasses", label: "眼镜", desc: "Tech 味" },
-  { id: "cap", label: "学士帽", desc: "School 味" },
-  { id: "phones", label: "耳机", desc: "听歌的蛇" },
-  { id: "bow", label: "蝴蝶结", desc: "精致的蛇" },
-  { id: "bubble", label: "星星泡泡", desc: "梦见星星(老站彩蛋)" },
+  { id: "glasses", label: "眼镜", desc: "黑色板材圆框" },
+  { id: "cap", label: "学士帽", desc: "密歇根 M" },
+  { id: "phones", label: "耳机", desc: "奶油薄荷" },
+  { id: "bow", label: "蝴蝶结", desc: "缎面粉" },
+  { id: "shades", label: "墨镜", desc: "Deal with it" },
+  { id: "cat", label: "猫耳", desc: "后掠猫耳发箍" },
+  { id: "nycap", label: "纽约帽", desc: "反戴的 NY 棒球帽" },
 ];
 
 const THEMES: { id: Theme; label: string; desc: string }[] = [
