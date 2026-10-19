@@ -118,7 +118,7 @@ Whitespace is the design. When unsure, add space rather than a divider line.
 
 ## 5. Block vocabulary (case blocks)
 
-Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a skimmer must read).
+Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a skimmer must read), `[text](url)` for source links (Miro boards, docs, reports).
 
 | Block | Renders as | Use when |
 |---|---|---|
@@ -133,6 +133,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `step` | Auto-numbered 01, 02 … with title + text, hairline rules | How-to sequences and pipelines |
 | `img` | Centered figure + caption; `w` = display width in px at 1440 | Evidence, diagrams, logos. Copy `w` from the old site; above 880 the figure breaks out of the column (max 1040) |
 | `link` | Accent pill button | One call to action (prototype, slides, live site) |
+| `embed` | Live iframe, 16:9 (YouTube) or 16:10 (Figma), up to 1040px wide + caption | Videos and clickable prototypes. Use `youtube-nocookie.com/embed/<id>` and Figma's `figma.com/embed?embed_host=share&url=…` |
 
 ## 6. Writing a new page (checklist)
 

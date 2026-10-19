@@ -1,0 +1,42 @@
+import type { CaseStudy } from "../cases";
+
+export const rutabagga: CaseStudy = {
+  accent: "#764c99",
+  sub: "Local. Natural. Sustainable.",
+  role: "UI Designer",
+  timeline: "Mar 2022 – Apr 2022",
+  tools: "Adobe Illustrator",
+  sections: [
+    { id: "overview", label: "Overview", blocks: [
+      { t: "h", text: "Background" },
+      { t: "p", text: "This is a logo design I did for a fictional client called Rutabagga that aims to promote vegan food and products." },
+      { t: "h", text: "Client Brief" },
+      { t: "callout", text: "Rutabagga app aims to help those trying to reduce their environmental footprint by consuming more vegetarian and vegan products." },
+      { t: "p", text: "Better heart health, weight loss, and “good karma” are among the numerous benefits of vegan and vegetarian diets." },
+      { t: "callout", text: "Our tagline reads: “Local. Natural. Sustainable.”" },
+      { t: "p", text: "We promote seasonal eating — eating sustainably. We teach our users only to eat fruits and vegetables in season for their geographic area: apples in the fall, rutabaga in the winter, radishes in the spring, and peaches in the summer." },
+      { t: "h", text: "Logomark" },
+      { t: "img", src: "rutabagga/02.png", caption: "Design preview — logomark, logotype, and color palette" },
+      { t: "p", text: "I combined the shape of a rutabaga with the shape of a plate to highlight the theme of the food industry and the name of the company. To make the plate unambiguous, I used the figure/ground gestalt principle to put a fork on the plate. The logomark color is inspired by the color of rutabaga, with a gradient for the body." },
+      { t: "h", text: "Logotype" },
+      { t: "p", text: "I used Gravesend Sans for the logotype, decorating the letter U to look like a root vegetable — a gradient stroke and a small tip at the bottom." },
+      { t: "stat", value: "#764C99", label: "Primary · purple" },
+      { t: "stat", value: "#E24C95", label: "Primary · pink" },
+      { t: "stat", value: "#53B57F", label: "Primary · green" },
+    ] },
+    { id: "design", label: "Design", blocks: [
+      { t: "h", text: "Typography" },
+      { t: "img", src: "rutabagga/03.png", caption: "Gravesend Sans (logotype) & Adobe Garamond Pro (body)" },
+      { t: "h", text: "Scalability" },
+      { t: "img", src: "rutabagga/04.png", caption: "Logo at 3in / 1in / 0.5in" },
+      { t: "h", text: "Logo Variation" },
+      { t: "img", src: "rutabagga/05.png", caption: "Stacked / extended, with & without tagline, and mark alone" },
+      { t: "h", text: "Color Variation" },
+      { t: "img", src: "rutabagga/06.png", caption: "Color / black / stroke on white and black grounds" },
+      { t: "h", text: "Clear Space" },
+      { t: "img", src: "rutabagga/07.png", caption: "Clear-space guidelines" },
+      { t: "h", text: "App Screens" },
+      { t: "img", src: "rutabagga/09.png", caption: "App screen design" },
+    ] },
+  ],
+};

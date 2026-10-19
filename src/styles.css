@@ -865,6 +865,12 @@ button { font-family: inherit; color: inherit; }
 .cs-stat:last-of-type { margin-bottom: 24px; }
 
 .cs-fig { margin: 40px 0; }
+.cs-embed { margin: 40px calc(-1 * min(80px, var(--cs-gutter))); }
+.cs-embed > div { position: relative; width: 100%; max-width: 1040px; margin: 0 auto; background: #f1f1f3; border-radius: 6px; overflow: hidden; }
+.cs-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.cs-embed figcaption { margin-top: 12px; text-align: center; font-family: var(--font-sans); font-size: 14px; line-height: 1.5; color: #777; }
+.cs-p a, .cs-list a, .cs-feature a, .cs-step a, .cs-quote a { color: var(--cs); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.cs-callout a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .cs-fig.wide { margin-inline: calc(-1 * min(80px, var(--cs-gutter))); }
 
 .cs-fig img { display: block; width: var(--w, auto); max-width: 100%; height: auto; margin: 0 auto; }
