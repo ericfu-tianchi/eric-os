@@ -1214,6 +1214,9 @@ button { font-family: inherit; color: inherit; }
 }
 .finder-icon-item:hover { border-color: var(--hairline); background: #fafafc; }
 .finder-icon-item .glyph-wrap { height: 66px; display: inline-flex; align-items: center; }
+.finder-icon-slot { height: 66px; display: flex; align-items: center; justify-content: center; }
+.finder-icon-grid.has-thumbs .finder-icon-slot { height: 104px; }
+.finder-icon-grid.has-thumbs { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
 .finder-item-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-system); font-size: 12px; font-weight: 660; letter-spacing: -.01em; }
 .finder-item-meta { min-height: 14px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--faint); font-family: var(--font-system); font-size: 9.5px; letter-spacing: .015em; }
 .finder-icon-item.placeholder, .finder-list-row.placeholder { opacity: .58; cursor: default; }

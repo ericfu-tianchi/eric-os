@@ -36,13 +36,19 @@ function kindLabel(node: FileNode) {
   return "Application";
 }
 
-function FinderNodeIcon({ node, size }: { node: FileNode; size: number }) {
+function thumbOf(node: FileNode) {
+  const target = resolvedNode(node);
+  return target.projectSlug ? fileIconOf(target.projectSlug) : target.app === "about" ? fileIconOf("about") : undefined;
+}
+
+/** Reading pages show their cover as the icon; in icon view it gets more room (thumbSize). */
+function FinderNodeIcon({ node, size, thumbSize = size }: { node: FileNode; size: number; thumbSize?: number }) {
   const target = resolvedNode(node);
   const game = target.gameId ? EXTERNAL_GAMES[target.gameId] : undefined;
   if (node.icon) return <img className="finder-pixel-icon" src={node.icon} width={size} height={size} alt="" draggable={false} />;
   if (game) return <img className="finder-pixel-icon" src={game.icon} width={size} height={size} alt="" draggable={false} />;
-  const thumb = target.projectSlug ? fileIconOf(target.projectSlug) : target.app === "about" ? fileIconOf("about") : undefined;
-  if (thumb) return <img className="finder-thumb-icon" src={thumb} width={size} height={size} alt="" draggable={false} />;
+  const thumb = thumbOf(node);
+  if (thumb) return <img className="finder-thumb-icon" src={thumb} width={thumbSize} height={thumbSize} alt="" draggable={false} />;
   return <PixIcon name={nodeIcon(node)} size={size} />;
 }
 
@@ -148,7 +154,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
             <span>This space is intentionally quiet for now.</span>
           </div>
         ) : view === "icon" ? (
-          <div className="finder-icon-grid" role="list">
+          <div className={`finder-icon-grid ${children.some(thumbOf) ? "has-thumbs" : ""}`} role="list">
             {children.map((node) => (
               <button
                 type="button"
@@ -156,7 +162,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
                 className={`finder-icon-item ${node.kind === "placeholder" ? "placeholder" : ""}`}
                 onClick={() => openNode(node)}
               >
-                <FinderNodeIcon node={node} size={66} />
+                <span className="finder-icon-slot"><FinderNodeIcon node={node} size={66} thumbSize={104} /></span>
                 <span className="finder-item-name">{node.name}</span>
                 <span className="finder-item-meta">{node.description ?? kindLabel(node)}</span>
               </button>

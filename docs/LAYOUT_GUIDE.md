@@ -147,10 +147,15 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 
 ## 7. File icons for reading pages
 
-A reading page's icon in Finder (and About_Me.md on the desktop) is its **real first screen**,
-landscape 4:3, in the S4 frame: one-pixel light-gray hairline, stepped corners, a small
-stepped dog-ear top-right. Never pixelate the content; the pixel trait lives in the frame only.
-Files: `src/assets/file-icons/<slug>.webp` (264px, `about.webp` for About), picked up by
-`fileIconOf()`. Regenerate an icon whenever a page's hero or opening section changes
-(capture the first screen at a 760px-wide window, then compose the frame).
+A reading page's icon is its **cover**, cropped to fill a landscape 4:3 card (never the whole
+page shrunk: at 1/12 scale nothing reads). Pages without a cover get their name in Montserrat 800
+on the accent color; About uses its portrait and greeting. The card sits in the S4 frame
+(one-pixel light-gray hairline, stepped corners, small stepped dog-ear top-right); the content
+itself is never pixelated.
 
+In Finder icon view these thumbnails get a 104px slot (other icons stay 66px; a folder that
+contains thumbnails gives every item the taller slot so labels line up). Desktop and list view
+use the normal icon size.
+
+Files: `src/assets/file-icons/<slug>.webp` (416px = 4x of 104, `about.webp` for About), read by
+`fileIconOf()`. Regenerate an icon when a page's cover changes.
