@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useOS } from "../store";
+import { PixIcon } from "./Pixel";
 
 /**
  * SnakeChat — "Ask the snake" about Tianchi (POST /api/ask → Workers AI, see worker/).
@@ -68,6 +69,9 @@ const steerFor = (lang: Lang, seed: number) => {
   const a = seed % pool.length;
   return [pool[a], pool[(a + 1 + (seed % (pool.length - 1))) % pool.length]];
 };
+
+// Full-stomach "play to skip" treatment, on trial: 1 = link in the fine print, 2 = button in the message, 3 = snake in the send slot
+const LOCK_UI = ((v) => (v === "1" || v === "3" ? v : "2"))(new URLSearchParams(window.location.search).get("lockui"));
 
 const langOf = (text: string): Lang => (/[一-鿿]/.test(text) ? "zh" : "en");
 
@@ -138,7 +142,7 @@ async function send(text: string) {
   }
   if (state.asked >= CAP) {
     set({ lock: { kind: "full", from: now, until: now + DIGEST_MS }, pending: q });
-    return say(COPY.full[lang]); // the "skip the wait" button under the log offers the game
+    return say(COPY.full[lang], LOCK_UI === "2" ? { action: "play" } : {});
   }
   const recent = state.sentAt.filter((t) => now - t < FAST_WINDOW_MS);
   if (recent.length >= FAST_N) {
@@ -238,7 +242,12 @@ export function SnakeChat({ style, onAct, onClose }: {
 
   const lastQuestion = [...s.msgs].reverse().find((m) => m.role === "user")?.content;
   const left = s.lock ? s.lock.until - now : 0;
-  const placeholder = s.mail
+  const full = s.lock?.kind === "full";
+  const placeholder = s.lock?.kind === "fast"
+    ? `Swallowing… ${Math.max(1, Math.ceil(left / 1000))}s`
+    : full
+      ? `Digesting… ${mmss(left)}`
+      : s.mail
         ? "Type it here — I'll pass it to Tianchi ✉️"
         : "Ask anything about Tianchi…";
 
@@ -282,45 +291,46 @@ export function SnakeChat({ style, onAct, onClose }: {
           </div>
         )}
       </div>
-      {s.lock ? (
-        // locked: the input row becomes a status pill — a progress ring, the countdown, and (when full) the way out
-        <div className={`sguide-wait ${s.lock.kind}`} role="status">
-          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden>
-            <circle cx="11" cy="11" r="8.5" fill="none" stroke="var(--hairline)" strokeWidth="2.5" />
-            <circle
-              cx="11" cy="11" r="8.5" fill="none" strokeWidth="2.5" strokeLinecap="round" transform="rotate(-90 11 11)"
-              strokeDasharray={`${(2 * Math.PI * 8.5 * Math.min(1, (now - s.lock.from) / (s.lock.until - s.lock.from))).toFixed(2)} 99`}
-            />
-          </svg>
-          <span className="txt">
-            <b>{s.lock.kind === "full" ? "Digesting…" : "Swallowing…"}</b>
-            <span>{s.lock.kind === "full" ? `${mmss(left)} left` : `${Math.max(1, Math.ceil(left / 1000))}s`}</span>
-          </span>
-          {s.lock.kind === "full" && (
-            <button type="button" className="sguide-cta" onClick={() => onAct("play")}>Play Snake to skip</button>
-          )}
+      {s.lock && (
+        <div className={`sguide-lock ${s.lock.kind}`} aria-hidden>
+          <i style={{ width: `${Math.min(100, ((now - s.lock.from) / (s.lock.until - s.lock.from)) * 100)}%` }} />
         </div>
-      ) : (
-        <form onSubmit={(e) => { e.preventDefault(); const q = draft; setDraft(""); void send(q); }}>
-          <input
-            ref={inputRef}
-            autoFocus
-            value={draft}
-            maxLength={300}
-            onChange={(e) => setDraft(e.target.value)}
-            placeholder={placeholder}
-            aria-label="Your question"
-          />
-          <button type="submit" disabled={!draft.trim() || s.busy} aria-label={s.mail ? "Write email" : "Send"}>
+      )}
+      <form onSubmit={(e) => { e.preventDefault(); const q = draft; setDraft(""); void send(q); }}>
+        <input
+          ref={inputRef}
+          autoFocus
+          value={draft}
+          maxLength={300}
+          disabled={!!s.lock}
+          onChange={(e) => setDraft(e.target.value)}
+          placeholder={placeholder}
+          aria-label="Your question"
+        />
+        {full && LOCK_UI === "3" ? (
+          <button type="button" className="sguide-skipicon" onClick={() => onAct("play")} aria-label="Play Snake to skip the wait" title="Play Snake to skip the wait">
+            <PixIcon name="snake" size={22} />
+          </button>
+        ) : (
+          <button type="submit" disabled={!draft.trim() || s.busy || !!s.lock} aria-label={s.mail ? "Write email" : "Send"}>
             {s.mail
               ? <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden><rect x="1.5" y="3.5" width="13" height="9" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M2.5 4.8 8 9l5.5-4.2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
               : "↑"}
           </button>
-        </form>
-      )}
+        )}
+      </form>
       <p className="fine">
-        <span>{draft.length >= 240 ? "AI answers can be wrong." : "AI answers can be wrong. Built on Cloudflare Workers AI."}</span>
-        {draft.length >= 240 && <span className="count">{draft.length}/300</span>}
+        {full && LOCK_UI === "1" ? (
+          <>
+            <span>Can't wait?</span>
+            <button type="button" className="sguide-skiplink" onClick={() => onAct("play")}>Play Snake to skip →</button>
+          </>
+        ) : (
+          <>
+            <span>{draft.length >= 240 ? "AI answers can be wrong." : "AI answers can be wrong. Built on Cloudflare Workers AI."}</span>
+            {draft.length >= 240 && <span className="count">{draft.length}/300</span>}
+          </>
+        )}
       </p>
     </div>
   );
