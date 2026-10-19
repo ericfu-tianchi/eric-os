@@ -372,13 +372,16 @@ button { font-family: inherit; color: inherit; }
   font-size: var(--os-size-label); font-weight: 650; letter-spacing: 0.01em; line-height: 1.25;
   color: var(--stage-ink);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
-  padding: 1px 5px;
+  padding: 1px 0;
   max-width: 100%; min-height: 17px; overflow: hidden;
   text-align: center; white-space: normal;
 }
+/* Selection, same as Finder: a gray tile hugging the icon, and a blue pill that hugs each line of the name */
+.dicon .label-text { padding: 1px 5px; border-radius: 4px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 .dicon.selected { border-color: transparent; background: transparent; }
-.dicon.selected .label { background: var(--select); color: #fff; border-radius: 4px; text-shadow: none; }
-.dicon.selected .glyph-wrap { background: rgba(255, 255, 255, 0.14); border-radius: 6px; }
+.dicon.selected .label { text-shadow: none; }
+.dicon.selected .label-text { background: var(--select); color: #fff; }
+.dicon.selected .glyph-wrap { background: rgba(255, 255, 255, 0.14); border-radius: 8px; box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.14); }
 .dicon.dragging:not(.dicon-drag-preview) { opacity: 0; cursor: default; }
 .dicon-drag-preview {
   position: fixed;
@@ -1225,7 +1228,7 @@ button { font-family: inherit; color: inherit; }
 }
 /* Like the desktop: one click selects, a double click opens. No hover state. */
 .finder-icon-item:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.finder-icon-item.selected .finder-icon-slot { background: rgba(10, 100, 224, 0.1); border-radius: 8px; }
+.finder-icon-item.selected .finder-icon-slot > * { background: rgba(0, 0, 0, 0.07); border-radius: 8px; box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.07); }
 .finder-icon-item.selected .finder-item-name { background: var(--select); color: #fff; border-radius: 4px; padding: 0 6px; }
 .finder-icon-item .glyph-wrap { height: 66px; display: inline-flex; align-items: center; }
 .finder-icon-slot { height: 66px; padding: 0 8px; display: flex; align-items: center; justify-content: center; }
