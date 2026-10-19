@@ -537,14 +537,96 @@ const CENTRE: HatDesign[] = [
   },
 ];
 
+/* ═════════════════════════ Round 3 · top-down classics ═════════════════════════ */
+
+/* ── Viking helmet: dome behind the eyes, horns sweeping out and forward ── */
+function viking(o: { dome: string; rim: string; hi: string; horn: string; hornLine: string; long?: boolean }) {
+  const t = o.long ? 1.18 : 1;
+  const horn = (s: number) => `<path d="M-9 ${s * 10.5} C-12 ${s * 21 * t} -5 ${s * 29 * t} ${7 * t} ${s * 30.5 * Math.min(t, 1.05)} C${1.5 * t} ${s * 25 * t} -1 ${s * 18} -1 ${s * 11.5}Z" fill="${o.horn}" stroke="${o.hornLine}" stroke-width="1" stroke-linejoin="round"/>
+    <path d="M-8.4 ${s * 17} Q-5 ${s * 16.4} -2.6 ${s * 15.6} M-6.6 ${s * 22.4} Q-3 ${s * 21.6} -0.4 ${s * 20.4}" fill="none" stroke="${o.hornLine}" stroke-width=".9" stroke-linecap="round"/>`;
+  return `${horn(-1)}${horn(1)}
+    <circle cx="-4" cy="0" r="13.5" fill="${o.dome}" stroke="${o.rim}" stroke-width="1.4"/>
+    <path d="M-17.5 0 H9.5 M-4 -13.5 V13.5" stroke="${o.rim}" stroke-width="2.4" stroke-linecap="round"/>
+    ${[[-14, -8], [-14, 8], [6, -8], [6, 8]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1" fill="${o.rim}"/>`).join("")}
+    <path d="M-12.5 -6.5 A10 10 0 0 1 -8 -10.6" fill="none" stroke="${o.hi}" stroke-width="1.6" stroke-linecap="round"/>`;
+}
+
+/* ── Headlamp: strap round the head, lamp up front, light thrown ahead ── */
+function headlamp(o: { strap: string; lamp: string; beam: string; id: string; pixel?: boolean }) {
+  const beam = o.pixel
+    ? [0, 1, 2, 3].map((k) => `<rect x="${22 + k * 3}" y="${-4 - k * 2.2}" width="3" height="${8 + k * 4.4}" fill="${o.beam}" opacity="${0.55 - k * 0.11}"/>`).join("")
+    : `<defs><linearGradient id="${o.id}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${o.beam}" stop-opacity=".75"/><stop offset="1" stop-color="${o.beam}" stop-opacity="0"/></linearGradient></defs>
+       <path d="M21 -3.4 L34 -12 L34 12 L21 3.4Z" fill="url(#${o.id})"/>`;
+  return `${beam}
+    <rect x="-21.6" y="-21.6" width="43.2" height="43.2" rx="5" fill="none" stroke="${o.strap}" stroke-width="2.6"/>
+    <rect x="15.4" y="-5.2" width="6.6" height="10.4" rx="2.2" fill="${o.lamp}"/>
+    <rect x="19.6" y="-3.6" width="2.6" height="7.2" rx="1.2" fill="#FFF6C9"/>`;
+}
+
+/* ── Cat-ear-style headbands: band across the head, ears lying out to the sides ── */
+const band = (c: string) => `<path d="M-2 -22.5 Q-8 0 -2 22.5" fill="none" stroke="${c}" stroke-width="3.2" stroke-linecap="round"/>`;
+const EARS: HatDesign[] = [
+  {
+    id: "e1", group: "ears", label: "Cat ears", note: "Black band, pointed ears, pink inside",
+    svg: `${band("#1E1F23")}${[-1, 1].map((s) => `<path d="M-11.5 ${s * 19.6} C-11.8 ${s * 24} -11 ${s * 28.5} -8.6 ${s * 31.4} C-3.6 ${s * 29.6} 1.4 ${s * 25.4} 4 ${s * 20.2} Q-3.8 ${s * 17.6} -11.5 ${s * 19.6}Z" fill="#1E1F23" stroke="#1E1F23" stroke-width="1.2" stroke-linejoin="round"/>
+      <path d="M-8.4 ${s * 21} C-8.6 ${s * 23.8} -8.2 ${s * 26.4} -7.2 ${s * 28} C-4 ${s * 26.6} -1.2 ${s * 24.2} 0.6 ${s * 21.2} Q-4 ${s * 19.8} -8.4 ${s * 21}Z" fill="#FF8FB1"/>`).join("")}`,
+  },
+  {
+    id: "e2", group: "ears", label: "Bunny ears", note: "Long soft ears flopping back",
+    svg: `${band("#F4F1EC")}${[-1, 1].map((s) => `<ellipse cx="-9" cy="${s * 26}" rx="11.5" ry="4.6" transform="rotate(${s * 18} -9 ${s * 26})" fill="#FBF9F5" stroke="#D9D2C6" stroke-width="1"/>
+      <ellipse cx="-9.6" cy="${s * 26.2}" rx="8" ry="2.2" transform="rotate(${s * 18} -9.6 ${s * 26.2})" fill="#FFB8CC"/>`).join("")}`,
+  },
+  {
+    id: "e3", group: "ears", label: "Bear ears", note: "Round and fuzzy, honey brown",
+    svg: `${band("#7A4A25")}${[-1, 1].map((s) => `<circle cx="-3.4" cy="${s * 24.5}" r="6.6" fill="#8A5530" stroke="#6A3E1E" stroke-width="1"/>
+      <circle cx="-3.4" cy="${s * 25.2}" r="3.6" fill="#D9A06A"/>`).join("")}`,
+  },
+];
+
+/* ── Aviator leather cap + goggles pushed up on top ── */
+function aviatorCap(o: { leather: string; seam: string; flap: string; rim: string; lens: string; trim?: string }) {
+  return `${[-1, 1].map((s) => `<rect x="-15" y="${s > 0 ? 18.6 : -25.4}" width="14" height="6.8" rx="3.2" fill="${o.flap}" stroke="${o.seam}" stroke-width="1"/>`).join("")}
+    <path d="M5 -21.4 L-17 -21.4 Q-21.6 -21.4 -21.6 -17 V17 Q-21.6 21.4 -17 21.4 L5 21.4 Q9.4 0 5 -21.4Z" fill="${o.leather}" stroke="${o.seam}" stroke-width="1.1"/>
+    ${o.trim ? `<path d="M5 -21.4 Q9.4 0 5 21.4" fill="none" stroke="${o.trim}" stroke-width="3.6" stroke-linecap="round" stroke-dasharray="0.1 3.2"/>` : ""}
+    <path d="M-21.6 0 H4.4" stroke="${o.seam}" stroke-width=".9" stroke-dasharray="2 1.6"/>
+    <path d="M-1.5 -21 V21" stroke="${o.seam}" stroke-width="2.6"/>
+    ${[-1, 1].map((s) => `<circle cx="-1.5" cy="${s * 7.6}" r="5.6" fill="${o.lens}" stroke="${o.rim}" stroke-width="2"/>
+      <path d="M-3.8 ${s * 7.6 - 2.6} a3.4 3.4 0 0 1 3 -1" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="1" stroke-linecap="round"/>`).join("")}
+    <rect x="-3" y="-2" width="3" height="4" rx="1" fill="${o.rim}"/>`;
+}
+
+const ROUND3: { id: string; title: string; brief: string; designs: HatDesign[] }[] = [
+  {
+    id: "viking", title: "Viking helmet", brief: "Dome behind the eyes, horns sweeping out", designs: [
+      { id: "v1", group: "viking", label: "Iron + ivory", note: "Steel dome, cross ridge, rivets, ivory horns", svg: viking({ dome: "#A3ACB7", rim: "#68717D", hi: "#E3E8EE", horn: "#F3E9CF", hornLine: "#C7B48A" }) },
+      { id: "v2", group: "viking", label: "Bronze", note: "Warm bronze dome, white horns", svg: viking({ dome: "#C98B45", rim: "#8C5A22", hi: "#F2C88E", horn: "#FBF7EE", hornLine: "#D1C6AE" }) },
+      { id: "v3", group: "viking", label: "Dark iron, long horns", note: "Blackened helmet, longer horns — more drama", svg: viking({ dome: "#4A4F57", rim: "#26292E", hi: "#8E959F", horn: "#EFE4C6", hornLine: "#B9A57A", long: true }) },
+    ],
+  },
+  {
+    id: "lamp", title: "Headlamp", brief: "Strap round the head, light thrown ahead wherever it goes", designs: [
+      { id: "l1", group: "lamp", label: "Classic", note: "Black strap, warm beam", svg: headlamp({ strap: "#1E1F23", lamp: "#2A2B30", beam: "#FFE27A", id: "snk-beam1" }) },
+      { id: "l2", group: "lamp", label: "Trail orange", note: "Outdoor orange strap, cool white beam", svg: headlamp({ strap: "#FF7A1A", lamp: "#3A3B40", beam: "#E9F4FF", id: "snk-beam2" }) },
+      { id: "l3", group: "lamp", label: "Pixel beam", note: "Stepped 8-bit light cone", svg: headlamp({ strap: "#1E1F23", lamp: "#2A2B30", beam: "#FFE27A", id: "snk-beam3", pixel: true }) },
+    ],
+  },
+  { id: "ears", title: "Ear headbands", brief: "A band across the head, ears lying out to the sides", designs: EARS },
+  {
+    id: "aviator", title: "Aviator cap + goggles", brief: "Leather cap with ear flaps, goggles pushed up on top", designs: [
+      { id: "a1", group: "aviator", label: "Brown + brass", note: "Classic flight leather, brass goggles", svg: aviatorCap({ leather: "#8B5A2B", seam: "#5E3A18", flap: "#7A4C22", rim: "#C99A3B", lens: "#8FB7C9" }) },
+      { id: "a2", group: "aviator", label: "Black + chrome", note: "Black leather, chrome rims, green lenses", svg: aviatorCap({ leather: "#2A2B30", seam: "#121316", flap: "#232428", rim: "#C9CDD4", lens: "#5FAF8C" }) },
+      { id: "a3", group: "aviator", label: "Tan + shearling", note: "Tan leather with a cream fleece edge", svg: aviatorCap({ leather: "#B98552", seam: "#8A5C30", flap: "#A97644", rim: "#C99A3B", lens: "#8FB7C9", trim: "#F4EBDD" }) },
+    ],
+  },
+];
+
 const pick = (list: HatDesign[], ids: string[]) => list.filter((d) => ids.includes(d.id));
 
 export const HAT_GROUPS: { id: string; title: string; brief: string; tag: string; designs: HatDesign[] }[] = [
-  { id: "locked", title: "Locked", brief: "Already chosen", tag: "locked", designs: pick(HEADPHONES, ["h4"]) },
-  { id: "glasses", title: "Glasses · black", brief: "Five black frames — pick one", tag: "round 2", designs: BLACK_GLASSES },
-  { id: "cap", title: "Grad cap · Michigan", brief: "Diamond board; the M sits alone in the centre and the tassel never touches it", tag: "round 2", designs: CAPS2 },
-  { id: "bow", title: "Bow · B1 refined", brief: "Sheen and folds now stay inside the loops; cleaner tails and knot", tag: "round 2", designs: [{ id: "b1r", group: "bow", label: "Satin pink, refined", note: "Was B1", svg: BOW_B1 }, ...pick(BOWS, ["b1"]).map((d) => ({ ...d, id: "b1-old", label: "B1 before", note: "For comparison" }))] },
-  { id: "shades", title: "Shades", brief: "S1 retuned in four proportions, S2 kept", tag: "round 2", designs: [...SHADES2, ...pick(SHADES, ["s2"])] },
-  { id: "centre", title: "New · Dead centre, symmetric", brief: "Like the cap, glasses and headphones: centred on the head and mirror-symmetric from above", tag: "round 2", designs: CENTRE },
-  { id: "kept", title: "Kept from round 1", brief: "You liked these — unchanged", tag: "kept", designs: [...pick(FLOWERS, ["f3"]), ...CROWNS] },
+  ...ROUND3.map((g) => ({ ...g, tag: "round 3" })),
+  {
+    id: "locked", title: "Locked", brief: "Already chosen", tag: "locked",
+    designs: [...pick(HEADPHONES, ["h4"]), ...pick(BLACK_GLASSES, ["bg2"]), ...pick(CAPS2, ["mc2"]), { id: "b1r", group: "bow", label: "Satin pink, refined", svg: BOW_B1 }, ...pick(SHADES2, ["s1a"])],
+  },
+  { id: "kept", title: "Still on the table", brief: "From earlier rounds, no decision yet", tag: "kept", designs: [...pick(FLOWERS, ["f3"]), ...CROWNS, ...CENTRE] },
 ];

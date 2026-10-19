@@ -42,6 +42,7 @@
   .bar code { font: 600 12.5px ui-monospace, Menlo, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52vw; }
   .bar button { border: 0; border-radius: 8px; background: #17171a; color: #fff; font: 600 12.5px inherit; padding: 8px 12px; cursor: pointer; font-family: inherit; }
   h2 .tag { font: 600 10.5px ui-monospace, Menlo, monospace; text-transform: uppercase; letter-spacing: .08em; padding: 3px 7px; border-radius: 4px; margin-left: 8px; vertical-align: 3px; background: rgba(255,255,255,.08); color: var(--muted); }
+  h2 .tag.round3 { background: rgba(10,100,224,.22); color: #8db8ff; }
   h2 .tag.round2 { background: rgba(10,100,224,.22); color: #8db8ff; }
   h2 .tag.locked { background: rgba(6,194,104,.18); color: #5fe09a; }
   .bubble-real { width: 60px; height: 52px; border-radius: 50%; background: #fff; display: grid; place-items: center; box-shadow: 0 2px 6px rgba(0,0,0,.2), 0 16px 40px rgba(0,0,0,.4); }
@@ -103,14 +104,6 @@
     return s.querySelector(".grid");
   };
 
-  // Ask · chat glyphs: in the thought bubble, 3× and real size
-  const g0 = section("Ask about Eric · chat icon", "Replaces the “?” inside the thought bubble — no pick yet", "kept");
-  for (const c of CHAT_GLYPHS) {
-    const zoom = `<svg width="210" height="182" viewBox="-14 -10 60 52"><ellipse cx="16" cy="16" rx="30" ry="26" fill="#fff"/><g>${c.svg}</g></svg>`;
-    const real = `<div class="bubble-real"><svg width="32" height="32" viewBox="0 0 32 32">${c.svg}</svg></div><span>real size</span>`;
-    g0.appendChild(card(c.id, c.label, c.note, zoom, real));
-  }
-
   for (const grp of HAT_GROUPS) {
     const g = section(grp.title, grp.brief, grp.tag);
     for (const d of grp.designs) {
@@ -119,6 +112,14 @@
       const up = `<svg width="76" height="112" viewBox="-38 -46 76 112">${cells(-90, 1)}${head(hatSvg(d, -90), -90)}</svg>`;
       g.appendChild(card(d.id, d.label, d.note, zoom, right + up));
     }
+  }
+
+  // Ask · chat glyphs: in the thought bubble, 3× and real size
+  const g0 = section("Ask about Eric · chat icon", "Replaces the “?” inside the thought bubble — no pick yet", "kept");
+  for (const c of CHAT_GLYPHS) {
+    const zoom = `<svg width="210" height="182" viewBox="-14 -10 60 52"><ellipse cx="16" cy="16" rx="30" ry="26" fill="#fff"/><g>${c.svg}</g></svg>`;
+    const real = `<div class="bubble-real"><svg width="32" height="32" viewBox="0 0 32 32">${c.svg}</svg></div><span>real size</span>`;
+    g0.appendChild(card(c.id, c.label, c.note, zoom, real));
   }
 
   sync();
