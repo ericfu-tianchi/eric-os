@@ -57,6 +57,12 @@ const ACTION_LABEL: Record<Action, string> = {
   ai: "See AI projects",
   email: "Email Eric",
 };
+// Per-visit cap: past this many questions the snake stops calling the model (the Worker also limits per IP).
+const ASK_CAP = 20;
+const CAP_LINE = {
+  en: "I've eaten so many questions I'm too long to move. Play a round of Snake while I digest?",
+  zh: "问题吃太多了，我已经长到动不了了。趁我消化，来一局贪吃蛇？",
+};
 const STARTERS = ["What does Eric do?", "What is he building lately?", "Show me his AI projects"];
 const HATS: { id: SnakeHat; label: string }[] = [
   { id: "none", label: "None" },
@@ -188,6 +194,11 @@ export function SnakeGuide() {
     const next: Msg[] = [...msgs, { role: "user", content: q }];
     setMsgs(next);
     setDraft("");
+    if (next.filter((m) => m.role === "user").length > ASK_CAP) {
+      const zh = /[\u4e00-\u9fff]/.test(q);
+      setMsgs([...next, { role: "assistant", content: zh ? CAP_LINE.zh : CAP_LINE.en, action: "play" }]);
+      return;
+    }
     setBusy(true);
     try {
       const res = await fetch("/api/ask", {

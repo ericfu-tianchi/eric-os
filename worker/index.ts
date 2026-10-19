@@ -4,12 +4,30 @@
  *
  * POST /api/ask  { messages: [{ role: "user" | "assistant", content }] }
  *   → { reply, action? }  — the desktop snake's chat, on Workers AI's free tier.
+ *
+ * Abuse guard: 8 questions a minute per IP (Workers rate-limit binding). Past that, or
+ * when the day's free AI quota is gone, the snake answers with a canned in-character line
+ * instead of calling the model. A per-visit cap lives in the browser (SnakeGuide.tsx).
  */
 
 interface Env {
   AI: { run: (model: string, input: unknown) => Promise<unknown> };
   ASSETS: { fetch: (req: Request) => Promise<Response> };
+  ASK_LIMIT: { limit: (o: { key: string }) => Promise<{ success: boolean }> };
 }
+
+// Canned lines, in the visitor's language. Tone: TBD by Eric — see the options in chat.
+const CANNED = {
+  fast: {
+    en: "Whoa, slow down — I can only swallow one question at a time. 🐍 Give me a few seconds to digest.",
+    zh: "慢点慢点，我一口只能吞一个问题 🐍 让我消化几秒钟。",
+  },
+  quota: {
+    en: "My brain ran out of apples for today 🍎 Email Eric — the real one answers too.",
+    zh: "今天的苹果吃完了，脑子转不动了 🍎 直接给 Eric 发邮件吧，真人也会回。",
+  },
+};
+const lang = (text: string) => (/[\u4e00-\u9fff]/.test(text) ? "zh" : "en");
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -89,6 +107,9 @@ async function ask(req: Request, env: Env) {
   const body = (await req.json().catch(() => null)) as { messages?: unknown } | null;
   const messages = clean(body?.messages);
   if (!messages) return json({ error: "bad_request" }, 400);
+  const l = lang(messages[messages.length - 1].content);
+  const { success } = await env.ASK_LIMIT.limit({ key: req.headers.get("cf-connecting-ip") ?? "anon" });
+  if (!success) return json({ reply: CANNED.fast[l], limited: "fast" });
   try {
     const out = await env.AI.run(MODEL, {
       messages: [{ role: "system", content: SYSTEM + "\n/no_think" }, ...messages],
@@ -104,8 +125,8 @@ async function ask(req: Request, env: Env) {
     if (!reply) throw new Error("empty");
     return json({ reply, action });
   } catch {
-    // Free-tier quota spent or model hiccup: stay in character.
-    return json({ reply: "My brain is napping right now 😴 Try again later, or email Eric directly!", action: "email", degraded: true });
+    // Free-tier quota spent (requests fail rather than bill) or a model hiccup: stay in character.
+    return json({ reply: CANNED.quota[l], action: "email", limited: "quota" });
   }
 }
 
