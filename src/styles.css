@@ -262,19 +262,15 @@ button { font-family: inherit; color: inherit; }
   /* The opaque bar ends sharply; one compact shadow begins below it. */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.24);
 }
+/* Like a macOS menu title: no outline, just a soft rounded fill while its menu is open. */
 .menubar .brand {
   display: flex; align-items: center; gap: 9px;
-  padding: 4px 10px 4px 6px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-s);
-  cursor: pointer; background: none; color: inherit;
+  padding: 3px 9px 3px 6px;
+  border: 0; border-radius: 5px;
+  cursor: default; background: none; color: inherit;
   font-weight: 800;
-  transition: background 100ms, border-color 100ms;
 }
-.menubar .brand:hover, .menubar .brand.open {
-  border-color: rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
-}
+.menubar .brand.open { background: rgba(255, 255, 255, 0.14); }
 .fu-wing-mark { display: block; width: auto; height: 20px; user-select: none; }
 .menubar .os-name {
   /* OS wordmark: one notch larger than status chrome, optically balanced to the mark. */
@@ -291,11 +287,7 @@ button { font-family: inherit; color: inherit; }
   font-variant-numeric: tabular-nums;
   color: rgba(241, 241, 243, 0.68);
 }
-.menubar .right .status-icons { display: flex; align-items: center; gap: 9px; }
-.top-battery {
-  display: block; width: 24px; height: 11px;
-  image-rendering: pixelated; user-select: none;
-}
+.menubar .right > span { white-space: pre; }
 
 /* menu-pop is a white floating surface (window family) */
 .menu-pop {
@@ -513,16 +505,16 @@ button { font-family: inherit; color: inherit; }
 .finder-nav, .finder-views { display: flex; align-items: center; gap: 2px; flex: none; }
 .finder-nav { margin-left: 6px; }
 .finder-nav button, .finder-views button {
-  width: 26px; height: 26px; padding: 0; border: 0; border-radius: 6px;
+  width: 22px; height: 22px; padding: 0; border: 0; border-radius: 5px;
   display: inline-flex; align-items: center; justify-content: center;
   color: var(--ink); background: transparent; cursor: default;
 }
 .finder-nav button:hover:not(:disabled), .finder-views button:hover { background: #f0f0f3; }
 .finder-nav button:disabled { color: #c4c4ca; }
-.finder-views button { width: 28px; height: 28px; color: #7a7a82; }
-.finder-views button.active { color: var(--ink); background: #ececf0; }
-.finder-nav svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.finder-views svg { width: 16px; height: 16px; fill: currentColor; }
+.finder-views button { width: 24px; height: 22px; border-radius: 5px; color: #9a9aa2; }
+.finder-views button.active { color: var(--ink); background: #eeeef1; }
+.finder-nav svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.finder-views svg { width: 14px; height: 14px; fill: currentColor; }
 .finder-titlebar .window-crumb { margin-left: 4px; gap: 6px; font-size: 13px; font-weight: 500; color: var(--muted); }
 .finder-titlebar .window-crumb .crumb-part { gap: 6px; }
 .finder-titlebar .window-crumb .crumb-sep { color: #c4c4ca; }

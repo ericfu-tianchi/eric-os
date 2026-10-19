@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useOS } from "../store";
-import batteryIcon from "../assets/icons/b/battery-v2.png";
 import fuWingMark from "../assets/fu-wing-mark.png";
 
 function useClock() {
@@ -10,10 +9,11 @@ function useClock() {
     return () => window.clearInterval(t);
   }, []);
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const hh = now.getHours();
   const mm = now.getMinutes().toString().padStart(2, "0");
   const h12 = hh % 12 === 0 ? 12 : hh % 12;
-  return `${days[now.getDay()]} ${h12}:${mm} ${hh >= 12 ? "PM" : "AM"}`;
+  return `${days[now.getDay()]} ${months[now.getMonth()]} ${now.getDate()}  ${h12}:${mm} ${hh >= 12 ? "PM" : "AM"}`;
 }
 
 export function MenuBar() {
@@ -44,9 +44,6 @@ export function MenuBar() {
           <span className="os-name"><span className="os-name-main">Tianchi</span> <span className="os-name-suffix">OS</span></span>
         </button>
         <div className="right">
-          <span className="status-icons">
-            <img className="top-battery" src={batteryIcon} alt="Battery at 80%" draggable={false} />
-          </span>
           <span>{clock}</span>
         </div>
       </nav>
