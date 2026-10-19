@@ -1221,11 +1221,14 @@ button { font-family: inherit; color: inherit; }
 .finder-icon-item {
   min-height: 136px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 7px;
   padding: 12px 6px 10px; border: 1px solid transparent; border-radius: 9px; color: var(--ink); background: transparent;
-  font: inherit; text-align: center; cursor: pointer;
+  font: inherit; text-align: center; cursor: default;
 }
-.finder-icon-item:hover { border-color: var(--hairline); background: #fafafc; }
+/* Like the desktop: one click selects, a double click opens. No hover state. */
+.finder-icon-item:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.finder-icon-item.selected .finder-icon-slot { background: rgba(0, 0, 0, 0.07); border-radius: 8px; }
+.finder-icon-item.selected .finder-item-name { background: var(--ink); color: #fff; border-radius: 4px; padding: 0 6px; }
 .finder-icon-item .glyph-wrap { height: 66px; display: inline-flex; align-items: center; }
-.finder-icon-slot { height: 66px; display: flex; align-items: center; justify-content: center; }
+.finder-icon-slot { height: 66px; padding: 0 8px; display: flex; align-items: center; justify-content: center; }
 .finder-icon-grid.has-thumbs .finder-icon-slot { height: 104px; }
 .finder-icon-grid.has-thumbs { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
 .finder-item-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-system); font-size: 12px; font-weight: 660; letter-spacing: -.01em; }
@@ -1234,9 +1237,9 @@ button { font-family: inherit; color: inherit; }
 .finder-list { border: 1px solid var(--hairline); border-radius: 8px; overflow: hidden; }
 .finder-list-head, .finder-list-row { display: grid; grid-template-columns: minmax(165px, 1.2fr) minmax(102px, .8fr) minmax(84px, .55fr); align-items: center; column-gap: 18px; }
 .finder-list-head { min-height: 36px; padding: 0 15px; color: var(--faint); background: #f7f7f9; border-bottom: 1px solid var(--hairline); font-family: var(--font-system); font-size: 10px; font-weight: 650; letter-spacing: .055em; }
-.finder-list-row { width: 100%; min-height: 58px; padding: 8px 15px; border: 0; border-bottom: 1px solid var(--hairline); color: var(--muted); background: var(--surface); font-family: var(--font-system); font-size: 11px; text-align: left; cursor: pointer; }
+.finder-list-row { width: 100%; min-height: 58px; padding: 8px 15px; border: 0; border-bottom: 1px solid var(--hairline); color: var(--muted); background: var(--surface); font-family: var(--font-system); font-size: 11px; text-align: left; cursor: default; }
 .finder-list-row:last-child { border-bottom: 0; }
-.finder-list-row:hover { background: #fafafc; color: var(--ink); }
+.finder-list-row.selected { background: var(--ink); color: #fff; }
 .finder-list-name { display: flex; align-items: center; min-width: 0; gap: 11px; color: var(--ink); font-size: 12.5px; font-weight: 660; }
 .finder-empty { min-height: 260px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; color: var(--faint); text-align: center; }
 .finder-empty strong { color: var(--muted); font-family: var(--font-system); font-size: 12px; font-weight: 650; }

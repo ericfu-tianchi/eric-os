@@ -175,8 +175,28 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
   if (!p) return <div className="win-pad">项目不存在。</div>;
   const cs = caseOf(p);
   const hero = heroOf(p.slug);
+  // Jumping past lazy images used to stop short: they load mid-scroll and push the target down.
+  // Load everything above the target first, then keep correcting until the section sits at the top.
   const jump = (id: string) => {
-    document.getElementById(`sec-${p.slug}-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const root = rootRef.current;
+    const scroller = root?.closest<HTMLElement>(".win-body");
+    const target = document.getElementById(`sec-${p.slug}-${id}`);
+    if (!root || !scroller || !target) return;
+    root.querySelectorAll<HTMLImageElement>("img[loading='lazy']").forEach((img) => {
+      if (img.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING) img.loading = "eager";
+    });
+    const offset = () => target.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+    scroller.scrollTo({ top: scroller.scrollTop + offset(), behavior: "smooth" });
+    let last = -1, checks = 0;
+    const settle = () => {
+      if (++checks > 12) return;
+      const moving = Math.abs(scroller.scrollTop - last) > 1;
+      last = scroller.scrollTop;
+      if (!moving && Math.abs(offset()) > 2) scroller.scrollTo({ top: scroller.scrollTop + offset(), behavior: "smooth" });
+      else if (!moving) return;
+      window.setTimeout(settle, 250);
+    };
+    window.setTimeout(settle, 250);
   };
   const meta = [["My Role", cs.role], ["Timeline", cs.timeline], ["Tools", cs.tools]].filter(([, v]) => v);
 

@@ -65,6 +65,9 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
   const children = filesystemChildren(current.id);
   const trail = filesystemTrail(current.id);
   const view = viewByDirectory[current.id] ?? "icon";
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  useEffect(() => setSelectedId(null), [current.id]);
 
   useEffect(() => {
     const next = filesystemNode(initialId)?.id ?? "tianchintosh";
@@ -146,7 +149,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
         </div>
       </aside>
 
-      <main className="finder-content">
+      <main className="finder-content" onClick={() => setSelectedId(null)}>
         {children.length === 0 ? (
           <div className="finder-empty">
             <PixIcon name="folder" size={48} />
@@ -159,8 +162,10 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
               <button
                 type="button"
                 key={node.id}
-                className={`finder-icon-item ${node.kind === "placeholder" ? "placeholder" : ""}`}
-                onClick={() => openNode(node)}
+                className={`finder-icon-item ${node.kind === "placeholder" ? "placeholder" : ""} ${selectedId === node.id ? "selected" : ""}`}
+                onClick={(e) => { e.stopPropagation(); setSelectedId(node.id); }}
+                onDoubleClick={() => openNode(node)}
+                onKeyDown={(e) => { if (e.key === "Enter") openNode(node); }}
               >
                 <span className="finder-icon-slot"><FinderNodeIcon node={node} size={66} thumbSize={104} /></span>
                 <span className="finder-item-name">{node.name}</span>
@@ -177,8 +182,10 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
               <button
                 type="button"
                 key={node.id}
-                className={`finder-list-row ${node.kind === "placeholder" ? "placeholder" : ""}`}
-                onClick={() => openNode(node)}
+                className={`finder-list-row ${node.kind === "placeholder" ? "placeholder" : ""} ${selectedId === node.id ? "selected" : ""}`}
+                onClick={(e) => { e.stopPropagation(); setSelectedId(node.id); }}
+                onDoubleClick={() => openNode(node)}
+                onKeyDown={(e) => { if (e.key === "Enter") openNode(node); }}
               >
                 <span className="finder-list-name"><FinderNodeIcon node={node} size={32} />{node.name}</span>
                 <span>{kindLabel(node)}</span>
