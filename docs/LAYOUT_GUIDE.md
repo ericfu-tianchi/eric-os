@@ -60,7 +60,7 @@ rail; no poster → the solid accent hero; no process → no process section.
   text or gradients on them. No poster → a solid accent band with the project name
   (Montserrat 800, 30–48px) and the subtitle.
 - **Sections:** each `CaseSection` is a full-width band. Bands alternate white / mist
-  `#f6f6f7`. Every band opens with a centered code-style title: `<Overview/>`.
+  `#f6f6f7` (a section full of white-background slides can set `white: true`). Every band opens with a centered code-style title: `<Overview/>`.
 - **Reading column:** 880px max, centered. Side gutter `clamp(24px, 7cqi, 80px)`.
 - **Meta rail (first section only):** My Role / Timeline / Tools in a 200px right rail,
   64px gap, beside the opening text blocks. It stops at the first callout or figure;
@@ -131,6 +131,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `stat` | Big accent number + label | A number that proves the point |
 | `feature` | Screenshot + title + text, sides alternate | Showcasing screens, features or a gallery of results |
 | `step` | Auto-numbered 01, 02 … with title + text, hairline rules | How-to sequences and pipelines |
+| `row` | 2–3 images side by side, each at its old-site width, one caption | Product photo strips, before/after pairs, two-up wireframes |
 | `img` | Centered figure + caption; `w` = display width in px at 1440 | Evidence, diagrams, logos. Copy `w` from the old site; above 880 the figure breaks out of the column (max 1040) |
 | `link` | Accent pill button | One call to action (prototype, slides, live site) |
 | `embed` | Live iframe, 16:9 (YouTube) or 16:10 (Figma), up to 1040px wide + caption | Videos and clickable prototypes. Use `youtube-nocookie.com/embed/<id>` and Figma's `figma.com/embed?embed_host=share&url=…` |

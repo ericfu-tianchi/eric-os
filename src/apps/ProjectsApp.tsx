@@ -79,10 +79,10 @@ export function ProjectsApp() {
 function Rich({ text }: { text: string }) {
   return (
     <>
-      {text.split(/(\*\*[^*]+\*\*|==[^=]+==|\[[^\]]+\]\([^)]+\))/g).map((part, i) => {
+      {text.split(/(\*\*[^*]+\*\*|==[^=]+==|\[[^\]]+\]\((?:[^()\s]|\([^()\s]*\))+\))/g).map((part, i) => {
         if (part.startsWith("**")) return <b key={i}>{part.slice(2, -2)}</b>;
         if (part.startsWith("==")) return <mark key={i}>{part.slice(2, -2)}</mark>;
-        const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+        const link = part.match(/^\[([^\]]+)\]\(((?:[^()\s]|\([^()\s]*\))+)\)$/); // URLs may hold one level of (parens)
         if (link) return <a key={i} href={link[2]} target="_blank" rel="noopener noreferrer">{link[1]}</a>;
         return part;
       })}
@@ -119,6 +119,18 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
       <figure className={`cs-embed ${b.kind}`}>
         <div style={{ aspectRatio: b.ratio ?? (b.kind === "youtube" ? 16 / 9 : 16 / 10) }}>
           <iframe src={b.src} title={b.caption ?? b.kind} loading="lazy" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowFullScreen />
+        </div>
+        {b.caption && <figcaption>{b.caption}</figcaption>}
+      </figure>
+    );
+  if (b.t === "row")
+    return (
+      <figure className="cs-row">
+        <div>
+          {b.items.map((item, i) => {
+            const src = detailImg(item.src);
+            return src ? <img key={i} src={src} alt="" loading="lazy" decoding="async" draggable={false} style={{ flexBasis: item.w, maxWidth: item.w }} /> : null;
+          })}
         </div>
         {b.caption && <figcaption>{b.caption}</figcaption>}
       </figure>
@@ -193,7 +205,7 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
         const split = si === 0 && meta.length > 0 ? s.blocks.findIndex((b) => !["h", "sub", "p"].includes(b.t)) : 0;
         const introEnd = split === -1 ? blocks.length : split;
         return (
-          <section key={s.id} id={`sec-${p.slug}-${s.id}`} className="cs-section" data-i={si}>
+          <section key={s.id} id={`sec-${p.slug}-${s.id}`} className={`cs-section ${s.white ? "white" : ""}`} data-i={si}>
             <h2 className="cs-title">&lt;{s.label}/&gt;</h2>
             {introEnd > 0 && (
               <div className="cs-intro">

@@ -27,8 +27,9 @@ export type CaseBlock =
   | { t: "step"; title: string; text: string } // numbered step (01, 02 …) for how-to sequences
   | { t: "link"; text: string; href: string } // accent pill button (external)
   | { t: "embed"; src: string; kind: "youtube" | "figma" | "web"; caption?: string; ratio?: number } // live iframe; ratio = w/h
+  | { t: "row"; items: { src: string; w: number }[]; caption?: string } // 2–3 images side by side at their old-site widths
   | { t: "img"; src: string; caption?: string; w?: number }; // src = "<slug>/NN.png"; w = display width in px at 1440 (old-site size)
-export interface CaseSection { id: string; label: string; blocks: CaseBlock[] }
+export interface CaseSection { id: string; label: string; blocks: CaseBlock[]; white?: boolean } // white: keep the band white (white-background slides)
 export interface CaseStudy {
   accent: string;
   sub?: string;
