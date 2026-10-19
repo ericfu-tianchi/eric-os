@@ -100,7 +100,7 @@ export function WindowFrame({
           </button>
           <button className="ctrl max" aria-label="最大化窗口" onClick={() => toggleMax(win.id)}>
             <svg viewBox="0 0 8 8" aria-hidden>
-              <path d="M1.4 1.4h5.2v5.2H1.4z" fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="1.6" />
+              <path d="M2.4 1.5h4.1v4.1z M1.5 2.4v4.1h4.1z" fill="rgba(0,0,0,0.55)" />
             </svg>
           </button>
         </div>
