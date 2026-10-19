@@ -95,7 +95,7 @@ use **bold** or a ==highlight==. Never more than these sizes.
 | Section title → first block | 56px |
 | Before a label (except the first in a column) | 64px |
 | Label → its text | 20px |
-| Before a `>>` sub-heading | 48px; then 18px |
+| Before a sub-heading | 48px; then 18px |
 | Paragraph → paragraph | 18px |
 | Figure (above / below) | 40px |
 | Callout band (above / below) | 56px |
