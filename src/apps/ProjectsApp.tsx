@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { GROUPS, PROJECTS, byGroup, metaOf, type Group, type Category } from "../data/projects";
 import { caseOf, type CaseBlock } from "../data/cases";
 import { useOS } from "../store";
@@ -129,17 +129,36 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
 export function ProjectDetailApp({ slug }: { slug?: string }) {
   const p = PROJECTS.find((x) => x.slug === slug);
   const [active, setActive] = useState(0);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Scroll spy: the nav follows the section that has crossed the upper third of the window.
+  useEffect(() => {
+    const root = rootRef.current;
+    const scroller = root?.closest<HTMLElement>(".win-body");
+    if (!root || !scroller) return;
+    const onScroll = () => {
+      const sections = [...root.querySelectorAll<HTMLElement>(".cs-section[data-i]")];
+      const line = scroller.getBoundingClientRect().top + scroller.clientHeight * 0.35;
+      const atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 4;
+      let current = 0;
+      sections.forEach((s) => { if (atBottom || s.getBoundingClientRect().top <= line) current = Number(s.dataset.i); });
+      setActive(current);
+    };
+    onScroll();
+    scroller.addEventListener("scroll", onScroll, { passive: true });
+    return () => scroller.removeEventListener("scroll", onScroll);
+  }, [slug]);
+
   if (!p) return <div className="win-pad">项目不存在。</div>;
   const cs = caseOf(p);
   const hero = heroOf(p.slug);
-  const jump = (i: number, id: string) => {
-    setActive(i);
+  const jump = (id: string) => {
     document.getElementById(`sec-${p.slug}-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
   const meta = [["My Role", cs.role], ["Timeline", cs.timeline], ["Tools", cs.tools]].filter(([, v]) => v);
 
   return (
-    <div className="cs" style={{ "--cs": cs.accent } as React.CSSProperties}>
+    <div className="cs" ref={rootRef} style={{ "--cs": cs.accent } as React.CSSProperties}>
       {hero ? (
         <img className="cs-hero" src={hero} alt={p.name} draggable={false} />
       ) : (
@@ -149,7 +168,7 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
         <nav className="cs-nav" aria-label="Sections">
           <div>
             {cs.sections.map((s, i) => (
-              <button key={s.id} className={i === active ? "on" : ""} onClick={() => jump(i, s.id)}>{s.label}</button>
+              <button key={s.id} className={i === active ? "on" : ""} onClick={() => jump(s.id)}>{s.label}</button>
             ))}
           </div>
         </nav>
@@ -163,7 +182,7 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
         const split = si === 0 && meta.length > 0 ? s.blocks.findIndex((b) => !["h", "sub", "p"].includes(b.t)) : 0;
         const introEnd = split === -1 ? blocks.length : split;
         return (
-          <section key={s.id} id={`sec-${p.slug}-${s.id}`} className="cs-section">
+          <section key={s.id} id={`sec-${p.slug}-${s.id}`} className="cs-section" data-i={si}>
             <h2 className="cs-title">&lt;{s.label}/&gt;</h2>
             {introEnd > 0 && (
               <div className="cs-intro">
