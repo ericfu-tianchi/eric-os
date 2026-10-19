@@ -144,3 +144,13 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 6. Screens go in `feature` rows, not stacked `img`s.
 7. Images live in `src/assets/old-site/detail/<slug>/` as WebP at 2× their display width (content may still say `NN.png`; the loader prefers the `.webp`). Never upscale a small export: re-export from the source (old-site originals: `static.wixstatic.com/media/<id>` without the `/v1/fill/...` suffix).
 8. Check the page at the default window size and maximized (1440px): measure, rhythm, nothing stretched.
+
+## 7. File icons for reading pages
+
+A reading page's icon in Finder (and About_Me.md on the desktop) is its **real first screen**,
+landscape 4:3, in the S4 frame: one-pixel light-gray hairline, stepped corners, a small
+stepped dog-ear top-right. Never pixelate the content; the pixel trait lives in the frame only.
+Files: `src/assets/file-icons/<slug>.webp` (264px, `about.webp` for About), picked up by
+`fileIconOf()`. Regenerate an icon whenever a page's hero or opening section changes
+(capture the first screen at a 760px-wide window, then compose the frame).
+

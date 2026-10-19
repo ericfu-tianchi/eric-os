@@ -17,6 +17,7 @@ import gearRaster from "../assets/icons/b/gear.png";
 import computerRaster from "../assets/icons/b/computer.png";
 import soulBladeRaster from "../assets/icons/b/soul-blade.png";
 import legoWorldRaster from "../assets/icons/b/lego-world.svg";
+import aboutPageRaster from "../assets/file-icons/about.webp";
 
 /** AI pixel-art icon set (v0.5, "Balanced"): crisp true-pixel + tidy shading, vivid on the charcoal
  *  stage. These rasters override the hand-drawn vector PixIcons below. Flip USE_RASTER_ICONS to
@@ -26,7 +27,7 @@ const RASTER_ICONS: Record<string, string> = {
   folder: folderRaster, doc: docRaster, pdf: pdfRaster,
   snake: snakeRaster, heart: heartRaster, star: starRaster,
   gear: gearRaster, computer: computerRaster,
-  "soul-blade": soulBladeRaster, "lego-world": legoWorldRaster,
+  "soul-blade": soulBladeRaster, "lego-world": legoWorldRaster, "about-page": aboutPageRaster,
 };
 
 /** raster URL for an icon (so the snake game can draw eaten icons as the real art, not the vector). */
@@ -374,7 +375,7 @@ export function iconCellData(name: PixIconName): { w: number; h: number; cells: 
 type VectorIconName =
   | "folder" | "doc" | "pdf" | "snake" | "heart" | "star" | "gear" | "computer";
 /** App icons exist only as raster art; their vector fallback is the plain document. */
-export type PixIconName = VectorIconName | "soul-blade" | "lego-world";
+export type PixIconName = VectorIconName | "soul-blade" | "lego-world" | "about-page";
 export type IconTreatment = "outline" | "flat" | "duotone" | "tile" | "dissolve";
 
 const I_INK = "#26262b";

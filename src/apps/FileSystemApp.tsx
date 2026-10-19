@@ -9,6 +9,7 @@ import {
   type FileNode,
 } from "../data/filesystem";
 import { PixIcon, type PixIconName } from "../components/Pixel";
+import { fileIconOf } from "../data/projectAssets";
 import { useWindowChrome, type WindowViewMode } from "../components/WindowChrome";
 
 function resolvedNode(node: FileNode) {
@@ -40,6 +41,8 @@ function FinderNodeIcon({ node, size }: { node: FileNode; size: number }) {
   const game = target.gameId ? EXTERNAL_GAMES[target.gameId] : undefined;
   if (node.icon) return <img className="finder-pixel-icon" src={node.icon} width={size} height={size} alt="" draggable={false} />;
   if (game) return <img className="finder-pixel-icon" src={game.icon} width={size} height={size} alt="" draggable={false} />;
+  const thumb = target.projectSlug ? fileIconOf(target.projectSlug) : target.app === "about" ? fileIconOf("about") : undefined;
+  if (thumb) return <img className="finder-thumb-icon" src={thumb} width={size} height={size} alt="" draggable={false} />;
   return <PixIcon name={nodeIcon(node)} size={size} />;
 }
 

@@ -7,6 +7,11 @@ export const coverOf = (slug: string): string | undefined => covers[`../assets/o
 export const heroOf = (slug: string): string | undefined =>
   heroes[`../assets/old-site/heroes/${slug}.png`] ?? heroes[`../assets/old-site/heroes/${slug}.webp`];
 
+// Page thumbnails: each reading page's real first screen in the S4 file frame
+// (fine hairline, stepped corners, small dog-ear). Keyed by project slug, plus "about".
+const fileIcons = import.meta.glob("../assets/file-icons/*.webp", { eager: true, import: "default" }) as Record<string, string>;
+export const fileIconOf = (key: string): string | undefined => fileIcons[`../assets/file-icons/${key}.webp`];
+
 // inline case-study section images, referenced as "<slug>/NN.png"
 // (re-exported originals are .webp; content keeps referencing "<slug>/NN.png")
 const detail = import.meta.glob("../assets/old-site/detail/**/*.{png,webp}", { eager: true, import: "default" }) as Record<string, string>;
