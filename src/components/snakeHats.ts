@@ -639,35 +639,77 @@ const CAT_EARS: HatDesign[] = [
 ];
 
 /* ── New York fitted cap, worn backwards: brim out the back, snap gap at the forehead ── */
-// interlocking N + Y monogram, ~10 units, drawn as serif strokes so it reads at 44px
-const NY_MARK = (c: string) => `<g fill="none" stroke="${c}" stroke-width="1.35" stroke-linecap="square" stroke-linejoin="miter">
-  <path d="M-4.6 3.8 V-4 L1.2 3.8 V-4"/><path d="M-5.8 3.8 H-3.4 M-5.8 -4 H-3.6 M0 -4 H2.4"/>
-  <path d="M-0.8 -1.6 L2.2 2 L5.2 -1.6 M2.2 2 V6.4"/><path d="M-1.8 -1.6 H0.2 M4.2 -1.6 H6.2 M1 6.4 H3.4"/></g>`;
-function nyCap(ang: number, o: { crown: string; seam: string; brim: string; brimEdge: string; mark: string; button?: string; sticker?: boolean }) {
-  const cx = -5;
-  const seams = [30, 90, 150, 210, 270, 330].map((d) => {
-    const a = (d * Math.PI) / 180;
-    return `<path d="M${cx} 0 L${(cx + 15 * Math.cos(a)).toFixed(2)} ${(19.5 * Math.sin(a)).toFixed(2)}" stroke="${o.seam}" stroke-width=".8"/>`;
+// The Yankees' interlocking NY cap insignia — the real artwork (Wikimedia Commons,
+// "NewYorkYankees_caplogo.svg", 300-unit box, bbox centre 150.6,150.7, 238×274). Trademark of the New York Yankees.
+const NY_LOGO_D = "M31.554,86.643c3.799.142,23.85-21.491,26.791-23.703,21.438,29.347,22.032,39.505,71.449,84.088-2.975-20.317-38.262-80.601-56.562-99.327,8.932-9.029,27.56-27.152,32.744-33.296,5.491,15.799,25.006,77.316,45.252,114.563h0c15.479-29.347,42.52-103.844,42.271-115.128,8.849,8.192,22.393,25.94,32.153,34.427-19.056,14.673-51.801,81.83-63.711,113.435-3.451,9.167-.593,14.673-.593,14.673,10.674,8.192,46.44,41.762,52.991,47.97C201.243,139.693,228.63,83.257,247.682,62.94c3.053,3.219,12.271,10.933,22.03,20.881-10.12,13.544-30.136,48.92-30.96,85.782-1.192,53.049,7.738,76.188,22.027,97.069-6.391,7.835-11.179,7.321-20.241,18.06-14.338-13.164-68.987-62.478-78.596-71.109h0l1.79,40.069c.456,2.339.969,23.352,10.12,33.299-20.102.026-23.964.028-44.059.563,6.71-9.071,8.778-28.845,8.932-34.989l-.598-63.773c-7.932-7.607-47.121-43.191-50.606-46.842h0c4.165,21.446,4.764,88.04-25.004,138.27-2.443-3.514-27.299-33.074-26.797-33.863,9.15-14.338,25.295-46.615,25.601-76.752.559-55.033-20.922-69.503-29.767-82.962";
+type CapColors = { crown: string; crownHi: string; seam: string; brim: string; brimHi: string; stitch: string; logo: string; eyelet: string };
+/**
+ * 59FIFTY-style fitted cap worn backwards, seen from above. Everything is drawn in an
+ * unscaled frame and shrunk 0.95; the brim reaches back to about -39, over the neck.
+ * Crown: near-round dome, 6 panels from the top button, an eyelet per panel, double-stitched
+ * seams. Brim: out the back, 4 rows of stitching, the crown's shadow, optional gold sticker.
+ * Logo: on the front panels (now facing back), its top pointing at the button.
+ */
+function nyCap(id: string, c: CapColors, sticker: boolean) {
+  const cx = -8.5, rx = 19.5, ry = 19.5 * 0.97, bx = cx + 1.2; // crown centre / radii / top button
+  const pt = (deg: number, k = 1) => {
+    const a = (deg * Math.PI) / 180;
+    return [cx + rx * k * Math.cos(a), ry * k * Math.sin(a)] as const;
+  };
+  const f = (n: number) => n.toFixed(2);
+  const [p1x, p1y] = pt(112), [p2x, p2y] = pt(248);
+  const tip = cx - rx - 13.5; // a real brim sticks out about a third of the crown
+  const brim = (k: number) => {
+    // the brim outline scaled toward its root, so the stitch rows converge at the corners like real ones
+    const ox = p1x - 2, sx = (x: number) => f(ox + (x - ox) * k), sy = (y: number) => f(y * k);
+    return `M${sx(p2x)} ${sy(p2y)} C${sx(p2x - 11)} ${sy(p2y - 2.2)} ${sx(tip)} ${sy(-15.5)} ${sx(tip)} 0 C${sx(tip)} ${sy(15.5)} ${sx(p1x - 11)} ${sy(p1y + 2.2)} ${sx(p1x)} ${sy(p1y)}`;
+  };
+  const seamAngles = [0, 60, 120, 180, 240, 300];
+  const seams = seamAngles.map((d) => {
+    const [ex, ey] = pt(d, 0.995);
+    const a = (d * Math.PI) / 180, nx = -Math.sin(a) * 0.75, ny = Math.cos(a) * 0.75;
+    return `<path d="M${f(bx)} 0 L${f(ex)} ${f(ey)}" stroke="${c.seam}" stroke-width=".8"/>
+      <path d="M${f(bx + nx * 2)} ${f(ny * 2)} L${f(ex + nx)} ${f(ey + ny)}" stroke="${c.stitch}" stroke-width=".3" stroke-dasharray=".8 .55"/>`;
   }).join("");
-  return `
-    <path d="M-17 -13 C-27 -14 -34.5 -9 -34.5 0 C-34.5 9 -27 14 -17 13 Z" fill="${o.brim}" stroke="${o.brimEdge}" stroke-width="1"/>
-    ${[3.2, 6.2].map((d) => `<path d="M-17 ${-13 + d * 0.55} C${-26 + d * 0.3} ${-13 + d * 0.7} ${-33.5 + d} -8 ${-33.5 + d} 0 C${-33.5 + d} 8 ${-26 + d * 0.3} ${13 - d * 0.7} -17 ${13 - d * 0.55}" fill="none" stroke="${o.brimEdge}" stroke-width=".6" opacity=".8"/>`).join("")}
-    ${o.sticker ? `<circle cx="-28" cy="-5.5" r="2.6" fill="#D9B44A" stroke="#F2DB8C" stroke-width=".7"/><circle cx="-28" cy="-5.5" r="1.2" fill="#B88F25"/>` : ""}
-    <ellipse cx="${cx}" cy="0" rx="15" ry="19.5" fill="${o.crown}"/>
-    ${seams}
-    <path d="M${cx} 0 L${(cx + 15 * Math.cos(-2.1)).toFixed(2)} ${(19.5 * Math.sin(-2.1)).toFixed(2)} A15 19.5 0 0 1 ${(cx + 15 * Math.cos(-1.05)).toFixed(2)} ${(19.5 * Math.sin(-1.05)).toFixed(2)}Z" fill="rgba(255,255,255,.07)"/>
-    <path d="M9.4 -5.4 C5.4 -4.6 4.4 -2 4.4 0 C4.4 2 5.4 4.6 9.4 5.4 Z" fill="#06C268"/>
-    <rect x="7.6" y="-5.6" width="2.2" height="11.2" rx="1" fill="${o.brim}" stroke="${o.seam}" stroke-width=".5"/>
-    <circle cx="8.7" cy="-3" r=".7" fill="${o.mark}" opacity=".8"/><circle cx="8.7" cy="0" r=".7" fill="${o.mark}" opacity=".8"/><circle cx="8.7" cy="3" r=".7" fill="${o.mark}" opacity=".8"/>
-    <circle cx="${cx}" cy="0" r="2" fill="${o.button ?? o.crown}" stroke="${o.seam}" stroke-width=".7"/>
-    <g transform="translate(-14 0) rotate(${-ang})">${NY_MARK(o.mark)}</g>`;
+  const eyelets = seamAngles.map((d) => {
+    const [ex, ey] = pt(d + 30, 0.34); // eyelets sit high on each panel, near the button
+    return `<circle cx="${f(ex)}" cy="${f(ey)}" r=".95" fill="${c.eyelet}"/><circle cx="${f(ex)}" cy="${f(ey)}" r="1.35" fill="none" stroke="${c.stitch}" stroke-width=".35"/>`;
+  }).join("");
+  const s = 11.6 / 274; // logo height ≈ 12 units, running along the panel
+  return `<defs>
+      <radialGradient id="${id}-dome" cx="${f(cx - 5)}" cy="-6" r="${f(rx * 1.25)}" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${c.crownHi}"/><stop offset="1" stop-color="${c.crown}"/></radialGradient>
+      <linearGradient id="${id}-brim" x1="${f(tip)}" y1="0" x2="${f(p1x)}" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${c.brimHi}"/><stop offset="1" stop-color="${c.brim}"/></linearGradient>
+      <clipPath id="${id}-bclip"><path d="${brim(1)}Z"/></clipPath>
+    </defs>
+    <g transform="scale(.95)">
+      <path d="${brim(1)}Z" fill="url(#${id}-brim)" stroke="${c.seam}" stroke-width=".7"/>
+      ${[0.94, 0.89, 0.84, 0.79].map((k) => `<path d="${brim(k)}" fill="none" stroke="${c.stitch}" stroke-width=".3" stroke-dasharray=".8 .5"/>`).join("")}
+      <ellipse cx="${f(cx - 1.4)}" cy=".6" rx="${rx}" ry="${f(ry)}" fill="rgba(0,0,0,.35)" clip-path="url(#${id}-bclip)"/>
+      ${sticker ? `<g transform="translate(${f(tip + 5.4)} -8.4)"><circle r="3.1" fill="#C9A13A"/><circle r="3.1" fill="none" stroke="#F3DC8E" stroke-width=".5"/><circle r="2" fill="none" stroke="#A88224" stroke-width=".45"/><path d="M-1.6 -1.6 A2.4 2.4 0 0 1 .6 -2.3" fill="none" stroke="#FFF2C4" stroke-width=".6" stroke-linecap="round"/></g>` : ""}
+      <ellipse cx="${f(cx)}" cy="0" rx="${rx}" ry="${f(ry)}" fill="url(#${id}-dome)" stroke="${c.seam}" stroke-width=".8"/>
+      ${seams}${eyelets}
+      <g transform="translate(${f(cx - 12.6)} 0) rotate(90) scale(${s.toFixed(5)}) translate(-150.63 -150.7)">
+        <path d="${NY_LOGO_D}" fill="rgba(0,0,0,.4)" transform="translate(9 9)"/>
+        <path d="${NY_LOGO_D}" fill="${c.logo}"/>
+      </g>
+      <circle cx="${f(bx)}" cy="0" r="2.3" fill="url(#${id}-dome)" stroke="${c.seam}" stroke-width=".6"/>
+      <circle cx="${f(bx - 0.6)}" cy="-0.6" r=".8" fill="${c.crownHi}" opacity=".9"/>
+    </g>`;
 }
 const NY_NAVY = "#0C2340";
 const NY_CAPS: HatDesign[] = [
-  { id: "ny1", group: "nycap", label: "Classic navy", note: "Navy six-panel, white NY, navy brim out the back", svg: (ang) => nyCap(ang, { crown: NY_NAVY, seam: "#06152A", brim: "#102B4C", brimEdge: "#06152A", mark: "#FFFFFF" }) },
-  { id: "ny2", group: "nycap", label: "Navy + gold sticker", note: "The unpeeled gold brim sticker — streetwear detail", svg: (ang) => nyCap(ang, { crown: NY_NAVY, seam: "#06152A", brim: "#102B4C", brimEdge: "#06152A", mark: "#FFFFFF", sticker: true }) },
-  { id: "ny3", group: "nycap", label: "All black", note: "Black on black, white NY", svg: (ang) => nyCap(ang, { crown: "#17181B", seam: "#050506", brim: "#1E1F23", brimEdge: "#050506", mark: "#FFFFFF", sticker: true }) },
-  { id: "ny4", group: "nycap", label: "Cream + navy NY", note: "Summer cream cap, navy mark and button", svg: (ang) => nyCap(ang, { crown: "#F3EEE3", seam: "#CFC6B4", brim: "#ECE5D6", brimEdge: "#C7BCA6", mark: NY_NAVY, button: NY_NAVY }) },
+  {
+    id: "ny2r", group: "nycap", label: "Navy + gold sticker", note: "Refined NY2: real NY insignia turned to face the button, rounder crown, eyelets, stitched seams and brim",
+    svg: nyCap("snk-ny1", { crown: "#0B1D38", crownHi: "#1C3966", seam: "#050E1D", brim: "#0B1D38", brimHi: "#18335C", stitch: "rgba(255,255,255,.26)", logo: "#FFFFFF", eyelet: "#040B17" }, true),
+  },
+  {
+    id: "ny2b", group: "nycap", label: "Black + gold sticker", note: "Same cap in black",
+    svg: nyCap("snk-ny2", { crown: "#121316", crownHi: "#2E3036", seam: "#000000", brim: "#121316", brimHi: "#2A2B30", stitch: "rgba(255,255,255,.22)", logo: "#FFFFFF", eyelet: "#000000" }, true),
+  },
+  {
+    id: "ny2n", group: "nycap", label: "Navy, no sticker", note: "Clean brim — for comparison",
+    svg: nyCap("snk-ny3", { crown: "#0B1D38", crownHi: "#1C3966", seam: "#050E1D", brim: "#0B1D38", brimHi: "#18335C", stitch: "rgba(255,255,255,.26)", logo: "#FFFFFF", eyelet: "#040B17" }, false),
+  },
 ];
 
 /* ── Christmas ── */
@@ -743,8 +785,8 @@ const HALLOWEEN: HatDesign[] = [
 const pick = (list: HatDesign[], ids: string[]) => list.filter((d) => ids.includes(d.id));
 
 export const HAT_GROUPS: { id: string; title: string; brief: string; tag: string; designs: HatDesign[] }[] = [
+  { id: "nycap", title: "New York cap · backwards", brief: "Rebuilt from NY2: the real NY insignia, rounder crown, every seam stitched", tag: "round 5", designs: NY_CAPS },
   { id: "cat", title: "Cat ears · orientation", brief: "Same ears, four ways to wear them — pick one", tag: "round 4", designs: CAT_EARS },
-  { id: "nycap", title: "New York cap · backwards", brief: "Six-panel fitted cap, brim out the back, snap gap at the forehead, NY on the back panel", tag: "round 4", designs: NY_CAPS },
   { id: "xmas", title: "Christmas", brief: "Pick one", tag: "round 4", designs: XMAS },
   { id: "halloween", title: "Halloween", brief: "Pick one", tag: "round 4", designs: HALLOWEEN },
   {
