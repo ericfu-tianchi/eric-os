@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useOS } from "../store";
-import { PixIcon } from "./Pixel";
 
 /**
  * SnakeChat — "Ask the snake" about Tianchi (POST /api/ask → Workers AI, see worker/).
@@ -13,7 +12,7 @@ import { PixIcon } from "./Pixel";
  *   error    no reply by 25 s / network / server error → retry button + email card
  *   offline  the browser is offline → retry button
  *   fast     > 8 questions a minute (browser, and per IP in the Worker) → 15 s lock
- *   full     > 20 questions this visit → 3 min digest lock; any Snake game digests at once
+ *   full     > 20 questions this visit → 3 min digest lock ("Play Snake →" skips it); any Snake game digests at once
  *   quota    the day's free AI is used up → email card, and the input turns into
  *            "write to Tianchi": Send opens a pre-filled email instead
  */
@@ -69,9 +68,6 @@ const steerFor = (lang: Lang, seed: number) => {
   const a = seed % pool.length;
   return [pool[a], pool[(a + 1 + (seed % (pool.length - 1))) % pool.length]];
 };
-
-// Full-stomach "play to skip" treatment, on trial: 1 = link in the fine print, 2 = button in the message, 3 = snake in the send slot
-const LOCK_UI = ((v) => (v === "1" || v === "3" ? v : "2"))(new URLSearchParams(window.location.search).get("lockui"));
 
 const langOf = (text: string): Lang => (/[一-鿿]/.test(text) ? "zh" : "en");
 
@@ -142,7 +138,7 @@ async function send(text: string) {
   }
   if (state.asked >= CAP) {
     set({ lock: { kind: "full", from: now, until: now + DIGEST_MS }, pending: q });
-    return say(COPY.full[lang], LOCK_UI === "2" ? { action: "play" } : {});
+    return say(COPY.full[lang], { action: "play" }); // "Play Snake →" skips the wait
   }
   const recent = state.sentAt.filter((t) => now - t < FAST_WINDOW_MS);
   if (recent.length >= FAST_N) {
@@ -307,30 +303,15 @@ export function SnakeChat({ style, onAct, onClose }: {
           placeholder={placeholder}
           aria-label="Your question"
         />
-        {full && LOCK_UI === "3" ? (
-          <button type="button" className="sguide-skipicon" onClick={() => onAct("play")} aria-label="Play Snake to skip the wait" title="Play Snake to skip the wait">
-            <PixIcon name="snake" size={22} />
-          </button>
-        ) : (
-          <button type="submit" disabled={!draft.trim() || s.busy || !!s.lock} aria-label={s.mail ? "Write email" : "Send"}>
-            {s.mail
-              ? <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden><rect x="1.5" y="3.5" width="13" height="9" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M2.5 4.8 8 9l5.5-4.2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
-              : "↑"}
-          </button>
-        )}
+        <button type="submit" disabled={!draft.trim() || s.busy || !!s.lock} aria-label={s.mail ? "Write email" : "Send"}>
+          {s.mail
+            ? <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden><rect x="1.5" y="3.5" width="13" height="9" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M2.5 4.8 8 9l5.5-4.2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
+            : "↑"}
+        </button>
       </form>
       <p className="fine">
-        {full && LOCK_UI === "1" ? (
-          <>
-            <span>Can't wait?</span>
-            <button type="button" className="sguide-skiplink" onClick={() => onAct("play")}>Play Snake to skip →</button>
-          </>
-        ) : (
-          <>
-            <span>{draft.length >= 240 ? "AI answers can be wrong." : "AI answers can be wrong. Built on Cloudflare Workers AI."}</span>
-            {draft.length >= 240 && <span className="count">{draft.length}/300</span>}
-          </>
-        )}
+        <span>{draft.length >= 240 ? "AI answers can be wrong." : "AI answers can be wrong. Built on Cloudflare Workers AI."}</span>
+        {draft.length >= 240 && <span className="count">{draft.length}/300</span>}
       </p>
     </div>
   );

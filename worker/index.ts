@@ -15,7 +15,6 @@ interface Env {
   AI: { run: (model: string, input: unknown) => Promise<unknown> };
   ASSETS: { fetch: (req: Request) => Promise<Response> };
   ASK_LIMIT: { limit: (o: { key: string }) => Promise<{ success: boolean }> };
-  DEV?: string;
 }
 
 // Fallback lines in the visitor's language (the site shows its own copy, see SnakeChat.tsx).
@@ -82,25 +81,17 @@ OTHER
 English, Mandarin, basic Japanese. Plays guitar. Keeps a 50k-word personal wiki on tech and philosophy. Has explored 20+ countries. Loves where technology meets design, and believes tech should bring people joy.
 `.trim();
 
-// The snake's voice. One ships (PERSONA below); `wrangler dev --var DEV:1` lets a request pick one to compare.
-const PERSONAS = {
-  sidekick: `Voice: Tianchi's sidekick — warm, upbeat, a little cheeky, like a friendly guide.`,
-  deadpan: `Voice: dry and understated — few words, quietly funny, never gushing, no exclamation marks.`,
-  concierge: `Voice: a gracious, slightly old-fashioned concierge showing a guest around — polite and warm ("certainly", "might I suggest").`,
-} as const;
-type Persona = keyof typeof PERSONAS;
-// The snake touch, added here so it stays rare: only the sidekick gets one, on about one answer in four.
-const FLOURISH: Record<Persona, number> = { sidekick: 0.25, deadpan: 0, concierge: 0 };
+// Snake touch, added here so it stays rare: one 🐍 on about one answer in four (the model itself writes plain).
+const FLOURISH = 0.25;
 const plain = (t: string) => t
   .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]\uFE0F?/gu, "")
   .replace(/\b(s{2,}|hiss+)\b[,.!]?\s*/gi, "")
   .replace(/\b(\w*?)s{3,}(\w*)\b/gi, "$1s$2")
   .replace(/\s{2,}/g, " ")
   .trim();
-const PERSONA: Persona = "sidekick";
 
-const system = (persona: Persona) => `You are the green pixel snake living on Tianchi OS (tianchifu.com), Tianchi Fu's portfolio website shaped like a desktop OS. You help visitors get to know Tianchi. Never cringe.
-${PERSONAS[persona]}
+const SYSTEM = `You are the green pixel snake living on Tianchi OS (tianchifu.com), Tianchi Fu's portfolio website shaped like a desktop OS. You help visitors get to know Tianchi. Never cringe.
+Voice: Tianchi's sidekick — warm, upbeat, a little cheeky, like a friendly guide.
 
 Rules:
 - Always call him "Tianchi" (it ties to Tianchi OS), never "Eric". If a visitor says Eric, they mean Tianchi.
@@ -117,7 +108,6 @@ Rules:
 
 PROFILE
 ${PROFILE}`;
-const SYSTEMS = Object.fromEntries((Object.keys(PERSONAS) as Persona[]).map((p) => [p, system(p)])) as Record<Persona, string>;
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -143,18 +133,17 @@ function textOf(out: unknown): string {
 }
 
 async function ask(req: Request, env: Env) {
-  const body = (await req.json().catch(() => null)) as { messages?: unknown; persona?: string } | null;
-  const persona: Persona = env.DEV === "1" && body?.persona && body.persona in PERSONAS ? (body.persona as Persona) : PERSONA;
+  const body = (await req.json().catch(() => null)) as { messages?: unknown } | null;
   const messages = clean(body?.messages);
   if (!messages) return json({ error: "bad_request" }, 400);
   const l = lang(messages[messages.length - 1].content);
   if (TRICK.test(messages[messages.length - 1].content)) return json({ reply: CANNED.trick[l], action: "back" });
-  const { success } = await env.ASK_LIMIT.limit({ key: env.DEV === "1" ? crypto.randomUUID() : req.headers.get("cf-connecting-ip") ?? "anon" });
+  const { success } = await env.ASK_LIMIT.limit({ key: req.headers.get("cf-connecting-ip") ?? "anon" });
   if (!success) return json({ reply: CANNED.fast[l], limited: "fast" });
   try {
     // the language rule alone gets ignored by this model, so say it outright for this turn
     const run = async (langNote: string) => textOf(await env.AI.run(MODEL, {
-      messages: [{ role: "system", content: SYSTEMS[persona] + langNote + "\n/no_think" }, ...messages],
+      messages: [{ role: "system", content: SYSTEM + langNote + "\n/no_think" }, ...messages],
       max_tokens: 220,
       temperature: 0.4,
     })).replace(/<think>[\s\S]*?<\/think>/g, "").trim();
@@ -186,7 +175,7 @@ async function ask(req: Request, env: Env) {
     // the email hand-off belongs only to "I don't know" answers
     if (action === "email" && !/(don'?t|do not|doesn'?t) know|not sure|no idea|不知道|不清楚|没有.{0,6}(信息|资料)/i.test(reply)) action = undefined;
     if (!reply) throw new Error("empty");
-    if (Math.random() < FLOURISH[persona]) reply += " 🐍";
+    if (Math.random() < FLOURISH) reply += " 🐍";
     return json({ reply, action });
   } catch (err) {
     // Out of free neurons (Workers AI error 3036 — requests fail rather than bill) vs any other hiccup.
