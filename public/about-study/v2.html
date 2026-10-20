@@ -51,7 +51,7 @@ html, body { margin: 0; background: #0b0b0d; color: #ececef; font-family: var(--
 .label::before { content: ""; width: 18px; height: 2px; background: var(--ac); }
 
 /* ---------- hero ---------- */
-.hero { position: relative; height: 700px; padding: 26px 56px 0; isolation: isolate; }
+.hero { position: relative; height: 640px; padding: 26px 56px 0; isolation: isolate; }
 .hero .grid { position: absolute; inset: 0; z-index: -2;
   background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
   background-size: 44px 44px; -webkit-mask-image: radial-gradient(ellipse 70% 80% at 70% 60%, #000 30%, transparent 75%); mask-image: radial-gradient(ellipse 70% 80% at 70% 60%, #000 30%, transparent 75%); }
@@ -61,15 +61,22 @@ html, body { margin: 0; background: #0b0b0d; color: #ececef; font-family: var(--
 .meta .now { display: inline-flex; align-items: center; gap: 8px; color: var(--soft); }
 .meta .now i { width: 7px; height: 7px; border-radius: 50%; background: var(--ac); box-shadow: 0 0 0 0 var(--ac); animation: ping 2.2s infinite; }
 @keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ac) 70%, transparent); } 70%, 100% { box-shadow: 0 0 0 9px transparent; } }
-.name { position: relative; margin: 56px 0 0; font: 800 132px/0.84 var(--display); letter-spacing: -.05em; }
+.name { position: relative; margin: 64px 0 0; font: 800 100px/0.86 var(--display); letter-spacing: -.045em; }
 .name .l { display: block; overflow: hidden; padding-bottom: .06em; }
 .name .l > span { display: inline-block; }
 .name .l1 { position: relative; z-index: 1; }
 .name .l2 { position: relative; z-index: 3; margin-top: -.02em; }
 .name .eric { color: color-mix(in srgb, var(--ink) 30%, transparent); font-weight: 800; }
 .name .dot { color: var(--ac); }
-.photo { position: absolute; z-index: 2; right: -30px; bottom: 0; width: 560px; image-rendering: auto; }
-.me[data-ph="fix1px"] .photo { image-rendering: pixelated; }
+.pwrap { position: absolute; z-index: 2; right: -118px; bottom: 0; width: 650px; pointer-events: none; }
+.photo { position: relative; z-index: 1; display: block; width: 100%; }
+/* the old site's rough offset shadow, two ways: a hard copy of the silhouette, or a blocky pixel one */
+.me[data-shadow="hard"] .photo { filter: drop-shadow(14px 12px 0 var(--ac2)); }
+.pshadow { position: absolute; inset: 0; transform: translate(16px, 14px); background: var(--ac2); display: none;
+  -webkit-mask: url(/about-study/b-mask-px.png) center / 100% 100% no-repeat; mask: url(/about-study/b-mask-px.png) center / 100% 100% no-repeat; }
+.me[data-shadow="pixel"] .pshadow { display: block; }
+.me[data-px="1"] .photo { image-rendering: pixelated; }
+.me[data-c2="pink"] { --ac2: #ff2e6e; } .me[data-c2="red"] { --ac2: #ff3b3b; } .me[data-c2="coral"] { --ac2: #ff6a55; } .me[data-c2="none"] { --ac2: transparent; }
 .photo { pointer-events: none; }
 .lead { position: relative; z-index: 3; margin: 26px 0 0; max-width: 380px; font-size: 21px; line-height: 1.45; color: #d8d8dd; font-weight: 450; }
 .lead b { color: var(--ink); font-weight: 650; }
@@ -84,7 +91,7 @@ html, body { margin: 0; background: #0b0b0d; color: #ececef; font-family: var(--
 /* entrance */
 .play .name .l > span { animation: rise .9s cubic-bezier(.2,.8,.2,1) both; }
 .play .name .l2 > span { animation-delay: .08s; }
-.play .photo { animation: photo 1.2s .15s cubic-bezier(.2,.8,.2,1) both; }
+.play .pwrap { animation: photo 1.2s .15s cubic-bezier(.2,.8,.2,1) both; }
 .play .lead, .play .proof, .play .meta { animation: fade .8s .45s both; }
 @keyframes rise { from { transform: translateY(105%); } to { transform: none; } }
 @keyframes photo { from { opacity: 0; transform: translateX(40px) scale(1.03); } to { opacity: 1; transform: none; } }
@@ -190,11 +197,11 @@ a { color: inherit; text-decoration: none; }
 <body>
 <div class="study">
   <h1>About_Me.md · v2</h1>
-  <p class="lede">Round 4. The portrait is your original photo again, pixel for pixel; GPT only filled in the missing cap top and guitar bottom (three tries: A, B, C), and the shirt logo is gone. Try Photo × Tone × Accent; colour stays off your face unless you pick a tinted tone. One direction, done properly: Night stage, your pick. Switch the accent colour and the Path layout at the top; the page inside the window is live (scroll it, hover the rows and cards). The window is the real 960 × 720 size. Use Pick to send me your combo.</p>
+  <p class="lede">Round 5. Original B (your face, untouched) styled seven ways under LOOK, with a second colour for the old site's rough offset shadow next to the green. The name is smaller so your head sits higher. Accent and Path work as before.</p>
   <div class="ctrl">
     <div class="grp" id="acs"><span>ACCENT</span></div>
-    <div class="grp" id="phs"><span>PHOTO</span></div>
-    <div class="grp" id="tns"><span>TONE</span></div>
+    <div class="grp" id="lks"><span>LOOK</span></div>
+    <div class="grp" id="c2s"><span>2ND COLOUR</span></div>
     <div class="grp" id="tls"><span>PATH</span></div>
     <button class="replay" id="replay">Replay intro</button>
   </div>
@@ -210,8 +217,18 @@ const ICON = {
 };
 const ACCENTS = [["green", "Green", "#06c268"], ["vermilion", "Vermilion", "#ff5b35"], ["champagne", "Champagne", "#d9bd8c"], ["crimson", "Crimson", "#e2263f"], ["pink", "Pink", "#ff2e6e"]];
 // the portrait: your original photo, untouched; GPT only painted the missing cap top and guitar bottom (A/B/C = three tries); logo removed
-const PHOTOS = [["fix1", "Original A"], ["fix2", "Original B"], ["fix3", "Original C"], ["fix1px", "A + touch of pixel"]];
-const TONES = [["colour", "Colour"], ["mono", "B&W"], ["warm", "Warm B&W"], ["crimson", "Crimson"], ["pink", "Pink"]];
+// Original B, styled seven ways. img = b-<img>.webp; shadow: hard (old-site offset), pixel (blocky), none
+const LOOKS = [
+  ["old", "Old-site shadow", { img: "colour", shadow: "hard" }],
+  ["pxshadow", "Pixel shadow", { img: "colour", shadow: "pixel" }],
+  ["poster", "Poster", { img: "poster", shadow: "hard" }],
+  ["sprite", "Sprite", { img: "sprite", shadow: "pixel", px: true }],
+  ["lightpx", "Touch of pixel", { img: "px", shadow: "hard", px: true }],
+  ["halftone", "Halftone", { img: "halftone", shadow: "none" }],
+  ["duo", "Pink duotone", { img: "duo", shadow: "none" }],
+];
+const C2 = [["pink", "Pink", "#ff2e6e"], ["red", "Red", "#ff3b3b"], ["coral", "Coral", "#ff6a55"], ["none", "No second colour", "#3a3b40"]];
+
 const TLS = [["gantt", "Gantt"], ["years", "Big years"], ["spine", "Spine"], ["rail", "Rail"]];
 
 // ---- content (from LinkedIn About + Experience/Education) ----
@@ -249,13 +266,14 @@ const PHIL = "Tech is never the end, but a powerful means. I'm driven by the pos
 const KEY = ["positive", "human", "impact"];
 
 function page(ac, tl) {
+  const L = LOOKS.find((x) => x[0] === state.look)[2];
   const words = PHIL.split(" ").map((w) => `<span class="w ${KEY.includes(w) ? "k" : ""}">${w}</span>`).join(" ");
-  return `<div class="me play" data-ac="${ac}" data-ph="${state.ph}">
+  return `<div class="me play" data-ac="${ac}" data-shadow="${L.shadow}" data-px="${L.px ? 1 : 0}" data-c2="${state.c2}">
   <section class="hero">
     <div class="grid"></div><div class="glow"></div>
     <div class="meta"><span>About_Me.md</span><span class="now"><i></i>Now · AI PM at OpusClip · Singapore</span></div>
     <h2 class="name"><span class="l l1"><span>Tianchi</span></span><span class="l l2"><span><span class="eric">(Eric)</span> Fu<span class="dot">.</span></span></span></h2>
-    <img class="photo" src="/about-study/${state.ph}-${state.tone}.webp" alt="Tianchi playing guitar">
+    <div class="pwrap"><i class="pshadow"></i><img class="photo" src="/about-study/b-${L.img}.webp" alt="Tianchi playing guitar"></div>
     <p class="lead">I turn what AI models can do into products people <b>actually enjoy</b>, with an engineer's logic and a designer's hands.</p>
     <div class="cta"><a href="#" class="primary">${ICON.mail}Email me</a><a href="#">${ICON.li}LinkedIn</a><a href="#">${ICON.gh}GitHub</a></div>
     <div class="proof"><div><b>3 yrs</b><span>AI products</span></div><div><b>10M+</b><span>inferences / mo</span></div><div><b>80+</b><span>agents shipped</span></div></div>
@@ -275,11 +293,11 @@ function page(ac, tl) {
 </div>`;
 }
 
-let state = { ac: "green", tl: "years", ph: "fix1", tone: "colour" };
-try { Object.assign(state, JSON.parse(localStorage.getItem("about-v4") || "{}")); } catch {}
+let state = { ac: "green", tl: "years", look: "old", c2: "pink" };
+try { Object.assign(state, JSON.parse(localStorage.getItem("about-v5") || "{}")); } catch {}
 if (!ACCENTS.some((a) => a[0] === state.ac)) state.ac = "green";
-if (!PHOTOS.some((a) => a[0] === state.ph)) state.ph = "fix1";
-if (!TONES.some((a) => a[0] === state.tone)) state.tone = "colour";
+if (!LOOKS.some((a) => a[0] === state.look)) state.look = "old";
+if (!C2.some((a) => a[0] === state.c2)) state.c2 = "pink";
 const vp = document.getElementById("vp");
 function render(keepScroll) {
   const top = vp.scrollTop; vp.innerHTML = page(state.ac, state.tl); if (keepScroll) vp.scrollTop = top;
@@ -289,14 +307,14 @@ function render(keepScroll) {
   new IntersectionObserver(([e], o) => { if (!e.isIntersecting) return; ws.forEach((w, i) => setTimeout(() => w.classList.add("in"), i * 70)); o.disconnect(); }, { root: vp, threshold: 0.4 }).observe(vp.querySelector(".phil p"));
   document.querySelectorAll("#acs button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.ac));
   document.querySelectorAll("#tls button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.tl));
-  document.querySelectorAll("#phs button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.ph));
-  document.querySelectorAll("#tns button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.tone));
-  document.getElementById("pick").textContent = `accent: ${state.ac}, photo: ${state.ph}, tone: ${state.tone}, path: ${state.tl}`;
-  try { localStorage.setItem("about-v4", JSON.stringify(state)); } catch {}
+  document.querySelectorAll("#lks button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.look));
+  document.querySelectorAll("#c2s button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.c2));
+  document.getElementById("pick").textContent = `look: ${state.look}, 2nd: ${state.c2}, accent: ${state.ac}, path: ${state.tl}`;
+  try { localStorage.setItem("about-v5", JSON.stringify(state)); } catch {}
 }
 for (const [k, l, c] of ACCENTS) { const b = document.createElement("button"); b.dataset.k = k; b.innerHTML = `<i style="background:${c}"></i>${l}`; b.onclick = () => { state.ac = k; render(true); }; document.getElementById("acs").appendChild(b); }
-for (const [k, l] of PHOTOS) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.ph = k; render(true); }; document.getElementById("phs").appendChild(b); }
-for (const [k, l] of TONES) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.tone = k; render(true); }; document.getElementById("tns").appendChild(b); }
+for (const [k, l] of LOOKS) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.look = k; render(true); }; document.getElementById("lks").appendChild(b); }
+for (const [k, l, c] of C2) { const b = document.createElement("button"); b.dataset.k = k; b.innerHTML = `<i style="background:${c}"></i>${l}`; b.onclick = () => { state.c2 = k; render(true); }; document.getElementById("c2s").appendChild(b); }
 for (const [k, l] of TLS) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.tl = k; render(true); vp.querySelector(".path").scrollIntoView({ block: "start" }); }; document.getElementById("tls").appendChild(b); }
 document.getElementById("replay").onclick = () => { vp.scrollTop = 0; render(); };
 document.getElementById("copy").onclick = async (e) => { try { await navigator.clipboard.writeText(document.getElementById("pick").textContent); e.target.textContent = "Copied"; setTimeout(() => (e.target.textContent = "Copy"), 1200); } catch {} };
