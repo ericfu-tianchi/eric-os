@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>About Me Directions</title>
+<style>
+@font-face { font-family: "Geist"; src: url("/src/assets/fonts/geist-sans-variable.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Montserrat"; src: url("/src/assets/fonts/montserrat-700.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Montserrat"; src: url("/src/assets/fonts/montserrat-800.woff2") format("woff2"); font-weight: 800; }
+@font-face { font-family: "Source Sans Pro"; src: url("/src/assets/fonts/sourcesanspro-400.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Source Sans Pro"; src: url("/src/assets/fonts/sourcesanspro-600.woff2") format("woff2"); font-weight: 600; }
+@font-face { font-family: "Source Sans Pro"; src: url("/src/assets/fonts/sourcesanspro-700.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "JetBrains Mono"; src: url("/src/assets/fonts/jbmono-500.woff2") format("woff2"); font-weight: 500; }
+@font-face { font-family: "JetBrains Mono"; src: url("/src/assets/fonts/jbmono-700.woff2") format("woff2"); font-weight: 700; }
+:root { --paper: #1c1d21; --ink: #17171a; --muted: #5e5e66; --faint: #9a9aa2; --hair: #e6e6ea; --green: #06C268; --pink: #FF1256;
+  --display: "Montserrat", sans-serif; --text: "Source Sans Pro", sans-serif; --ui: "Geist", sans-serif; --mono: "JetBrains Mono", monospace; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: #ececef; font-family: var(--ui); }
+a { color: inherit; }
+.page { max-width: 1060px; margin: 0 auto; padding: 44px 24px 140px; }
+.page > h1 { font-size: 34px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 8px; }
+.lede { color: #8a8b92; font-size: 15px; line-height: 1.6; max-width: 78ch; margin: 0 0 6px; }
+.dir { margin-top: 64px; }
+.dir-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+.dir-head .id { font: 600 12px var(--mono); color: #8a8b92; }
+.dir-head b { font-size: 20px; }
+.dir-head p { margin: 0; color: #8a8b92; font-size: 13.5px; flex: 1; }
+.dir-head button { height: 30px; padding: 0 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,.18); background: none; color: #ececef; font: 600 12.5px var(--ui); cursor: pointer; }
+.dir.on .dir-head button { background: #0a64e0; border-color: #0a64e0; }
+/* the OS window the page lives in */
+.win { width: 960px; max-width: 100%; margin: 0 auto; border-radius: 4px; overflow: hidden; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.2), 0 26px 64px rgba(0,0,0,.42); position: relative; }
+.tb { height: 30px; display: flex; align-items: center; gap: 8px; padding: 0 12px; background: #fff; border-bottom: 1px solid var(--hair); font: 600 12px var(--ui); color: #5e5e66; position: relative; z-index: 3; }
+.tb i { width: 12px; height: 12px; border-radius: 3px; background: #ff5a4d; } .tb i + i { background: #2ec16e; margin-right: 10px; }
+.fold { position: absolute; left: 0; right: 0; top: 750px; border-top: 1px dashed rgba(255,18,86,.7); z-index: 5; pointer-events: none; }
+.fold::after { content: "window fold (720px)"; position: absolute; right: 8px; top: 2px; font: 600 10px var(--mono); color: #ff1256; background: rgba(255,255,255,.8); padding: 1px 4px; }
+.btn { white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 6px; font: 600 14px var(--ui); text-decoration: none; border: 1px solid var(--hair); color: var(--ink); background: #fff; }
+.btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+.btn svg { width: 16px; height: 16px; }
+.bar { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; background: #f4f4f6; color: #17171a; padding: 9px 9px 9px 16px; border-radius: 12px; box-shadow: 0 18px 50px rgba(0,0,0,.5); font-size: 13px; z-index: 20; }
+.bar code { font: 600 12.5px var(--mono); }
+.bar button { border: 0; border-radius: 8px; background: #17171a; color: #fff; padding: 8px 12px; cursor: pointer; font: 600 12.5px var(--ui); }
+
+/* ================= A · Poster ================= */
+.A { padding: 56px 64px 56px; font-family: var(--text); color: #181818; position: relative; overflow: hidden; }
+.A .kicker { font: 700 11px var(--mono); letter-spacing: .16em; color: #9a9aa2; }
+.A h2 { font: 800 92px/0.92 var(--display); letter-spacing: -.035em; margin: 18px 0 0; color: #17171a; }
+.A h2 span { display: block; }
+.A .aka { font: 600 15px var(--text); color: #9a9aa2; margin: 14px 0 0; }
+.A .lead { font: 600 24px/1.35 var(--text); max-width: 360px; margin: 26px 0 0; color: #17171a; }
+.A .photo { position: absolute; right: -70px; top: 44px; width: 540px; filter: drop-shadow(14px 14px 0 var(--pink)); }
+.A .quote { margin: 64px 0 0; padding: 30px 0 0; border-top: 2px solid #17171a; display: grid; grid-template-columns: 70px 1fr; gap: 12px; }
+.A .quote .q { font: 800 96px/0.8 var(--display); color: var(--pink); }
+.A .quote p { margin: 0; font: 700 30px/1.3 var(--display); letter-spacing: -.01em; color: #17171a; }
+.A .vals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-top: 44px; }
+.A .vals h4 { margin: 0 0 8px; font: 700 15px var(--display); color: #17171a; }
+.A .vals h4::before { content: ""; display: block; width: 22px; height: 4px; background: var(--pink); margin-bottom: 12px; }
+.A .vals p { margin: 0; font-size: 15px; line-height: 1.55; color: #494949; }
+.A .path { margin-top: 48px; display: grid; grid-template-columns: repeat(5, 1fr); position: relative; }
+.A .path::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 2px; background: #e6e6ea; }
+.A .path a { position: relative; text-decoration: none; padding-right: 14px; }
+.A .path a::before { content: ""; display: block; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 3px solid #17171a; margin-bottom: 14px; position: relative; }
+.A .path a.now::before { background: var(--pink); border-color: var(--pink); }
+.A .path .y { font: 700 12px var(--mono); color: #9a9aa2; }
+.A .path b { display: block; font: 700 16px var(--display); margin-top: 4px; color: #17171a; }
+.A .path span { display: block; font-size: 14px; color: #5e5e66; line-height: 1.4; margin-top: 2px; }
+.A .path a:hover b { color: var(--pink); }
+.A .foot { display: flex; align-items: center; gap: 10px; margin-top: 48px; }
+.A .foot .off { margin-left: auto; font-size: 14px; color: #9a9aa2; }
+
+/* ================= B · Night stage ================= */
+.B { background: #16171a; color: #ececef; padding: 0 0 52px; font-family: var(--ui); position: relative; overflow: hidden;
+  background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px); background-size: 44px 44px; }
+.B .hero { position: relative; height: 470px; }
+.B .photo { position: absolute; left: -30px; bottom: 0; width: 640px; }
+.B .glow { position: absolute; left: 60px; top: 60px; width: 420px; height: 420px; background: radial-gradient(circle, rgba(6,194,104,.22), transparent 65%); }
+.B .name { position: absolute; right: 56px; top: 64px; text-align: right; }
+.B .name .k { font: 600 12px var(--mono); color: var(--green); letter-spacing: .12em; }
+.B .name h2 { margin: 12px 0 0; font: 800 84px/0.9 var(--display); letter-spacing: -.035em; }
+.B .name .aka { margin-top: 12px; font-size: 14px; color: #8a8b92; }
+.B .name .lead { margin: 26px 0 0 auto; max-width: 340px; font-size: 19px; line-height: 1.45; color: #d6d6db; }
+.B .quote { margin: 0 56px; padding: 34px 0; border-top: 1px solid rgba(255,255,255,.1); border-bottom: 1px solid rgba(255,255,255,.1); font: 700 34px/1.25 var(--display); letter-spacing: -.015em; text-align: center; }
+.B .quote em { font-style: normal; color: var(--green); }
+.B .vals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin: 40px 56px 0; }
+.B .vals i { display: block; width: 14px; height: 14px; background: var(--green); border-radius: 2px; margin-bottom: 14px; }
+.B .vals h4 { margin: 0 0 8px; font-size: 16px; font-weight: 650; }
+.B .vals p { margin: 0; font-size: 14px; line-height: 1.55; color: #9a9ba3; }
+.B .lower { display: grid; grid-template-columns: 1fr 300px; gap: 44px; margin: 44px 56px 0; }
+.B .path a { display: grid; grid-template-columns: 96px 1fr auto; gap: 14px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.08); text-decoration: none; }
+.B .path .y { font: 500 12px var(--mono); color: #8a8b92; }
+.B .path b { font-weight: 650; font-size: 15.5px; } .B .path span { color: #9a9ba3; font-size: 14px; }
+.B .path .go { color: var(--green); font-size: 13px; opacity: 0; transition: opacity .15s; }
+.B .path a:hover .go { opacity: 1; }
+.B .off h5 { margin: 0 0 12px; font: 600 12px var(--mono); color: var(--green); letter-spacing: .1em; }
+.B .off p { margin: 0 0 10px; font-size: 14.5px; color: #c9c9cf; }
+.B .btns { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+.B .btn { background: transparent; color: #ececef; border-color: rgba(255,255,255,.2); }
+.B .btn.primary { background: var(--green); color: #07140c; border-color: var(--green); }
+
+/* ================= C · Spec sheet ================= */
+.C { padding: 52px 60px 48px; font-family: var(--ui); color: var(--ink); background: #fff; }
+.C .top { display: grid; grid-template-columns: 400px 1fr; gap: 48px; align-items: center; }
+.C .screen { background: #1c1d21; border-radius: 10px; padding: 18px 18px 0; box-shadow: inset 0 0 0 8px #0e0f11, 0 18px 40px rgba(0,0,0,.18); overflow: hidden; height: 290px; position: relative;
+  background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size: 22px 22px; }
+.C .screen img { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 400px; image-rendering: pixelated; }
+.C .stand { width: 90px; height: 16px; margin: 0 auto; background: #d9d9de; clip-path: polygon(15% 0, 85% 0, 100% 100%, 0 100%); }
+.C h2 { margin: 0; font-size: 44px; font-weight: 700; letter-spacing: -.03em; }
+.C .ver { margin: 6px 0 22px; font-size: 14px; color: var(--faint); }
+.C dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; margin: 0; font-size: 15px; }
+.C dt { font-weight: 600; text-align: right; } .C dd { margin: 0; color: var(--muted); }
+.C .lead { margin: 22px 0 0; font-size: 17px; line-height: 1.5; color: #2a2a2e; }
+.C .quote { margin: 44px 0 0; padding: 28px 32px; background: #17171a; color: #fff; border-radius: 8px; display: flex; gap: 18px; align-items: center; }
+.C .quote i { flex: none; width: 14px; height: 14px; background: var(--green); border-radius: 2px; animation: blink 1.1s steps(1) infinite; }
+.C .quote p { margin: 0; font: 600 24px/1.35 var(--ui); letter-spacing: -.01em; }
+@keyframes blink { 50% { opacity: 0; } }
+.C h3 { margin: 40px 0 14px; font-size: 13px; font-weight: 650; color: var(--faint); letter-spacing: .08em; text-transform: uppercase; }
+.C .feat { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.C .feat div { padding: 16px; border: 1px solid var(--hair); border-radius: 8px; }
+.C .feat b { display: block; font-size: 15px; margin-bottom: 6px; } .C .feat p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+.C .notes a { display: grid; grid-template-columns: 90px 1fr auto; gap: 16px; padding: 11px 0; border-top: 1px solid var(--hair); text-decoration: none; align-items: baseline; }
+.C .notes .tag { font: 600 12px var(--mono); padding: 2px 8px; border-radius: 999px; background: #f4f4f6; color: var(--muted); justify-self: start; }
+.C .notes a.now .tag { background: rgba(6,194,104,.14); color: #078a4a; }
+.C .notes b { font-size: 15px; } .C .notes span { color: var(--muted); font-size: 14px; } .C .notes .go { color: var(--faint); font-size: 13px; }
+.C .notes a:hover .go { color: var(--ink); }
+.C .foot { display: flex; gap: 10px; margin-top: 30px; align-items: center; }
+.C .foot small { margin-left: auto; color: var(--faint); font-size: 13px; }
+
+/* ================= D · Bento ================= */
+.D { background: #f4f4f6; padding: 28px; font-family: var(--ui); color: var(--ink); }
+.D .grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 116px; gap: 12px; }
+.D .t { background: #fff; border-radius: 14px; padding: 20px; position: relative; overflow: hidden; border: 1px solid #ececf0; }
+.D .photo { grid-column: span 2; grid-row: span 3; background: #e9e9ec; padding: 0; }
+.D .photo img { position: absolute; left: -30px; bottom: 0; width: 520px; }
+.D .photo .tag { position: absolute; left: 18px; top: 16px; font: 600 11px var(--mono); color: var(--muted); background: #fff; padding: 4px 8px; border-radius: 999px; }
+.D .name { grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; justify-content: flex-end; }
+.D .name h2 { margin: 0; font: 800 58px/0.95 var(--display); letter-spacing: -.035em; }
+.D .name p { margin: 12px 0 0; font-size: 16px; line-height: 1.45; color: var(--muted); max-width: 360px; }
+.D .phil { grid-column: span 2; grid-row: span 1; background: #17171a; color: #fff; display: flex; align-items: center; }
+.D .phil p { margin: 0; font: 650 18px/1.35 var(--ui); } .D .phil p em { font-style: normal; color: var(--green); }
+.D .stat { grid-row: span 1; display: flex; flex-direction: column; justify-content: space-between; }
+.D .stat b { font: 800 34px/1 var(--display); letter-spacing: -.02em; } .D .stat span { font-size: 13px; color: var(--muted); line-height: 1.35; }
+.D .stat.g b { color: #079a55; }
+.D .vals { grid-column: span 2; grid-row: span 2; }
+.D .vals h5, .D .path h5 { margin: 0 0 12px; font-size: 12px; font-weight: 650; color: var(--faint); letter-spacing: .08em; text-transform: uppercase; }
+.D .vals > div { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+.D .vals b { display: block; font-size: 14.5px; } .D .vals p { margin: 3px 0 0; font-size: 13px; color: var(--muted); line-height: 1.45; }
+.D .path { grid-column: span 2; grid-row: span 2; }
+.D .path a { display: flex; gap: 12px; align-items: baseline; padding: 7px 0; border-top: 1px solid var(--hair); text-decoration: none; font-size: 14px; }
+.D .path a .y { flex: none; width: 74px; font: 500 12px var(--mono); color: var(--faint); } .D .path a b { font-weight: 600; } .D .path a span { color: var(--muted); }
+.D .path a .go { margin-left: auto; color: var(--faint); }
+.D .links { grid-column: span 4; grid-row: span 1; display: flex; align-items: center; gap: 10px; }
+.D .links p { margin: 0 auto 0 0; font-size: 15px; color: var(--muted); }
+
+/* ================= E · Magazine ================= */
+.E { display: grid; grid-template-columns: 380px 1fr; font-family: var(--text); color: #181818; min-height: 900px; }
+.E .left { background: #17171a; position: relative; overflow: hidden; }
+.E .left img { position: absolute; left: -200px; top: 130px; width: 640px; }
+.E .left .cap { position: absolute; left: 24px; top: 26px; font: 700 11px var(--mono); letter-spacing: .16em; color: #8a8b92; }
+.E .left .sig { position: absolute; left: 24px; bottom: 22px; font: 600 13px var(--ui); color: #c9c9cf; }
+.E .right { padding: 56px 56px 48px; }
+.E h2 { margin: 0; font: 800 64px/0.95 var(--display); letter-spacing: -.035em; }
+.E .aka { margin: 12px 0 0; color: #9a9aa2; font-size: 15px; }
+.E .lead { margin: 22px 0 0; font-size: 20px; line-height: 1.5; color: #2a2a2e; }
+.E section { display: grid; grid-template-columns: 44px 1fr; gap: 8px; margin-top: 36px; padding-top: 20px; border-top: 1px solid #e6e6ea; }
+.E section > .n { font: 700 13px var(--mono); color: var(--pink); }
+.E section h4 { margin: 0 0 12px; font: 700 13px var(--display); letter-spacing: .12em; text-transform: uppercase; color: #9a9aa2; }
+.E .phil { margin: 0; font: 700 26px/1.3 var(--display); letter-spacing: -.01em; }
+.E .vals { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+.E .vals b { font: 700 16px var(--display); } .E .vals p { margin: 4px 0 0; font-size: 15px; line-height: 1.5; color: #494949; }
+.E .path a { display: flex; gap: 14px; padding: 8px 0; text-decoration: none; font-size: 15.5px; align-items: baseline; }
+.E .path .y { width: 92px; flex: none; font: 500 12.5px var(--mono); color: #9a9aa2; } .E .path b { font-weight: 700; } .E .path span { color: #5e5e66; }
+.E .path a:hover b { color: var(--pink); }
+.E .foot { display: flex; gap: 10px; margin-top: 32px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>About_Me.md · five directions</h1>
+  <p class="lede">Same words in all five, so you're only judging the design. Each one is shown inside a real 960px window; the dashed pink line is where a 720px-tall window ends (everything above it is what people see before scrolling). In the real page every line in "Path" opens its folder or case study. Pick one (or mix: "B layout + A photo").</p>
+  <p class="lede">The philosophy line is the one from your old site. Paste me the exact sentence from your LinkedIn About and I'll swap it in.</p>
+  <div id="root"></div>
+</div>
+<div class="bar"><span>Pick</span><code id="pick">none yet</code><button id="copy">Copy</button></div>
+
+<template id="icons">
+  <svg data-k="gh" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+  <svg data-k="li" viewBox="0 0 16 16" fill="currentColor"><path d="M0 1.15C0 .52.52 0 1.18 0h13.64C15.48 0 16 .52 16 1.15v13.7c0 .63-.52 1.15-1.18 1.15H1.18C.52 16 0 15.48 0 14.85V1.15zm4.94 12.24V6.17H2.54v7.22h2.4zM3.74 5.18c.84 0 1.36-.55 1.36-1.25-.02-.71-.52-1.25-1.34-1.25-.82 0-1.36.54-1.36 1.25 0 .7.52 1.25 1.33 1.25h.01zm4.91 8.21V9.36c0-.22.02-.43.08-.59.17-.43.57-.88 1.23-.88.87 0 1.22.66 1.22 1.63v3.87h2.4V9.25c0-2.22-1.18-3.25-2.76-3.25-1.27 0-1.84.7-2.16 1.19v.03h-.02l.02-.03V6.17h-2.4c.03.68 0 7.22 0 7.22h2.4z"/></svg>
+  <svg data-k="mail" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M2 4l6 5 6-5"/></svg>
+</template>
+
+<script>
+const ic = (k) => document.getElementById("icons").content.querySelector(`[data-k="${k}"]`).outerHTML;
+const C = {
+  name: ["Tianchi", "Fu"],
+  aka: "Eric works too.",
+  lead: "I turn what AI models can do into products people actually enjoy, with an engineer's logic and a designer's hands.",
+  phil: "Technology isn't just cold math and code. It should bring people <em>joy</em>.",
+  vals: [
+    ["Tech × Design", "Trained as an engineer, grown as a designer. I write the PRD, then build the prototype myself."],
+    ["AI, full stack", "From model to interface: prompt tooling and agent platforms at Huawei Cloud, creative AI at OpusClip."],
+    ["Evals before opinions", "I trust a model once I've tested it. I've built eval systems that decided which models shipped."],
+    ["Joy is a feature", "If people smile while using it, it's working. That's why this site has a snake."],
+  ],
+  path: [
+    ["2026 → now", "OpusClip", "AI Product Manager · Singapore", true],
+    ["2026 → 27", "NUS", "MSc, AI & Innovation", true],
+    ["2023 → 26", "Huawei Cloud", "Product Manager & Designer"],
+    ["Michigan", "University of Michigan", "MSc Information (HCI) · 2 Expo awards"],
+    ["SJTU", "Shanghai Jiao Tong", "BEng, Electrical & Computer Eng."],
+  ],
+  off: ["Plays guitar", "20+ countries, rebuilt in LEGO", "A 50,000-word personal wiki", "English · 中文 · 日本語 (a little)"],
+  stats: [["3 yrs", "turning AI models into products"], ["16M+", "creators on OpusClip, where I own model evals"], ["10M+", "monthly inferences on Prompt Studio at Huawei"], ["20+", "countries explored"]],
+};
+const P = "/about-study/";
+const btns = (cls = "") => `<a class="btn ${cls}" href="#">${ic("gh")}GitHub</a><a class="btn ${cls}" href="#">${ic("li")}LinkedIn</a><a class="btn primary" href="#">${ic("mail")}Email me</a>`;
+const shortY = (y) => y;
+
+const DIRS = [
+  { id: "A", title: "Poster", note: "Light, editorial, loud type. The colour cutout huge on the right with the old site's pink offset; a horizontal path timeline.", html: () => `
+  <div class="A">
+    <img class="photo" src="${P}p0-cutout.png" alt="">
+    <div class="kicker">ABOUT_ME.MD</div>
+    <h2><span>${C.name[0]}</span><span>${C.name[1]}.</span></h2>
+    <p class="aka">${C.aka}</p>
+    <p class="lead">${C.lead}</p>
+    <div class="quote"><span class="q">“</span><p>${C.phil.replace(/<\/?em>/g, "")}</p></div>
+    <div class="vals">${C.vals.map(([h, p]) => `<div><h4>${h}</h4><p>${p}</p></div>`).join("")}</div>
+    <div class="path">${C.path.map(([y, b, s, now]) => `<a href="#" class="${now ? "now" : ""}"><span class="y">${y}</span><b>${b}</b><span>${s}</span></a>`).join("")}</div>
+    <div class="foot">${btns()}<span class="off">${C.off[0]} · ${C.off[1]}</span></div>
+  </div>` },
+  { id: "B", title: "Night stage", note: "The page becomes the desk: charcoal, the 44px grid, the photo in neon green. Big name on the right, philosophy as a centre band.", html: () => `
+  <div class="B">
+    <div class="hero"><div class="glow"></div><img class="photo" src="${P}p2-duo.png" alt="">
+      <div class="name"><div class="k">ABOUT_ME.MD</div><h2>${C.name[0]}<br>${C.name[1]}</h2><div class="aka">${C.aka}</div><p class="lead">${C.lead}</p></div>
+    </div>
+    <p class="quote">${C.phil}</p>
+    <div class="vals">${C.vals.map(([h, p]) => `<div><i></i><h4>${h}</h4><p>${p}</p></div>`).join("")}</div>
+    <div class="lower">
+      <div class="path">${C.path.map(([y, b, s]) => `<a href="#"><span class="y">${y}</span><span><b>${b}</b> · <span>${s}</span></span><span class="go">Open →</span></a>`).join("")}</div>
+      <div class="off"><h5>OFF-SCREEN</h5>${C.off.map((o) => `<p>${o}</p>`).join("")}<div class="btns">${btns()}</div></div>
+    </div>
+  </div>` },
+  { id: "C", title: "Spec sheet", note: "The most Tianchi OS one: About This Mac for a person. Pixel-dithered photo on a little screen, specs, a blinking-caret philosophy, path as release notes.", html: () => `
+  <div class="C">
+    <div class="top">
+      <div><div class="screen"><img src="${P}p3-pixel.png" alt=""></div><div class="stand"></div></div>
+      <div>
+        <h2>Tianchi Fu</h2><p class="ver">Version 2026 · Singapore · ${C.aka}</p>
+        <dl><dt>Engineered at</dt><dd>Shanghai Jiao Tong (ECE)</dd><dt>Designed at</dt><dd>University of Michigan (HCI)</dd><dt>Shipped at</dt><dd>Huawei Cloud, OpusClip</dd><dt>Now running</dt><dd>MSc AI at NUS</dd><dt>Powered by</dt><dd>Curiosity, coffee and a guitar</dd></dl>
+        <p class="lead">${C.lead}</p>
+      </div>
+    </div>
+    <div class="quote"><p>${C.phil.replace(/<\/?em>/g, "")}</p><i></i></div>
+    <h3>Features</h3>
+    <div class="feat">${C.vals.map(([h, p]) => `<div><b>${h}</b><p>${p}</p></div>`).join("")}</div>
+    <h3>Release notes</h3>
+    <div class="notes">${C.path.map(([y, b, s, now]) => `<a href="#" class="${now ? "now" : ""}"><span class="tag">${y}</span><span><b>${b}</b> · <span>${s}</span></span><span class="go">Open →</span></a>`).join("")}</div>
+    <div class="foot">${btns()}<small>${C.off.slice(0, 2).join(" · ")}</small></div>
+  </div>` },
+  { id: "D", title: "Bento", note: "Everything at a glance in tiles: big photo, name, a dark philosophy tile, four proof numbers, values, path, links. Fits one screen.", html: () => `
+  <div class="D"><div class="grid">
+    <div class="t photo"><img src="${P}p1-mono.png" alt=""><span class="tag">ABOUT_ME.MD</span></div>
+    <div class="t name"><h2>${C.name[0]}<br>${C.name[1]}</h2><p>${C.lead}</p></div>
+    <div class="t phil"><p>“${C.phil}”</p></div>
+    ${C.stats.map(([b, s], i) => `<div class="t stat ${i === 0 ? "g" : ""}"><b>${b}</b><span>${s}</span></div>`).join("")}
+    <div class="t vals"><h5>What I bring</h5><div>${C.vals.map(([h, p]) => `<div><b>${h}</b><p>${p}</p></div>`).join("")}</div></div>
+    <div class="t path"><h5>Path</h5>${C.path.map(([y, b, s]) => `<a href="#"><span class="y">${y}</span><span><b>${b}</b> <span>${s}</span></span><span class="go">→</span></a>`).join("")}</div>
+    <div class="t links"><p>${C.off.slice(0, 2).join(" · ")}</p>${btns()}</div>
+  </div></div>` },
+  { id: "E", title: "Magazine split", note: "A tall black-and-white portrait on the left, numbered chapters on the right: philosophy, what I bring, path, off-screen. Quiet and grown-up.", html: () => `
+  <div class="E">
+    <div class="left"><img src="${P}p1-mono.png" alt=""><span class="cap">ABOUT_ME.MD</span><span class="sig">Tianchi, with a guitar</span></div>
+    <div class="right">
+      <h2>${C.name[0]} ${C.name[1]}</h2><p class="aka">${C.aka}</p><p class="lead">${C.lead}</p>
+      <section><span class="n">01</span><div><h4>Philosophy</h4><p class="phil">${C.phil.replace(/<\/?em>/g, "")}</p></div></section>
+      <section><span class="n">02</span><div><h4>What I bring</h4><div class="vals">${C.vals.map(([h, p]) => `<div><b>${h}</b><p>${p}</p></div>`).join("")}</div></div></section>
+      <section><span class="n">03</span><div><h4>Path</h4><div class="path">${C.path.map(([y, b, s]) => `<a href="#"><span class="y">${y}</span><span><b>${b}</b> · <span>${s}</span></span></a>`).join("")}</div></div></section>
+      <section><span class="n">04</span><div><h4>Off-screen</h4><p style="margin:0;font-size:15.5px;color:#494949">${C.off.join(" · ")}</p></div></section>
+      <div class="foot">${btns()}</div>
+    </div>
+  </div>` },
+];
+
+let pick = ""; try { pick = localStorage.getItem("about-pick") || ""; } catch {}
+const root = document.getElementById("root"), pe = document.getElementById("pick");
+const sync = () => { pe.textContent = pick || "none yet"; document.querySelectorAll(".dir").forEach((d) => d.classList.toggle("on", d.dataset.id === pick)); try { localStorage.setItem("about-pick", pick); } catch {} };
+for (const d of DIRS) {
+  const el = document.createElement("section"); el.className = "dir"; el.dataset.id = d.id;
+  el.innerHTML = `<div class="dir-head"><span class="id">${d.id}</span><b>${d.title}</b><p>${d.note}</p><button>Pick</button></div>
+    <div class="win"><div class="tb"><i></i><i></i>About_Me.md</div>${d.html()}<div class="fold"></div></div>`;
+  el.querySelector("button").onclick = () => { pick = d.id; sync(); };
+  el.querySelectorAll('a[href="#"]').forEach((a) => a.addEventListener("click", (e) => e.preventDefault()));
+  root.appendChild(el);
+}
+sync();
+document.getElementById("copy").onclick = async (e) => { try { await navigator.clipboard.writeText(pick); e.target.textContent = "Copied"; setTimeout(() => (e.target.textContent = "Copy"), 1200); } catch {} };
+</script>
+</body>
+</html>
