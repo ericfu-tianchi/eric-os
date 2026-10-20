@@ -76,7 +76,7 @@ html, body { margin: 0; background: #0b0b0d; color: #ececef; font-family: var(--
 .pshadow { position: absolute; inset: 0; background: var(--ac2); display: none; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
 .me[data-shadow="pixel"] .pshadow { display: block; }
 .me[data-px="1"] .photo { image-rendering: pixelated; }
-.me[data-c2="pink"] { --ac2: #ff2e6e; } .me[data-c2="red"] { --ac2: #ff3b3b; } .me[data-c2="coral"] { --ac2: #ff6a55; } .me[data-c2="none"] { --ac2: transparent; }
+.me[data-c2="pink"] { --ac2: #ff2e6e; } .me[data-c2="green"] { --ac2: #06c268; } .me[data-c2="greendim"] { --ac2: rgba(6,194,104,.35); } .me[data-c2="white"] { --ac2: #f2f2f4; } .me[data-c2="whitedim"] { --ac2: rgba(255,255,255,.18); } .me[data-c2="black"] { --ac2: #000; } .me[data-c2="none"] { --ac2: transparent; }
 .photo { pointer-events: none; }
 .lead { position: relative; z-index: 3; margin: 26px 0 0; max-width: 380px; font-size: 21px; line-height: 1.45; color: #d8d8dd; font-weight: 450; }
 .lead b { color: var(--ink); font-weight: 650; }
@@ -234,11 +234,20 @@ const SHAPES = [
   ["fine", "Fine pixel", { mask: "sh-fine.png", dx: 12, dy: 10, clip: true }],
   ["rough", "Rough print", { mask: "sh-rough.png", dx: 14, dy: 12, clip: true }],
   ["smooth", "Smooth (old site)", { mask: "sh-smooth.png", dx: 14, dy: 12, clip: true }],
-  ["up", "Up-right", { mask: "sh-tidy.png", dx: 16, dy: -12, clip: true }],
+  ["up", "Up-right (old)", { mask: "sh-tidy.png", dx: 16, dy: -12, clip: true }],
+  ["ura", "UR · rounded 6px", { mask: "sh-ur-a.png", dx: 14, dy: -10, clip: true }],
+  ["urb", "UR · fine 4px", { mask: "sh-ur-b.png", dx: 12, dy: -9, clip: true }],
+  ["urc", "UR · smooth", { mask: "sh-ur-c.png", dx: 14, dy: -10, clip: true }],
+  ["urd", "UR · chunky 8px", { mask: "sh-ur-d.png", dx: 16, dy: -12, clip: true }],
+  ["r1", "Right · 6px", { mask: "sh-r1.png", dx: 0, dy: 0, clip: false }],
+  ["r2", "Up-right · no cap bump", { mask: "sh-r2.png", dx: 0, dy: 0, clip: false }],
+  ["r3", "Up-right · smooth", { mask: "sh-r3.png", dx: 0, dy: 0, clip: false }],
+  ["r4", "Right · fine 4px", { mask: "sh-r4.png", dx: 0, dy: 0, clip: false }],
+  ["r5", "Head sideways, body up-right", { mask: "sh-r5.png", dx: 0, dy: 0, clip: false }],
   ["ring", "Pixel outline", { mask: "sh-ring.png", dx: 0, dy: 0, clip: false }],
 ];
 const DOTS = [["pink", "Pink", "#ff2e6e"], ["blue", "Blue", "#4d8dff"]];
-const C2 = [["pink", "Pink", "#ff2e6e"], ["red", "Red", "#ff3b3b"], ["coral", "Coral", "#ff6a55"], ["none", "No second colour", "#3a3b40"]];
+const C2 = [["pink", "Pink", "#ff2e6e"], ["green", "Green", "#06c268"], ["greendim", "Green 35%", "rgba(6,194,104,.35)"], ["white", "White", "#f2f2f4"], ["whitedim", "White 18%", "rgba(255,255,255,.18)"], ["black", "Black", "#000"], ["none", "None", "#3a3b40"]];
 
 const TLS = [["gantt", "Gantt"], ["years", "Big years"], ["spine", "Spine"], ["rail", "Rail"]];
 
@@ -304,8 +313,8 @@ function page(ac, tl) {
 </div>`;
 }
 
-let state = { ac: "green", tl: "years", look: "mix50", c2: "pink", dot: "pink", shape: "tidy" };
-try { Object.assign(state, JSON.parse(localStorage.getItem("about-v9") || "{}")); } catch {}
+let state = { ac: "green", tl: "years", look: "soft2", c2: "pink", dot: "pink", shape: "r2" };
+try { Object.assign(state, JSON.parse(localStorage.getItem("about-v11") || "{}")); } catch {}
 if (!ACCENTS.some((a) => a[0] === state.ac)) state.ac = "green";
 if (!LOOKS.some((a) => a[0] === state.look)) state.look = "mix50";
 if (!SHAPES.some((a) => a[0] === state.shape)) state.shape = "tidy";
@@ -325,7 +334,7 @@ function render(keepScroll) {
   document.querySelectorAll("#c2s button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.c2));
   document.querySelectorAll("#shs button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.shape));
   document.getElementById("pick").textContent = `look: ${state.look}, shape: ${state.shape}, shadow: ${state.c2}, accent: ${state.ac}, path: ${state.tl}`;
-  try { localStorage.setItem("about-v9", JSON.stringify(state)); } catch {}
+  try { localStorage.setItem("about-v11", JSON.stringify(state)); } catch {}
 }
 for (const [k, l, c] of ACCENTS) { const b = document.createElement("button"); b.dataset.k = k; b.innerHTML = `<i style="background:${c}"></i>${l}`; b.onclick = () => { state.ac = k; render(true); }; document.getElementById("acs").appendChild(b); }
 for (const [k, l] of LOOKS) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.look = k; render(true); }; document.getElementById("lks").appendChild(b); }
