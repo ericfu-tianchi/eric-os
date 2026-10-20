@@ -198,7 +198,7 @@ a { color: inherit; text-decoration: none; }
 <body>
 <div class="study">
   <h1>About_Me.md · v2</h1>
-  <p class="lede">Round 6. Blue accent. The photo now floats above the hero's bottom line. Pixel shadow plus five halftones that keep more of your face (DOTS sets their colour; SHADOW is the pixel shadow's colour).</p>
+  <p class="lede">Round 7. Pink pixel shadow + green accent. The smeared hands are fixed: GPT Image redrew only the forearms, hands and strings and everything else is your original pixels (face untouched). Comic / Bold ink / Cel turn the whole picture into one consistent US-comic style.</p>
   <div class="ctrl">
     <div class="grp" id="acs"><span>ACCENT</span></div>
     <div class="grp" id="lks"><span>LOOK</span></div>
@@ -221,12 +221,14 @@ const ACCENTS = [["blue", "Blue", "#4d8dff"], ["green", "Green", "#06c268"], ["v
 // the portrait: your original photo, untouched; GPT only painted the missing cap top and guitar bottom (A/B/C = three tries); logo removed
 // Original B, styled seven ways. img = b-<img>.webp; shadow: hard (old-site offset), pixel (blocky), none
 const LOOKS = [
-  ["pxshadow", "Pixel shadow", { img: "b-colour", shadow: "pixel" }],
-  ["ht1", "Halftone · fine", { img: "ht1", shadow: "none" }],
-  ["ht2", "Halftone · over photo", { img: "ht2", shadow: "none" }],
+  ["pxshadow", "As is (smeared hands)", { img: "b-colour", mask: "b-mask-px.png", shadow: "pixel" }],
+  ["h1", "Clean hands A", { img: "h1-colour", mask: "h1-mask-px.png", shadow: "pixel" }],
+  ["h2", "Clean hands B", { img: "h2-colour", mask: "h2-mask-px.png", shadow: "pixel" }],
+  ["h1comic", "Comic A", { img: "h1-comic", mask: "h1-mask-px.png", shadow: "pixel" }],
+  ["h2comic", "Comic B", { img: "h2-comic", mask: "h2-mask-px.png", shadow: "pixel" }],
+  ["h1bold", "Bold ink", { img: "h1-bold", mask: "h1-mask-px.png", shadow: "pixel" }],
+  ["h1cel", "Cel", { img: "h1-cel", mask: "h1-mask-px.png", shadow: "pixel" }],
   ["ht3", "Halftone · true face", { img: "ht3", shadow: "none" }],
-  ["ht4", "Line screen", { img: "ht4", shadow: "none" }],
-  ["ht5", "Misprint", { img: "ht5", shadow: "none" }],
 ];
 const DOTS = [["pink", "Pink", "#ff2e6e"], ["blue", "Blue", "#4d8dff"]];
 const C2 = [["pink", "Pink", "#ff2e6e"], ["red", "Red", "#ff3b3b"], ["coral", "Coral", "#ff6a55"], ["none", "No second colour", "#3a3b40"]];
@@ -275,7 +277,7 @@ function page(ac, tl) {
     <div class="grid"></div><div class="glow"></div>
     <div class="meta"><span>About_Me.md</span><span class="now"><i></i>Now · AI PM at OpusClip · Singapore</span></div>
     <h2 class="name"><span class="l l1"><span>Tianchi</span></span><span class="l l2"><span><span class="eric">(Eric)</span> Fu<span class="dot">.</span></span></span></h2>
-    <div class="pwrap"><i class="pshadow"></i><img class="photo" src="/about-study/${L.img.startsWith("ht") ? `${L.img}-${state.dot}` : L.img}.webp" alt="Tianchi playing guitar"></div>
+    <div class="pwrap"><i class="pshadow" style="${L.mask ? `-webkit-mask-image:url(/about-study/${L.mask});mask-image:url(/about-study/${L.mask})` : ""}"></i><img class="photo" src="/about-study/${L.img.startsWith("ht") ? `${L.img}-${state.dot}` : L.img}.webp" alt="Tianchi playing guitar"></div>
     <p class="lead">I turn what AI models can do into products people <b>actually enjoy</b>, with an engineer's logic and a designer's hands.</p>
     <div class="cta"><a href="#" class="primary">${ICON.mail}Email me</a><a href="#">${ICON.li}LinkedIn</a><a href="#">${ICON.gh}GitHub</a></div>
     <div class="proof"><div><b>3 yrs</b><span>AI products</span></div><div><b>10M+</b><span>inferences / mo</span></div><div><b>80+</b><span>agents shipped</span></div></div>
@@ -295,10 +297,10 @@ function page(ac, tl) {
 </div>`;
 }
 
-let state = { ac: "blue", tl: "years", look: "ht3", c2: "pink", dot: "pink" };
-try { Object.assign(state, JSON.parse(localStorage.getItem("about-v6") || "{}")); } catch {}
+let state = { ac: "green", tl: "years", look: "h1comic", c2: "pink", dot: "pink" };
+try { Object.assign(state, JSON.parse(localStorage.getItem("about-v7") || "{}")); } catch {}
 if (!ACCENTS.some((a) => a[0] === state.ac)) state.ac = "green";
-if (!LOOKS.some((a) => a[0] === state.look)) state.look = "ht3";
+if (!LOOKS.some((a) => a[0] === state.look)) state.look = "h1comic";
 if (!DOTS.some((a) => a[0] === state.dot)) state.dot = "pink";
 if (!ACCENTS.some((a) => a[0] === state.ac)) state.ac = "blue";
 if (!C2.some((a) => a[0] === state.c2)) state.c2 = "pink";
@@ -315,7 +317,7 @@ function render(keepScroll) {
   document.querySelectorAll("#c2s button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.c2));
   document.querySelectorAll("#dts button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.dot));
   document.getElementById("pick").textContent = `look: ${state.look}, dots: ${state.dot}, shadow: ${state.c2}, accent: ${state.ac}, path: ${state.tl}`;
-  try { localStorage.setItem("about-v6", JSON.stringify(state)); } catch {}
+  try { localStorage.setItem("about-v7", JSON.stringify(state)); } catch {}
 }
 for (const [k, l, c] of ACCENTS) { const b = document.createElement("button"); b.dataset.k = k; b.innerHTML = `<i style="background:${c}"></i>${l}`; b.onclick = () => { state.ac = k; render(true); }; document.getElementById("acs").appendChild(b); }
 for (const [k, l] of LOOKS) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.look = k; render(true); }; document.getElementById("lks").appendChild(b); }
