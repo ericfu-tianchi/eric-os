@@ -9,6 +9,7 @@ import {
   type FileNode,
 } from "../data/filesystem";
 import { PixIcon, type PixIconName } from "../components/Pixel";
+import { fileIconOf } from "../data/projectAssets";
 import { useWindowChrome, type WindowViewMode } from "../components/WindowChrome";
 
 function resolvedNode(node: FileNode) {
@@ -35,11 +36,19 @@ function kindLabel(node: FileNode) {
   return "Application";
 }
 
-function FinderNodeIcon({ node, size }: { node: FileNode; size: number }) {
+function thumbOf(node: FileNode) {
+  const target = resolvedNode(node);
+  return target.projectSlug ? fileIconOf(target.projectSlug) : target.app === "about" ? fileIconOf("about") : undefined;
+}
+
+/** Reading pages show their cover as the icon; in icon view it gets more room (thumbSize). */
+function FinderNodeIcon({ node, size, thumbSize = size }: { node: FileNode; size: number; thumbSize?: number }) {
   const target = resolvedNode(node);
   const game = target.gameId ? EXTERNAL_GAMES[target.gameId] : undefined;
   if (node.icon) return <img className="finder-pixel-icon" src={node.icon} width={size} height={size} alt="" draggable={false} />;
   if (game) return <img className="finder-pixel-icon" src={game.icon} width={size} height={size} alt="" draggable={false} />;
+  const thumb = thumbOf(node);
+  if (thumb) return <img className="finder-thumb-icon" src={thumb} width={thumbSize} height={thumbSize} alt="" draggable={false} />;
   return <PixIcon name={nodeIcon(node)} size={size} />;
 }
 
@@ -56,6 +65,9 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
   const children = filesystemChildren(current.id);
   const trail = filesystemTrail(current.id);
   const view = viewByDirectory[current.id] ?? "icon";
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  useEffect(() => setSelectedId(null), [current.id]);
 
   useEffect(() => {
     const next = filesystemNode(initialId)?.id ?? "tianchintosh";
@@ -77,8 +89,8 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
     : trail.find((node) => (FINDER_ROOT_IDS as readonly string[]).includes(node.id))?.id ?? "tianchintosh";
 
   const chrome = useMemo(() => ({
-    trail: [{ label: current.name }],
-    centeredTitle: current.name,
+    trail: trail.map((node) => ({ label: node.name, onClick: () => navigate(node.id) })),
+    meta: "",
     navigation: {
       canGoBack: historyIndex > 0,
       canGoForward: historyIndex < history.length - 1,
@@ -86,7 +98,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
       onForward: goForward,
     },
     viewControls: { mode: view, onChange: setView },
-  }), [current.name, history.length, historyIndex, view]);
+  }), [current.id, history.length, historyIndex, view]);
   useWindowChrome(chrome);
 
   const openNode = (node: FileNode) => {
@@ -102,6 +114,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
       const game = EXTERNAL_GAMES[node.gameId];
       return open(node.gameId, { title: game.name, maximized: true });
     }
+    if (node.html) return open("html-doc", { title: node.name, payload: node.id });
     if (node.app === "snake") return setSnakeMode(true);
     if (node.app) return open(node.app, { title: node.name });
   };
@@ -114,7 +127,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
           className={`finder-side-root ${activeSidebarId === "tianchintosh" ? "active" : ""}`}
           onClick={() => navigate("tianchintosh")}
         >
-          <PixIcon name="computer" size={24} />
+          <PixIcon name="computer" size={20} />
           <span>Tianchintosh HD</span>
         </button>
         <div className="finder-side-rule" />
@@ -128,7 +141,9 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
                 className={`finder-side-item ${activeSidebarId === id ? "active" : ""}`}
                 onClick={() => navigate(id)}
               >
-                <FinderNodeIcon node={node} size={23} />
+                {node.sidebarIcon
+                  ? <img className="finder-thumb-icon" src={node.sidebarIcon} width={20} height={20} alt="" draggable={false} />
+                  : <FinderNodeIcon node={node} size={20} />}
                 <span>{node.name}</span>
               </button>
             );
@@ -136,7 +151,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
         </div>
       </aside>
 
-      <main className="finder-content">
+      <main className="finder-content" onClick={() => setSelectedId(null)}>
         {children.length === 0 ? (
           <div className="finder-empty">
             <PixIcon name="folder" size={48} />
@@ -144,15 +159,17 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
             <span>This space is intentionally quiet for now.</span>
           </div>
         ) : view === "icon" ? (
-          <div className="finder-icon-grid" role="list">
+          <div className={`finder-icon-grid ${children.some(thumbOf) ? "has-thumbs" : ""}`} role="list">
             {children.map((node) => (
               <button
                 type="button"
                 key={node.id}
-                className={`finder-icon-item ${node.kind === "placeholder" ? "placeholder" : ""}`}
-                onClick={() => openNode(node)}
+                className={`finder-icon-item ${node.kind === "placeholder" ? "placeholder" : ""} ${selectedId === node.id ? "selected" : ""}`}
+                onClick={(e) => { e.stopPropagation(); setSelectedId(node.id); }}
+                onDoubleClick={() => openNode(node)}
+                onKeyDown={(e) => { if (e.key === "Enter") openNode(node); }}
               >
-                <FinderNodeIcon node={node} size={66} />
+                <span className="finder-icon-slot"><FinderNodeIcon node={node} size={66} thumbSize={104} /></span>
                 <span className="finder-item-name">{node.name}</span>
                 <span className="finder-item-meta">{node.description ?? kindLabel(node)}</span>
               </button>
@@ -161,18 +178,20 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
         ) : (
           <div className="finder-list" role="list">
             <div className="finder-list-head" aria-hidden>
-              <span>Name</span><span>Kind</span><span>Items</span>
+              <span className="sorted">Name</span><span>Kind</span><span>Size</span>
             </div>
             {children.map((node) => (
               <button
                 type="button"
                 key={node.id}
-                className={`finder-list-row ${node.kind === "placeholder" ? "placeholder" : ""}`}
-                onClick={() => openNode(node)}
+                className={`finder-list-row ${node.kind === "placeholder" ? "placeholder" : ""} ${selectedId === node.id ? "selected" : ""}`}
+                onClick={(e) => { e.stopPropagation(); setSelectedId(node.id); }}
+                onDoubleClick={() => openNode(node)}
+                onKeyDown={(e) => { if (e.key === "Enter") openNode(node); }}
               >
-                <span className="finder-list-name"><FinderNodeIcon node={node} size={32} />{node.name}</span>
+                <span className="finder-list-name"><FinderNodeIcon node={node} size={18} /><span>{node.name}</span></span>
                 <span>{kindLabel(node)}</span>
-                <span>{node.description ?? "—"}</span>
+                <span>{/\d+ items?/.test(node.description ?? "") ? node.description : "—"}</span>
               </button>
             ))}
           </div>

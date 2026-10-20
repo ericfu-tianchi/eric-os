@@ -1,66 +1,31 @@
 import { useOS, type Wallpaper, type IconSet, type Theme, type SnakeHat, type AppId } from "../store";
 import { PixIcon, type PixIconName } from "../components/Pixel";
+import resumePage from "../assets/resume-page.png";
+import resume from "../data/resumeLinks.json";
 
+/** The real resume PDF, read like a document viewer: a centered page on a quiet stage. */
 export function ResumeApp() {
   return (
-    <div className="win-pad">
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 14, flexWrap: "wrap" }}>
-        <div style={{ flex: 1, minWidth: 200 }}>
-          <p className="mono-label">RESUME · v2023(2026 版更新中)</p>
-          <h1 style={{ fontSize: 28, fontWeight: 900, margin: "4px 0 2px", letterSpacing: "-0.02em" }}>Tianchi (Eric) Fu</h1>
-          <p className="small" style={{ margin: "2px 0 0" }}>Product Manager · UX Designer · Builder</p>
-        </div>
-        <button className="btn" disabled>DOWNLOAD PDF · SOON</button>
+    <div className="pdf-viewer">
+      <div className="pdf-toolbar">
+        <a className="btn" href="/resume.pdf" target="_blank" rel="noopener">Open in new tab</a>
+        <a className="btn" href="/resume.pdf" download="Tianchi-Fu-Resume-2026.pdf">Download PDF</a>
       </div>
-
-      <div className="cv-block" style={{ marginTop: 20 }}>
-        <p className="mono-label">EXPERIENCE</p>
-        <div className="cv-item">
-          <span className="role">UX Design Intern <span className="org">— Huawei,深圳</span></span>
-          <span className="when">2022.05–09</span>
-          <span className="what">折叠屏 PC 窗口管理机制设计;专利申请中。</span>
-        </div>
-        <div className="cv-item">
-          <span className="role">Game UX Designer <span className="org">— WolverineSoft Studio</span></span>
-          <span className="when">2022</span>
-          <span className="what">40 人团队,2D 潜艇 RTS《SubTension》:教程/商店/背包 UI。</span>
-        </div>
-        <div className="cv-item">
-          <span className="role">UX Designer <span className="org">— Backyard Brains(客户项目)</span></span>
-          <span className="when">2022</span>
-          <span className="what">Neurobot 重设计:高危可用性问题 13→1,HCI Expo 一等奖。</span>
-        </div>
-        <div className="cv-item">
-          <span className="role">Product Manager Intern <span className="org">— JYI,上海</span></span>
-          <span className="when">2021</span>
-          <span className="what">AI 面试 SaaS:引导流程重设计,学生满意度 +20%,两月 30+ 付费企业。</span>
-        </div>
-      </div>
-
-      <div className="cv-block">
-        <p className="mono-label">EDUCATION</p>
-        <div className="cv-item">
-          <span className="role">M.S. Human-Computer Interaction <span className="org">— University of Michigan</span></span>
-          <span className="when">2021–23 · GPA 3.8</span>
-        </div>
-        <div className="cv-item">
-          <span className="role">B.A. ECE + Data Science Minor <span className="org">— Shanghai Jiao Tong University</span></span>
-          <span className="when">–2021</span>
-        </div>
-      </div>
-
-      <div className="cv-block">
-        <p className="mono-label">SKILLS</p>
-        <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginTop: 8 }}>
-          {["AI PRODUCT", "UX RESEARCH", "FIGMA", "PYTHON", "REACT", "SQL", "PRD", "VIBE CODING"].map((s) => (
-            <span key={s} className="chip">{s}</span>
+      <div className="pdf-stage">
+        <div className="pdf-page" style={{ aspectRatio: resume.aspect }}>
+          <img src={resumePage} alt="Tianchi (Eric) Fu — Resume 2026" draggable={false} />
+          {resume.links.map((link, i) => (
+            <a
+              key={i}
+              href={link.href}
+              target="_blank"
+              rel="noopener"
+              aria-label={link.href}
+              style={{ left: `${link.left}%`, top: `${link.top}%`, width: `${link.width}%`, height: `${link.height}%` }}
+            />
           ))}
         </div>
       </div>
-
-      <p style={{ margin: 0, fontFamily: "var(--font-mono)", fontSize: 10.5, color: "var(--faint)", letterSpacing: "0.06em" }}>
-        // Opus / AI PM 篇章正在写入 2026 版
-      </p>
     </div>
   );
 }
@@ -120,11 +85,13 @@ const ICON_SETS: { id: IconSet; label: string; desc: string }[] = [
 
 const HATS: { id: SnakeHat; label: string; desc: string }[] = [
   { id: "none", label: "无", desc: "素颜蛇" },
-  { id: "glasses", label: "眼镜", desc: "Tech 味" },
-  { id: "cap", label: "学士帽", desc: "School 味" },
-  { id: "phones", label: "耳机", desc: "听歌的蛇" },
-  { id: "bow", label: "蝴蝶结", desc: "精致的蛇" },
-  { id: "bubble", label: "星星泡泡", desc: "梦见星星(老站彩蛋)" },
+  { id: "glasses", label: "眼镜", desc: "黑色板材圆框" },
+  { id: "cap", label: "学士帽", desc: "密歇根 M" },
+  { id: "phones", label: "耳机", desc: "奶油薄荷" },
+  { id: "bow", label: "蝴蝶结", desc: "缎面粉" },
+  { id: "shades", label: "墨镜", desc: "Deal with it" },
+  { id: "cat", label: "猫耳", desc: "后掠猫耳发箍" },
+  { id: "nycap", label: "纽约帽", desc: "反戴的 NY 棒球帽" },
 ];
 
 const THEMES: { id: Theme; label: string; desc: string }[] = [

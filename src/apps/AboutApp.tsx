@@ -14,15 +14,17 @@ export function AboutApp() {
       <div style={{ display: "flex", gap: 28, alignItems: "center", flexWrap: "wrap" }}>
         <img
           src={guitar}
-          alt="Eric playing guitar"
+          alt="Tianchi playing guitar"
           style={{ width: 250, height: "auto", display: "block", flex: "0 0 auto", filter: "drop-shadow(7px 8px 0 #ff1256)" }}
           draggable={false}
         />
         <div style={{ flex: 1, minWidth: 250 }}>
           <p className="mono-label">About_Me.md</p>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: 40, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.05, margin: "6px 0 10px" }}>
-            Hi, I&rsquo;m Eric.
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: 40, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.05, margin: "6px 0 6px" }}>
+            Hi, I&rsquo;m Tianchi.
           </h1>
+          {/* the one place that ties the two names together: resume, LinkedIn and email say Eric */}
+          <p style={{ fontSize: 14, color: "var(--muted)", margin: "0 0 12px" }}>Tianchi (Eric) Fu — either name works.</p>
           <p style={{ fontSize: 17, fontWeight: 600, color: "var(--ink)", margin: 0 }}>
             A Tech-Savvy UX Designer, Product Manager &amp; Life Enthusiast.
           </p>

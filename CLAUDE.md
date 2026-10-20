@@ -1,4 +1,4 @@
-# ERIC OS — 施工手册
+# Tianchi OS — 施工手册
 
 Eric Fu 的个人网站:一个桌面操作系统形状的作品集。
 **任何 AI/人在此仓库动工前,先读完本文件。**
@@ -45,10 +45,18 @@ v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(明暗�
 ## V0.5 文件系统与内容入口
 
 - **Finder 真相源**:`src/data/filesystem.ts` 定义 Tianchintosh HD 的所有节点、外部游戏 URL、根目录与 ID。`FileSystemApp.tsx` 是所有文件夹共用的左右分栏 Finder，支持后退 / 前进、图标 / 列表视图。
-- **桌面映射**:`src/components/desktopGrid.tsx` 控制桌面上显示的 11 个入口与右侧锚定位置；它与 `filesystem.ts` 目前有少量平行配置，新增顶级桌面目录时要同时检查两处。
+- **桌面映射**:`src/components/desktopGrid.tsx` 控制桌面上显示的 13 个入口与右侧锚定位置；它与 `filesystem.ts` 目前有少量平行配置，新增顶级桌面目录时要同时检查两处。
 - **真实游戏**:桌面 Snake 的主实现是 `DesktopSnake.tsx`。Soul Blade / Twist Solver 定义在 `filesystem.ts` 的 `EXTERNAL_GAMES`，通过 `ExternalGameApp.tsx` 最大化 iframe 打开。
+- **内容页排版**:所有阅读型页面(项目详情、How I Built It、长文)**动工前先读 `docs/LAYOUT_GUIDE.md`**,并先说明用哪种格式(默认 case blocks 数据 + `ProjectDetailApp` 渲染;HTML 仅限需交互的例外;暂不用 Markdown)。
 - **内容扩展**:新增 case 仍以 `src/data/projects.ts` / `cases*.ts` 为主；在批量引入 HTML、Markdown、PDF、视频前，应先建立统一 content manifest + renderer registry，避免分散的 app 判断。
-- **Record 边界**:`src/data/snakeRecord.ts` 现在只是 localStorage 预览适配器；上线前换成 Worker / 数据库。`App.tsx` 中存在一次性 QA reset，正式发布前移除。
+- **全站纪录**:只存一条全站最高分(分数 + 署名),在 Worker 的 KV(`SNAKE` 命名空间,`/api/record`)。`src/data/snakeRecord.ts` 负责读写并在本地缓存最后一次看到的纪录;Worker 拒绝明显伪造的分数(超过游戏时长可能达到的分数)。个人 BEST 仍存在访客自己的浏览器里。
+
+## V0.6 蛇助手(壁纸蛇 = Tianchi 的小跟班)
+
+- **入口**:`SnakeGuide.tsx` 挂在桌面上。蛇头是菜单:悬停/点击 → 扇形三朵想法泡泡(Play / Dress me up / Ask about Tianchi)。没被发现时每次加载 5–10 s 冒第一个,之后每 20–30 s 随机一个;一旦发现(悬停 0.8 s / 点头 / 点泡泡)本次访问不再冒。不跨访问记忆。
+- **换装**:`snakeHats.ts` 只放上线的 7 件(BG2 眼镜 / MC2 密歇根帽 / H4 耳机 / B1R 蝴蝶结 / S1A 像素墨镜 / CE2 猫耳 / NY2B 反戴纽约帽)+ Ask 图标 C3;候选与历史方案在 `snakeHatStudy.ts`,审阅页 `/hat-study.html`(仅 dev)。全部 44 单位头部局部坐标,随头转向。
+- **对话**:`SnakeChat.tsx`(对话存模块级 store,关窗/玩游戏不丢,刷新清空)→ `POST /api/ask` → `worker/index.ts`(Workers AI Qwen3-30B,免费额度)。人设 A「热心小跟班」;称呼一律 Tianchi。跑题由模型打 `[[off]]` 标签后换固定台词 + 两个推荐问题;越狱/套提示词由 Worker 正则直接拦截。限流:每 IP 8 次/分钟(rate-limit binding)、每次访问 20 问(满了锁 3 分钟,"Play Snake →" 或任何一局游戏立刻消化)。额度用完 → 邮件卡片 + 输入框变写信模式。
+- **本地跑**:`npm run dev` + `npx wrangler dev --port 8787`(Vite 已把 `/api` 代理到 8787)。边界情况截图在 `qa/`(不进 git)。
 
 ## 施工配方:新增一个应用(5 步)
 
@@ -66,7 +74,7 @@ v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(明暗�
 2. 部署 Cloudflare Pages,绑 tianchi-fu.com
 3. 项目详情窗装真实截图与 case study
 4. SNAKE.SYS 2.0:果实=项目图标,吃到哪个游戏结束后开哪个窗口
-5. ASK-ERIC.AI:聊天窗 + 3 个工具(openApp/openProject/downloadResume),Cloudflare Workers 包 Claude API
+5. ~~ASK-ERIC.AI~~ → 已做成 V0.6 蛇助手(见上)
 6. URL 深链(/projects/model-eval 直达开窗)、开关窗音效(默认关)
 7. 简历 PDF 2026 版挂接
 

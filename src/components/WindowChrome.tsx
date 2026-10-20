@@ -12,8 +12,6 @@ export type WindowViewControls = { mode: WindowViewMode; onChange: (mode: Window
 export type WindowChromeState = {
   trail: WindowCrumb[];
   meta?: string;
-  /** Finder windows use a centered location name instead of breadcrumbs. */
-  centeredTitle?: string;
   navigation?: WindowNavigation;
   viewControls?: WindowViewControls;
 };

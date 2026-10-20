@@ -11,6 +11,8 @@ export type AppId =
   | "filesystem"
   | "soul-blade"
   | "twist-solver"
+  | "lego-world"
+  | "html-doc"
   | "life"
   | "playground"
   | "project-detail";
@@ -30,7 +32,8 @@ export interface WinInstance {
 export type Wallpaper = "snake" | "clean" | "noir";
 export type IconSet = "a" | "d";
 export type Theme = "dark" | "light";
-export type SnakeHat = "none" | "glasses" | "cap" | "phones" | "bow" | "bubble";
+export const SNAKE_HAT_IDS = ["none", "glasses", "cap", "phones", "bow", "shades", "cat", "nycap"] as const;
+export type SnakeHat = (typeof SNAKE_HAT_IDS)[number];
 /**
  * Desktop files are anchored to the right edge, independently of the
  * left-anchored "hello" wallpaper. `col` is retained only for old persisted
@@ -72,13 +75,15 @@ interface OSState {
 const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
   projects: { w: 680, h: 540 },
   about: { w: 600, h: 560 },
-  resume: { w: 620, h: 560 },
+  resume: { w: 720, h: 680 },
   readme: { w: 540, h: 470 },
   prefs: { w: 470, h: 470 },
   snake: { w: 424, h: 434 },
   filesystem: { w: 860, h: 590 },
   "soul-blade": { w: 1120, h: 720 },
   "twist-solver": { w: 1120, h: 720 },
+  "lego-world": { w: 1120, h: 720 },
+  "html-doc": { w: 820, h: 620 },
   life: { w: 560, h: 500 },
   playground: { w: 600, h: 520 },
   "project-detail": { w: 700, h: 520 },
@@ -104,7 +109,7 @@ export const useOS = create<OSState>()(
         // File-system windows and project detail windows are keyed by location;
         // every other app remains single-instance.
         const existing = Object.values(s.windows).find(
-          (w) => w.app === app && (!["project-detail", "filesystem"].includes(app) || w.payload === opts?.payload)
+          (w) => w.app === app && (!["project-detail", "filesystem", "html-doc"].includes(app) || w.payload === opts?.payload)
         );
         if (existing) return s.focus(existing.id);
         const id = `${app}-${s.seq}`;
@@ -186,6 +191,12 @@ export const useOS = create<OSState>()(
         snakeHat: s.snakeHat,
         seq: s.seq,
       }),
+      // a hat retired from the wardrobe (e.g. the old "bubble") falls back to none
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<OSState>;
+        const snakeHat = (SNAKE_HAT_IDS as readonly string[]).includes(p.snakeHat ?? "") ? p.snakeHat! : "none";
+        return { ...current, ...p, snakeHat };
+      },
     }
   )
 );

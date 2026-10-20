@@ -18,6 +18,7 @@ import {
   type GridSpec,
 } from "./desktopGrid";
 import { DesktopSnake } from "./DesktopSnake";
+import { SnakeGuide } from "./SnakeGuide";
 
 type Point = { x: number; y: number };
 type Marquee = { start: Point; end: Point };
@@ -70,7 +71,7 @@ function DesktopIcon({
   const ref = useRef<HTMLButtonElement>(null);
   const savedPos = iconPos[def.key];
   const pos = dragging && savedPos ? savedPos : iconVisiblePos(def, savedPos, spec);
-  const iconArt = <><PixIcon name={def.icon} size={iconGlyph(spec)} /><span className="label">{def.label}</span></>;
+  const iconArt = <><PixIcon name={def.icon} size={iconGlyph(spec)} /><span className="label"><span className="label-text">{def.label}</span></span></>;
 
   // Existing absolute placements become right-anchored the first time they are seen.
   useEffect(() => {
@@ -310,6 +311,7 @@ export function Desktop({ children }: { children?: React.ReactNode }) {
     >
       <div className="gridlayer" aria-hidden />
       {!snakeMode && wallpaper !== "clean" && <DesktopSnake frozen />}
+      {!snakeMode && wallpaper !== "clean" && <SnakeGuide />}
       {!snakeMode && ICONS.map((icon) => (
         <DesktopIcon
           key={icon.key}

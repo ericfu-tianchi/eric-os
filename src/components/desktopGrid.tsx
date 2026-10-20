@@ -23,7 +23,7 @@ const folderIcon = (key: "school" | "huawei" | "opus" | "selected" | "website" |
   return { key, label: node.name, icon: "folder", app: "filesystem", title: node.name, payload: node.id, cellRight, row };
 };
 
-/** Desktop = the six project roots plus the small system utilities. Each folder opens
+/** Desktop = the six project roots, two game shortcuts, plus the small system utilities. Each folder opens
     the same canonical node that Tianchintosh HD exposes, never a duplicate view. */
 export const ICONS: IconDef[] = [
   folderIcon("school", 2, 1),
@@ -32,7 +32,9 @@ export const ICONS: IconDef[] = [
   folderIcon("selected", 2, 4),
   folderIcon("website", 5, 4),
   folderIcon("ai", 8, 4),
-  { key: "about", label: "About_Me.md", icon: "doc", app: "about", title: "About_Me.md", cellRight: 2, row: 7 },
+  { key: "soul-blade", label: "Soul Blade", icon: "soul-blade", app: "soul-blade", title: "Soul Blade", maximized: true, cellRight: 11, row: 1 },
+  { key: "lego-world", label: "My Lego World", icon: "lego-world", app: "lego-world", title: "My Lego World", maximized: true, cellRight: 11, row: 4 },
+  { key: "about", label: "About_Me.md", icon: "about-page", app: "about", title: "About_Me.md", cellRight: 2, row: 7 },
   { key: "resume", label: "resume.pdf", icon: "pdf", app: "resume", title: "resume.pdf", cellRight: 5, row: 7 },
   { key: "snake", label: "Snake", icon: "snake", app: "snake", title: "Snake", cellRight: 8, row: 7 },
   { key: "disk", label: "Tianchintosh HD", icon: "computer", app: "filesystem", title: "Tianchintosh HD", payload: "tianchintosh", cellRight: 2, row: 10 },

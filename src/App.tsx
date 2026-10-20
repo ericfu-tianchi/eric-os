@@ -15,9 +15,9 @@ import { ProjectsApp, ProjectDetailApp } from "./apps/ProjectsApp";
 import { SnakeApp } from "./apps/SnakeApp";
 import { ResumeApp, PrefsApp } from "./apps/MiscApps";
 import { LifeApp, PlaygroundApp } from "./apps/LifeApp";
-import { resetSnakeRecordPreview } from "./data/snakeRecord";
 import { FileSystemApp } from "./apps/FileSystemApp";
 import { ExternalGameApp } from "./apps/ExternalGameApp";
+import { HtmlDocApp } from "./apps/HtmlDocApp";
 
 /** App registry — add an app: one component + one entry here. */
 const APP_VIEWS: Record<AppId, (w: WinInstance) => React.ReactNode> = {
@@ -30,6 +30,8 @@ const APP_VIEWS: Record<AppId, (w: WinInstance) => React.ReactNode> = {
   snake: () => <SnakeApp />,
   "soul-blade": () => <ExternalGameApp gameId="soul-blade" />,
   "twist-solver": () => <ExternalGameApp gameId="twist-solver" />,
+  "lego-world": () => <ExternalGameApp gameId="lego-world" />,
+  "html-doc": (w) => <HtmlDocApp nodeId={w.payload} />,
   life: () => <LifeApp />,
   playground: () => <PlaygroundApp />,
   "project-detail": (w) => <ProjectDetailApp slug={w.payload} />,
@@ -38,10 +40,10 @@ const APP_VIEWS: Record<AppId, (w: WinInstance) => React.ReactNode> = {
 const APP_BADGES: Partial<Record<AppId, string>> = {
   projects: "3 folders",
   snake: "v1.0",
-  filesystem: "Finder",
   "soul-blade": "LIVE GAME",
   "twist-solver": "LIVE APP",
-  resume: "v2023",
+  "lego-world": "LIVE APP",
+  resume: "2026",
 };
 
 const CANVAS_VARIANTS = [
@@ -127,16 +129,6 @@ export default function App() {
     root.dataset.canvas = canvasVariant;
     return () => { delete root.dataset.canvas; };
   }, [canvasVariant, canvasStudy, theme]);
-
-  // Temporary, one-time QA reset so Eric can immediately exercise the
-  // first global-record / credit flow without resetting the entire desktop.
-  useEffect(() => {
-    const key = "eric-os-snake-record-qa-reset-v1";
-    if (localStorage.getItem(key)) return;
-    useOS.getState().setSnakeBest(0);
-    resetSnakeRecordPreview();
-    localStorage.setItem(key, "1");
-  }, []);
 
   // first visit: never an empty desktop
   useEffect(() => {

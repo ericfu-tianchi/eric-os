@@ -1,5 +1,6 @@
 import { PROJECTS } from "../data/projects";
-import { PixelGlyph, PixelWordmark } from "./Pixel";
+import { PixelWordmark } from "./Pixel";
+import fuWingMark from "../assets/fu-wing-mark.png";
 
 /**
  * MobileShell — the content survives without the metaphor.
@@ -10,8 +11,8 @@ export function MobileShell() {
     <div className="mobile-shell">
       <nav className="menubar" style={{ position: "fixed" }}>
         <span className="brand" style={{ cursor: "default" }}>
-          <PixelGlyph name="logo" size={22} />
-          <PixelWordmark text="ERIC OS" cell={2.4} />
+          <img className="fu-wing-mark" src={fuWingMark} alt="" draggable={false} />
+          <PixelWordmark text="TIANCHI OS" cell={2.4} />
         </span>
         <div className="right">
           <span style={{ fontSize: 11 }}>PORTFOLIO</span>
@@ -19,9 +20,9 @@ export function MobileShell() {
       </nav>
 
       <section className="m-card">
-        <div className="m-head">About Eric</div>
+        <div className="m-head">About Tianchi</div>
         <div className="m-body">
-          <h1 style={{ margin: "0 0 4px", fontSize: 26, fontWeight: 900 }}>Eric Fu</h1>
+          <h1 style={{ margin: "0 0 4px", fontSize: 26, fontWeight: 900 }}>Tianchi (Eric) Fu</h1>
           <p style={{ margin: "0 0 10px", fontWeight: 700, color: "var(--muted)", fontSize: 12.5 }}>
             PRODUCT MANAGER · DESIGNER · BUILDER
           </p>

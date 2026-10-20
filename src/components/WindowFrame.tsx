@@ -5,7 +5,7 @@ import { WindowChromeProvider, type WindowChromeState } from "./WindowChrome";
 import { PROJECTS } from "../data/projects";
 
 /**
- * WindowFrame — the single chrome for every window in ERIC OS.
+ * WindowFrame — the single chrome for every window in Tianchi OS.
  * Controls live TOP-LEFT: red square = close, green square = maximize.
  * Plain color blocks at rest; glyphs appear on hover.
  * Drag by titlebar; double-click titlebar toggles maximize.
@@ -86,7 +86,7 @@ export function WindowFrame({
       aria-label={title}
     >
       <header
-        className={`titlebar ${chrome?.centeredTitle ? "finder-titlebar" : ""}`}
+        className={`titlebar ${chrome?.navigation ? "finder-titlebar" : ""}`}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -95,49 +95,51 @@ export function WindowFrame({
         <div className="controls">
           <button className="ctrl close" aria-label="关闭窗口" onClick={requestClose}>
             <svg viewBox="0 0 8 8" aria-hidden>
-              <path d="M1 1l6 6M7 1L1 7" stroke="rgba(0,0,0,0.5)" strokeWidth="1.8" strokeLinecap="square" />
+              <path d="M1 1l6 6M7 1L1 7" stroke="rgba(0,0,0,0.6)" strokeWidth="1.8" strokeLinecap="square" />
             </svg>
           </button>
           <button className="ctrl max" aria-label="最大化窗口" onClick={() => toggleMax(win.id)}>
-            <svg viewBox="0 0 8 8" aria-hidden>
-              <path d="M1.4 1.4h5.2v5.2H1.4z" fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="1.6" />
+            <svg viewBox="0 0 13 13" aria-hidden>
+              {/* macOS full-screen arrows, optically balanced: both states share the triangles' centroids */}
+              <path
+                d={win.maximized
+                  ? "M5.67 5.67H1.27L5.67 1.27Z M7.33 7.33H11.73L7.33 11.73Z"
+                  : "M2.73 2.73H7.13L2.73 7.13Z M10.27 10.27H5.87L10.27 5.87Z"}
+                fill="rgba(0,0,0,0.6)"
+              />
             </svg>
           </button>
         </div>
         {chrome?.navigation && (
           <div className="finder-nav" onPointerDown={(e) => e.stopPropagation()}>
             <button type="button" aria-label="后退" disabled={!chrome.navigation.canGoBack} onClick={chrome.navigation.onBack}>
-              <svg viewBox="0 0 12 12" aria-hidden><path d="M7.6 2.2 3.8 6l3.8 3.8" /></svg>
+              <svg viewBox="0 0 16 16" aria-hidden><path d="M10 3.5 5.5 8l4.5 4.5" /></svg>
             </button>
             <button type="button" aria-label="前进" disabled={!chrome.navigation.canGoForward} onClick={chrome.navigation.onForward}>
-              <svg viewBox="0 0 12 12" aria-hidden><path d="M4.4 2.2 8.2 6l-3.8 3.8" /></svg>
+              <svg viewBox="0 0 16 16" aria-hidden><path d="m6 3.5 4.5 4.5L6 12.5" /></svg>
             </button>
           </div>
         )}
-        {chrome?.centeredTitle ? (
-          <span className="finder-title" aria-label="当前位置">{chrome.centeredTitle}</span>
-        ) : (
-          <nav className="window-crumb" aria-label="当前位置" onPointerDown={(e) => e.stopPropagation()}>
-            {trail.map((crumb, index) => (
-              <span className="crumb-part" key={`${crumb.label}-${index}`}>
-                {index > 0 && <span className="crumb-sep">/</span>}
-                {crumb.onClick && index < trail.length - 1 ? (
-                  <button type="button" onClick={crumb.onClick}>{crumb.label}</button>
-                ) : (
-                  <span>{crumb.label}</span>
-                )}
-              </span>
-            ))}
-          </nav>
-        )}
+        <nav className="window-crumb" aria-label="当前位置" onPointerDown={(e) => e.stopPropagation()}>
+          {trail.map((crumb, index) => (
+            <span className="crumb-part" key={`${crumb.label}-${index}`}>
+              {index > 0 && <span className="crumb-sep">/</span>}
+              {crumb.onClick && index < trail.length - 1 ? (
+                <button type="button" onClick={crumb.onClick}>{crumb.label}</button>
+              ) : (
+                <span>{crumb.label}</span>
+              )}
+            </span>
+          ))}
+        </nav>
         <span className="spacer" />
         {chrome?.viewControls && (
           <div className="finder-views" onPointerDown={(e) => e.stopPropagation()} aria-label="视图切换">
             <button type="button" className={chrome.viewControls.mode === "icon" ? "active" : ""} aria-label="图标视图" onClick={() => chrome.viewControls?.onChange("icon")}>
-              <svg viewBox="0 0 12 12" aria-hidden><path d="M1.5 1.5h3v3h-3zM7.5 1.5h3v3h-3zM1.5 7.5h3v3h-3zM7.5 7.5h3v3h-3z" /></svg>
+              <svg viewBox="0 0 16 16" aria-hidden><rect x="2" y="2" width="5" height="5" rx="1.2" /><rect x="9" y="2" width="5" height="5" rx="1.2" /><rect x="2" y="9" width="5" height="5" rx="1.2" /><rect x="9" y="9" width="5" height="5" rx="1.2" /></svg>
             </button>
             <button type="button" className={chrome.viewControls.mode === "list" ? "active" : ""} aria-label="列表视图" onClick={() => chrome.viewControls?.onChange("list")}>
-              <svg viewBox="0 0 12 12" aria-hidden><path d="M1.5 2.2h1.4v1.4H1.5zM4.2 2.6h6.3M1.5 5.3h1.4v1.4H1.5zM4.2 5.7h6.3M1.5 8.4h1.4v1.4H1.5zM4.2 8.8h6.3" /></svg>
+              <svg viewBox="0 0 16 16" aria-hidden><rect x="2" y="3" width="2" height="2" rx=".6" /><rect x="5.5" y="3.25" width="8.5" height="1.5" rx=".75" /><rect x="2" y="7" width="2" height="2" rx=".6" /><rect x="5.5" y="7.25" width="8.5" height="1.5" rx=".75" /><rect x="2" y="11" width="2" height="2" rx=".6" /><rect x="5.5" y="11.25" width="8.5" height="1.5" rx=".75" /></svg>
             </button>
           </div>
         )}
