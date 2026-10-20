@@ -112,7 +112,7 @@ Whitespace is the design. When unsure, add space rather than a divider line.
   Rutabagga `#764c99`, Huawei `#e71b23`, ECE `#0c2649`, Hand-coded site `#494949`.
 - The accent is used only for: labels, the sub-heading square, meta labels, stat numbers,
   feature titles, the callout band, the pill button, the active nav dot.
-- Highlights are a marker stroke across the lower half of the line in the accent at 36%, the same on white, mist and inside tinted panels (inside the solid callout band it is white at 28%). Findings panels use the 16% tint (`--cs-tint`).
+- Highlights are a full-height tint behind the words at 24% of the accent (`--cs-mark`); inside a tinted findings panel they use a deeper 34% tint (`--cs-mark-on-tint`), never white. Findings panels use the 16% tint (`--cs-tint`).
 - Everything else is grayscale. No second accent, no gradients.
 - Accent text must stay readable on white; if a brand color is neon, use a deeper shade.
 
