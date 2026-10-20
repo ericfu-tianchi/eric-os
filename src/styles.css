@@ -133,7 +133,6 @@
   --space-group: 14px;   /* gap between setting groups                   */
   --space-panel: 24px;   /* padding around an OS app's content           */
   --snake: #06c268;      /* the wallpaper snake's body (brand green)     */
-  --snake-shadow: none;  /* Light: the snake sits on the desk with a soft shadow */
   --shadow-menu: 0 12px 30px rgba(0, 0, 0, 0.3);
   --menu-bg: rgba(39, 40, 46, 0.92);   /* menus + context menus: dark glass on the stage */
   --menu-ink: #f1f1f3;
@@ -155,7 +154,6 @@
    so the grid, menubar, dock, menus, labels, selection and the snake game all read on it. */
 :root[data-theme="light"] {
   --snake: #06a85a;      /* one step deeper: calm on pale gray instead of buzzing */
-  --snake-shadow: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.16)) drop-shadow(0 6px 12px rgba(0, 0, 0, 0.08));
   color-scheme: light;
   --paper: #e9e9ec;
   --bar: #f4f4f6;
@@ -1135,7 +1133,7 @@ button { font-family: inherit; color: inherit; }
 /* ============ desktop snake: wallpaper (frozen) + game ============ */
 .dsnake { position: fixed; top: var(--menubar-h); left: 0; right: 0; bottom: 0; z-index: 560; overflow: hidden; } /* above the menubar so the in-bar HUD isn't dimmed by it */
 .dsnake.frozen { z-index: 4; pointer-events: none; } /* wallpaper layer, under windows */
-.dsnake-svg { position: absolute; inset: 0; filter: var(--snake-shadow); }
+.dsnake-svg { position: absolute; inset: 0; }
 .dsnake-hud {
   /* lives dead-center INSIDE the menubar — never covers the play field (or the apple) */
   position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 600;

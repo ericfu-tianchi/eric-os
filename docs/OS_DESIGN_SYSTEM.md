@@ -33,7 +33,7 @@ Tooltips are near-black (`tooltip-bg`) with white `ui-meta` text, `r-xs`, paddin
 
 Dark is the default and the hero. Light is a full twin of the OS layer, not an inverted afterthought:
 
-- **Desk**: `paper` turns cool gray (#e9e9ec) and the 44px grid stays visible (`gridline` flips to a dark 6% line). The hello pose and the game play exactly as in Dark; the snake turns one step deeper (`snake` #06a85a) and casts a soft shadow (`snake-shadow`) so it sits on the pale desk instead of reading as a flat sticker.
+- **Desk**: `paper` turns cool gray (#e9e9ec) and the 44px grid stays visible (`gridline` flips to a dark 6% line). The hello pose and the game play exactly as in Dark; the snake turns one step deeper (`snake` #06a85a), calm on the pale desk instead of buzzing. No shadow.
 - **Menubar and dock**: frosted light glass with dark text (`menubar-*`, `dock-*`); the wordmark inverts to ink.
 - **Menus**: light glass (`menu-*` light values). Tooltips stay near-black in both themes.
 - **Icons**: no drop shadow under desktop icons and no text shadow under their names; selection uses a dark 7% tile and the same `select` pill.
