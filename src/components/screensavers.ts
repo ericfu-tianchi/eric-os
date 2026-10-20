@@ -303,8 +303,8 @@ function makeCrazy(W: number, H: number): Saver {
 }
 
 // =====================================================================
-// Project reel: Apple's Aerial, with Tianchi's work. One cover at a time,
-// framed in the middle, crossfading every 7s with a slow drift.
+// Project reel: Apple's Aerial, with Tianchi's work. Slow pans across the
+// project covers, the name and one line bottom-left, the lockup bottom-right.
 // =====================================================================
 const REEL_SRC: [string, string][] = [
   ["refugeeone", heroRefugee], ["lego-world", heroLego], ["neurobot", heroNeurobot], ["homesoffcampus", heroHomes],
@@ -319,51 +319,34 @@ function reel() {
   return REEL;
 }
 function makeReel(W: number, H: number): Saver {
-  // Not full bleed: each cover sits framed in the middle (about 70% wide) over a dim,
-  // blurred wash of itself, drifting a touch, with the caption under its left edge.
   const R = reel(), SLIDE = 7, FADE = 1.2, dpr = window.devicePixelRatio || 1;
   let t = 0;
-  const frame = (s: (typeof R)[number]) => {
-    const iw = s.img.naturalWidth, ih = s.img.naturalHeight;
-    const w = Math.min(W * 0.7, (H * 0.56 * iw) / ih), h = (w * ih) / iw;
-    return { w, h, x: (W - w) / 2, y: H * 0.46 - h / 2 };
-  };
   const paint = (ctx: CanvasRenderingContext2D, s: (typeof R)[number], k: number, a: number, dir: number) => {
-    if (!s.img.naturalWidth || a <= 0) return;
-    const f = frame(s);
-    ctx.save(); ctx.globalAlpha = a * 0.28; ctx.filter = "blur(40px)";
-    const sc = Math.max(W / s.img.naturalWidth, H / s.img.naturalHeight) * 1.2;
-    ctx.drawImage(s.img, (W - s.img.naturalWidth * sc) / 2, (H - s.img.naturalHeight * sc) / 2, s.img.naturalWidth * sc, s.img.naturalHeight * sc);
-    ctx.restore();
-    ctx.save(); ctx.globalAlpha = a;
-    ctx.shadowColor = "rgba(0,0,0,.45)"; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14;
-    ctx.beginPath(); ctx.roundRect(f.x, f.y, f.w, f.h, 8); ctx.fillStyle = PAPER; ctx.fill();
-    ctx.shadowColor = "transparent"; ctx.clip();
-    const z = 1.02 + 0.05 * k, zw = f.w * z, zh = f.h * z;
-    ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(s.img, f.x - (zw - f.w) / 2 + dir * (k - 0.5) * f.w * 0.02, f.y - (zh - f.h) / 2, zw, zh);
-    ctx.restore();
+    if (!s.img.naturalWidth) return;
+    const sc = Math.max(W / s.img.naturalWidth, H / s.img.naturalHeight) * (1.06 + 0.1 * k);
+    const w = s.img.naturalWidth * sc, h = s.img.naturalHeight * sc, dx = (W - w) / 2 + dir * (k - 0.5) * W * 0.04;
+    ctx.save(); ctx.globalAlpha = a; ctx.imageSmoothingQuality = "high"; ctx.drawImage(s.img, dx, (H - h) / 2, w, h); ctx.restore();
   };
   return {
     step(dt) { t += dt; },
     draw(ctx) {
       bg(ctx, W, H);
       const i = Math.floor(t / SLIDE) % R.length, local = t % SLIDE, k = local / SLIDE;
-      const fadeIn = t > SLIDE ? clamp(local / FADE) : 1;
-      if (local < FADE && t > SLIDE) paint(ctx, R[(i + R.length - 1) % R.length], 1, 1 - fadeIn, (i - 1) % 2 ? 1 : -1);
-      paint(ctx, R[i], k, fadeIn, i % 2 ? 1 : -1);
-      if (!R[i].img.naturalWidth) return;
-      const f = frame(R[i]), ca = clamp((local - 0.8) / 0.6) * (1 - clamp((local - SLIDE + 0.9) / 0.6)), fs = Math.max(12, H * 0.026);
-      ctx.save(); ctx.globalAlpha = ca; ctx.textBaseline = "alphabetic";
-      ctx.fillStyle = "#ececef"; ctx.font = `650 ${fs}px Geist, sans-serif`; ctx.fillText(R[i].name, f.x, f.y + f.h + fs * 2);
-      ctx.fillStyle = MUTED; ctx.font = `500 ${fs * 0.6}px Geist, sans-serif`; ctx.fillText(R[i].sub, f.x, f.y + f.h + fs * 3.1);
+      if (local < FADE && t > SLIDE) paint(ctx, R[(i + R.length - 1) % R.length], 1 + local / SLIDE, 1, (i - 1) % 2 ? 1 : -1);
+      paint(ctx, R[i], k, t > SLIDE ? clamp(local / FADE) : 1, i % 2 ? 1 : -1);
+      const g = ctx.createLinearGradient(0, H * 0.55, 0, H); g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,.6)");
+      ctx.fillStyle = g; ctx.fillRect(0, H * 0.55, W, H * 0.45);
+      const ca = clamp((local - 0.8) / 0.6) * (1 - clamp((local - SLIDE + 0.9) / 0.6)), fs = Math.max(13, H * 0.034);
+      ctx.save(); ctx.globalAlpha = ca; ctx.shadowColor = "rgba(0,0,0,.4)"; ctx.shadowBlur = 12;
+      ctx.fillStyle = "#fff"; ctx.font = `650 ${fs}px Geist, sans-serif`; ctx.fillText(R[i].name, W * 0.05, H * 0.9);
+      ctx.fillStyle = "rgba(255,255,255,.75)"; ctx.font = `500 ${fs * 0.5}px Geist, sans-serif`; ctx.fillText(R[i].sub, W * 0.05, H * 0.9 + fs * 0.95);
       ctx.restore();
-      // lockup, bottom-right under the frame's right edge
-      const ls = fs * 0.62, mh = ls * 1.5, mw = mh * MARK_RATIO, bmp = markBitmap(mh * dpr);
-      ctx.save(); ctx.globalAlpha = 0.8; ctx.font = `650 ${ls}px Geist, sans-serif`; ctx.textBaseline = "middle";
-      const tw = ctx.measureText("Tianchi OS").width, x = f.x + f.w - tw - mw - ls * 0.5, y = f.y + f.h + fs * 1.65;
+      // lockup, bottom-right
+      const ls = fs * 0.5, mh = ls * 1.5, mw = mh * MARK_RATIO, bmp = markBitmap(mh * dpr);
+      ctx.save(); ctx.globalAlpha = 0.85; ctx.font = `650 ${ls}px Geist, sans-serif`; ctx.textBaseline = "middle";
+      const tw = ctx.measureText("Tianchi OS").width, x = W * 0.95 - tw - mw - ls * 0.5, y = H * 0.9 - fs * 0.3;
       if (bmp) ctx.drawImage(bmp, x, y - mh / 2, mw, mh);
-      ctx.fillStyle = "#ececef"; ctx.fillText("Tianchi OS", x + mw + ls * 0.5, y);
+      ctx.fillStyle = "#fff"; ctx.fillText("Tianchi OS", x + mw + ls * 0.5, y);
       ctx.restore();
     },
   };
