@@ -18,6 +18,7 @@ import { LifeApp, PlaygroundApp } from "./apps/LifeApp";
 import { FileSystemApp } from "./apps/FileSystemApp";
 import { ExternalGameApp } from "./apps/ExternalGameApp";
 import { HtmlDocApp } from "./apps/HtmlDocApp";
+import { AboutOSApp } from "./apps/AboutOSApp";
 
 /** App registry — add an app: one component + one entry here. */
 const APP_VIEWS: Record<AppId, (w: WinInstance) => React.ReactNode> = {
@@ -35,6 +36,7 @@ const APP_VIEWS: Record<AppId, (w: WinInstance) => React.ReactNode> = {
   life: () => <LifeApp />,
   playground: () => <PlaygroundApp />,
   "project-detail": (w) => <ProjectDetailApp slug={w.payload} />,
+  "about-os": () => <AboutOSApp />,
 };
 
 const APP_BADGES: Partial<Record<AppId, string>> = {

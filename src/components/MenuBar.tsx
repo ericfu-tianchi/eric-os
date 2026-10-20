@@ -50,6 +50,8 @@ export function MenuBar() {
 
       {menuOpen && (
         <div className="menu-pop" role="menu">
+          <button onClick={item(() => open("about-os", { title: "About Tianchi OS" }))}>About Tianchi OS</button>
+          <hr />
           <button onClick={item(() => open("about", { title: "About_Me.md" }))}>About Tianchi</button>
           <button onClick={item(() => open("filesystem", { title: "Tianchintosh HD", payload: "tianchintosh" }))}>Tianchintosh HD</button>
           <button onClick={item(() => open("prefs", { title: "Settings" }))}>Settings…</button>

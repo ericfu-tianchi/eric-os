@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Loading and Screen Savers</title>
+<style>
+  @font-face { font-family: "Geist"; src: url("/src/assets/fonts/geist-sans-variable.woff2") format("woff2"); font-weight: 100 900; }
+  :root { --stage: #1c1d21; --card: #24252b; --line: rgba(255,255,255,.08); --ink: #ececef; --muted: #8a8b92; --pick: #0a64e0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--stage); color: var(--ink); font-family: "Geist", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 24px 120px; }
+  h1 { font-size: 34px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 6px; }
+  .lede { color: var(--muted); margin: 0; font-size: 15px; line-height: 1.6; max-width: 72ch; }
+  section { margin-top: 44px; }
+  section h2 { font-size: 20px; margin: 0; font-weight: 700; }
+  section .brief { color: var(--muted); font-size: 13.5px; margin: 4px 0 16px; max-width: 80ch; line-height: 1.55; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+  .card { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 10px 14px; }
+  .card.on { border-color: var(--pick); box-shadow: 0 0 0 1px var(--pick); }
+  .screen { position: relative; aspect-ratio: 16 / 10; border-radius: 6px; overflow: hidden; background: #1c1d21; cursor: zoom-in; }
+  .screen canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .meta { display: flex; align-items: flex-start; gap: 10px; padding: 12px 4px 0; }
+  .meta .txt { flex: 1; min-width: 0; }
+  .meta .id { font: 600 11px ui-monospace, Menlo, monospace; color: var(--muted); letter-spacing: .04em; }
+  .meta b { display: block; font-size: 15px; margin-top: 2px; }
+  .meta p { margin: 4px 0 0; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+  .acts { display: flex; gap: 6px; flex: none; }
+  .acts button { height: 28px; padding: 0 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,.14); background: transparent; color: var(--ink); font: 600 12.5px "Geist", sans-serif; cursor: pointer; }
+  .acts button:hover { border-color: rgba(255,255,255,.4); }
+  .card.on .acts .pick { background: var(--pick); border-color: var(--pick); }
+  .toggles { display: flex; gap: 8px; margin-top: 14px; }
+  .toggles label { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--muted); cursor: pointer; }
+  .bar { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; background: #f4f4f6; color: #17171a; padding: 9px 9px 9px 16px; border-radius: 12px; box-shadow: 0 18px 50px rgba(0,0,0,.5); font-size: 13px; max-width: calc(100vw - 32px); z-index: 10; }
+  .bar code { font: 600 12.5px ui-monospace, Menlo, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52vw; }
+  .bar button { border: 0; border-radius: 8px; background: #17171a; color: #fff; padding: 8px 12px; cursor: pointer; font: 600 12.5px "Geist", sans-serif; }
+  .full { position: fixed; inset: 0; z-index: 100; background: #1c1d21; cursor: none; }
+  .full canvas { width: 100%; height: 100%; display: block; }
+  .full .hint { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); font-size: 12.5px; color: rgba(255,255,255,.55); transition: opacity .6s; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Loading and Screen Savers</h1>
+  <p class="lede">Every card runs live. Click a preview to see it full screen (click or Esc to leave). Use Pick on the ones you like; the bar at the bottom collects them so you can paste them back.</p>
+
+  <section>
+    <h2>Loading screen</h2>
+    <p class="brief">Shown once per visit, about two seconds, click to skip. Each one has the F mark and the Tianchi OS name, set in Geist like the menubar. They loop here so you can watch them more than once.</p>
+    <div class="grid" id="loaders"></div>
+  </section>
+
+  <section>
+    <h2>Screen savers</h2>
+    <p class="brief">Starts after a few idle minutes; any mouse move or key ends it. The ones you pick become choices in Settings. Clock speeds up in the small preview so you can see the minute change.</p>
+    <div class="toggles"><label><input type="checkbox" id="clockToggle" /> Show the time on top, like the macOS lock screen</label></div>
+    <div class="grid" id="savers" style="margin-top:14px"></div>
+  </section>
+</div>
+<div class="bar"><span>Picks</span><code id="picks">none yet</code><button id="copy">Copy</button></div>
+
+<script>
+// ---------- shared look ----------
+const GREEN = "#06C268", PAPER = "#1c1d21", GRIDL = "rgba(255,255,255,.045)", INK = "#ececef", MUTED = "#8a8b92";
+const GEMS = ["#06C268", "#FF4D7E", "#21C4C4", "#4D8BFF", "#F5B027", "#A77BFF"];
+const img = (src) => { const i = new Image(); i.src = src; return i; };
+const FMARK = img("/src/assets/fu-wing-mark.png");
+const APPLE = img("/src/assets/icons/b/apple.png");
+const ICONS = ["computer", "doc", "folder", "gear", "heart", "pdf", "snake", "star", "apple", "soul-blade", "twist-solver", "battery-v1"].map((n) => img(`/src/assets/icons/b/${n}.png`));
+const ERIC_POSE = [[0,11],[1,11],[2,11],[2,10],[2,9],[2,8],[2,7],[2,6],[2,5],[2,4],[3,4],[3,5],[3,6],[3,7],[4,7],[4,8],[4,9],[4,10],[4,11],[5,11],[6,11],[6,10],[6,9],[6,8],[6,7],[7,7],[8,7],[8,8],[8,9],[7,9],[7,10],[7,11],[8,11],[9,11],[10,11],[10,10],[10,9],[10,8],[10,7],[10,6],[10,5],[10,4],[11,4],[12,4],[12,5],[12,6],[12,7],[12,8],[12,9],[12,10],[12,11],[13,11],[14,11],[14,10],[14,9],[14,8],[14,7],[14,6],[14,5],[14,4],[15,4],[16,4],[16,5],[16,6],[16,7],[16,8],[16,9],[16,10],[16,11],[17,11],[18,11],[18,10],[18,9],[18,8],[18,7],[19,7],[20,7],[20,8],[20,9],[20,10],[20,11],[21,11],[22,11],[23,11]];
+
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const ease = (t) => 1 - Math.pow(1 - clamp(t), 3);
+const easeBack = (t) => { t = clamp(t); const c = 1.6; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+const rnd = (a, b) => a + Math.random() * (b - a);
+const ri = (n) => Math.floor(Math.random() * n);
+
+function bg(ctx, W, H) { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, W, H); }
+function grid(ctx, W, H, c, alpha = 1, ox = 0, oy = 0) {
+  if (alpha <= 0) return;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = GRIDL; ctx.lineWidth = 1; ctx.beginPath();
+  for (let x = ox % c; x <= W; x += c) { ctx.moveTo(Math.round(x) + .5, 0); ctx.lineTo(Math.round(x) + .5, H); }
+  for (let y = oy % c; y <= H; y += c) { ctx.moveTo(0, Math.round(y) + .5); ctx.lineTo(W, Math.round(y) + .5); }
+  ctx.stroke(); ctx.restore();
+}
+// one snake block, exactly like the desktop: flush cell, hairline gap, 10% corner
+function cell(ctx, x, y, c, color = GREEN, s = 1) {
+  const g = c * 0.023, w = (c - 2 * g) * s;
+  ctx.fillStyle = color; ctx.beginPath(); ctx.roundRect(x + c / 2 - w / 2, y + c / 2 - w / 2, w, w, w * 0.105); ctx.fill();
+}
+function head(ctx, x, y, c, dx, dy, color = GREEN, look) {
+  cell(ctx, x, y, c, color);
+  if (c < 9) return;
+  const cx = x + c / 2, cy = y + c / 2, px = -dy, py = dx, er = c * 0.125;
+  const lx = look ? look[0] : dx, ly = look ? look[1] : dy, m = Math.hypot(lx, ly) || 1;
+  for (const k of [-1, 1]) {
+    const ex = cx + dx * c * 0.3 + px * c * 0.21 * k, ey = cy + dy * c * 0.3 + py * c * 0.21 * k;
+    ctx.fillStyle = "#fafafa"; ctx.beginPath(); ctx.arc(ex, ey, er, 0, 7); ctx.fill();
+    ctx.fillStyle = "#363636"; ctx.beginPath(); ctx.arc(ex + lx / m * er * 0.42, ey + ly / m * er * 0.42, er * 0.42, 0, 7); ctx.fill();
+  }
+}
+function drawSnake(ctx, body, c, ox, oy, color = GREEN, look) {
+  for (let i = body.length - 1; i >= 1; i--) cell(ctx, ox + body[i][0] * c, oy + body[i][1] * c, c, color);
+  const [hx, hy] = body[0], nb = body[1] || [hx - 1, hy];
+  head(ctx, ox + hx * c, oy + hy * c, c, Math.sign(hx - nb[0]), Math.sign(hy - nb[1]), color, look);
+}
+// the lockup: white F mark + "Tianchi OS" in Geist, OS muted like the menubar
+function wordmark(ctx, x, y, size, align = "center", alpha = 1) {
+  ctx.save(); ctx.globalAlpha = alpha; ctx.font = `650 ${size}px Geist`; ctx.textBaseline = "middle";
+  const a = "Tianchi", b = " OS", wa = ctx.measureText(a).width, wb = ctx.measureText(b).width;
+  let x0 = align === "center" ? x - (wa + wb) / 2 : align === "right" ? x - wa - wb : x;
+  ctx.fillStyle = INK; ctx.fillText(a, x0, y); ctx.fillStyle = MUTED; ctx.fillText(b, x0 + wa, y);
+  ctx.restore(); return wa + wb;
+}
+function mark(ctx, cx, cy, h, alpha = 1, tint) {
+  if (!FMARK.complete || !FMARK.naturalWidth) return;
+  const w = h * FMARK.naturalWidth / FMARK.naturalHeight;
+  ctx.save(); ctx.globalAlpha = alpha;
+  if (tint) {
+    const o = tintCache(tint, Math.ceil(w), Math.ceil(h)); ctx.drawImage(o, cx - w / 2, cy - h / 2, w, h);
+  } else ctx.drawImage(FMARK, cx - w / 2, cy - h / 2, w, h);
+  ctx.restore();
+}
+const _tc = {};
+function tintCache(color, w, h) {
+  const k = color + w + "x" + h; if (_tc[k]) return _tc[k];
+  const o = document.createElement("canvas"); o.width = w; o.height = h; const x = o.getContext("2d");
+  x.drawImage(FMARK, 0, 0, w, h); x.globalCompositeOperation = "source-in"; x.fillStyle = color; x.fillRect(0, 0, w, h);
+  return (_tc[k] = o);
+}
+function lockupRow(ctx, cx, cy, s, alpha = 1) { // mark left of name, centered as a unit
+  ctx.save(); ctx.font = `650 ${s}px Geist`; const tw = ctx.measureText("Tianchi OS").width; ctx.restore();
+  const mh = s * 1.5, mw = mh * 545 / 886, gap = s * 0.55, total = mw + gap + tw;
+  mark(ctx, cx - total / 2 + mw / 2, cy, mh, alpha);
+  wordmark(ctx, cx - total / 2 + mw + gap, cy + s * 0.04, s, "left", alpha);
+}
+function clockText(d = new Date()) {
+  const h = d.getHours() % 12 || 12; return `${h}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+function dateText(d = new Date()) { return d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }); }
+function lockClock(ctx, W, H) {
+  const s = H * 0.15;
+  ctx.save(); ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+  ctx.shadowColor = "rgba(0,0,0,.35)"; ctx.shadowBlur = s * 0.2;
+  ctx.fillStyle = "rgba(255,255,255,.88)"; ctx.font = `600 ${s * 0.16}px Geist`; ctx.fillText(dateText(), W / 2, H * 0.1 + s * 0.16);
+  ctx.font = `650 ${s}px Geist`; ctx.fillText(clockText(), W / 2, H * 0.1 + s * 1.12);
+  ctx.restore();
+}
+
+// ---------- pathfinding for autonomous snakes ----------
+function bfs(cols, rows, from, to, blocked) {
+  const N = cols * rows, prev = new Int32Array(N).fill(-1), q = [from[1] * cols + from[0]], start = q[0], goal = to[1] * cols + to[0];
+  prev[start] = start;
+  for (let qi = 0; qi < q.length; qi++) {
+    const v = q[qi]; if (v === goal) break;
+    const x = v % cols, y = (v / cols) | 0;
+    for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+      const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= cols || ny >= rows) continue;
+      const n = ny * cols + nx; if (prev[n] !== -1 || blocked[n]) continue; prev[n] = v; q.push(n);
+    }
+  }
+  if (prev[goal] === -1) return null;
+  let v = goal; while (prev[v] !== start) v = prev[v];
+  return [v % cols, (v / cols) | 0];
+}
+function freeSpace(cols, rows, from, blocked) {
+  const seen = new Uint8Array(cols * rows), q = [from[1] * cols + from[0]]; seen[q[0]] = 1;
+  for (let qi = 0; qi < q.length && q.length < 400; qi++) {
+    const v = q[qi], x = v % cols, y = (v / cols) | 0;
+    for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+      const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= cols || ny >= rows) continue;
+      const n = ny * cols + nx; if (seen[n] || blocked[n]) continue; seen[n] = 1; q.push(n);
+    }
+  }
+  return q.length;
+}
+function autoStep(cols, rows, body, apple, blocked) {
+  const h = body[0];
+  let next = bfs(cols, rows, h, apple, blocked);
+  if (next && freeSpace(cols, rows, next, blocked) < body.length) next = null; // don't walk into a pocket
+  if (!next) {
+    let best = null, bs = -1;
+    for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+      const nx = h[0] + dx, ny = h[1] + dy; if (nx < 0 || ny < 0 || nx >= cols || ny >= rows || blocked[ny * cols + nx]) continue;
+      const s = freeSpace(cols, rows, [nx, ny], blocked) + Math.random(); if (s > bs) { bs = s; best = [nx, ny]; }
+    }
+    next = best;
+  }
+  return next;
+}
+function placeApple(cols, rows, blocked, margin = 1) {
+  for (let k = 0; k < 200; k++) { const x = margin + ri(cols - 2 * margin), y = margin + ri(rows - 2 * margin); if (!blocked[y * cols + x]) return [x, y]; }
+  return [1, 1];
+}
+function apple(ctx, x, y, c, t = 0) {
+  if (!APPLE.complete || !APPLE.naturalWidth) { cell(ctx, x, y, c, "#F04E38", .6); return; }
+  const s = c * (0.86 + Math.sin(t * 5) * 0.03);
+  ctx.save(); ctx.imageSmoothingEnabled = false; ctx.drawImage(APPLE, x + (c - s) / 2, y + (c - s) / 2, s, s); ctx.restore();
+}
+
+// =====================================================================
+// LOADERS: each one is (ctx, W, H, t) → draws frame t seconds into the loop
+// =====================================================================
+const LOOP = 4.2;
+const LOADERS = [
+  {
+    id: "L1", title: "Ouroboros", note: "A ring of cells around the F. The snake circles it, eating as it goes, until its head bites its own tail. Then the ring pops and the desktop arrives.",
+    draw(ctx, W, H, t) {
+      bg(ctx, W, H);
+      const n = 7, ring = []; // 24 cells clockwise
+      for (let i = 0; i < n; i++) ring.push([i, 0]);
+      for (let i = 1; i < n; i++) ring.push([n - 1, i]);
+      for (let i = n - 2; i >= 0; i--) ring.push([i, n - 1]);
+      for (let i = n - 2; i >= 1; i--) ring.push([0, i]);
+      const N = ring.length, c = Math.min(W, H) * 0.052, ox = W / 2 - n * c / 2, oy = H * 0.44 - n * c / 2;
+      const T = 2.2, step = 0.072, p = clamp(t / T), out = clamp((t - 2.75) / 0.45);
+      const k = Math.floor(t / step), L = Math.min(N, 3 + Math.floor(p * (N - 3)));
+      const full = t >= T;
+      const pop = full ? clamp((t - T) / 0.5) : 0;
+      ctx.save(); ctx.globalAlpha = 1 - out;
+      // track
+      for (const [x, y] of ring) { ctx.fillStyle = "rgba(255,255,255,.035)"; ctx.beginPath(); ctx.roundRect(ox + x * c + c * .06, oy + y * c + c * .06, c * .88, c * .88, c * .1); ctx.fill(); }
+      const headI = full ? Math.floor(T / step) % N : k % N;
+      const flash = full && pop < 0.35 ? 1 : 0;
+      for (let j = L - 1; j >= 0; j--) {
+        const [x, y] = ring[(headI - j + N * 4) % N], s = 1 + Math.sin(clamp(pop * 2) * Math.PI) * 0.12 * (j % 2 ? 1 : .6);
+        if (j === 0) {
+          const nx = ring[(headI + 1) % N], dx = Math.sign(nx[0] - x), dy = Math.sign(nx[1] - y);
+          head(ctx, ox + x * c, oy + y * c, c * s, dx, dy, flash ? "#7CF0B0" : GREEN);
+        } else cell(ctx, ox + x * c, oy + y * c, c, flash ? "#7CF0B0" : GREEN, s);
+      }
+      if (!full) { // the next bite
+        const nextT = ((L + 1 - 3) / (N - 3)) * T, ai = Math.floor(nextT / step) % N, [ax, ay] = ring[ai];
+        if (L < N) apple(ctx, ox + ax * c, oy + ay * c, c, t);
+      }
+      mark(ctx, W / 2, oy + n * c / 2, c * 3.3, 1, null);
+      wordmark(ctx, W / 2, oy + n * c + c * 1.35, c * 0.78);
+      ctx.restore();
+      return t > LOOP;
+    },
+  },
+  {
+    id: "L2", title: "Hello, again", note: "The snake writes the same hello it wears on the desktop. Then the grid fades in around it and the loader simply becomes the desktop, no cut.",
+    draw(ctx, W, H, t) {
+      bg(ctx, W, H);
+      const c = W / 40, ox = (W - 24 * c) / 2, oy = H * 0.58 - 12 * c;
+      const g = clamp((t - 2.35) / 0.6);
+      grid(ctx, W, H, c, g, ox, oy);
+      const lk = clamp(t / 0.35) * (1 - clamp((t - 2.45) / 0.4));
+      lockupRow(ctx, W / 2, oy + 2.0 * c, c * 0.95, lk);
+      const n = Math.floor(clamp((t - 0.35) / 1.75) * ERIC_POSE.length);
+      if (n >= 2) {
+        const body = ERIC_POSE.slice(0, n).reverse();
+        const done = n === ERIC_POSE.length;
+        drawSnake(ctx, body, c, ox, oy, GREEN, done && t > 2.15 && t < 2.35 ? [0, -1] : null);
+      }
+      return t > LOOP;
+    },
+  },
+  {
+    id: "L3", title: "Tail chase", note: "The quiet one. F mark and name, and a tiny snake chasing its tail round a 3×3 ring underneath, the way a spinner would.",
+    draw(ctx, W, H, t) {
+      bg(ctx, W, H);
+      const a = clamp(t / 0.3) * (1 - clamp((t - 2.7) / 0.4));
+      const s = H * 0.055;
+      mark(ctx, W / 2, H * 0.4, s * 2.6, a);
+      wordmark(ctx, W / 2, H * 0.4 + s * 2.2, s * 0.62, "center", a);
+      const ring = [[0,0],[1,0],[2,0],[2,1],[2,2],[1,2],[0,2],[0,1]], c = s * 0.32, ox = W / 2 - 1.5 * c, oy = H * 0.4 + s * 3.2;
+      const k = Math.floor(t / 0.085);
+      ctx.save(); ctx.globalAlpha = a;
+      for (let j = 4; j >= 0; j--) { const [x, y] = ring[(k - j + 80) % 8]; cell(ctx, ox + x * c, oy + y * c, c, GREEN, 1); if (j === 0) { ctx.globalAlpha = a; } }
+      ctx.restore();
+      return t > LOOP;
+    },
+  },
+  {
+    id: "L4", title: "Progress snake", note: "The progress bar is a snake on a track of cells. Every apple it eats is one thing loaded, with a small caption for each.",
+    draw(ctx, W, H, t) {
+      bg(ctx, W, H);
+      const a = clamp(t / 0.3) * (1 - clamp((t - 2.85) / 0.4));
+      const n = 18, c = Math.min(W * 0.022, H * 0.036), ox = W / 2 - n * c / 2, oy = H * 0.56;
+      ctx.save(); ctx.globalAlpha = a;
+      lockupRow(ctx, W / 2, H * 0.4, c * 1.25, 1);
+      for (let i = 0; i < n; i++) { ctx.fillStyle = "rgba(255,255,255,.05)"; ctx.beginPath(); ctx.roundRect(ox + i * c + c * .06, oy + c * .06, c * .88, c * .88, c * .1); ctx.fill(); }
+      const apples = [4, 9, 13, 17], p = clamp((t - 0.2) / 2.3), hx = Math.min(n - 1, Math.floor(p * n));
+      const eaten = apples.filter((x) => x <= hx).length, len = Math.min(hx + 1, 2 + eaten * 2);
+      for (const ax of apples) if (ax > hx) apple(ctx, ox + ax * c, oy, c, t);
+      const body = []; for (let i = 0; i < len; i++) body.push([hx - i, 0]);
+      drawSnake(ctx, body, c, ox, oy);
+      const caps = ["Waking up the snake…", "Polishing pixels…", "Loading Tianchi's projects…", "Brewing the coffee…", "Ready."];
+      ctx.font = `500 ${c * 0.62}px Geist`; ctx.fillStyle = MUTED; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(caps[eaten], W / 2, oy + c * 2.1);
+      ctx.restore();
+      return t > LOOP;
+    },
+  },
+  {
+    id: "L5", title: "Pixels to F", note: "Green cells fly in and build a pixel F, then it resolves into the real, smooth F mark. Pixels first, then modern: the site's whole idea in two seconds.",
+    init(W, H) {
+      const cols = 13, rows = 21, o = document.createElement("canvas"); o.width = cols; o.height = rows;
+      const x = o.getContext("2d"); if (FMARK.naturalWidth) x.drawImage(FMARK, 0, 0, cols, rows);
+      const d = x.getImageData(0, 0, cols, rows).data, cells = [];
+      for (let y = 0; y < rows; y++) for (let i = 0; i < cols; i++) if (d[(y * cols + i) * 4 + 3] > 70) cells.push({ x: i, y, a: rnd(0, 6.28), r: rnd(0.5, 1.1), d: 0 });
+      cells.sort((p, q) => q.y - p.y || p.x - q.x).forEach((p, i, arr) => (p.d = (i / arr.length) * 0.75 + rnd(0, 0.12)));
+      return { cells, cols, rows };
+    },
+    draw(ctx, W, H, t, S) {
+      bg(ctx, W, H);
+      if (!S.cells.length && FMARK.naturalWidth) Object.assign(S, this.init(W, H));
+      const mh = H * 0.36, c = mh / S.rows, mw = S.cols * c, ox = W / 2 - mw / 2, oy = H * 0.42 - mh / 2;
+      const res = clamp((t - 1.45) / 0.35), out = clamp((t - 2.9) / 0.4);
+      ctx.save(); ctx.globalAlpha = 1 - out;
+      for (const p of S.cells) {
+        const k = easeBack((t - 0.1 - p.d) / 0.5); if (t - 0.1 - p.d < 0) continue;
+        const sx = W / 2 + Math.cos(p.a) * W * 0.6 * p.r, sy = H / 2 + Math.sin(p.a) * H * 0.6 * p.r;
+        const x = sx + (ox + p.x * c - sx) * k, y = sy + (oy + p.y * c - sy) * k;
+        ctx.globalAlpha = (1 - out) * (1 - res);
+        cell(ctx, x, y, c, res > 0 ? "#ffffff" : GREEN, 1 - res * 0.15);
+      }
+      ctx.globalAlpha = 1 - out;
+      if (res > 0) mark(ctx, W / 2, H * 0.42, mh * 1.04, res);
+      const w = clamp((t - 1.75) / 0.4);
+      ctx.translate(0, (1 - ease(w)) * c);
+      wordmark(ctx, W / 2, oy + mh + c * 2.4, c * 1.5, "center", w * (1 - out));
+      ctx.restore();
+      return t > LOOP;
+    },
+  },
+];
+
+// =====================================================================
+// SCREEN SAVERS: make(W, H) → { step(dt, now), draw(ctx) }
+// =====================================================================
+function makeWander(W, H) {
+  const cols = 32, c = W / cols, rows = Math.floor(H / c), oy = (H - rows * c) / 2;
+  let body, ap, acc = 0, skins = [];
+  const reset = () => { body = [[6, rows >> 1], [5, rows >> 1], [4, rows >> 1], [3, rows >> 1], [2, rows >> 1]]; ap = placeApple(cols, rows, mask()); };
+  const mask = () => { const m = new Uint8Array(cols * rows); for (const [x, y] of body) m[y * cols + x] = 1; return m; };
+  reset();
+  return {
+    step(dt) {
+      acc += dt;
+      while (acc > 0.13) {
+        acc -= 0.13;
+        const m = mask(); const t = body[body.length - 1]; m[t[1] * cols + t[0]] = 0;
+        const nx = autoStep(cols, rows, body, ap, m);
+        if (!nx) { skins.push({ cells: body.slice(), age: 0 }); reset(); continue; }
+        body.unshift(nx);
+        if (nx[0] === ap[0] && nx[1] === ap[1]) {
+          if (body.length > 26) { skins.push({ cells: body.slice(8), age: 0 }); body = body.slice(0, 8); } // sheds its skin
+          ap = placeApple(cols, rows, mask());
+        } else body.pop();
+      }
+      skins.forEach((s) => (s.age += dt)); skins = skins.filter((s) => s.age < 2.4);
+    },
+    draw(ctx, now) {
+      bg(ctx, W, H); grid(ctx, W, H, c, 1, 0, oy);
+      for (const s of skins) { ctx.save(); ctx.globalAlpha = 0.35 * (1 - s.age / 2.4); for (const [x, y] of s.cells) cell(ctx, x * c, oy + y * c, c, "#ffffff"); ctx.restore(); }
+      apple(ctx, ap[0] * c, oy + ap[1] * c, c, now);
+      drawSnake(ctx, body, c, 0, oy, GREEN, [ap[0] - body[0][0], ap[1] - body[0][1]]);
+    },
+  };
+}
+
+function makeHello(W, H) {
+  const cols = 56, c = W / cols, rows = Math.floor(H / c), oy = (H - rows * c) / 2;
+  const WORDS = ["hello", "你好", "hola", "bonjour", "こんにちは", "ciao", "안녕", "hej", "olá"];
+  let wi = 0, path = [], t = 0;
+  const raster = (word) => {
+    const o = document.createElement("canvas"); o.width = cols; o.height = rows; const x = o.getContext("2d");
+    let fs = rows * 0.5; x.font = `700 ${fs}px Geist, "PingFang SC", "Hiragino Sans", "Apple SD Gothic Neo", sans-serif`;
+    const w = x.measureText(word).width; if (w > cols * 0.86) fs *= (cols * 0.86) / w;
+    x.font = `700 ${fs}px Geist, "PingFang SC", "Hiragino Sans", "Apple SD Gothic Neo", sans-serif`;
+    x.fillStyle = "#fff"; x.textAlign = "center"; x.textBaseline = "middle"; x.fillText(word, cols / 2, rows / 2 + fs * 0.04);
+    const d = x.getImageData(0, 0, cols, rows).data, pts = [];
+    for (let y = 0; y < rows; y++) for (let i = 0; i < cols; i++) if (d[(y * cols + i) * 4 + 3] > 120) pts.push([i, y]);
+    // order like a pen: always the nearest unwritten cell, left to right overall
+    const out = []; const left = new Set(pts.map((p, i) => i));
+    let cur = pts.reduce((a, p, i) => (p[0] < pts[a][0] ? i : a), 0);
+    while (left.size) { left.delete(cur); out.push(pts[cur]); let best = -1, bd = 1e9; for (const i of left) { const dd = Math.abs(pts[i][0] - pts[cur][0]) * 1.15 + Math.abs(pts[i][1] - pts[cur][1]); if (dd < bd) { bd = dd; best = i; } } if (best < 0) break; cur = best; }
+    return out;
+  };
+  path = raster(WORDS[0]);
+  return {
+    step(dt) {
+      t += dt;
+      const write = path.length * 0.028, total = write + 2.4;
+      if (t > total) { t = 0; wi = (wi + 1) % WORDS.length; path = raster(WORDS[wi]); }
+    },
+    draw(ctx) {
+      bg(ctx, W, H); grid(ctx, W, H, c, 1, 0, oy);
+      const write = path.length * 0.028, n = Math.min(path.length, Math.floor(t / 0.028)), fade = clamp((t - write - 1.7) / 0.6);
+      ctx.save(); ctx.globalAlpha = 1 - fade;
+      for (let i = 0; i < n; i++) { const [x, y] = path[i]; cell(ctx, x * c, oy + y * c, c, GREEN, i > n - 3 ? 0.8 : 1); }
+      if (n > 0 && n < path.length) { const [x, y] = path[n - 1], p = path[Math.max(0, n - 2)]; head(ctx, x * c, oy + y * c, c, Math.sign(x - p[0]) || 1, Math.sign(y - p[1])); }
+      ctx.restore();
+    },
+  };
+}
+
+function makeDrift(W, H) {
+  const cols = 64, c = W / cols, rows = Math.ceil(H / c);
+  const snakes = Array.from({ length: 11 }, (_, i) => {
+    const x = ri(cols), y = ri(rows), d = [[1,0],[-1,0],[0,1],[0,-1]][ri(4)];
+    return { body: Array.from({ length: 10 + ri(10) }, () => [x, y]), d, color: GEMS[i % GEMS.length], acc: rnd(0, .1), speed: rnd(0.07, 0.12) };
+  });
+  return {
+    step(dt) {
+      for (const s of snakes) {
+        s.acc += dt;
+        while (s.acc > s.speed) {
+          s.acc -= s.speed;
+          if (Math.random() < 0.14) { const [dx, dy] = s.d; s.d = Math.random() < .5 ? [-dy, dx] : [dy, -dx]; }
+          const [hx, hy] = s.body[0];
+          s.body.unshift([(hx + s.d[0] + cols) % cols, (hy + s.d[1] + rows) % rows]); s.body.pop();
+        }
+      }
+    },
+    draw(ctx) {
+      bg(ctx, W, H);
+      for (const s of snakes) {
+        for (let i = s.body.length - 1; i >= 0; i--) {
+          const [x, y] = s.body[i]; ctx.globalAlpha = 1 - i / s.body.length * 0.85;
+          cell(ctx, x * c, y * c, c, s.color, i === 0 ? 1 : 0.9);
+        }
+      }
+      ctx.globalAlpha = 1;
+    },
+  };
+}
+
+const DIGITS = {
+  "0": ["01110","10001","10011","10101","11001","10001","01110"], "1": ["00100","01100","00100","00100","00100","00100","01110"],
+  "2": ["01110","10001","00001","00010","00100","01000","11111"], "3": ["11110","00001","00001","01110","00001","00001","11110"],
+  "4": ["00010","00110","01010","10010","11111","00010","00010"], "5": ["11111","10000","11110","00001","00001","10001","01110"],
+  "6": ["00110","01000","10000","11110","10001","10001","01110"], "7": ["11111","00001","00010","00100","01000","01000","01000"],
+  "8": ["01110","10001","10001","01110","10001","10001","01110"], "9": ["01110","10001","10001","01111","00001","00010","01100"],
+};
+function makeClock(W, H, fast) {
+  const t0 = Date.now(); let now = 0, shown = "", born = {}, acc = 0, k = 0;
+  const timeStr = () => { const d = fast ? new Date(t0 + now * 12000) : new Date(); return clockText(d); };
+  return {
+    step(dt) {
+      now += dt; acc += dt; while (acc > 0.11) { acc -= 0.11; k++; }
+      const s = timeStr();
+      if (s !== shown) { [...s].forEach((ch, i) => { if (shown[i] !== ch || s.length !== shown.length) born[i] = now; }); shown = s; }
+    },
+    draw(ctx) {
+      bg(ctx, W, H);
+      const s = shown, colsW = [...s].reduce((a, ch) => a + (ch === ":" ? 1 : 5), 0) + (s.length - 1) * 2;
+      const c = Math.min(W * 0.66 / colsW, H * 0.36 / 7), ox = W / 2 - colsW * c / 2, oy = H * 0.44 - 3.5 * c;
+      grid(ctx, W, H, c, 1, ox, oy);
+      let x0 = 0;
+      [...s].forEach((ch, i) => {
+        const age = now - (born[i] ?? -9);
+        if (ch === ":") { if (Math.floor(now * (fast ? 2 : 1)) % 2 === 0) { cell(ctx, ox + x0 * c, oy + 2 * c, c); cell(ctx, ox + x0 * c, oy + 4 * c, c); } x0 += 3; return; }
+        DIGITS[ch].forEach((row, y) => [...row].forEach((b, x) => {
+          if (b !== "1") return; const sc = easeBack((age - (y * 5 + x) * 0.012) / 0.35);
+          if (sc > 0) cell(ctx, ox + (x0 + x) * c, oy + y * c, c, GREEN, sc);
+        }));
+        x0 += 7;
+      });
+      // a little snake orbiting the clock
+      const m = 2, gx = -m - 1, gy = -m - 1, gw = colsW + 2 * m + 2, gh = 7 + 2 * m + 2, ring = [];
+      for (let i = 0; i < gw; i++) ring.push([gx + i, gy]); for (let i = 1; i < gh; i++) ring.push([gx + gw - 1, gy + i]);
+      for (let i = gw - 2; i >= 0; i--) ring.push([gx + i, gy + gh - 1]); for (let i = gh - 2; i >= 1; i--) ring.push([gx, gy + i]);
+      const body = Array.from({ length: 9 }, (_, j) => ring[(k - j + ring.length * 9) % ring.length]);
+      drawSnake(ctx, body, c, ox, oy);
+      ctx.save(); ctx.fillStyle = "rgba(236,236,239,.8)"; ctx.font = `600 ${c * 1.1}px Geist`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(dateText(fast ? new Date(t0 + now * 12000) : new Date()), W / 2, oy + (7 + m + 3.4) * c); ctx.restore();
+    },
+    clock: true,
+  };
+}
+
+function makeBounce(W, H) {
+  const s = H * 0.06; let x = W * 0.3, y = H * 0.4, vx = W * 0.12, vy = H * 0.13, ci = 0, corners = 0, party = [], since = 0;
+  const size = () => { const mh = s * 1.6; return { w: mh * 545 / 886 + s * 0.5 + s * 5.0, h: mh }; };
+  return {
+    step(dt) {
+      const { w, h } = size(); x += vx * dt; y += vy * dt; since += dt; let hx = false, hy = false;
+      if (x < 0) { x = 0; vx = Math.abs(vx); hx = true; } if (x + w > W) { x = W - w; vx = -Math.abs(vx); hx = true; }
+      if (y < 0) { y = 0; vy = Math.abs(vy); hy = true; } if (y + h > H) { y = H - h; vy = -Math.abs(vy); hy = true; }
+      if (hx || hy) {
+        ci = (ci + 1) % GEMS.length;
+        // nudge, now and then, so the corner you're all waiting for actually happens
+        if (since > 9 && Math.random() < 0.5) {
+          const tx = (vx > 0 ? W - w - x : x) / Math.abs(vx), dy = vy > 0 ? H - h - y : y, need = dy / tx;
+          if (need > Math.abs(vy) * 0.6 && need < Math.abs(vy) * 1.6) vy = Math.sign(vy) * need;
+        }
+      }
+      if ((hx && hy) || (hx && (y < 2 || y + h > H - 2)) || (hy && (x < 2 || x + w > W - 2))) {
+        corners++; since = 0;
+        for (let i = 0; i < 70; i++) party.push({ x: x + w / 2, y: y + h / 2, vx: rnd(-1, 1) * W * 0.4, vy: rnd(-1.2, 0.2) * H * 0.6, life: rnd(1, 2), c: GEMS[ri(GEMS.length)] });
+      }
+      party.forEach((p) => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += H * 0.9 * dt; p.life -= dt; }); party = party.filter((p) => p.life > 0);
+    },
+    draw(ctx) {
+      bg(ctx, W, H);
+      const mh = s * 1.6, mw = mh * 545 / 886, col = GEMS[ci];
+      mark(ctx, x + mw / 2, y + mh / 2, mh, 1, col);
+      ctx.save(); ctx.font = `650 ${s}px Geist`; ctx.fillStyle = col; ctx.textBaseline = "middle"; ctx.fillText("Tianchi OS", x + mw + s * 0.5, y + mh / 2); ctx.restore();
+      for (const p of party) { ctx.globalAlpha = clamp(p.life); cell(ctx, p.x, p.y, s * 0.28, p.c); } ctx.globalAlpha = 1;
+      if (corners) { ctx.save(); ctx.font = `600 ${s * 0.32}px Geist`; ctx.fillStyle = MUTED; ctx.textAlign = "right"; ctx.fillText(`Corner hits: ${corners}`, W - s * 0.5, H - s * 0.5); ctx.restore(); }
+    },
+  };
+}
+
+function makeLife(W, H) {
+  const cols = 64, c = W / cols, rows = Math.ceil(H / c);
+  let a = new Uint8Array(cols * rows), age = new Uint16Array(cols * rows), acc = 0, gen = 0, hist = [];
+  const seed = () => { for (let i = 0; i < a.length; i++) { a[i] = Math.random() < 0.28 ? 1 : 0; age[i] = 0; } gen = 0; hist = []; };
+  seed();
+  return {
+    step(dt) {
+      acc += dt;
+      while (acc > 0.12) {
+        acc -= 0.12; const b = new Uint8Array(a.length); let pop = 0;
+        for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+          let n = 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (dx || dy) n += a[((y + dy + rows) % rows) * cols + (x + dx + cols) % cols];
+          const i = y * cols + x, live = a[i] ? n === 2 || n === 3 : n === 3; b[i] = live ? 1 : 0; age[i] = live ? (a[i] ? age[i] + 1 : 0) : 0; pop += b[i];
+        }
+        a = b; gen++; hist.push(pop); if (hist.length > 30) hist.shift();
+        if (gen > 60 && (pop < cols * rows * 0.03 || Math.max(...hist) - Math.min(...hist) < 4)) seed();
+        if (gen % 50 === 0) { const x = ri(cols - 3), y = ri(rows - 3); [[1,0],[2,1],[0,2],[1,2],[2,2]].forEach(([dx, dy]) => (a[(y + dy) * cols + x + dx] = 1)); } // a glider drops in
+      }
+    },
+    draw(ctx) {
+      bg(ctx, W, H); grid(ctx, W, H, c);
+      for (let i = 0; i < a.length; i++) if (a[i]) { const g = age[i]; cell(ctx, (i % cols) * c, ((i / cols) | 0) * c, c, g === 0 ? "#7CF0B0" : g < 6 ? GREEN : "#079a55"); }
+    },
+  };
+}
+
+function makeFloat(W, H) {
+  const sprites = Array.from({ length: 22 }, () => ({ img: ICONS[ri(ICONS.length)], z: rnd(0.35, 1), x: rnd(0, W), y: rnd(0, H), ph: rnd(0, 6.28), rot: rnd(-0.2, 0.2) }));
+  sprites.sort((p, q) => p.z - q.z);
+  return {
+    step(dt) { for (const s of sprites) { s.y -= H * 0.05 * s.z * dt; s.ph += dt * 0.7; if (s.y < -H * 0.2) { s.y = H * 1.15; s.x = rnd(0, W); s.img = ICONS[ri(ICONS.length)]; } } },
+    draw(ctx) {
+      bg(ctx, W, H);
+      const g = ctx.createRadialGradient(W / 2, H * 0.6, 0, W / 2, H * 0.6, W * 0.7); g.addColorStop(0, "rgba(6,194,104,.08)"); g.addColorStop(1, "rgba(6,194,104,0)"); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      ctx.imageSmoothingEnabled = false;
+      for (const s of sprites) {
+        if (!s.img.complete || !s.img.naturalWidth) continue;
+        const sz = W * 0.075 * s.z; ctx.save(); ctx.globalAlpha = 0.25 + s.z * 0.75;
+        ctx.translate(s.x + Math.sin(s.ph) * W * 0.012, s.y); ctx.rotate(s.rot + Math.sin(s.ph * 0.8) * 0.08);
+        ctx.drawImage(s.img, -sz / 2, -sz / 2, sz, sz); ctx.restore();
+      }
+    },
+  };
+}
+
+function makePipes(W, H) {
+  const cols = 40, c = W / cols, rows = Math.ceil(H / c);
+  let used, pipes, segs, fade, acc;
+  const reset = () => { used = new Uint8Array(cols * rows); pipes = []; segs = []; fade = 0; acc = 0; spawn(); };
+  const spawn = () => { for (let k = 0; k < 50; k++) { const x = ri(cols), y = ri(rows); if (!used[y * cols + x]) { used[y * cols + x] = 1; pipes.push({ x, y, d: [[1,0],[-1,0],[0,1],[0,-1]][ri(4)], color: GEMS[pipes.length % GEMS.length], len: 0 }); segs.push({ x, y, x2: x, y2: y, color: pipes[pipes.length - 1].color, joint: true }); return; } } fade = 0.001; };
+  reset();
+  return {
+    step(dt) {
+      if (fade > 0) { fade += dt; if (fade > 1.2) reset(); return; }
+      acc += dt;
+      while (acc > 0.045) {
+        acc -= 0.045; const p = pipes[pipes.length - 1];
+        let d = p.d; if (Math.random() < 0.22) d = Math.random() < .5 ? [-d[1], d[0]] : [d[1], -d[0]];
+        const opts = [d, p.d, [-p.d[1], p.d[0]], [p.d[1], -p.d[0]]].filter(([dx, dy]) => { const nx = p.x + dx, ny = p.y + dy; return nx >= 0 && ny >= 0 && nx < cols && ny < rows && !used[ny * cols + nx]; });
+        if (!opts.length || p.len > 60) { if (used.reduce((a, b) => a + b, 0) > cols * rows * 0.5) fade = 0.001; else spawn(); continue; }
+        const [dx, dy] = opts[0], turn = dx !== p.d[0] || dy !== p.d[1];
+        segs.push({ x: p.x, y: p.y, x2: p.x + dx, y2: p.y + dy, color: p.color, joint: turn });
+        p.x += dx; p.y += dy; p.d = [dx, dy]; p.len++; used[p.y * cols + p.x] = 1;
+      }
+    },
+    draw(ctx) {
+      bg(ctx, W, H);
+      ctx.save(); ctx.globalAlpha = 1 - clamp(fade / 1.2); ctx.lineCap = "round";
+      for (const s of segs) {
+        const ax = s.x * c + c / 2, ay = s.y * c + c / 2, bx = s.x2 * c + c / 2, by = s.y2 * c + c / 2;
+        ctx.strokeStyle = s.color; ctx.lineWidth = c * 0.46; ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+        ctx.strokeStyle = "rgba(255,255,255,.28)"; ctx.lineWidth = c * 0.1; ctx.beginPath(); ctx.moveTo(ax - c * .08, ay - c * .08); ctx.lineTo(bx - c * .08, by - c * .08); ctx.stroke();
+        if (s.joint) { ctx.fillStyle = s.color; ctx.beginPath(); ctx.arc(ax, ay, c * 0.34, 0, 7); ctx.fill(); ctx.fillStyle = "rgba(255,255,255,.22)"; ctx.beginPath(); ctx.arc(ax - c * .09, ay - c * .09, c * 0.12, 0, 7); ctx.fill(); }
+      }
+      ctx.restore();
+    },
+  };
+}
+
+function makeDuel(W, H) {
+  const cols = 36, c = W / cols, rows = Math.floor(H / c), oy = (H - rows * c) / 2;
+  const S = [{ color: GREEN, name: "Green", score: 0 }, { color: "#FF4D7E", name: "Pink", score: 0 }];
+  let ap, acc = 0, booms = [];
+  const spawn = (s, i) => { const y = i ? rows - 4 : 3, x = i ? cols - 4 : 3, dx = i ? 1 : -1; s.body = [[x, y], [x + dx, y], [x + 2 * dx, y], [x + 3 * dx, y]]; };
+  S.forEach(spawn);
+  const mask = () => { const m = new Uint8Array(cols * rows); for (const s of S) for (const [x, y] of s.body) m[y * cols + x] = 1; return m; };
+  ap = placeApple(cols, rows, mask(), 2);
+  return {
+    step(dt) {
+      acc += dt;
+      while (acc > 0.11) {
+        acc -= 0.11;
+        S.forEach((s, i) => {
+          const m = mask(); const t = s.body[s.body.length - 1]; m[t[1] * cols + t[0]] = 0;
+          const o = S[1 - i].body[0]; // don't step where the rival's head could land
+          for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) { const nx = o[0] + dx, ny = o[1] + dy; if (nx >= 0 && ny >= 0 && nx < cols && ny < rows) m[ny * cols + nx] = 1; }
+          const nx = autoStep(cols, rows, s.body, ap, m);
+          if (!nx) { booms.push(...s.body.map(([x, y]) => ({ x, y, life: 0.8, c: s.color }))); S[1 - i].score += 3; spawn(s, i); return; }
+          s.body.unshift(nx);
+          if (nx[0] === ap[0] && nx[1] === ap[1]) { s.score++; ap = placeApple(cols, rows, mask(), 2); if (s.body.length > 22) s.body.length = 12; } else s.body.pop();
+        });
+      }
+      booms.forEach((b) => (b.life -= dt)); booms = booms.filter((b) => b.life > 0);
+    },
+    draw(ctx, now) {
+      bg(ctx, W, H); grid(ctx, W, H, c, 1, 0, oy);
+      for (const b of booms) { ctx.globalAlpha = b.life / 0.8; cell(ctx, b.x * c, oy + b.y * c, c, b.c, 0.4 + b.life * 0.6); } ctx.globalAlpha = 1;
+      apple(ctx, ap[0] * c, oy + ap[1] * c, c, now);
+      S.forEach((s) => drawSnake(ctx, s.body, c, 0, oy, s.color, [ap[0] - s.body[0][0], ap[1] - s.body[0][1]]));
+      ctx.save(); ctx.font = `650 ${c * 0.75}px Geist`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      const y = oy + c * 0.9; ctx.fillStyle = GREEN; ctx.fillText(String(S[0].score), W / 2 - c * 1.2, y); ctx.fillStyle = MUTED; ctx.fillText("–", W / 2, y); ctx.fillStyle = "#FF4D7E"; ctx.fillText(String(S[1].score), W / 2 + c * 1.2, y);
+      ctx.restore();
+    },
+  };
+}
+
+const SAVERS = [
+  { id: "S1", title: "Wander", note: "The snake roams the grid on its own, hunting apples. When it gets long it sheds its skin and starts small again.", make: makeWander },
+  { id: "S2", title: "Hello, world", note: "Apple's Hello, our way: the snake writes hello in one language after another (你好, hola, bonjour, こんにちは…).", make: makeHello },
+  { id: "S3", title: "Drift", note: "A dozen small snakes in the icon colours wander and wrap around the screen. Calm, a bit hypnotic.", make: makeDrift },
+  { id: "S4", title: "Snake clock", note: "The time in big green cells with the date underneath; a snake circles it, and each minute the new digits pop in.", make: (W, H, fast) => makeClock(W, H, fast) },
+  { id: "S5", title: "Corner hit", note: "Not a snake. The F mark bounces around like the old DVD logo and changes colour on every wall. Hit a corner and it throws a party.", make: makeBounce },
+  { id: "S6", title: "Life", note: "Not a snake. Conway's Game of Life on the desktop grid: new cells light up, old ones darken, gliders drop in.", make: makeLife },
+  { id: "S7", title: "Floating icons", note: "Not a snake. The desktop's pixel icons drift slowly upward at different depths, like Apple's Floating.", make: makeFloat },
+  { id: "S8", title: "Pipes", note: "Not a snake. The Windows 3D Pipes classic, flattened onto our grid in the icon colours. Fades and starts over when the screen fills.", make: makePipes },
+  { id: "S9", title: "Snake duel", note: "Two AI snakes fight over apples with a live score. Surprisingly hard to look away from.", make: makeDuel },
+];
+
+// ---------- page plumbing ----------
+const PICK_KEY = "motion-study-picks";
+let picks = new Set(); try { picks = new Set(JSON.parse(localStorage.getItem(PICK_KEY) || "[]")); } catch {}
+const sync = () => { document.getElementById("picks").textContent = picks.size ? [...picks].join(", ") : "none yet"; try { localStorage.setItem(PICK_KEY, JSON.stringify([...picks])); } catch {} };
+let showClock = false;
+document.getElementById("clockToggle").onchange = (e) => (showClock = e.target.checked);
+
+function sizeCanvas(cv) { const r = cv.getBoundingClientRect(), d = devicePixelRatio || 1; cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); return { W: r.width, H: r.height, d }; }
+
+// a "player" runs one loader or saver on a canvas
+function player(cv, kind, def, fast) {
+  let dims, state, t = 0;
+  const reset = () => { dims = sizeCanvas(cv); t = 0; state = kind === "saver" ? def.make(dims.W, dims.H, fast) : { cells: [] }; };
+  reset();
+  return {
+    reset,
+    frame(dt, now) {
+      const ctx = cv.getContext("2d"); ctx.setTransform(dims.d, 0, 0, dims.d, 0, 0);
+      if (kind === "loader") { t += dt; if (def.draw(ctx, dims.W, dims.H, t, state)) { t = 0; state = { cells: [] }; } }
+      else { state.step(Math.min(dt, 0.1), now); state.draw(ctx, now); if (showClock && !state.clock) lockClock(ctx, dims.W, dims.H); }
+    },
+  };
+}
+
+const players = new Set();
+function card(host, kind, def) {
+  const el = document.createElement("div");
+  el.className = "card" + (picks.has(def.id) ? " on" : "");
+  el.innerHTML = `<div class="screen"><canvas></canvas></div><div class="meta"><div class="txt"><span class="id">${def.id}</span><b>${def.title}</b><p>${def.note}</p></div><div class="acts"><button class="pick">Pick</button></div></div>`;
+  host.appendChild(el);
+  const cv = el.querySelector("canvas"), pl = player(cv, kind, def, true);
+  pl.visible = false; players.add(pl);
+  new IntersectionObserver(([e]) => (pl.visible = e.isIntersecting)).observe(cv);
+  new ResizeObserver(() => pl.reset()).observe(el.querySelector(".screen"));
+  el.querySelector(".pick").onclick = () => { picks.has(def.id) ? picks.delete(def.id) : picks.add(def.id); el.classList.toggle("on"); sync(); };
+  el.querySelector(".screen").onclick = () => full(kind, def);
+}
+function full(kind, def) {
+  const ov = document.createElement("div"); ov.className = "full"; ov.innerHTML = `<canvas></canvas><div class="hint">Click or press Esc to exit</div>`;
+  document.body.appendChild(ov);
+  const pl = player(ov.querySelector("canvas"), kind, def, false); pl.visible = true; players.add(pl);
+  setTimeout(() => (ov.querySelector(".hint").style.opacity = 0), 1800);
+  const close = () => { players.delete(pl); ov.remove(); removeEventListener("keydown", onKey); };
+  const onKey = (e) => { if (e.key === "Escape") close(); };
+  ov.onclick = close; addEventListener("keydown", onKey);
+}
+
+let last = performance.now();
+function loop(ts) {
+  const dt = (ts - last) / 1000; last = ts;
+  for (const p of players) if (p.visible) p.frame(dt, ts / 1000);
+  requestAnimationFrame(loop);
+}
+Promise.all([document.fonts.load("650 20px Geist"), document.fonts.load("800 20px Geist"), new Promise((r) => (FMARK.complete ? r() : (FMARK.onload = r)))]).then(() => {
+  LOADERS.forEach((d) => card(document.getElementById("loaders"), "loader", d));
+  SAVERS.forEach((d) => card(document.getElementById("savers"), "saver", d));
+  sync(); requestAnimationFrame(loop);
+});
+document.getElementById("copy").onclick = async (e) => { try { await navigator.clipboard.writeText([...picks].join(", ")); e.target.textContent = "Copied"; setTimeout(() => (e.target.textContent = "Copy"), 1200); } catch {} };
+</script>
+</body>
+</html>

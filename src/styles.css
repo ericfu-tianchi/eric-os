@@ -47,6 +47,7 @@
   --muted: #5e5e66;          /* secondary text inside windows       */
   --faint: #9a9aa2;          /* captions inside windows             */
   --hairline: #e6e6ea;       /* 1px window borders & dividers        */
+  --track: #ebebef;          /* control tracks: segmented, switch, slider */
 
   /* window-control accents — the only sanctioned chrome color */
   --red: #ff5a4d;            /* close                    */
@@ -661,6 +662,10 @@ button { font-family: inherit; color: inherit; }
 }
 .dock-item:hover .tip { opacity: 1; transition: opacity 0s 80ms; }
 .dock-sep { position: relative; z-index: 2; width: 1px; align-self: stretch; margin: 4px 3px; background: var(--dock-sep); border-radius: 2px; }
+/* Settings → Dock → auto-hide: parked below the edge; a thin strip at the bottom calls it back */
+.dock { transition: transform 0.26s ease; }
+.dock.dock-hidden { transform: translateX(-50%) translateY(calc(100% + 24px)); }
+.dock-hotzone { position: fixed; left: 0; right: 0; bottom: 0; height: 6px; z-index: 479; }
 /* SNAKE.SYS takeover: the dock dips out */
 .dock.dock-leave {
   opacity: 0;
@@ -771,13 +776,58 @@ button { font-family: inherit; color: inherit; }
 .set-label b { font-size: var(--ui-body); font-weight: 600; }
 .set-label span { font-size: var(--ui-meta); color: var(--muted); }
 .set-row .sguide-hats { padding: 0; }
-.segmented { flex: none; display: inline-flex; gap: 2px; padding: 2px; border-radius: var(--r-sm); background: #ebebef; }
+.segmented { flex: none; display: inline-flex; gap: 2px; padding: 2px; border-radius: var(--r-sm); background: var(--track); }
 .segmented button {
   height: 26px; padding: 0 12px; border: 0; border-radius: var(--r-xs); background: transparent; color: var(--muted);
   font-family: var(--font-system); font-size: var(--ui-control); font-weight: 560; cursor: pointer;
 }
 .segmented button:hover { color: var(--ink); }
 .segmented button.on { background: var(--surface); color: var(--ink); box-shadow: var(--soft-s); }
+
+/* About Tianchi OS: About This Mac, our way. Centered, a tiny screen as the hero, right-aligned spec labels */
+.aboutos {
+  min-height: 100%; display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 22px var(--space-panel) 18px; background: var(--surface); color: var(--ink); font-family: var(--font-system);
+}
+.aboutos-screen { width: 184px; height: auto; margin-bottom: 18px; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.14)); }
+.aboutos h1 { margin: 0; font-family: var(--font-system); font-size: var(--ui-title); font-weight: 650; letter-spacing: -0.015em; }
+.aboutos-sub { margin: 3px 0 16px; font-size: var(--ui-meta); color: var(--faint); }
+.aboutos dl { display: grid; gap: 4px; margin: 0 0 18px; font-size: var(--ui-control); }
+.aboutos dl div { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.aboutos dt { text-align: right; font-weight: 560; }
+.aboutos dd { margin: 0; text-align: left; color: var(--muted); }
+.aboutos footer { margin-top: auto; padding-top: 18px; display: flex; flex-direction: column; gap: 2px; font-size: var(--ui-fine); color: var(--faint); }
+
+/* switch: one on/off setting. Track var(--track) → ink when on; white knob with soft-s */
+.switch {
+  flex: none; position: relative; width: 34px; height: 20px; padding: 0; border: 0; border-radius: var(--r-pill);
+  background: var(--track); cursor: pointer; transition: background 0.16s ease;
+}
+.switch::after {
+  content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--surface); box-shadow: var(--soft-s); transition: transform 0.16s ease;
+}
+.switch.on { background: var(--ink); }
+.switch.on::after { transform: translateX(14px); }
+
+/* slider: continuous value (Dock size). Ink fill on a var(--track) track, white knob, end labels in ui-fine */
+.slider { flex: none; width: 168px; }
+.slider input {
+  display: block; width: 100%; height: 18px; margin: 0; background: transparent; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+}
+.slider input::-webkit-slider-runnable-track {
+  height: 4px; border-radius: var(--r-pill);
+  background: linear-gradient(90deg, var(--ink) var(--fill), var(--track) var(--fill));
+}
+.slider input::-moz-range-track { height: 4px; border-radius: var(--r-pill); background: var(--track); }
+.slider input::-moz-range-progress { height: 4px; border-radius: var(--r-pill); background: var(--ink); }
+.slider input::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px; margin-top: -6px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--hairline); box-shadow: var(--soft-s);
+}
+.slider input::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--surface); border: 1px solid var(--hairline); box-shadow: var(--soft-s); }
+.slider-ends { display: flex; justify-content: space-between; margin-top: 2px; font-size: var(--ui-fine); color: var(--faint); }
 
 .readme :is(h3) { margin: 18px 0 6px; font-size: 15px; }
 .readme p, .readme li { font-size: 13.8px; line-height: 1.8; color: var(--muted); }
@@ -1471,7 +1521,7 @@ button { font-family: inherit; color: inherit; }
   display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px 7px;
   border: 1px solid transparent; border-radius: var(--r-sm); background: var(--surface-2); color: var(--muted); font-size: var(--ui-meta);
 }
-.sguide-hats button:hover { background: #ebebef; }
+.sguide-hats button:hover { background: var(--track); }
 .sguide-hats button.on { border-color: var(--select); color: var(--ink); background: rgba(10, 100, 224, 0.06); }
 .sguide-card footer {
   display: flex; justify-content: space-between; align-items: center; padding: 9px 14px 11px;

@@ -60,8 +60,11 @@ Dark is the default and the hero. Light is a full twin of the OS layer, not an i
 
 - **Button**: one family. Use `.btn` for secondary, `.btn.primary` for the main action, and `.btn.lg` (38px, `ui-body`) for content calls to action in reading pages. In-panel buttons are 28px tall.
 - **Menu**: dark glass, items `ui-control` at 560, hover `menu-hover`, separators `menu-line`. Title Case; end an item with `…` when it opens a window with more choices.
-- **Segmented control**: for one choice among two to four options (Appearance, Wallpaper). A `surface-2`-like track at `r-sm`, the active segment white with `soft-s`.
+- **Segmented control**: for one choice among two to four options (Appearance). A `surface-2`-like track at `r-sm`, the active segment white with `soft-s`.
 - **Settings group**: white `r-md` cards on a `#f6f6f8` window body; each row has a `ui-body` 600 label, a `ui-meta` caption and the control on the right.
+- **Switch**: one on/off setting, like macOS. 34 × 20 pill: `track` when off, `ink` when on (never a colour), white knob with `soft-s`. Label the row with the full sentence ("Automatically hide and show the Dock").
+- **Slider**: one continuous value with live preview (Dock size). 4px `track` with an `ink` fill, a 16px white knob with a `hairline` ring, and the two end labels underneath in `ui-fine` `faint`.
+- **About window**: About This Mac, our way. Centered column on `surface`: a hero illustration, the name in `ui-title`, a `ui-meta` `faint` subtitle, a spec list (labels right-aligned `ink` 560, values left-aligned `muted`, `ui-control`), one `.btn`, and `ui-fine` `faint` credits at the bottom.
 - **Chip**: pill, 28px, 1px `hairline`, `ui-control` at 500. For suggested questions only.
 - **Chat panel**: header with a `ui-body` 650 title and a `ui-meta` tag, bubbles at `r-bubble`, a pill composer, a round `select` send button and `ui-fine` fine print.
 - **Thought bubble**: the snake's idle hint and menu. White ellipses with trailing dots, one pixel icon or glyph inside, a tooltip caption on hover.
@@ -108,6 +111,7 @@ Every token below exists in `src/styles.css` under the same name. Type styles ma
 | `--muted` | `#5e5e66` | Secondary text inside windows (6.4:1 on surface). |
 | `--faint` | `#9a9aa2` | Captions and placeholders inside windows. Decorative only: 2.8:1 on surface, never for anything a person must read to act. |
 | `--hairline` | `#e6e6ea` | 1px window borders, dividers, secondary button and input outlines. |
+| `--track` | `#ebebef` | Control tracks: segmented control, switch (off), slider. |
 | `--select` | `#0a64e0` | The visitor's own colour: selection pills, the visitor's chat bubbles, the send button, focus inside the chat. |
 | `--red` | `#ff5a4d` | Close control only. |
 | `--green` | `#2ec16e` | Maximize control, running dot, the digest progress line. |
@@ -200,7 +204,7 @@ Near-black tooltips with white text, the same everywhere: the dock, the snake's 
 
 A macOS-style segmented control for one choice among two to four options.
 
-- Use it for settings with a few named options (Appearance, Wallpaper). Use the hat picker grid for visual choices.
+- Use it for settings with a few named options (Appearance). Use the hat picker grid for visual choices.
 - Labels are one word in sentence case. The active segment is white with `soft-s`; the others are `muted`.
 - Put the current option's one-line description in the row's caption, not in a tooltip.
 

@@ -1,4 +1,4 @@
-import { useOS, type Theme, type AppId } from "../store";
+import { useOS, DOCK_SIZE, type Theme, type AppId } from "../store";
 import { HatPicker } from "../components/SnakeGuide";
 import { PixIcon, type PixIconName } from "../components/Pixel";
 import resumePage from "../assets/resume-page.png";
@@ -94,8 +94,27 @@ function Segmented<T extends string>({ value, options, onChange, label }: {
   );
 }
 
+/** A macOS-style switch for one on/off setting. On is ink, never a colour. */
+function Switch({ on, onChange, label }: { on: boolean; onChange: (v: boolean) => void; label: string }) {
+  return <button type="button" role="switch" aria-checked={on} aria-label={label} className={`switch${on ? " on" : ""}`} onClick={() => onChange(!on)} />;
+}
+
+/** A macOS-style slider with its two end labels underneath. */
+function Slider({ value, min, max, onChange, label, ends }: {
+  value: number; min: number; max: number; onChange: (v: number) => void; label: string; ends: [string, string];
+}) {
+  return (
+    <div className="slider">
+      <input type="range" min={min} max={max} value={value} aria-label={label}
+        style={{ "--fill": `${((value - min) / (max - min)) * 100}%` } as React.CSSProperties}
+        onChange={(e) => onChange(Number(e.target.value))} />
+      <div className="slider-ends"><span>{ends[0]}</span><span>{ends[1]}</span></div>
+    </div>
+  );
+}
+
 export function PrefsApp() {
-  const { theme, setTheme, resetDesktop } = useOS();
+  const { theme, setTheme, resetDesktop, dockSize, setDockSize, dockAutoHide, setDockAutoHide, open } = useOS();
   return (
     <div className="settings">
       <header>
@@ -119,6 +138,17 @@ export function PrefsApp() {
 
       <section className="set-group">
         <div className="set-row">
+          <div className="set-label"><b>Dock size</b><span>Drag to resize. The dock follows along.</span></div>
+          <Slider label="Dock size" value={dockSize} min={DOCK_SIZE.min} max={DOCK_SIZE.max} onChange={setDockSize} ends={["Small", "Large"]} />
+        </div>
+        <div className="set-row">
+          <div className="set-label"><b>Automatically hide and show the Dock</b><span>Move the pointer to the bottom edge to bring it back.</span></div>
+          <Switch label="Automatically hide and show the Dock" on={dockAutoHide} onChange={setDockAutoHide} />
+        </div>
+      </section>
+
+      <section className="set-group">
+        <div className="set-row">
           <div className="set-label"><b>Reset desktop</b><span>Puts every icon and window back where it started.</span></div>
           <button
             type="button"
@@ -130,6 +160,10 @@ export function PrefsApp() {
           >
             Reset
           </button>
+        </div>
+        <div className="set-row">
+          <div className="set-label"><b>About Tianchi OS</b><span>Version, credits and who's behind it.</span></div>
+          <button type="button" className="btn" onClick={() => open("about-os", { title: "About Tianchi OS" })}>About…</button>
         </div>
       </section>
     </div>

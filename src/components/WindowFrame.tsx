@@ -69,6 +69,7 @@ export function WindowFrame({
     snake: "Snake",
     readme: "Tianchintosh HD",
     prefs: "Settings",
+    "about-os": "About Tianchi OS",
   };
   const title = win.app === "project-detail"
     ? PROJECTS.find((project) => project.slug === win.payload)?.name ?? win.title ?? win.id
