@@ -99,6 +99,27 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
   if (b.t === "quote") return <blockquote className="cs-quote"><Rich text={b.text} /></blockquote>;
   if (b.t === "list")
     return <ul className={`cs-list ${b.plain ? "plain" : ""}`}>{b.items.map((item, i) => <li key={i}><Rich text={item} /></li>)}</ul>;
+  if (b.t === "status") {
+    const LABEL = { done: "Done", partly: "Partly", todo: "Not yet" } as const;
+    const count = (k: keyof typeof LABEL) => b.items.filter((x) => x.s === k).length;
+    return (
+      <div className="cs-status">
+        <div className="cs-status-sum">
+          <div className="bar" aria-hidden>{(["done", "partly", "todo"] as const).map((k) => <i key={k} className={k} style={{ flex: count(k) }} />)}</div>
+          <div className="legend">{(["done", "partly", "todo"] as const).map((k) => <span key={k} className={k}><i />{count(k)} {LABEL[k].toLowerCase()}</span>)}</div>
+        </div>
+        <ol>
+          {b.items.map((x, i) => (
+            <li key={i} className={x.s}>
+              <span className="n">{String(i + 1).padStart(2, "0")}</span>
+              <span className="t"><Rich text={x.text} /></span>
+              <span className="pill">{LABEL[x.s]}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    );
+  }
   if (b.t === "step")
     return <div className="cs-step"><span className="n">{String(n).padStart(2, "0")}</span><div><h4>{b.title}</h4><p><Rich text={b.text} /></p></div></div>;
   if (b.t === "stat")

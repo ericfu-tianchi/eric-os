@@ -275,6 +275,8 @@ export const CRAZY_ONES = [
   "Because the people who are crazy enough to think they can change the world, are the ones who do.",
   "Think different."
 ];
+/** A deliberate beat inside a line: typing stops right before this phrase, holds, then finishes. */
+export const CRAZY_BEAT = { before: "are the ones who do", seconds: 1.8 };
 const CRAZY_CREDIT = "Apple, Think Different, 1997";
 function makeCrazy(W: number, H: number): Saver {
   const m = document.createElement("canvas").getContext("2d")!;
@@ -291,9 +293,17 @@ function makeCrazy(W: number, H: number): Saver {
   // body: every line wrapped to rows; a line's block is laid out from its own top
   const blocks = body.map((text) => ({ text, rows: wrap(text, F1, W * 0.78) }));
   let tops: number[] = [], y = 0, t0 = 1.0; const starts: number[] = [];
+  const beatAt = blocks.map((b) => b.text.indexOf(CRAZY_BEAT.before)); // -1 = no beat in this line
+  // characters shown `e` seconds into line i, holding still for the beat
+  const typedAt = (i: number, e: number) => {
+    const p = beatAt[i];
+    if (p < 0 || e * CPS < p) return Math.floor(e * CPS);
+    return e < p / CPS + CRAZY_BEAT.seconds ? p : Math.floor((e - CRAZY_BEAT.seconds) * CPS);
+  };
   blocks.forEach((b, i) => {
     if (i === penI && i > 0) t0 += 1.6; // a breath before the second-to-last line
-    tops.push(y); y += b.rows.length * lh + fs * 0.25; starts.push(t0); t0 += b.text.length / CPS + HOLD + (i === penI ? 1.2 : 0);
+    tops.push(y); y += b.rows.length * lh + fs * 0.25; starts.push(t0);
+    t0 += b.text.length / CPS + HOLD + (i === penI ? 1.2 : 0) + (beatAt[i] >= 0 ? CRAZY_BEAT.seconds : 0);
   });
   const bodyEnd = t0;
   const penStart = bodyEnd + 1.6;
@@ -337,10 +347,11 @@ function makeCrazy(W: number, H: number): Saver {
           const top = H / 2 - scroll + tops[i] + lh * 0.7 - lift, dist = cur - i;
           const a = i === cur ? 1 : Math.max(0, 0.42 - (dist - 1) * 0.1) * clamp((top - H * 0.08) / (H * 0.2));
           ctx.globalAlpha = a * fadeAll; ctx.fillStyle = i === penI && i === cur ? "#ffffff" : "#e2e2e6"; // the last body line is just brighter
-          const c = typeRows(ctx, b.rows, Math.floor((t - starts[i]) * CPS), top, lh, F1);
+          const c = typeRows(ctx, b.rows, typedAt(i, t - starts[i]), top, lh, F1);
           if (i === cur) caret = c;
         });
-        const typing = blocks.length > 0 && (t - starts[cur]) * CPS < blocks[cur].text.length;
+        const typed = blocks.length ? typedAt(cur, t - starts[cur]) : 0;
+        const typing = blocks.length > 0 && typed < blocks[cur].text.length && typed !== beatAt[cur];
         ctx.globalAlpha = fadeAll; block(ctx, caret, fs, typing || blink());
       }
       // ---- finale 2: the tagline, huge, then the credit

@@ -158,7 +158,7 @@ export function SnakeGuide() {
     hovering.current = false;
     window.clearTimeout(knowTimer.current);
     window.clearTimeout(closeTimer.current);
-    closeTimer.current = window.setTimeout(() => setMenu(false), 320);
+    closeTimer.current = window.setTimeout(() => setMenu(false), 600);
   };
 
   function act(a: Action | Topic) {
@@ -200,6 +200,8 @@ export function SnakeGuide() {
         onMouseEnter={enter}
         onMouseLeave={leave}
       >
+        {/* under the head and bubbles */}
+        {menu && <i className="sguide-bridge" style={{ left: -2.6 * c, top: -3.35 * c, width: 5.2 * c, height: 3.35 * c }} aria-hidden />}
         <button
           type="button"
           className="sguide-head"

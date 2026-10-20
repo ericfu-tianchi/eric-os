@@ -22,6 +22,7 @@ export type CaseBlock =
   | { t: "callout"; label?: string; text: string } // full-width accent band
   | { t: "quote"; text: string } // pull quote: centered, between two short hairlines
   | { t: "list"; items: string[]; plain?: boolean } // bullets; tinted panel unless plain
+  | { t: "status"; items: { s: "done" | "partly" | "todo"; text: string }[] } // priority-ordered plan with a status per row + summary bar
   | { t: "stat"; value: string; label: string } // big-number highlight
   | { t: "feature"; src: string; title: string; text: string } // screen + caption, sides alternate
   | { t: "step"; title: string; text: string } // numbered step (01, 02 …) for how-to sequences
