@@ -7,6 +7,15 @@
  */
 import fuWingMark from "../assets/fu-wing-mark.png";
 import appleIcon from "../assets/icons/b/apple.png";
+import { PROJECTS } from "../data/projects";
+import heroRefugee from "../assets/old-site/heroes/refugeeone.webp";
+import heroLego from "../assets/old-site/heroes/lego-world.webp";
+import heroNeurobot from "../assets/old-site/heroes/neurobot.png";
+import heroHomes from "../assets/old-site/heroes/homesoffcampus.png";
+import heroHuawei from "../assets/old-site/heroes/huawei.png";
+import heroSub from "../assets/old-site/heroes/subtension.png";
+import heroConnectr from "../assets/old-site/heroes/connectr.png";
+import heroRutabagga from "../assets/old-site/heroes/rutabagga.png";
 export type { SaverId };
 
 export type Saver = { step: (dt: number) => void; draw: (ctx: CanvasRenderingContext2D, now: number) => void };
@@ -193,13 +202,14 @@ function makeDuel(W: number, H: number): Saver {
 
 // =====================================================================
 // Corner hit: the F mark and the name bounce like the old DVD logo and change
-// colour on every wall. A true corner is rare (as it should be); a very light
-// nudge makes sure one happens every couple of minutes or so.
+// colour on every wall. A true corner is rare (as it should be): simulated over
+// 20 hours, about one every 2 min on a 1440×900 screen and every 4 min at 1080p.
 // =====================================================================
 function makeCorner(W: number, H: number): Saver {
   const s = Math.max(18, H * 0.055), dpr = window.devicePixelRatio || 1;
   const mh = s * 1.6, mw = mh * MARK_RATIO, gap = s * 0.5;
-  let tw = s * 5, x = rnd(0, W * 0.5), y = rnd(0, H * 0.5), vx = W * 0.11, vy = W * 0.11 * 0.73, ci = 0, corners = 0, since = 0;
+  const VY = W * 0.11 * 0.73;
+  let tw = s * 5, x = rnd(0, W * 0.5), y = rnd(0, H * 0.5), vx = W * 0.11, vy = VY, ci = 0, corners = 0, since = 0;
   let party: { x: number; y: number; vx: number; vy: number; life: number; c: string }[] = [];
   return {
     step(dt) {
@@ -210,7 +220,10 @@ function makeCorner(W: number, H: number): Saver {
       if (y < 0) { y = 0; vy = Math.abs(vy); hy = true; } if (y + h > H) { y = H - h; vy = -Math.abs(vy); hy = true; }
       if (hx || hy) {
         ci = (ci + 1) % GEMS.length;
-        if (since > 90 && Math.random() < 0.15) { // the rare nudge: line the next x and y walls up
+        // ±4% on every bounce keeps the path from locking into a loop (one that misses every corner forever,
+        // or, after a corner, one that hits a corner every 7s). Natural rate: a corner every ~7–11 min.
+        vy = Math.sign(vy) * VY * rnd(0.96, 1.04);
+        if (since > 180 && Math.random() < 0.1) { // the rare nudge: about one corner every 2–4 min overall
           const tx = (vx > 0 ? W - w - x : x) / Math.abs(vx), need = (vy > 0 ? H - h - y : y) / tx;
           if (need > Math.abs(vy) * 0.75 && need < Math.abs(vy) * 1.3) vy = Math.sign(vy) * need;
         }
@@ -236,7 +249,112 @@ function makeCorner(W: number, H: number): Saver {
   };
 }
 
+
+// =====================================================================
+// Here's to the crazy ones: Apple's 1997 Think Different, credited. The lines
+// type out one by one, the caret is the snake's head, and it ends on the F.
+// Only the opening line and the tagline are quoted (the full ad copy is
+// Apple's); CRAZY_ONES is the one place to change the text.
+// =====================================================================
+export const CRAZY_ONES = ["Here's to the crazy ones.", "Think different."];
+const CRAZY_CREDIT = "Apple, Think Different, 1997";
+function makeCrazy(W: number, H: number): Saver {
+  const few = CRAZY_ONES.length <= 3;
+  const fs = few ? Math.min(H * 0.075, W * 0.05) : Math.min(H * 0.046, W * 0.028), lh = fs * (few ? 1.4 : 1.55), CPS = few ? 14 : 30;
+  const starts: number[] = []; let acc = 0.8;
+  for (const l of CRAZY_ONES) { starts.push(acc); acc += l.length / CPS + (few ? 1.2 : 0.55); }
+  const textEnd = acc, total = textEnd + 7.2;
+  let t = 0;
+  return {
+    step(dt) { t += dt; if (t > total) t = 0; },
+    draw(ctx) {
+      bg(ctx, W, H);
+      ctx.save(); ctx.font = `600 ${fs}px Geist, sans-serif`; ctx.textBaseline = "alphabetic";
+      const widest = Math.max(...CRAZY_ONES.map((l) => ctx.measureText(l).width));
+      const x0 = W / 2 - widest / 2, y0 = H / 2 - (CRAZY_ONES.length * lh) / 2 + fs * 0.8;
+      const out = clamp((t - textEnd - 2.2) / 0.8);
+      ctx.globalAlpha = 1 - out;
+      CRAZY_ONES.forEach((l, i) => {
+        if (t < starts[i]) return;
+        const n = Math.min(l.length, Math.floor((t - starts[i]) * CPS)), current = t < (starts[i + 1] ?? textEnd + 1.2);
+        ctx.fillStyle = current || few ? "#ececef" : "rgba(236,236,239,.5)";
+        const shown = l.slice(0, n); ctx.fillText(shown, x0, y0 + i * lh);
+        if (current && Math.floor(t * 2.4) % 2 === 0 || current && n < l.length) {
+          const cw = fs * 0.72; head(ctx, x0 + ctx.measureText(shown).width + fs * 0.2, y0 + i * lh - fs * 0.74, cw, 1, 0, GREEN);
+        }
+      });
+      const cr = clamp((t - textEnd + 0.4) / 0.6);
+      ctx.globalAlpha = cr * (1 - out); ctx.font = `500 ${fs * (few ? 0.28 : 0.42)}px Geist, sans-serif`; ctx.fillStyle = MUTED;
+      ctx.fillText(`— ${CRAZY_CREDIT}`, x0, y0 + CRAZY_ONES.length * lh + fs * 0.1);
+      ctx.restore();
+      const end = clamp((t - textEnd - 3.0) / 0.8) * (1 - clamp((t - total + 0.6) / 0.6));
+      if (end > 0) {
+        const bmp = markBitmap(H * 0.15 * (window.devicePixelRatio || 1)), mh = H * 0.15, mw = mh * MARK_RATIO;
+        ctx.save(); ctx.globalAlpha = end;
+        if (bmp) ctx.drawImage(bmp, W / 2 - mw / 2, H * 0.42 - mh / 2, mw, mh);
+        ctx.font = `650 ${H * 0.04}px Geist, sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        const a = "Tianchi", b = " OS", wa = ctx.measureText(a).width, wb = ctx.measureText(b).width;
+        ctx.textAlign = "left"; ctx.fillStyle = "#ececef"; ctx.fillText(a, W / 2 - (wa + wb) / 2, H * 0.42 + H * 0.12);
+        ctx.fillStyle = MUTED; ctx.fillText(b, W / 2 - (wa + wb) / 2 + wa, H * 0.42 + H * 0.12);
+        ctx.restore();
+      }
+    },
+  };
+}
+
+// =====================================================================
+// Project reel: Apple's Aerial, with Tianchi's work. Slow pans across the
+// project covers, the name and one line bottom-left, the lockup bottom-right.
+// =====================================================================
+const REEL_SRC: [string, string][] = [
+  ["refugeeone", heroRefugee], ["lego-world", heroLego], ["neurobot", heroNeurobot], ["homesoffcampus", heroHomes],
+  ["huawei", heroHuawei], ["subtension", heroSub], ["connectr", heroConnectr], ["rutabagga", heroRutabagga],
+];
+let REEL: { img: HTMLImageElement; name: string; sub: string }[] | null = null;
+function reel() {
+  if (!REEL) REEL = REEL_SRC.map(([slug, src]) => {
+    const p = PROJECTS.find((q) => q.slug === slug);
+    return { img: load(src), name: p?.name ?? slug, sub: p ? `${p.year} · ${p.desc}` : "" };
+  });
+  return REEL;
+}
+function makeReel(W: number, H: number): Saver {
+  const R = reel(), SLIDE = 7, FADE = 1.2, dpr = window.devicePixelRatio || 1;
+  let t = 0;
+  const paint = (ctx: CanvasRenderingContext2D, s: (typeof R)[number], k: number, a: number, dir: number) => {
+    if (!s.img.naturalWidth) return;
+    const sc = Math.max(W / s.img.naturalWidth, H / s.img.naturalHeight) * (1.06 + 0.1 * k);
+    const w = s.img.naturalWidth * sc, h = s.img.naturalHeight * sc, dx = (W - w) / 2 + dir * (k - 0.5) * W * 0.04;
+    ctx.save(); ctx.globalAlpha = a; ctx.imageSmoothingQuality = "high"; ctx.drawImage(s.img, dx, (H - h) / 2, w, h); ctx.restore();
+  };
+  return {
+    step(dt) { t += dt; },
+    draw(ctx) {
+      bg(ctx, W, H);
+      const i = Math.floor(t / SLIDE) % R.length, local = t % SLIDE, k = local / SLIDE;
+      if (local < FADE && t > SLIDE) paint(ctx, R[(i + R.length - 1) % R.length], 1 + local / SLIDE, 1, (i - 1) % 2 ? 1 : -1);
+      paint(ctx, R[i], k, t > SLIDE ? clamp(local / FADE) : 1, i % 2 ? 1 : -1);
+      const g = ctx.createLinearGradient(0, H * 0.55, 0, H); g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,.6)");
+      ctx.fillStyle = g; ctx.fillRect(0, H * 0.55, W, H * 0.45);
+      const ca = clamp((local - 0.8) / 0.6) * (1 - clamp((local - SLIDE + 0.9) / 0.6)), fs = Math.max(13, H * 0.034);
+      ctx.save(); ctx.globalAlpha = ca; ctx.shadowColor = "rgba(0,0,0,.4)"; ctx.shadowBlur = 12;
+      ctx.fillStyle = "#fff"; ctx.font = `650 ${fs}px Geist, sans-serif`; ctx.fillText(R[i].name, W * 0.05, H * 0.9);
+      ctx.fillStyle = "rgba(255,255,255,.75)"; ctx.font = `500 ${fs * 0.5}px Geist, sans-serif`; ctx.fillText(R[i].sub, W * 0.05, H * 0.9 + fs * 0.95);
+      ctx.restore();
+      // lockup, bottom-right
+      const ls = fs * 0.5, mh = ls * 1.5, mw = mh * MARK_RATIO, bmp = markBitmap(mh * dpr);
+      ctx.save(); ctx.globalAlpha = 0.85; ctx.font = `650 ${ls}px Geist, sans-serif`; ctx.textBaseline = "middle";
+      const tw = ctx.measureText("Tianchi OS").width, x = W * 0.95 - tw - mw - ls * 0.5, y = H * 0.9 - fs * 0.3;
+      if (bmp) ctx.drawImage(bmp, x, y - mh / 2, mw, mh);
+      ctx.fillStyle = "#fff"; ctx.fillText("Tianchi OS", x + mw + ls * 0.5, y);
+      ctx.restore();
+    },
+  };
+}
+
 export const SAVERS: Record<SaverId, { label: string; make: (W: number, H: number) => Saver }> = {
   duel: { label: "Snake duel", make: makeDuel },
   corner: { label: "Corner hit", make: makeCorner },
+  crazy: { label: "Crazy ones", make: makeCrazy },
+  reel: { label: "Project reel", make: makeReel },
 };

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useOS } from "../store";
+import { useOS, SAVER_IDS } from "../store";
 import { SAVERS } from "./screensavers";
 
 /**
@@ -40,7 +40,7 @@ export function ScreenSaver() {
     const engine = SAVERS[saver].make(W, H);
     let raf = 0, last = performance.now();
     const frame = (ts: number) => {
-      engine.step(Math.min((ts - last) / 1000, 0.1)); last = ts;
+      engine.step(Math.max(0, Math.min((ts - last) / 1000, 0.1))); last = ts;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); engine.draw(ctx, ts / 1000);
       raf = requestAnimationFrame(frame);
     };
@@ -77,6 +77,43 @@ export function ScreenSaver() {
   return (
     <div className="screensaver" onClickCapture={(e) => e.stopPropagation()} aria-hidden>
       <canvas ref={cv} />
+    </div>
+  );
+}
+
+/** Settings: every screen saver as a live thumbnail, like macOS. Each runs a miniature of the real thing. */
+export function SaverPicker() {
+  const { saver, setSaver } = useOS();
+  const refs = useRef<(HTMLCanvasElement | null)[]>([]);
+  const ids = SAVER_IDS;
+  useEffect(() => {
+    const VW = 480, VH = 300; // draw the real saver at a small "screen", then scale it into the tile
+    const runs = refs.current.map((cv, i) => {
+      if (!cv) return null;
+      const dpr = window.devicePixelRatio || 1, r = cv.getBoundingClientRect();
+      cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+      return { ctx: cv.getContext("2d")!, k: (r.width * dpr) / VW, engine: SAVERS[ids[i]].make(VW, VH) };
+    });
+    let raf = 0, last = performance.now();
+    const frame = (ts: number) => {
+      const dt = Math.max(0, Math.min((ts - last) / 1000, 0.1)); last = ts;
+      for (const run of runs) {
+        if (!run) continue;
+        run.engine.step(dt); run.ctx.setTransform(run.k, 0, 0, run.k, 0, 0); run.engine.draw(run.ctx, ts / 1000);
+      }
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+    return () => cancelAnimationFrame(raf);
+  }, [ids]);
+  return (
+    <div className="saver-picker" role="radiogroup" aria-label="Screen saver">
+      {ids.map((id, i) => (
+        <button key={id} type="button" role="radio" aria-checked={saver === id} className={saver === id ? "on" : ""} onClick={() => setSaver(id)}>
+          <canvas ref={(el) => { refs.current[i] = el; }} />
+          <span>{SAVERS[id].label}</span>
+        </button>
+      ))}
     </div>
   );
 }

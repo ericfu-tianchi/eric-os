@@ -674,8 +674,8 @@ const SAVERS = [
   { id: "S7", title: "Floating icons", note: "Not a snake. The desktop's pixel icons drift slowly upward at different depths, like Apple's Floating.", make: makeFloat },
   { id: "S8", title: "Pipes", note: "Not a snake. The Windows 3D Pipes classic, flattened onto our grid in the icon colours. Fades and starts over when the screen fills.", make: makePipes },
   { id: "S9", title: "Snake duel", note: "Your pick for the default. Apple = +1; hit a wall, yourself or the rival and you burst (rival +3) and respawn. First to 20 wins the round.", make: SHIP.duel.make },
-  { id: "N1", title: "Here's to the curious ones", note: "New. Our take on Apple's Think Different, in our own words: the lines type out one by one, the caret is the snake's head, and it ends on the F and “Stay curious.”", make: makeCurious },
-  { id: "N2", title: "Project reel", note: "New. Like Apple's Aerial: slow pans across Tianchi's project covers, with the name and one line, bottom-left. The screen saver doubles as a portfolio.", make: makeReel },
+  { id: "N1", title: "Here's to the crazy ones", note: "Shipped. Apple's Think Different, credited: the opening line and the tagline type out with the snake's head as the caret, then the F.", make: SHIP.crazy.make },
+  { id: "N2", title: "Project reel", note: "Shipped. Like Apple's Aerial: slow pans across Tianchi's project covers, with the name and one line, bottom-left. The screen saver doubles as a portfolio.", make: SHIP.reel.make },
   { id: "N3", title: "Word of the Day", note: "New. macOS Word of the Day, but every word is about Tianchi: eval, prototype, wanderlust, ouroboros…", make: makeWord },
 ];
 
@@ -728,7 +728,7 @@ function full(kind, def) {
 
 let last = performance.now();
 function loop(ts) {
-  const dt = (ts - last) / 1000; last = ts;
+  const dt = Math.max(0, (ts - last) / 1000); last = ts;
   for (const p of players) if (p.visible) p.frame(dt, ts / 1000);
   requestAnimationFrame(loop);
 }
