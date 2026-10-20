@@ -40,8 +40,8 @@ export function AboutOSApp() {
   useEffect(() => { fetchSnakeRecord().then(setRecord); }, []);
   const specs: [string, string][] = [
     ["Owner", "Tianchi (Eric) Fu"],
-    ["Chip", "Curiosity, always on"],
-    ["Memory", "Every project, kept"],
+    ["Chip", "Tianchi T1 Pro"],
+    ["Memory", "18 GB"],
     ["Snake record", record.score > 0 ? `${record.score} by ${record.alias}` : "Up for grabs"],
     ["Version", "1.0 (2026)"],
   ];
