@@ -1,7 +1,20 @@
 # Tianchi OS — 施工手册
 
-Eric Fu 的个人网站:一个桌面操作系统形状的作品集。
+Tianchi (Eric) Fu 的个人网站:一个桌面操作系统形状的作品集。
 **任何 AI/人在此仓库动工前,先读完本文件。**
+
+## 🎨 设计规范(必读,任何 UI / 内容改动前)
+
+本站的设计规范有两份,**所有 Agent 动工前必须先读对应的那份并严格遵守**;拿不准时宁可先问,不要自创样式:
+
+1. **OS 层** → `docs/OS_DESIGN_SYSTEM.md`:菜单、Settings、Finder、蛇的对话/换装、tooltip、窗口、Dock、桌面。字体、字号、圆角、颜色、按钮、表面、文案、图标规则都在里面。
+2. **阅读页** → `docs/LAYOUT_GUIDE.md`:案例研究、About、How I Built It 的排版。
+
+硬规则:
+- 只用 `src/styles.css` `:root` 里已有的 token(`--ui-*` 字号、`--r-*` 圆角、颜色、阴影、间距);**不写新的零散数值**。确实缺东西 → 先扩展规范(token + 文档),再实现,并同步更新三处:`src/styles.css`、`docs/OS_DESIGN_SYSTEM.md`、可视化文档 https://claude.ai/artifact/H3kdSW5jdA33qbSXsRWBqn(仅 Eric 可见)。
+- UI 零彩色(颜色只给像素图标、蛇、红绿窗控键);`--select` 蓝只代表"访客自己";按钮只用 `.btn` 家族。
+- 全站英文,文案写法见规范的 Voice and copy。
+- 视觉改动先给 Eric 看图/样稿,确认后再实装;交付前在真实尺寸截图自检。
 
 ## ⚠️ 视觉方向 v2（V0.5 已实装，取代旧的暖 cream/硬阴影方向）
 

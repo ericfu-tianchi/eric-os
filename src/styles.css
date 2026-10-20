@@ -102,6 +102,16 @@
   --r-sm: 6px;           /* buttons, tiles, list rows, inner cards       */
   --r-md: 8px;           /* menus, popovers, panels, setting groups      */
   --r-pill: 999px;       /* chips, the chat composer, status pills       */
+  --r-window: var(--radius-l); /* windows: crisp 4px by design              */
+  --r-bubble: 12px;      /* chat message bubbles only                    */
+  --r-dock: 14px;        /* the dock                                     */
+  --space-menu: 5px;     /* menu inset around its items                  */
+  --space-row-y: 12px;   /* setting row, vertical                        */
+  --space-row-x: 14px;   /* setting rows and panel headers, horizontal   */
+  --space-group: 14px;   /* gap between setting groups                   */
+  --space-panel: 24px;   /* padding around an OS app's content           */
+  --snake: #06c268;      /* the wallpaper snake's body (brand green)     */
+  --shadow-menu: 0 12px 30px rgba(0, 0, 0, 0.3);
   --menu-bg: rgba(39, 40, 46, 0.92);   /* menus + context menus: dark glass on the stage */
   --menu-ink: #f1f1f3;
   --menu-hover: rgba(255, 255, 255, 0.11);
@@ -300,12 +310,12 @@ button { font-family: inherit; color: inherit; }
 /* Menus (the Tianchi OS menu, the desktop context menu): dark glass on the stage, one style. */
 .menu-pop, .desktop-context {
   position: fixed; z-index: 700;
-  padding: 5px;
+  padding: var(--space-menu);
   color: var(--menu-ink);
   background: var(--menu-bg);
   border: 1px solid var(--menu-line);
   border-radius: var(--r-md);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-menu);
   -webkit-backdrop-filter: blur(18px) saturate(112%);
   backdrop-filter: blur(18px) saturate(112%);
   font-family: var(--font-system); font-size: var(--ui-control); font-weight: 560;
@@ -541,7 +551,7 @@ button { font-family: inherit; color: inherit; }
   -webkit-backdrop-filter: blur(18px) saturate(112%);
   backdrop-filter: blur(18px) saturate(112%);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
+  border-radius: var(--r-dock);
   box-shadow: 0 14px 27px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 .dock::before {
@@ -696,12 +706,12 @@ button { font-family: inherit; color: inherit; }
 .contact-row { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 14px; }
 
 /* Settings — an OS app, so it speaks the OS system: Geist, grouped rows, segmented controls */
-.settings { min-height: 100%; padding: 24px 24px 28px; background: #f6f6f8; color: var(--ink); font-family: var(--font-system); }
+.settings { min-height: 100%; padding: var(--space-panel) var(--space-panel) 28px; background: #f6f6f8; color: var(--ink); font-family: var(--font-system); }
 .settings header { margin: 0 4px 16px; }
 .settings h1 { margin: 0; font-family: var(--font-system); font-size: var(--ui-title); font-weight: 650; letter-spacing: -0.015em; }
 .settings header p { margin: 4px 0 0; font-size: var(--ui-control); color: var(--muted); }
-.set-group { margin-bottom: 14px; background: var(--surface); border: 1px solid var(--hairline); border-radius: var(--r-md); }
-.set-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 14px; }
+.set-group { margin-bottom: var(--space-group); background: var(--surface); border: 1px solid var(--hairline); border-radius: var(--r-md); }
+.set-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: var(--space-row-y) var(--space-row-x); }
 .set-row + .set-row { border-top: 1px solid var(--hairline); }
 .set-row.stack { flex-direction: column; align-items: stretch; gap: 10px; }
 .set-label { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
@@ -1418,7 +1428,7 @@ button { font-family: inherit; color: inherit; }
 .sguide-chat { min-height: 0; }
 .sguide-log { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 12px 12px 6px; }
 .sguide-log .msg {
-  max-width: 86%; padding: 8px 11px; border-radius: 12px; font-size: var(--ui-body); line-height: 1.45; /* chat bubbles: the one 12px shape */
+  max-width: 86%; padding: 8px 11px; border-radius: var(--r-bubble); font-size: var(--ui-body); line-height: 1.45;
   white-space: pre-wrap; overflow-wrap: anywhere;
 }
 .sguide-log .msg.bot { align-self: flex-start; background: var(--surface-2); border-bottom-left-radius: 3px; }

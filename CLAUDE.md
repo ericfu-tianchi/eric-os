@@ -1,7 +1,20 @@
 # Tianchi OS — 施工手册
 
-Eric Fu 的个人网站:一个桌面操作系统形状的作品集。
+Tianchi (Eric) Fu 的个人网站:一个桌面操作系统形状的作品集。
 **任何 AI/人在此仓库动工前,先读完本文件。**
+
+## 🎨 设计规范(必读,任何 UI / 内容改动前)
+
+本站的设计规范有两份,**所有 Agent 动工前必须先读对应的那份并严格遵守**;拿不准时宁可先问,不要自创样式:
+
+1. **OS 层** → `docs/OS_DESIGN_SYSTEM.md`:菜单、Settings、Finder、蛇的对话/换装、tooltip、窗口、Dock、桌面。字体、字号、圆角、颜色、按钮、表面、文案、图标规则都在里面。
+2. **阅读页** → `docs/LAYOUT_GUIDE.md`:案例研究、About、How I Built It 的排版。
+
+硬规则:
+- 只用 `src/styles.css` `:root` 里已有的 token(`--ui-*` 字号、`--r-*` 圆角、颜色、阴影、间距);**不写新的零散数值**。确实缺东西 → 先扩展规范(token + 文档),再实现,并同步更新三处:`src/styles.css`、`docs/OS_DESIGN_SYSTEM.md`、可视化文档 https://claude.ai/artifact/H3kdSW5jdA33qbSXsRWBqn(仅 Eric 可见)。
+- UI 零彩色(颜色只给像素图标、蛇、红绿窗控键);`--select` 蓝只代表"访客自己";按钮只用 `.btn` 家族。
+- 全站英文,文案写法见规范的 Voice and copy。
+- 视觉改动先给 Eric 看图/样稿,确认后再实装;交付前在真实尺寸截图自检。
 
 ## ⚠️ 视觉方向 v2(2026-07-15 定调,取代旧的暖 cream/硬阴影方向)
 
@@ -53,7 +66,7 @@ v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(明暗�
 
 ## OS 设计规范(2026-10-20)
 
-OS 层(菜单、Settings、Finder、蛇的对话/换装、tooltip、窗口)只用一套:字体 Geist;字号只用 `--ui-fine 10.5 / --ui-meta 11.5 / --ui-control 12.5 / --ui-body 13.5 / --ui-title 20`(文件名 12、菜单栏品牌 15 为既有特例);圆角只用 `--r-xs 4 / --r-sm 6 / --r-md 8 / --r-pill`(窗口 4、聊天气泡 12、Dock 14 为特例);四种表面:桌面台面、白窗口、深色玻璃菜单、白色浮层面板;tooltip 一律近黑底白字;按钮一个家族 `.btn`(白底细边 / 墨黑 primary / `.lg`),UI 不用彩色,`--select` 蓝只代表"访客自己"。全站英文。阅读页(案例、About)仍按 `docs/LAYOUT_GUIDE.md`。完整规范:Design System artifact https://claude.ai/artifact/H3kdSW5jdA33qbSXsRWBqn
+OS 层(菜单、Settings、Finder、蛇的对话/换装、tooltip、窗口)只用一套:字体 Geist;字号只用 `--ui-fine 10.5 / --ui-meta 11.5 / --ui-control 12.5 / --ui-body 13.5 / --ui-title 20`(文件名 12、菜单栏品牌 15 为既有特例);圆角只用 `--r-xs 4 / --r-sm 6 / --r-md 8 / --r-pill`(窗口 4、聊天气泡 12、Dock 14 为特例);四种表面:桌面台面、白窗口、深色玻璃菜单、白色浮层面板;tooltip 一律近黑底白字;按钮一个家族 `.btn`(白底细边 / 墨黑 primary / `.lg`),UI 不用彩色,`--select` 蓝只代表"访客自己"。全站英文。阅读页(案例、About)仍按 `docs/LAYOUT_GUIDE.md`。完整规范:`docs/OS_DESIGN_SYSTEM.md`(可视化版 https://claude.ai/artifact/H3kdSW5jdA33qbSXsRWBqn)
 
 ## V0.6 蛇助手(壁纸蛇 = Tianchi 的小跟班)
 
