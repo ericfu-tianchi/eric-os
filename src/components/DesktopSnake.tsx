@@ -24,7 +24,7 @@ const TONGUE = "#F04E38";
 // One stroke, tail (0,11) → head (23,11) facing right; the body folds against
 // itself at the h and e — legal for a snake, only the editor's tracer chokes
 // on it. Reference grid 35×18, rows anchored to the bottom at runtime.
-const ERIC_POSE: [number, number][] = [
+export const ERIC_POSE: [number, number][] = [
   [0, 11],  [1, 11],  [2, 11],  [2, 10],  [2, 9],  [2, 8],  [2, 7],  [2, 6],  [2, 5],  [2, 4],
   [3, 4],  [3, 5],  [3, 6],  [3, 7],  [4, 7],  [4, 8],  [4, 9],  [4, 10],  [4, 11],  [5, 11],
   [6, 11],  [6, 10],  [6, 9],  [6, 8],  [6, 7],  [7, 7],  [8, 7],  [8, 8],  [8, 9],  [7, 9],

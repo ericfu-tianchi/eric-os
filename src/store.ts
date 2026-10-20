@@ -15,7 +15,8 @@ export type AppId =
   | "html-doc"
   | "life"
   | "playground"
-  | "project-detail";
+  | "project-detail"
+  | "about-os";
 
 export interface WinInstance {
   id: string; // instance id
@@ -32,6 +33,7 @@ export interface WinInstance {
 export type IconSet = "a" | "d";
 export type Theme = "dark" | "light";
 export const SNAKE_HAT_IDS = ["none", "glasses", "cap", "phones", "bow", "shades", "cat", "nycap"] as const;
+export const DOCK_SIZE = { min: 32, max: 64, default: 46 };
 export type SnakeHat = (typeof SNAKE_HAT_IDS)[number];
 /**
  * Desktop files are anchored to the right edge, independently of the
@@ -49,6 +51,8 @@ interface OSState {
   theme: Theme;
   snakeBest: number;
   snakeHat: SnakeHat; // wallpaper snake's head accessory (set in Prefs)
+  dockSize: number; // dock icon size in px (Settings → Dock)
+  dockAutoHide: boolean;
   snakeMode: boolean; // desktop-wide snake takeover (transient, not persisted)
   booted: boolean;
   seq: number;
@@ -65,6 +69,8 @@ interface OSState {
   setSnakeBest: (n: number) => void;
   setSnakeHat: (h: SnakeHat) => void;
   setSnakeMode: (on: boolean) => void;
+  setDockSize: (px: number) => void;
+  setDockAutoHide: (on: boolean) => void;
   setBooted: () => void;
   resetDesktop: () => void;
 }
@@ -84,6 +90,7 @@ const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
   life: { w: 560, h: 500 },
   playground: { w: 600, h: 520 },
   "project-detail": { w: 700, h: 520 },
+  "about-os": { w: 300, h: 470 },
 };
 
 export const useOS = create<OSState>()(
@@ -96,6 +103,8 @@ export const useOS = create<OSState>()(
       theme: "dark",
       snakeBest: 0,
       snakeHat: "none",
+      dockSize: DOCK_SIZE.default,
+      dockAutoHide: false,
       snakeMode: false,
       booted: false,
       seq: 1,
@@ -168,6 +177,8 @@ export const useOS = create<OSState>()(
       setSnakeBest: (snakeBest) => set({ snakeBest }),
       setSnakeHat: (snakeHat) => set({ snakeHat }),
       setSnakeMode: (snakeMode) => set({ snakeMode }),
+      setDockSize: (dockSize) => set({ dockSize }),
+      setDockAutoHide: (dockAutoHide) => set({ dockAutoHide }),
       setBooted: () => set({ booted: true }),
 
       resetDesktop: () =>
@@ -183,6 +194,8 @@ export const useOS = create<OSState>()(
         theme: s.theme,
         snakeBest: s.snakeBest,
         snakeHat: s.snakeHat,
+        dockSize: s.dockSize,
+        dockAutoHide: s.dockAutoHide,
         seq: s.seq,
       }),
       // a hat retired from the wardrobe (e.g. the old "bubble") falls back to none
