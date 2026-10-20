@@ -782,8 +782,9 @@ button { font-family: inherit; color: inherit; }
 .aboutos-screen { width: 184px; height: auto; margin-bottom: 18px; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.14)); }
 .aboutos h1 { margin: 0; font-family: var(--font-system); font-size: var(--ui-title); font-weight: 650; letter-spacing: -0.015em; }
 .aboutos-sub { margin: 3px 0 16px; font-size: var(--ui-meta); color: var(--faint); }
-.aboutos dl { display: grid; gap: 4px; margin: 0 0 18px; font-size: var(--ui-control); }
-.aboutos dl div { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* the spec block is centred as a whole (sized to its own content), labels right-aligned against values */
+.aboutos dl { display: grid; grid-template-columns: auto auto; column-gap: 10px; row-gap: 4px; margin: 0 0 18px; font-size: var(--ui-control); }
+.aboutos dl div { display: contents; }
 .aboutos dt { text-align: right; font-weight: 560; }
 .aboutos dd { margin: 0; text-align: left; color: var(--muted); }
 .aboutos footer { margin-top: auto; padding-top: 18px; display: flex; flex-direction: column; gap: 2px; font-size: var(--ui-fine); color: var(--faint); }

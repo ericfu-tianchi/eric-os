@@ -148,7 +148,7 @@ export default function App() {
         projects: "Projects", about: "About_Me.md", resume: "resume.pdf",
         readme: "Tianchintosh HD", filesystem: "Tianchintosh HD", prefs: "Settings", snake: "Snake",
         "soul-blade": "Soul Blade", "twist-solver": "Twist Solver",
-        life: "LIFE.APP", playground: "PLAYGROUND",
+        life: "LIFE.APP", playground: "PLAYGROUND", "about-os": "About Tianchi OS",
       };
       m.split(",").forEach((tok) => {
         const [app, payload] = tok.split(":") as [AppId, string?];
