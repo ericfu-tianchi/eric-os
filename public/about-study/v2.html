@@ -39,6 +39,7 @@ html, body { margin: 0; background: #0b0b0d; color: #ececef; font-family: var(--
 .me { --bg: #111214; --ink: #f2f2f4; --soft: #a3a4ab; --faint: #6c6d75; --line: rgba(255,255,255,.09);
   background: var(--bg); color: var(--ink); position: relative; overflow: hidden; font-family: var(--ui); }
 /* the photo stays black & white in most; colour lives only in the details (dots, labels, key words, buttons) */
+.me[data-ac="blue"]       { --ac: #4d8dff; --ac-ink: #fff; }
 .me[data-ac="green"]      { --ac: #06c268; --ac-ink: #06140c; }
 .me[data-ac="vermilion"]  { --ac: #ff5b35; --ac-ink: #fff; }
 .me[data-ac="champagne"]  { --ac: #d9bd8c; --ac-ink: #17130b; }
@@ -68,7 +69,7 @@ html, body { margin: 0; background: #0b0b0d; color: #ececef; font-family: var(--
 .name .l2 { position: relative; z-index: 3; margin-top: -.02em; }
 .name .eric { color: color-mix(in srgb, var(--ink) 30%, transparent); font-weight: 800; }
 .name .dot { color: var(--ac); }
-.pwrap { position: absolute; z-index: 2; right: -118px; bottom: 0; width: 650px; pointer-events: none; }
+.pwrap { position: absolute; z-index: 2; right: -118px; bottom: 44px; width: 620px; pointer-events: none; }
 .photo { position: relative; z-index: 1; display: block; width: 100%; }
 /* the old site's rough offset shadow, two ways: a hard copy of the silhouette, or a blocky pixel one */
 .me[data-shadow="hard"] .photo { filter: drop-shadow(14px 12px 0 var(--ac2)); }
@@ -197,11 +198,12 @@ a { color: inherit; text-decoration: none; }
 <body>
 <div class="study">
   <h1>About_Me.md · v2</h1>
-  <p class="lede">Round 5. Original B (your face, untouched) styled seven ways under LOOK, with a second colour for the old site's rough offset shadow next to the green. The name is smaller so your head sits higher. Accent and Path work as before.</p>
+  <p class="lede">Round 6. Blue accent. The photo now floats above the hero's bottom line. Pixel shadow plus five halftones that keep more of your face (DOTS sets their colour; SHADOW is the pixel shadow's colour).</p>
   <div class="ctrl">
     <div class="grp" id="acs"><span>ACCENT</span></div>
     <div class="grp" id="lks"><span>LOOK</span></div>
-    <div class="grp" id="c2s"><span>2ND COLOUR</span></div>
+    <div class="grp" id="dts"><span>DOTS</span></div>
+    <div class="grp" id="c2s"><span>SHADOW</span></div>
     <div class="grp" id="tls"><span>PATH</span></div>
     <button class="replay" id="replay">Replay intro</button>
   </div>
@@ -215,18 +217,18 @@ const ICON = {
   li: '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M0 1.15C0 .52.52 0 1.18 0h13.64C15.48 0 16 .52 16 1.15v13.7c0 .63-.52 1.15-1.18 1.15H1.18C.52 16 0 15.48 0 14.85V1.15zm4.94 12.24V6.17H2.54v7.22h2.4zM3.74 5.18c.84 0 1.36-.55 1.36-1.25-.02-.71-.52-1.25-1.34-1.25-.82 0-1.36.54-1.36 1.25 0 .7.52 1.25 1.33 1.25h.01zm4.91 8.21V9.36c0-.22.02-.43.08-.59.17-.43.57-.88 1.23-.88.87 0 1.22.66 1.22 1.63v3.87h2.4V9.25c0-2.22-1.18-3.25-2.76-3.25-1.27 0-1.84.7-2.16 1.19v.03h-.02l.02-.03V6.17h-2.4c.03.68 0 7.22 0 7.22h2.4z"/></svg>',
   mail: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M2 4l6 5 6-5"/></svg>',
 };
-const ACCENTS = [["green", "Green", "#06c268"], ["vermilion", "Vermilion", "#ff5b35"], ["champagne", "Champagne", "#d9bd8c"], ["crimson", "Crimson", "#e2263f"], ["pink", "Pink", "#ff2e6e"]];
+const ACCENTS = [["blue", "Blue", "#4d8dff"], ["green", "Green", "#06c268"], ["vermilion", "Vermilion", "#ff5b35"], ["champagne", "Champagne", "#d9bd8c"], ["crimson", "Crimson", "#e2263f"], ["pink", "Pink", "#ff2e6e"]];
 // the portrait: your original photo, untouched; GPT only painted the missing cap top and guitar bottom (A/B/C = three tries); logo removed
 // Original B, styled seven ways. img = b-<img>.webp; shadow: hard (old-site offset), pixel (blocky), none
 const LOOKS = [
-  ["old", "Old-site shadow", { img: "colour", shadow: "hard" }],
-  ["pxshadow", "Pixel shadow", { img: "colour", shadow: "pixel" }],
-  ["poster", "Poster", { img: "poster", shadow: "hard" }],
-  ["sprite", "Sprite", { img: "sprite", shadow: "pixel", px: true }],
-  ["lightpx", "Touch of pixel", { img: "px", shadow: "hard", px: true }],
-  ["halftone", "Halftone", { img: "halftone", shadow: "none" }],
-  ["duo", "Pink duotone", { img: "duo", shadow: "none" }],
+  ["pxshadow", "Pixel shadow", { img: "b-colour", shadow: "pixel" }],
+  ["ht1", "Halftone · fine", { img: "ht1", shadow: "none" }],
+  ["ht2", "Halftone · over photo", { img: "ht2", shadow: "none" }],
+  ["ht3", "Halftone · true face", { img: "ht3", shadow: "none" }],
+  ["ht4", "Line screen", { img: "ht4", shadow: "none" }],
+  ["ht5", "Misprint", { img: "ht5", shadow: "none" }],
 ];
+const DOTS = [["pink", "Pink", "#ff2e6e"], ["blue", "Blue", "#4d8dff"]];
 const C2 = [["pink", "Pink", "#ff2e6e"], ["red", "Red", "#ff3b3b"], ["coral", "Coral", "#ff6a55"], ["none", "No second colour", "#3a3b40"]];
 
 const TLS = [["gantt", "Gantt"], ["years", "Big years"], ["spine", "Spine"], ["rail", "Rail"]];
@@ -273,7 +275,7 @@ function page(ac, tl) {
     <div class="grid"></div><div class="glow"></div>
     <div class="meta"><span>About_Me.md</span><span class="now"><i></i>Now · AI PM at OpusClip · Singapore</span></div>
     <h2 class="name"><span class="l l1"><span>Tianchi</span></span><span class="l l2"><span><span class="eric">(Eric)</span> Fu<span class="dot">.</span></span></span></h2>
-    <div class="pwrap"><i class="pshadow"></i><img class="photo" src="/about-study/b-${L.img}.webp" alt="Tianchi playing guitar"></div>
+    <div class="pwrap"><i class="pshadow"></i><img class="photo" src="/about-study/${L.img.startsWith("ht") ? `${L.img}-${state.dot}` : L.img}.webp" alt="Tianchi playing guitar"></div>
     <p class="lead">I turn what AI models can do into products people <b>actually enjoy</b>, with an engineer's logic and a designer's hands.</p>
     <div class="cta"><a href="#" class="primary">${ICON.mail}Email me</a><a href="#">${ICON.li}LinkedIn</a><a href="#">${ICON.gh}GitHub</a></div>
     <div class="proof"><div><b>3 yrs</b><span>AI products</span></div><div><b>10M+</b><span>inferences / mo</span></div><div><b>80+</b><span>agents shipped</span></div></div>
@@ -293,10 +295,12 @@ function page(ac, tl) {
 </div>`;
 }
 
-let state = { ac: "green", tl: "years", look: "old", c2: "pink" };
-try { Object.assign(state, JSON.parse(localStorage.getItem("about-v5") || "{}")); } catch {}
+let state = { ac: "blue", tl: "years", look: "ht3", c2: "pink", dot: "pink" };
+try { Object.assign(state, JSON.parse(localStorage.getItem("about-v6") || "{}")); } catch {}
 if (!ACCENTS.some((a) => a[0] === state.ac)) state.ac = "green";
-if (!LOOKS.some((a) => a[0] === state.look)) state.look = "old";
+if (!LOOKS.some((a) => a[0] === state.look)) state.look = "ht3";
+if (!DOTS.some((a) => a[0] === state.dot)) state.dot = "pink";
+if (!ACCENTS.some((a) => a[0] === state.ac)) state.ac = "blue";
 if (!C2.some((a) => a[0] === state.c2)) state.c2 = "pink";
 const vp = document.getElementById("vp");
 function render(keepScroll) {
@@ -309,11 +313,13 @@ function render(keepScroll) {
   document.querySelectorAll("#tls button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.tl));
   document.querySelectorAll("#lks button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.look));
   document.querySelectorAll("#c2s button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.c2));
-  document.getElementById("pick").textContent = `look: ${state.look}, 2nd: ${state.c2}, accent: ${state.ac}, path: ${state.tl}`;
-  try { localStorage.setItem("about-v5", JSON.stringify(state)); } catch {}
+  document.querySelectorAll("#dts button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.dot));
+  document.getElementById("pick").textContent = `look: ${state.look}, dots: ${state.dot}, shadow: ${state.c2}, accent: ${state.ac}, path: ${state.tl}`;
+  try { localStorage.setItem("about-v6", JSON.stringify(state)); } catch {}
 }
 for (const [k, l, c] of ACCENTS) { const b = document.createElement("button"); b.dataset.k = k; b.innerHTML = `<i style="background:${c}"></i>${l}`; b.onclick = () => { state.ac = k; render(true); }; document.getElementById("acs").appendChild(b); }
 for (const [k, l] of LOOKS) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.look = k; render(true); }; document.getElementById("lks").appendChild(b); }
+for (const [k, l, c] of DOTS) { const b = document.createElement("button"); b.dataset.k = k; b.innerHTML = `<i style="background:${c}"></i>${l}`; b.onclick = () => { state.dot = k; render(true); }; document.getElementById("dts").appendChild(b); }
 for (const [k, l, c] of C2) { const b = document.createElement("button"); b.dataset.k = k; b.innerHTML = `<i style="background:${c}"></i>${l}`; b.onclick = () => { state.c2 = k; render(true); }; document.getElementById("c2s").appendChild(b); }
 for (const [k, l] of TLS) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.tl = k; render(true); vp.querySelector(".path").scrollIntoView({ block: "start" }); }; document.getElementById("tls").appendChild(b); }
 document.getElementById("replay").onclick = () => { vp.scrollTop = 0; render(); };
