@@ -256,11 +256,53 @@ function makeCorner(W: number, H: number): Saver {
 // Only the opening line and the tagline are quoted (the full ad copy is
 // Apple's); CRAZY_ONES is the one place to change the text.
 // =====================================================================
-export const CRAZY_ONES = ["Here's to the crazy ones.", "Think different."];
+export const CRAZY_ONES = [
+  "Here's to the crazy ones.",
+  "The misfits.",
+  "The rebels.",
+  "The troublemakers.",
+  "The round pegs in the square holes.",
+  "The ones who see things differently.",
+  "They’re not fond of rules.",
+  "And they have no respect for the status quo.",
+  "You can quote them, disagree with them, glorify or vilify them.",
+  "About the only thing you can’t do is ignore them.",
+  "Because they change things.",
+  "They push the human race forward.",
+  "And while some may see them as the crazy ones, we see genius.",
+  "Because the people who are crazy enough to think they can change the world, are the ones who do.",
+  "Think different."
+];
 const CRAZY_CREDIT = "Apple, Think Different, 1997";
 function makeCrazy(W: number, H: number): Saver {
-  const few = CRAZY_ONES.length <= 3;
-  const fs = few ? Math.min(H * 0.075, W * 0.05) : Math.min(H * 0.046, W * 0.028), lh = fs * (few ? 1.4 : 1.55), CPS = few ? 14 : 30;
+  const few = CRAZY_ONES.length <= 3, CPS = few ? 14 : 30;
+  // Lay the text out once: wrap long lines to ~72% of the width, then shrink the
+  // type until the whole block fits ~78% of the height. Any length of text works.
+  const m = document.createElement("canvas").getContext("2d")!;
+  let fs = few ? Math.min(H * 0.075, W * 0.05) : Math.min(H * 0.046, W * 0.028), lh = 0;
+  let rows: { src: number; from: number; to: number; w: number }[] = [];
+  const maxW = W * 0.72;
+  for (let k = 0; k < 30; k++) {
+    m.font = `600 ${fs}px Geist, sans-serif`; lh = fs * (few ? 1.4 : 1.5); rows = [];
+    CRAZY_ONES.forEach((line, src) => {
+      let from = 0;
+      while (from < line.length) {
+        let to = line.length;
+        if (m.measureText(line.slice(from)).width > maxW) {
+          to = from;
+          for (let j = from; j <= line.length; j++) {
+            if (j === line.length || line[j] === " ") { if (m.measureText(line.slice(from, j)).width > maxW && to > from) break; to = j; }
+          }
+          if (to === from) to = line.length;
+        }
+        rows.push({ src, from, to, w: m.measureText(line.slice(from, to)).width });
+        from = to; while (line[from] === " ") from++;
+      }
+    });
+    if (rows.length * lh <= H * 0.78 || fs < 11) break;
+    fs *= 0.92;
+  }
+  const blockW = Math.max(...rows.map((r) => r.w)), x0 = W / 2 - blockW / 2, y0 = H / 2 - (rows.length * lh) / 2 + fs * 0.8;
   const starts: number[] = []; let acc = 0.8;
   for (const l of CRAZY_ONES) { starts.push(acc); acc += l.length / CPS + (few ? 1.2 : 0.55); }
   const textEnd = acc, total = textEnd + 7.2;
@@ -270,31 +312,33 @@ function makeCrazy(W: number, H: number): Saver {
     draw(ctx) {
       bg(ctx, W, H);
       ctx.save(); ctx.font = `600 ${fs}px Geist, sans-serif`; ctx.textBaseline = "alphabetic";
-      const widest = Math.max(...CRAZY_ONES.map((l) => ctx.measureText(l).width));
-      const x0 = W / 2 - widest / 2, y0 = H / 2 - (CRAZY_ONES.length * lh) / 2 + fs * 0.8;
       const out = clamp((t - textEnd - 2.2) / 0.8);
       ctx.globalAlpha = 1 - out;
-      CRAZY_ONES.forEach((l, i) => {
-        if (t < starts[i]) return;
-        const n = Math.min(l.length, Math.floor((t - starts[i]) * CPS)), current = t < (starts[i + 1] ?? textEnd + 1.2);
+      let caret: [number, number] | null = null;
+      rows.forEach((r, ri) => {
+        const i = r.src; if (t < starts[i]) return;
+        const line = CRAZY_ONES[i], n = Math.min(line.length, Math.floor((t - starts[i]) * CPS));
+        if (n <= r.from) return;
+        const current = t < (starts[i + 1] ?? textEnd + 1.2);
+        const shown = line.slice(r.from, Math.min(r.to, n)), y = y0 + ri * lh;
         ctx.fillStyle = current || few ? "#ececef" : "rgba(236,236,239,.5)";
-        const shown = l.slice(0, n); ctx.fillText(shown, x0, y0 + i * lh);
-        if (current && Math.floor(t * 2.4) % 2 === 0 || current && n < l.length) {
-          const cw = fs * 0.72; head(ctx, x0 + ctx.measureText(shown).width + fs * 0.2, y0 + i * lh - fs * 0.74, cw, 1, 0, GREEN);
-        }
+        ctx.fillText(shown, x0, y);
+        if (current) caret = [x0 + ctx.measureText(shown).width + fs * 0.2, y - fs * 0.74];
       });
+      const typing = CRAZY_ONES.some((l, i) => t >= starts[i] && (t - starts[i]) * CPS < l.length);
+      if (caret && (typing || Math.floor(t * 2.4) % 2 === 0)) head(ctx, caret[0], caret[1], fs * 0.72, 1, 0, GREEN);
       const cr = clamp((t - textEnd + 0.4) / 0.6);
-      ctx.globalAlpha = cr * (1 - out); ctx.font = `500 ${fs * (few ? 0.28 : 0.42)}px Geist, sans-serif`; ctx.fillStyle = MUTED;
-      ctx.fillText(`— ${CRAZY_CREDIT}`, x0, y0 + CRAZY_ONES.length * lh + fs * 0.1);
+      ctx.globalAlpha = cr * (1 - out); ctx.font = `500 ${Math.max(11, fs * (few ? 0.28 : 0.5))}px Geist, sans-serif`; ctx.fillStyle = MUTED;
+      ctx.fillText(`— ${CRAZY_CREDIT}`, x0, y0 + rows.length * lh + fs * 0.2);
       ctx.restore();
       const end = clamp((t - textEnd - 3.0) / 0.8) * (1 - clamp((t - total + 0.6) / 0.6));
       if (end > 0) {
         const bmp = markBitmap(H * 0.15 * (window.devicePixelRatio || 1)), mh = H * 0.15, mw = mh * MARK_RATIO;
         ctx.save(); ctx.globalAlpha = end;
         if (bmp) ctx.drawImage(bmp, W / 2 - mw / 2, H * 0.42 - mh / 2, mw, mh);
-        ctx.font = `650 ${H * 0.04}px Geist, sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.font = `650 ${H * 0.04}px Geist, sans-serif`; ctx.textBaseline = "middle";
         const a = "Tianchi", b = " OS", wa = ctx.measureText(a).width, wb = ctx.measureText(b).width;
-        ctx.textAlign = "left"; ctx.fillStyle = "#ececef"; ctx.fillText(a, W / 2 - (wa + wb) / 2, H * 0.42 + H * 0.12);
+        ctx.fillStyle = "#ececef"; ctx.fillText(a, W / 2 - (wa + wb) / 2, H * 0.42 + H * 0.12);
         ctx.fillStyle = MUTED; ctx.fillText(b, W / 2 - (wa + wb) / 2 + wa, H * 0.42 + H * 0.12);
         ctx.restore();
       }
