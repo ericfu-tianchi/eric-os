@@ -140,11 +140,11 @@ a { color: inherit; }
 .D .stat { grid-row: span 1; display: flex; flex-direction: column; justify-content: space-between; }
 .D .stat b { font: 800 34px/1 var(--display); letter-spacing: -.02em; } .D .stat span { font-size: 13px; color: var(--muted); line-height: 1.35; }
 .D .stat.g b { color: #079a55; }
-.D .vals { grid-column: span 2; grid-row: span 2; }
+.D .vals { grid-column: span 2; grid-row: span 3; }
 .D .vals h5, .D .path h5 { margin: 0 0 12px; font-size: 12px; font-weight: 650; color: var(--faint); letter-spacing: .08em; text-transform: uppercase; }
 .D .vals > div { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
 .D .vals b { display: block; font-size: 14.5px; } .D .vals p { margin: 3px 0 0; font-size: 13px; color: var(--muted); line-height: 1.45; }
-.D .path { grid-column: span 2; grid-row: span 2; }
+.D .path { grid-column: span 2; grid-row: span 3; }
 .D .path a { display: flex; gap: 12px; align-items: baseline; padding: 7px 0; border-top: 1px solid var(--hair); text-decoration: none; font-size: 14px; }
 .D .path a .y { flex: none; width: 74px; font: 500 12px var(--mono); color: var(--faint); } .D .path a b { font-weight: 600; } .D .path a span { color: var(--muted); }
 .D .path a .go { margin-left: auto; color: var(--faint); }
@@ -177,7 +177,7 @@ a { color: inherit; }
 <div class="page">
   <h1>About_Me.md · five directions</h1>
   <p class="lede">Same words in all five, so you're only judging the design. Each one is shown inside a real 960px window; the dashed pink line is where a 720px-tall window ends (everything above it is what people see before scrolling). In the real page every line in "Path" opens its folder or case study. Pick one (or mix: "B layout + A photo").</p>
-  <p class="lede">The philosophy line is the one from your old site. Paste me the exact sentence from your LinkedIn About and I'll swap it in.</p>
+  <p class="lede">Copy now follows your LinkedIn About: Tech × Design, AI full-stack, Model eval and your philosophy, verbatim, softened a little for the OS.</p>
   <div id="root"></div>
 </div>
 <div class="bar"><span>Pick</span><code id="pick">none yet</code><button id="copy">Copy</button></div>
@@ -194,22 +194,23 @@ const C = {
   name: ["Tianchi", "Fu"],
   aka: "Eric works too.",
   lead: "I turn what AI models can do into products people actually enjoy, with an engineer's logic and a designer's hands.",
-  phil: "Technology isn't just cold math and code. It should bring people <em>joy</em>.",
+  // his LinkedIn philosophy, verbatim
+  phil: "Tech is never the end, but a powerful means. I'm driven by the <em>positive human impact</em> tech enables.",
   vals: [
-    ["Tech × Design", "Trained as an engineer, grown as a designer. I write the PRD, then build the prototype myself."],
-    ["AI, full stack", "From model to interface: prompt tooling and agent platforms at Huawei Cloud, creative AI at OpusClip."],
-    ["Evals before opinions", "I trust a model once I've tested it. I've built eval systems that decided which models shipped."],
+    ["Tech × Design", "A bilingual PM where tech meets design. I dig into the why, turn complex logic into something intuitive, and get R&D, design and business pulling the same way."],
+    ["AI, full stack", "Three years turning model capability into product: enterprise AI at Huawei Cloud, creative AI (video, image, audio) at OpusClip."],
+    ["Model eval", "I build the frameworks that test LLM, video and image models, then let the results decide what ships."],
     ["Joy is a feature", "If people smile while using it, it's working. That's why this site has a snake."],
   ],
   path: [
     ["2026 → now", "OpusClip", "AI Product Manager · Singapore", true],
     ["2026 → 27", "NUS", "MSc, AI & Innovation", true],
-    ["2023 → 26", "Huawei Cloud", "Product Manager & Designer"],
-    ["Michigan", "University of Michigan", "MSc Information (HCI) · 2 Expo awards"],
-    ["SJTU", "Shanghai Jiao Tong", "BEng, Electrical & Computer Eng."],
+    ["2023 → 26", "Huawei Cloud", "AI Product Manager · Shenzhen"],
+    ["2021 → 23", "University of Michigan", "MSc, HCI · RefugeeOne, Subtension"],
+    ["2017 → 21", "Shanghai Jiao Tong", "BEng, Electrical & Computer Eng."],
   ],
   off: ["Plays guitar", "20+ countries, rebuilt in LEGO", "A 50,000-word personal wiki", "English · 中文 · 日本語 (a little)"],
-  stats: [["3 yrs", "turning AI models into products"], ["16M+", "creators on OpusClip, where I own model evals"], ["10M+", "monthly inferences on Prompt Studio at Huawei"], ["20+", "countries explored"]],
+  stats: [["3 yrs", "turning model capability into product"], ["10M+", "monthly prompt inferences on Huawei's Prompt Studio"], ["80+", "internal agents built on Copilot Builder"], ["20+", "countries explored"]],
 };
 const P = "/about-study/";
 const btns = (cls = "") => `<a class="btn ${cls}" href="#">${ic("gh")}GitHub</a><a class="btn ${cls}" href="#">${ic("li")}LinkedIn</a><a class="btn primary" href="#">${ic("mail")}Email me</a>`;
