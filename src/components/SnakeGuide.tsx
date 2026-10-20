@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useOS, type SnakeHat } from "../store";
 import { PixIcon } from "./Pixel";
 import { Hat } from "./DesktopSnake";
-import { ASK_GLYPH } from "./snakeHats";
+import chatIcon from "../assets/icons/b/chat.png";
 import { useGridSpec } from "./desktopGrid";
 import { SnakeChat, digestAfterGame, type ChatAction } from "./SnakeChat";
 
@@ -229,7 +229,7 @@ export function SnakeGuide() {
               >
                 {t === "play" && <PixIcon name="snake" size={32} />}
                 {t === "dress" && <span className="cycle">{HATS.slice(1).map((h) => <MiniHead key={h.id} hat={h.id} size={50} />)}</span>}
-                {t === "ask" && <svg width={30} height={30} viewBox="0 0 32 32" aria-hidden dangerouslySetInnerHTML={{ __html: ASK_GLYPH.svg }} />}
+                {t === "ask" && <img src={chatIcon} width={32} height={32} alt="" draggable={false} />}
                 <span className="cap">{CAPTION[t]}</span>
               </button>
             </span>
