@@ -38,10 +38,12 @@ html, body { margin: 0; background: #0b0b0d; color: #ececef; font-family: var(--
    ===================================================================== */
 .me { --bg: #111214; --ink: #f2f2f4; --soft: #a3a4ab; --faint: #6c6d75; --line: rgba(255,255,255,.09);
   background: var(--bg); color: var(--ink); position: relative; overflow: hidden; font-family: var(--ui); }
-.me[data-ac="pink"]  { --ac: #ff2e6e; --ac-ink: #fff; }
-.me[data-ac="blue"]  { --ac: #4d8dff; --ac-ink: #fff; }
-.me[data-ac="amber"] { --ac: #f5a623; --ac-ink: #1a1203; }
-.me[data-ac="mono"]  { --ac: #f2f2f4; --ac-ink: #111214; }
+/* the photo stays black & white in most; colour lives only in the details (dots, labels, key words, buttons) */
+.me[data-ac="green"]      { --ac: #06c268; --ac-ink: #06140c; }
+.me[data-ac="vermilion"]  { --ac: #ff5b35; --ac-ink: #fff; }
+.me[data-ac="champagne"]  { --ac: #d9bd8c; --ac-ink: #17130b; }
+.me[data-ac="crimson"]    { --ac: #e2263f; --ac-ink: #fff; }
+.me[data-ac="pink"]       { --ac: #ff2e6e; --ac-ink: #fff; }
 /* film grain over everything, very faint */
 .me::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
@@ -66,7 +68,9 @@ html, body { margin: 0; background: #0b0b0d; color: #ececef; font-family: var(--
 .name .l2 { position: relative; z-index: 3; margin-top: -.02em; }
 .name .eric { color: color-mix(in srgb, var(--ink) 30%, transparent); font-weight: 800; }
 .name .dot { color: var(--ac); }
-.photo { position: absolute; z-index: 2; right: -40px; bottom: 0; width: 640px; pointer-events: none; }
+.photo { position: absolute; z-index: 2; right: -30px; bottom: 0; width: 560px; image-rendering: auto; }
+.me[data-ph="px"] .photo, .me[data-ph="bit"] .photo { image-rendering: pixelated; }
+.photo { pointer-events: none; }
 .lead { position: relative; z-index: 3; margin: 26px 0 0; max-width: 380px; font-size: 21px; line-height: 1.45; color: #d8d8dd; font-weight: 450; }
 .lead b { color: var(--ink); font-weight: 650; }
 .proof { position: absolute; z-index: 3; left: 56px; bottom: 34px; display: flex; gap: 28px; }
@@ -186,9 +190,11 @@ a { color: inherit; text-decoration: none; }
 <body>
 <div class="study">
   <h1>About_Me.md · v2</h1>
-  <p class="lede">One direction, done properly: Night stage, your pick. Switch the accent colour and the Path layout at the top; the page inside the window is live (scroll it, hover the rows and cards). The window is the real 960 × 720 size. Use Pick to send me your combo.</p>
+  <p class="lede">Round 3. The portrait is now GPT Image's completed version (whole cap, whole guitar). Try Photo × Tone × Accent; colour stays off your face unless you pick a tinted tone. One direction, done properly: Night stage, your pick. Switch the accent colour and the Path layout at the top; the page inside the window is live (scroll it, hover the rows and cards). The window is the real 960 × 720 size. Use Pick to send me your combo.</p>
   <div class="ctrl">
     <div class="grp" id="acs"><span>ACCENT</span></div>
+    <div class="grp" id="phs"><span>PHOTO</span></div>
+    <div class="grp" id="tns"><span>TONE</span></div>
     <div class="grp" id="tls"><span>PATH</span></div>
     <button class="replay" id="replay">Replay intro</button>
   </div>
@@ -202,7 +208,10 @@ const ICON = {
   li: '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M0 1.15C0 .52.52 0 1.18 0h13.64C15.48 0 16 .52 16 1.15v13.7c0 .63-.52 1.15-1.18 1.15H1.18C.52 16 0 15.48 0 14.85V1.15zm4.94 12.24V6.17H2.54v7.22h2.4zM3.74 5.18c.84 0 1.36-.55 1.36-1.25-.02-.71-.52-1.25-1.34-1.25-.82 0-1.36.54-1.36 1.25 0 .7.52 1.25 1.33 1.25h.01zm4.91 8.21V9.36c0-.22.02-.43.08-.59.17-.43.57-.88 1.23-.88.87 0 1.22.66 1.22 1.63v3.87h2.4V9.25c0-2.22-1.18-3.25-2.76-3.25-1.27 0-1.84.7-2.16 1.19v.03h-.02l.02-.03V6.17h-2.4c.03.68 0 7.22 0 7.22h2.4z"/></svg>',
   mail: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M2 4l6 5 6-5"/></svg>',
 };
-const ACCENTS = [["pink", "Pink", "#ff2e6e"], ["blue", "Blue", "#4d8dff"], ["amber", "Amber", "#f5a623"], ["mono", "Mono", "#f2f2f4"]];
+const ACCENTS = [["green", "Green", "#06c268"], ["vermilion", "Vermilion", "#ff5b35"], ["champagne", "Champagne", "#d9bd8c"], ["crimson", "Crimson", "#e2263f"], ["pink", "Pink", "#ff2e6e"]];
+// the portrait: GPT Image completed the cap and the guitar; "px" adds a touch of pixel, "bit" is GPT's 16-bit take
+const PHOTOS = [["real", "Real"], ["px", "A touch of pixel"], ["bit", "16-bit"]];
+const TONES = [["colour", "Colour"], ["mono", "B&W"], ["warm", "Warm B&W"], ["crimson", "Crimson"], ["pink", "Pink"]];
 const TLS = [["gantt", "Gantt"], ["years", "Big years"], ["spine", "Spine"], ["rail", "Rail"]];
 
 // ---- content (from LinkedIn About + Experience/Education) ----
@@ -241,12 +250,12 @@ const KEY = ["positive", "human", "impact"];
 
 function page(ac, tl) {
   const words = PHIL.split(" ").map((w) => `<span class="w ${KEY.includes(w) ? "k" : ""}">${w}</span>`).join(" ");
-  return `<div class="me play" data-ac="${ac}">
+  return `<div class="me play" data-ac="${ac}" data-ph="${state.ph}">
   <section class="hero">
     <div class="grid"></div><div class="glow"></div>
     <div class="meta"><span>About_Me.md</span><span class="now"><i></i>Now · AI PM at OpusClip · Singapore</span></div>
     <h2 class="name"><span class="l l1"><span>Tianchi</span></span><span class="l l2"><span><span class="eric">(Eric)</span> Fu<span class="dot">.</span></span></span></h2>
-    <img class="photo" src="/about-study/v2-${ac}.png" alt="Tianchi playing guitar">
+    <img class="photo" src="/about-study/${state.ph}-${state.tone}.webp" alt="Tianchi playing guitar">
     <p class="lead">I turn what AI models can do into products people <b>actually enjoy</b>, with an engineer's logic and a designer's hands.</p>
     <div class="cta"><a href="#" class="primary">${ICON.mail}Email me</a><a href="#">${ICON.li}LinkedIn</a><a href="#">${ICON.gh}GitHub</a></div>
     <div class="proof"><div><b>3 yrs</b><span>AI products</span></div><div><b>10M+</b><span>inferences / mo</span></div><div><b>80+</b><span>agents shipped</span></div></div>
@@ -266,8 +275,11 @@ function page(ac, tl) {
 </div>`;
 }
 
-let state = { ac: "pink", tl: "gantt" };
-try { Object.assign(state, JSON.parse(localStorage.getItem("about-v2") || "{}")); } catch {}
+let state = { ac: "green", tl: "years", ph: "real", tone: "colour" };
+try { Object.assign(state, JSON.parse(localStorage.getItem("about-v4") || "{}")); } catch {}
+if (!ACCENTS.some((a) => a[0] === state.ac)) state.ac = "green";
+if (!PHOTOS.some((a) => a[0] === state.ph)) state.ph = "real";
+if (!TONES.some((a) => a[0] === state.tone)) state.tone = "colour";
 const vp = document.getElementById("vp");
 function render(keepScroll) {
   const top = vp.scrollTop; vp.innerHTML = page(state.ac, state.tl); if (keepScroll) vp.scrollTop = top;
@@ -277,10 +289,14 @@ function render(keepScroll) {
   new IntersectionObserver(([e], o) => { if (!e.isIntersecting) return; ws.forEach((w, i) => setTimeout(() => w.classList.add("in"), i * 70)); o.disconnect(); }, { root: vp, threshold: 0.4 }).observe(vp.querySelector(".phil p"));
   document.querySelectorAll("#acs button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.ac));
   document.querySelectorAll("#tls button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.tl));
-  document.getElementById("pick").textContent = `accent: ${state.ac}, path: ${state.tl}`;
-  try { localStorage.setItem("about-v2", JSON.stringify(state)); } catch {}
+  document.querySelectorAll("#phs button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.ph));
+  document.querySelectorAll("#tns button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.tone));
+  document.getElementById("pick").textContent = `accent: ${state.ac}, photo: ${state.ph}, tone: ${state.tone}, path: ${state.tl}`;
+  try { localStorage.setItem("about-v4", JSON.stringify(state)); } catch {}
 }
 for (const [k, l, c] of ACCENTS) { const b = document.createElement("button"); b.dataset.k = k; b.innerHTML = `<i style="background:${c}"></i>${l}`; b.onclick = () => { state.ac = k; render(true); }; document.getElementById("acs").appendChild(b); }
+for (const [k, l] of PHOTOS) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.ph = k; render(true); }; document.getElementById("phs").appendChild(b); }
+for (const [k, l] of TONES) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.tone = k; render(true); }; document.getElementById("tns").appendChild(b); }
 for (const [k, l] of TLS) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.tl = k; render(true); vp.querySelector(".path").scrollIntoView({ block: "start" }); }; document.getElementById("tls").appendChild(b); }
 document.getElementById("replay").onclick = () => { vp.scrollTop = 0; render(); };
 document.getElementById("copy").onclick = async (e) => { try { await navigator.clipboard.writeText(document.getElementById("pick").textContent); e.target.textContent = "Copied"; setTimeout(() => (e.target.textContent = "Copy"), 1200); } catch {} };
