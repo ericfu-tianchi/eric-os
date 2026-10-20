@@ -1,4 +1,4 @@
-import { useOS, type Wallpaper, type Theme, type AppId } from "../store";
+import { useOS, type Theme, type AppId } from "../store";
 import { HatPicker } from "../components/SnakeGuide";
 import { PixIcon, type PixIconName } from "../components/Pixel";
 import resumePage from "../assets/resume-page.png";
@@ -73,15 +73,10 @@ export function ReadmeApp() {
   );
 }
 
-const WALLPAPERS: { id: Wallpaper; label: string; desc: string }[] = [
-  { id: "snake", label: "Snake", desc: "The grid, with the hello snake and its guide." },
-  { id: "clean", label: "Clean", desc: "Just the grid. The snake takes a day off." },
-  { id: "noir", label: "Noir", desc: "The old site's dark board, for night owls." },
-];
 
 const THEMES: { id: Theme; label: string; desc: string }[] = [
   { id: "dark", label: "Dark", desc: "Charcoal desk under white windows." },
-  { id: "light", label: "Light", desc: "Light gray desk under white windows." },
+  { id: "light", label: "Light", desc: "Cool gray desk, same white windows." },
 ];
 
 /** A macOS-style segmented control: one choice of a few. */
@@ -100,7 +95,7 @@ function Segmented<T extends string>({ value, options, onChange, label }: {
 }
 
 export function PrefsApp() {
-  const { wallpaper, setWallpaper, theme, setTheme, resetDesktop } = useOS();
+  const { theme, setTheme, resetDesktop } = useOS();
   return (
     <div className="settings">
       <header>
@@ -112,10 +107,6 @@ export function PrefsApp() {
         <div className="set-row">
           <div className="set-label"><b>Appearance</b><span>{THEMES.find((t) => t.id === theme)?.desc}</span></div>
           <Segmented label="Appearance" value={theme} options={THEMES} onChange={setTheme} />
-        </div>
-        <div className="set-row">
-          <div className="set-label"><b>Wallpaper</b><span>{WALLPAPERS.find((w) => w.id === wallpaper)?.desc}</span></div>
-          <Segmented label="Wallpaper" value={wallpaper} options={WALLPAPERS} onChange={setWallpaper} />
         </div>
       </section>
 

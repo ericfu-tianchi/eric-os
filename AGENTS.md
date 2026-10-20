@@ -35,7 +35,7 @@ Tianchi (Eric) Fu 的个人网站:一个桌面操作系统形状的作品集。
 
 ## 设计 tokens(源:`src/styles.css` :root — 以代码为准)
 
-v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(明暗模式只翻转台面)· 圆角 4px · 柔投影+发丝边 · chrome 黑白灰零用色,仅红绿窗控键。字体自托管:Geist Sans(OS chrome、桌面文件名、Snake HUD/控制)/Montserrat(标题与大数字)/Source Sans Pro(正文,老站原件)/JetBrains Mono(技术性项目元数据)。品牌绿 `#06C268`(蛇/强调),老站粉 `#FF1256`(About 照片偏移)。分类色:AI=green,DESIGN=pink,PLAY=teal,LIFE=blue。
+v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(Light 主题重绘整个台面层:网格/菜单栏/Dock/菜单,见 `docs/OS_DESIGN_SYSTEM.md` Themes)· 圆角 4px · 柔投影+发丝边 · chrome 黑白灰零用色,仅红绿窗控键。字体自托管:Geist Sans(OS chrome、桌面文件名、Snake HUD/控制)/Montserrat(标题与大数字)/Source Sans Pro(正文,老站原件)/JetBrains Mono(技术性项目元数据)。品牌绿 `#06C268`(蛇/强调),老站粉 `#FF1256`(About 照片偏移)。分类色:AI=green,DESIGN=pink,PLAY=teal,LIFE=blue。
 
 ## 贪吃蛇壁纸系统(核心彩蛋,别破坏)
 
