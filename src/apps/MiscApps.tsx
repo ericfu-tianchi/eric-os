@@ -110,15 +110,18 @@ function Switch({ on, onChange, label }: { on: boolean; onChange: (v: boolean) =
   return <button type="button" role="switch" aria-checked={on} aria-label={label} className={`switch${on ? " on" : ""}`} onClick={() => onChange(!on)} />;
 }
 
-/** A macOS-style slider with its two end labels underneath. */
-function Slider({ value, min, max, onChange, label, ends }: {
-  value: number; min: number; max: number; onChange: (v: number) => void; label: string; ends: [string, string];
+/** A macOS-style slider that snaps to a few fixed stops, with a tick under each and the two end labels. */
+function Slider<T extends number>({ value, stops, onChange, label, ends }: {
+  value: T; stops: readonly T[]; onChange: (v: T) => void; label: string; ends: [string, string];
 }) {
+  const i = Math.max(0, stops.indexOf(value) === -1 ? stops.findIndex((s) => s >= value) : stops.indexOf(value));
   return (
     <div className="slider">
-      <input type="range" min={min} max={max} value={value} aria-label={label}
-        style={{ "--fill": `${((value - min) / (max - min)) * 100}%` } as React.CSSProperties}
-        onChange={(e) => onChange(Number(e.target.value))} />
+      <input type="range" min={0} max={stops.length - 1} step={1} value={i} aria-label={label}
+        aria-valuetext={`${i + 1} of ${stops.length}`}
+        style={{ "--fill": `${(i / (stops.length - 1)) * 100}%` } as React.CSSProperties}
+        onChange={(e) => onChange(stops[Number(e.target.value)])} />
+      <div className="slider-ticks" aria-hidden>{stops.map((s) => <i key={s} />)}</div>
       <div className="slider-ends"><span>{ends[0]}</span><span>{ends[1]}</span></div>
     </div>
   );
@@ -163,8 +166,8 @@ export function PrefsApp() {
 
       <section className="set-group">
         <div className="set-row">
-          <div className="set-label"><b>Dock size</b><span>Drag to resize. The dock follows along.</span></div>
-          <Slider label="Dock size" value={dockSize} min={DOCK_SIZE.min} max={DOCK_SIZE.max} onChange={setDockSize} ends={["Small", "Large"]} />
+          <div className="set-label"><b>Dock size</b><span>Five sizes. The dock follows along.</span></div>
+          <Slider label="Dock size" value={dockSize} stops={DOCK_SIZE.stops} onChange={setDockSize} ends={["Small", "Large"]} />
         </div>
         <div className="set-row">
           <div className="set-label"><b>Automatically hide and show the Dock</b><span>Move the pointer to the bottom edge to bring it back.</span></div>

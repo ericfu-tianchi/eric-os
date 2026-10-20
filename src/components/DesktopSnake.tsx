@@ -454,7 +454,7 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
               width={cellW - 2}
               height={cellH - 2}
               rx={rx}
-              fill={GREEN}
+              style={{ fill: "var(--snake)" }}
             />
           );
         })}

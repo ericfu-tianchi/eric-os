@@ -33,7 +33,7 @@ Tooltips are near-black (`tooltip-bg`) with white `ui-meta` text, `r-xs`, paddin
 
 Dark is the default and the hero. Light is a full twin of the OS layer, not an inverted afterthought:
 
-- **Desk**: `paper` turns cool gray (#e9e9ec) and the 44px grid stays visible (`gridline` flips to a dark 6% line). The snake, the hello pose and the game play exactly as in Dark.
+- **Desk**: `paper` turns cool gray (#e9e9ec) and the 44px grid stays visible (`gridline` flips to a dark 6% line). The hello pose and the game play exactly as in Dark; the snake turns one step deeper (`snake` #06a85a) and casts a soft shadow (`snake-shadow`) so it sits on the pale desk instead of reading as a flat sticker.
 - **Menubar and dock**: frosted light glass with dark text (`menubar-*`, `dock-*`); the wordmark inverts to ink.
 - **Menus**: light glass (`menu-*` light values). Tooltips stay near-black in both themes.
 - **Icons**: no drop shadow under desktop icons and no text shadow under their names; selection uses a dark 7% tile and the same `select` pill.
@@ -63,10 +63,10 @@ Dark is the default and the hero. Light is a full twin of the OS layer, not an i
 - **Segmented control**: for one choice among two to four options (Appearance). A `surface-2`-like track at `r-sm`, the active segment white with `soft-s`.
 - **Settings group**: white `r-md` cards on a `#f6f6f8` window body; each row has a `ui-body` 600 label, a `ui-meta` caption and the control on the right.
 - **Switch**: one on/off setting, like macOS. 34 × 20 pill: `track` when off, `ink` when on (never a colour), white knob with `soft-s`. Label the row with the full sentence ("Automatically hide and show the Dock").
-- **Slider**: one continuous value with live preview (Dock size). 4px `track` with an `ink` fill, a 16px white knob with a `hairline` ring, and the two end labels underneath in `ui-fine` `faint`.
+- **Slider**: a few fixed stops with live preview (Dock size: 32 / 40 / 48 / 56 / 64). 4px `track` with an `ink` fill, a 16px white knob with a `hairline` ring, a small `faint` tick under each stop, and the two end labels underneath in `ui-fine` `faint`.
 - **About window**: About This Mac, our way. Centered column on `surface`: a hero illustration, the name in `ui-title`, a `ui-meta` `faint` subtitle, a spec list (labels right-aligned `ink` 560, values left-aligned `muted`, `ui-control`), one `.btn`, and `ui-fine` `faint` credits at the bottom.
 - **Boot screen** ("Tail chase"): `paper` stage, the smooth F mark (104px, never pixelated), "Tianchi OS" in Geist 650 26px with `stage-muted` "OS", and a 3×3 ring of 14px `snake` cells where a 5-cell snake chases its tail. About 1.5s, once per visit, click to skip.
-- **Screen saver**: full screen, always on the dark stage, no cursor. Starts after the idle time set in Settings (default 3 min), never during Snake or inside an embedded game; any move, key or click ends it and that click never reaches the desktop. The F mark in a saver is the real mark (tinted at full resolution), not a pixel version. Settings shows every saver as a live 16:10 thumbnail (a miniature of the real thing), the chosen one ringed in `select`, with a Preview button.
+- **Screen saver**: full screen, always on the dark stage, no cursor. Starts after the idle time set in Settings (default 3 min), never during Snake or inside an embedded game; any move, key or click ends it and that click never reaches the desktop. The F mark in a saver is the real mark (tinted at full resolution), not a pixel version. Savers: Snake duel (default), Corner hit, Crazy ones, Project reel. Settings shows every saver as a live 16:10 thumbnail (a miniature of the real thing), the chosen one ringed in `select`, with a Preview button.
 - **Chip**: pill, 28px, 1px `hairline`, `ui-control` at 500. For suggested questions only.
 - **Chat panel**: header with a `ui-body` 650 title and a `ui-meta` tag, bubbles at `r-bubble`, a pill composer, a round `select` send button and `ui-fine` fine print.
 - **Thought bubble**: the snake's idle hint and menu. White ellipses with trailing dots, one pixel icon or glyph inside, a tooltip caption on hover.

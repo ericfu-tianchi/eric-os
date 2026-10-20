@@ -33,7 +33,7 @@ export interface WinInstance {
 export type IconSet = "a" | "d";
 export type Theme = "dark" | "light";
 export const SNAKE_HAT_IDS = ["none", "glasses", "cap", "phones", "bow", "shades", "cat", "nycap"] as const;
-export const DOCK_SIZE = { min: 32, max: 64, default: 46 };
+export const DOCK_SIZE = { stops: [32, 40, 48, 56, 64] as const, default: 48 };
 export type SaverId = "duel" | "corner" | "crazy" | "reel";
 export const SAVER_IDS: SaverId[] = ["duel", "corner", "crazy", "reel"];
 export type SnakeHat = (typeof SNAKE_HAT_IDS)[number];
@@ -219,6 +219,7 @@ export const useOS = create<OSState>()(
         const p = (persisted ?? {}) as Partial<OSState>;
         const snakeHat = (SNAKE_HAT_IDS as readonly string[]).includes(p.snakeHat ?? "") ? p.snakeHat! : "none";
         delete (p as { wallpaper?: unknown }).wallpaper; // retired setting: the snake wallpaper is the only one
+        if (p.dockSize && !(DOCK_SIZE.stops as readonly number[]).includes(p.dockSize)) p.dockSize = DOCK_SIZE.default; // old free-slider values snap back
         if (p.saver && !SAVER_IDS.includes(p.saver)) p.saver = "duel";
         return { ...current, ...p, snakeHat };
       },

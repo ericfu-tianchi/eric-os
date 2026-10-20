@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useOS, type SnakeHat } from "../store";
 import { PixIcon } from "./Pixel";
-import { GREEN, Hat } from "./DesktopSnake";
+import { Hat } from "./DesktopSnake";
 import { ASK_GLYPH } from "./snakeHats";
 import { useGridSpec } from "./desktopGrid";
 import { SnakeChat, digestAfterGame, type ChatAction } from "./SnakeChat";
@@ -59,7 +59,7 @@ function MiniHead({ hat, size = 40 }: { hat: SnakeHat; size?: number }) {
   const c = 44, er = c * 0.125, pr = er * 0.42, fa = c / 2 - er * 1.5, pb = c * 0.21;
   return (
     <svg width={size} height={size} viewBox="-40 -37 76 74" aria-hidden>
-      <rect x={-21} y={-21} width={42} height={42} rx={4.4} fill={GREEN} />
+      <rect x={-21} y={-21} width={42} height={42} rx={4.4} style={{ fill: "var(--snake)" }} />
       {[-1, 1].map((s) => (
         <g key={s}>
           <circle cx={fa} cy={pb * s} r={er} fill="#fafafa" />
