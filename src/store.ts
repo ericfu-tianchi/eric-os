@@ -34,6 +34,7 @@ export type IconSet = "a" | "d";
 export type Theme = "dark" | "light";
 export const SNAKE_HAT_IDS = ["none", "glasses", "cap", "phones", "bow", "shades", "cat", "nycap"] as const;
 export const DOCK_SIZE = { min: 32, max: 64, default: 46 };
+export type SaverId = "duel" | "corner";
 export type SnakeHat = (typeof SNAKE_HAT_IDS)[number];
 /**
  * Desktop files are anchored to the right edge, independently of the
@@ -53,6 +54,9 @@ interface OSState {
   snakeHat: SnakeHat; // wallpaper snake's head accessory (set in Prefs)
   dockSize: number; // dock icon size in px (Settings → Dock)
   dockAutoHide: boolean;
+  saver: SaverId; // Settings → Screen saver
+  saverDelay: number; // idle minutes before it starts; 0 = never
+  saverActive: boolean; // transient: the screen saver is showing
   snakeMode: boolean; // desktop-wide snake takeover (transient, not persisted)
   booted: boolean;
   seq: number;
@@ -71,6 +75,9 @@ interface OSState {
   setSnakeMode: (on: boolean) => void;
   setDockSize: (px: number) => void;
   setDockAutoHide: (on: boolean) => void;
+  setSaver: (id: SaverId) => void;
+  setSaverDelay: (min: number) => void;
+  setSaverActive: (on: boolean) => void;
   setBooted: () => void;
   resetDesktop: () => void;
 }
@@ -105,6 +112,9 @@ export const useOS = create<OSState>()(
       snakeHat: "none",
       dockSize: DOCK_SIZE.default,
       dockAutoHide: false,
+      saver: "duel",
+      saverDelay: 3,
+      saverActive: false,
       snakeMode: false,
       booted: false,
       seq: 1,
@@ -179,6 +189,9 @@ export const useOS = create<OSState>()(
       setSnakeMode: (snakeMode) => set({ snakeMode }),
       setDockSize: (dockSize) => set({ dockSize }),
       setDockAutoHide: (dockAutoHide) => set({ dockAutoHide }),
+      setSaver: (saver) => set({ saver }),
+      setSaverDelay: (saverDelay) => set({ saverDelay }),
+      setSaverActive: (saverActive) => set({ saverActive }),
       setBooted: () => set({ booted: true }),
 
       resetDesktop: () =>
@@ -196,6 +209,8 @@ export const useOS = create<OSState>()(
         snakeHat: s.snakeHat,
         dockSize: s.dockSize,
         dockAutoHide: s.dockAutoHide,
+        saver: s.saver,
+        saverDelay: s.saverDelay,
         seq: s.seq,
       }),
       // a hat retired from the wardrobe (e.g. the old "bubble") falls back to none

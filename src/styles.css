@@ -287,36 +287,25 @@ button { font-family: inherit; color: inherit; }
 .chip.play::before { background: var(--teal); }
 .chip.life::before { background: var(--blue); }
 
-/* ============ boot splash ============ */
+/* ============ boot splash: "Tail chase" ============ */
 .boot {
   position: fixed; inset: 0; z-index: 999;
   background: var(--paper);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 18px;
-  cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; animation: boot-fade 300ms both;
 }
-.boot .wordmark { animation: boot-pop 240ms steps(3, end) both; }
+.boot-mark { height: 104px; width: auto; user-select: none; }
 :root[data-theme="light"] .boot-mark { filter: invert(1); }
-.boot .tagline {
-  font-family: var(--font-system);
-  font-size: 12px; letter-spacing: 0.3em; color: var(--stage-muted);
-  text-transform: uppercase;
-  animation: boot-fade 500ms 250ms both;
+.boot-name {
+  margin-top: 20px; font-family: var(--font-system); font-size: 26px; font-weight: 650; letter-spacing: -0.02em;
+  color: var(--stage-ink);
 }
-.boot .bar {
-  width: 190px; height: 10px;
-  border: 1px solid var(--stage-line); border-radius: 5px;
-  background: rgba(255, 255, 255, 0.06); overflow: hidden;
-}
-.boot .bar i {
-  display: block; height: 100%;
-  background: var(--stage-ink);
-  animation: boot-load 780ms 150ms steps(9, end) both;
-}
-@keyframes boot-pop { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.boot-name span { color: var(--stage-muted); }
+.boot-spin { margin-top: 28px; display: grid; grid-template-columns: repeat(3, 14px); gap: 1px; }
+.boot-spin i { width: 14px; height: 14px; border-radius: 1.5px; background: transparent; }
+.boot-spin i.on { background: var(--snake); }
 @keyframes boot-fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes boot-load { from { width: 0; } to { width: 100%; } }
-.boot.leaving { animation: boot-out 200ms steps(3, end) both; }
+.boot.leaving { animation: boot-out 280ms ease both; }
 @keyframes boot-out { to { opacity: 0; } }
 
 /* ============ menubar (on the stage) ============ */
@@ -797,6 +786,12 @@ button { font-family: inherit; color: inherit; }
 .aboutos dt { text-align: right; font-weight: 560; }
 .aboutos dd { margin: 0; text-align: left; color: var(--muted); }
 .aboutos footer { margin-top: auto; padding-top: 18px; display: flex; flex-direction: column; gap: 2px; font-size: var(--ui-fine); color: var(--faint); }
+
+.set-actions { flex: none; display: flex; align-items: center; gap: 8px; }
+
+/* screen saver: above everything, no cursor */
+.screensaver { position: fixed; inset: 0; z-index: 2000; background: #1c1d21; cursor: none; }
+.screensaver canvas { display: block; width: 100%; height: 100%; }
 
 /* switch: one on/off setting. Track var(--track) → ink when on; white knob with soft-s */
 .switch {
