@@ -6,8 +6,10 @@
   "ai": { "binding": "AI" },
   // per-IP guard for /api/ask (worker/index.ts): 8 requests / 60 s
   "ratelimits": [{ "name": "ASK_LIMIT", "namespace_id": "1001", "simple": { "limit": 8, "period": 60 } }],
-  // Preview URLs let each trial build live at its own *.workers.dev address without touching tianchifu.com
-  "preview_urls": true,
+  // the one shared Snake record (worker/index.ts, /api/record)
+  "kv_namespaces": [{ "binding": "SNAKE", "id": "4d651e9d24524fed86f6fe16d53824ec" }],
+  // trial preview links are retired; production lives on tianchifu.com only
+  "preview_urls": false,
   "routes": [
     { "pattern": "tianchifu.com", "custom_domain": true },
     { "pattern": "www.tianchifu.com", "custom_domain": true }

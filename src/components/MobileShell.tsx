@@ -20,9 +20,9 @@ export function MobileShell() {
       </nav>
 
       <section className="m-card">
-        <div className="m-head">About Eric</div>
+        <div className="m-head">About Tianchi</div>
         <div className="m-body">
-          <h1 style={{ margin: "0 0 4px", fontSize: 26, fontWeight: 900 }}>Eric Fu</h1>
+          <h1 style={{ margin: "0 0 4px", fontSize: 26, fontWeight: 900 }}>Tianchi (Eric) Fu</h1>
           <p style={{ margin: "0 0 10px", fontWeight: 700, color: "var(--muted)", fontSize: 12.5 }}>
             PRODUCT MANAGER · DESIGNER · BUILDER
           </p>

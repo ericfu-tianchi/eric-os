@@ -2,6 +2,9 @@
  * Tianchi OS edge worker. Static files are served by the assets layer; only
  * /api/* reaches this code (see run_worker_first in wrangler.jsonc).
  *
+ * GET  /api/record                   → { score, alias }   the one shared Snake high score
+ * POST /api/record { score, alias, ms } → { ok, record }  ok = it became the new record
+ *
  * POST /api/ask  { messages: [{ role: "user" | "assistant", content }] }
  *   → { reply, action? }  — the desktop snake's chat, on Workers AI's free tier.
  *
@@ -15,6 +18,7 @@ interface Env {
   AI: { run: (model: string, input: unknown) => Promise<unknown> };
   ASSETS: { fetch: (req: Request) => Promise<Response> };
   ASK_LIMIT: { limit: (o: { key: string }) => Promise<{ success: boolean }> };
+  SNAKE: { get: (k: string) => Promise<string | null>; put: (k: string, v: string) => Promise<void> };
 }
 
 // Fallback lines in the visitor's language (the site shows its own copy, see SnakeChat.tsx).
@@ -184,10 +188,44 @@ async function ask(req: Request, env: Env) {
   }
 }
 
+/* ── Snake record: only the all-time best is kept ── */
+type SnakeRecord = { score: number; alias: string; at?: string };
+const NO_RECORD: SnakeRecord = { score: 0, alias: "Anonymous" };
+// Icons are worth 5 (13 on the desktop), apples 1, and the snake moves every 140 ms at best —
+// a score far beyond what the play time allows is a forged request, not a game.
+const MAX_ICON_POINTS = 80;
+const plausible = (score: number, ms: number) => score <= 1000 && score <= MAX_ICON_POINTS + ms / 400;
+const cleanAlias = (a: unknown) =>
+  (typeof a === "string" ? a : "").replace(/[<>"'`\\]/g, "").replace(/\s+/g, " ").trim().slice(0, 16) || "Anonymous";
+
+async function readRecord(env: Env): Promise<SnakeRecord> {
+  try {
+    const r = JSON.parse((await env.SNAKE.get("record")) ?? "null") as SnakeRecord | null;
+    return r && Number.isInteger(r.score) ? r : NO_RECORD;
+  } catch {
+    return NO_RECORD;
+  }
+}
+
+async function record(req: Request, env: Env) {
+  if (req.method === "GET") return json(await readRecord(env));
+  const { success } = await env.ASK_LIMIT.limit({ key: `rec:${req.headers.get("cf-connecting-ip") ?? "anon"}` });
+  if (!success) return json({ ok: false, record: await readRecord(env) }, 429);
+  const body = (await req.json().catch(() => null)) as { score?: unknown; alias?: unknown; ms?: unknown } | null;
+  const score = Number(body?.score), ms = Number(body?.ms);
+  const current = await readRecord(env);
+  if (!Number.isInteger(score) || score <= 0 || !Number.isFinite(ms) || !plausible(score, ms)) return json({ ok: false, record: current }, 400);
+  if (score <= current.score) return json({ ok: false, record: current }); // someone got there first
+  const next: SnakeRecord = { score, alias: cleanAlias(body?.alias), at: new Date().toISOString() };
+  await env.SNAKE.put("record", JSON.stringify(next));
+  return json({ ok: true, record: next });
+}
+
 export default {
   async fetch(req: Request, env: Env) {
     const url = new URL(req.url);
     if (url.pathname === "/api/ask" && req.method === "POST") return ask(req, env);
+    if (url.pathname === "/api/record" && (req.method === "GET" || req.method === "POST")) return record(req, env);
     if (url.pathname.startsWith("/api/")) return json({ error: "not_found" }, 404);
     return env.ASSETS.fetch(req);
   },

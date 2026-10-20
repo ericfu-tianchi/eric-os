@@ -4,7 +4,7 @@ import { SNAKE_HATS, hatSvg } from "./snakeHats";
 import { gridSpec, iconCellData, PixIcon, rasterIconUrl, type PixIconName } from "./Pixel";
 import { ICONS, TOPBAR, iconCellOf, iconGlyph, iconVisiblePos, useGridSpec, type GridSpec } from "./desktopGrid";
 import appleRaster from "../assets/icons/b/apple.png";
-import { readSnakeRecord, writeSnakeRecord, type SnakeRecord } from "../data/snakeRecord";
+import { cachedSnakeRecord, fetchSnakeRecord, submitSnakeRecord, type SnakeRecord } from "../data/snakeRecord";
 
 /**
  * DesktopSnake — Eric's hand-drawn wallpaper snake, and the game it wakes into.
@@ -118,9 +118,14 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
   const [muted, setMuted] = useState(false);
   const [scorePulse, setScorePulse] = useState(0);
   const [scorePop, setScorePop] = useState<ScorePop | null>(null);
-  const [record, setRecord] = useState<SnakeRecord>(() => readSnakeRecord());
+  const [record, setRecordState] = useState<SnakeRecord>(() => cachedSnakeRecord());
+  const recordRef = useRef(record); // end() runs outside render — read the latest shared record here
+  const setRecord = (r: SnakeRecord) => { recordRef.current = r; setRecordState(r); };
+  const gameMs = useRef(0);
   const [recordClaim, setRecordClaim] = useState(false);
   const [recordName, setRecordName] = useState("");
+  const [claimState, setClaimState] = useState<"idle" | "saving" | "error">("idle");
+  const [beaten, setBeaten] = useState(false); // someone else set a higher record while this game ran
 
   function playSound(kind: "apple" | "bonus") {
     if (mutedRef.current) return;
@@ -195,6 +200,8 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
     recordClaiming.current = false;
     setRecordClaim(false);
     setRecordName("");
+    setClaimState("idle");
+    setBeaten(false);
     setScorePop(null);
     playStartAt.current = 0; // re-arm the first-second speed ease-in
     if (!frozen && phase.current !== "enter") spawnApple(); // during the intro the apple makes its own entrance
@@ -215,23 +222,28 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
 
   function end() {
     over.current = true;
+    gameMs.current = playStartAt.current ? performance.now() - playStartAt.current : 0;
     if (score.current > best) setSnakeBest(score.current);
-    const currentRecord = readSnakeRecord();
-    setRecord(currentRecord);
-    if (score.current > currentRecord.score) {
+    if (score.current > recordRef.current.score) {
       recordClaiming.current = true;
       setRecordClaim(true);
     }
     rr();
   }
 
-  function claimRecord() {
-    const alias = recordName.trim().slice(0, 16) || "Anonymous";
-    const next = { score: score.current, alias };
-    writeSnakeRecord(next);
-    setRecord(next);
-    recordClaiming.current = false;
-    setRecordClaim(false);
+  async function claimRecord() {
+    if (claimState === "saving") return;
+    setClaimState("saving");
+    try {
+      const res = await submitSnakeRecord(score.current, recordName.trim().slice(0, 16) || "Anonymous", gameMs.current);
+      setRecord(res.record);
+      setBeaten(!res.ok);
+      recordClaiming.current = false;
+      setRecordClaim(false);
+      setClaimState("idle");
+    } catch {
+      setClaimState("error"); // offline or server down: keep the form so they can retry
+    }
   }
 
   function tick() {
@@ -266,6 +278,7 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
   }
 
   useEffect(() => {
+    if (!frozen) void fetchSnakeRecord().then(setRecord);
     demo.current = !frozen && new URLSearchParams(window.location.search).has("snakedemo");
     firstRun.current = !frozen &&
       (!localStorage.getItem("eric-os-snake-onboarded") || new URLSearchParams(window.location.search).has("tut")); // tutorial only the very first time (?tut=1 forces it for QA)
@@ -552,7 +565,8 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
               placeholder="Your name (optional)"
               aria-label="全站纪录署名"
             />
-            <button type="submit">SAVE RECORD</button>
+            {claimState === "error" && <div className="dsover-record-copy dsover-error">没能保存，检查网络后再试一次</div>}
+            <button type="submit" disabled={claimState === "saving"}>{claimState === "saving" ? "SAVING…" : claimState === "error" ? "TRY AGAIN" : "SAVE RECORD"}</button>
           </form>
         ) : (
           <div className="snake-tutorial dsnake-over">
@@ -565,6 +579,7 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
               <span>ALL-TIME RECORD</span>
               <strong>{record.score}</strong>
               <span>held by <b>{record.alias}</b></span>
+              {beaten && <span className="dsover-beaten">Someone beat it just before you — so close!</span>}
             </div>
             <div className="dsover-actions">
               <span><b>R</b> REPLAY</span>

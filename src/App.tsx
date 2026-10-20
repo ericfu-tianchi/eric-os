@@ -15,7 +15,6 @@ import { ProjectsApp, ProjectDetailApp } from "./apps/ProjectsApp";
 import { SnakeApp } from "./apps/SnakeApp";
 import { ResumeApp, PrefsApp } from "./apps/MiscApps";
 import { LifeApp, PlaygroundApp } from "./apps/LifeApp";
-import { resetSnakeRecordPreview } from "./data/snakeRecord";
 import { FileSystemApp } from "./apps/FileSystemApp";
 import { ExternalGameApp } from "./apps/ExternalGameApp";
 import { HtmlDocApp } from "./apps/HtmlDocApp";
@@ -130,16 +129,6 @@ export default function App() {
     root.dataset.canvas = canvasVariant;
     return () => { delete root.dataset.canvas; };
   }, [canvasVariant, canvasStudy, theme]);
-
-  // Temporary, one-time QA reset so Eric can immediately exercise the
-  // first global-record / credit flow without resetting the entire desktop.
-  useEffect(() => {
-    const key = "eric-os-snake-record-qa-reset-v1";
-    if (localStorage.getItem(key)) return;
-    useOS.getState().setSnakeBest(0);
-    resetSnakeRecordPreview();
-    localStorage.setItem(key, "1");
-  }, []);
 
   // first visit: never an empty desktop
   useEffect(() => {
