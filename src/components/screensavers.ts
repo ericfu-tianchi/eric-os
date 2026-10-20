@@ -254,9 +254,9 @@ function makeCorner(W: number, H: number): Saver {
 // Here's to the crazy ones: Apple's 1997 Think Different, credited.
 // A slow teleprompter: each line types out big in the middle of the screen
 // behind a blinking green block, then the whole text drifts up and fades as
-// the next one arrives. The last two lines are the finale: the screen clears,
-// the second-to-last line comes in on its own, a touch larger, then the last
-// line (the tagline) alone, a little larger again. Then the F. CRAZY_ONES is the text.
+// the next one arrives. The second-to-last line comes after a short breath,
+// a little brighter, same size. Then the screen clears and the last line (the
+// tagline) comes in alone, a little larger. Then the F. CRAZY_ONES is the text.
 // =====================================================================
 export const CRAZY_ONES = [
   "Here's to the crazy ones.",
@@ -283,19 +283,21 @@ function makeCrazy(W: number, H: number): Saver {
     for (const w of text.split(" ")) { const t = line ? `${line} ${w}` : w; if (m.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t; }
     out.push(line); return out.map((r) => ({ r, w: m.measureText(r).width }));
   };
-  const n = CRAZY_ONES.length, body = CRAZY_ONES.slice(0, Math.max(0, n - 2)), [pen, tag] = n >= 2 ? CRAZY_ONES.slice(-2) : ["", CRAZY_ONES[0] ?? ""];
+  const n = CRAZY_ONES.length, body = CRAZY_ONES.slice(0, Math.max(0, n - 1)), tag = CRAZY_ONES[n - 1] ?? "", penI = body.length - 1;
   const fs = Math.min(H * 0.072, W * 0.046), lh = fs * 1.4, F1 = `540 ${fs}px Geist, sans-serif`;
-  const fsP = fs * 1.08, lhP = fsP * 1.36, FP = `600 ${fsP}px Geist, sans-serif`; // a touch more than the body, not a shout
   const fsT = fs * 1.4, FT = `650 ${fsT}px Geist, sans-serif`;
   const CPS = 14, HOLD = 1.7; // characters a second, pause after each line
 
   // body: every line wrapped to rows; a line's block is laid out from its own top
   const blocks = body.map((text) => ({ text, rows: wrap(text, F1, W * 0.78) }));
   let tops: number[] = [], y = 0, t0 = 1.0; const starts: number[] = [];
-  for (const b of blocks) { tops.push(y); y += b.rows.length * lh + fs * 0.25; starts.push(t0); t0 += b.text.length / CPS + HOLD; }
-  const bodyEnd = t0, penRows = wrap(pen, FP, W * 0.7);
-  const penStart = bodyEnd + 1.6, penEnd = penStart + pen.length / (CPS * 0.85) + 2.8;
-  const tagStart = penEnd + 1.4, tagEnd = tagStart + tag.length / 7 + 3.8, endStart = tagEnd + 1.0, total = endStart + 5.5;
+  blocks.forEach((b, i) => {
+    if (i === penI && i > 0) t0 += 1.6; // a breath before the second-to-last line
+    tops.push(y); y += b.rows.length * lh + fs * 0.25; starts.push(t0); t0 += b.text.length / CPS + HOLD + (i === penI ? 1.2 : 0);
+  });
+  const bodyEnd = t0;
+  const penStart = bodyEnd + 1.6;
+  const tagStart = penStart + 0.4, tagEnd = tagStart + tag.length / 7 + 3.8, endStart = tagEnd + 1.0, total = endStart + 5.5;
   let t = 0;
 
   // type `count` characters of a wrapped block; each row centred on its final width
@@ -334,19 +336,12 @@ function makeCrazy(W: number, H: number): Saver {
           if (t < starts[i]) return;
           const top = H / 2 - scroll + tops[i] + lh * 0.7 - lift, dist = cur - i;
           const a = i === cur ? 1 : Math.max(0, 0.42 - (dist - 1) * 0.1) * clamp((top - H * 0.08) / (H * 0.2));
-          ctx.globalAlpha = a * fadeAll;
+          ctx.globalAlpha = a * fadeAll; ctx.fillStyle = i === penI && i === cur ? "#ffffff" : "#e2e2e6"; // the last body line is just brighter
           const c = typeRows(ctx, b.rows, Math.floor((t - starts[i]) * CPS), top, lh, F1);
           if (i === cur) caret = c;
         });
         const typing = blocks.length > 0 && (t - starts[cur]) * CPS < blocks[cur].text.length;
         ctx.globalAlpha = fadeAll; block(ctx, caret, fs, typing || blink());
-      }
-      // ---- finale 1: the second-to-last line, larger, alone
-      if (pen && t >= penStart && t < tagStart) {
-        const a = 1 - clamp((t - penEnd + 0.9) / 0.9), top = H / 2 - (penRows.length * lhP) / 2 + fsP * 0.75 - clamp((t - penEnd + 0.9) / 0.9) * H * 0.04;
-        ctx.globalAlpha = a; ctx.fillStyle = "#f4f4f6";
-        const c = typeRows(ctx, penRows, Math.floor((t - penStart) * CPS * 0.85), top, lhP, FP);
-        block(ctx, c, fsP, (t - penStart) * CPS * 0.85 < pen.length || blink());
       }
       // ---- finale 2: the tagline, huge, then the credit
       if (t >= tagStart && t < endStart + 0.8) {
