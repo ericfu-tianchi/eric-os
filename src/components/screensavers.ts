@@ -251,10 +251,12 @@ function makeCorner(W: number, H: number): Saver {
 
 
 // =====================================================================
-// Here's to the crazy ones: Apple's 1997 Think Different, credited. The lines
-// type out one by one, the caret is the snake's head, and it ends on the F.
-// Only the opening line and the tagline are quoted (the full ad copy is
-// Apple's); CRAZY_ONES is the one place to change the text.
+// Here's to the crazy ones: Apple's 1997 Think Different, credited.
+// A slow teleprompter: each line types out big in the middle of the screen
+// behind a blinking green block, then the whole text drifts up and fades as
+// the next one arrives. The last two lines are the finale: the screen clears,
+// the second-to-last line comes in larger on its own, then the last line
+// (the tagline) alone and huge. Then the F. CRAZY_ONES is the text.
 // =====================================================================
 export const CRAZY_ONES = [
   "Here's to the crazy ones.",
@@ -275,71 +277,101 @@ export const CRAZY_ONES = [
 ];
 const CRAZY_CREDIT = "Apple, Think Different, 1997";
 function makeCrazy(W: number, H: number): Saver {
-  const few = CRAZY_ONES.length <= 3, CPS = few ? 14 : 30;
-  // Lay the text out once: wrap long lines to ~72% of the width, then shrink the
-  // type until the whole block fits ~78% of the height. Any length of text works.
   const m = document.createElement("canvas").getContext("2d")!;
-  let fs = few ? Math.min(H * 0.075, W * 0.05) : Math.min(H * 0.046, W * 0.028), lh = 0;
-  let rows: { src: number; from: number; to: number; w: number }[] = [];
-  const maxW = W * 0.72;
-  for (let k = 0; k < 30; k++) {
-    m.font = `600 ${fs}px Geist, sans-serif`; lh = fs * (few ? 1.4 : 1.5); rows = [];
-    CRAZY_ONES.forEach((line, src) => {
-      let from = 0;
-      while (from < line.length) {
-        let to = line.length;
-        if (m.measureText(line.slice(from)).width > maxW) {
-          to = from;
-          for (let j = from; j <= line.length; j++) {
-            if (j === line.length || line[j] === " ") { if (m.measureText(line.slice(from, j)).width > maxW && to > from) break; to = j; }
-          }
-          if (to === from) to = line.length;
-        }
-        rows.push({ src, from, to, w: m.measureText(line.slice(from, to)).width });
-        from = to; while (line[from] === " ") from++;
-      }
-    });
-    if (rows.length * lh <= H * 0.78 || fs < 11) break;
-    fs *= 0.92;
-  }
-  const blockW = Math.max(...rows.map((r) => r.w)), x0 = W / 2 - blockW / 2, y0 = H / 2 - (rows.length * lh) / 2 + fs * 0.8;
-  const starts: number[] = []; let acc = 0.8;
-  for (const l of CRAZY_ONES) { starts.push(acc); acc += l.length / CPS + (few ? 1.2 : 0.55); }
-  const textEnd = acc, total = textEnd + 7.2;
+  const wrap = (text: string, font: string, maxW: number) => {
+    m.font = font; const out: string[] = []; let line = "";
+    for (const w of text.split(" ")) { const t = line ? `${line} ${w}` : w; if (m.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t; }
+    out.push(line); return out.map((r) => ({ r, w: m.measureText(r).width }));
+  };
+  const n = CRAZY_ONES.length, body = CRAZY_ONES.slice(0, Math.max(0, n - 2)), [pen, tag] = n >= 2 ? CRAZY_ONES.slice(-2) : ["", CRAZY_ONES[0] ?? ""];
+  const fs = Math.min(H * 0.072, W * 0.046), lh = fs * 1.4, F1 = `540 ${fs}px Geist, sans-serif`;
+  const fsP = Math.min(H * 0.084, W * 0.056), lhP = fsP * 1.3, FP = `650 ${fsP}px Geist, sans-serif`;
+  const fsT = Math.min(H * 0.15, W * 0.1), FT = `700 ${fsT}px Geist, sans-serif`;
+  const CPS = 17, HOLD = 1.3; // characters a second, pause after each line
+
+  // body: every line wrapped to rows; a line's block is laid out from its own top
+  const blocks = body.map((text) => ({ text, rows: wrap(text, F1, W * 0.78) }));
+  let tops: number[] = [], y = 0, t0 = 1.0; const starts: number[] = [];
+  for (const b of blocks) { tops.push(y); y += b.rows.length * lh + fs * 0.25; starts.push(t0); t0 += b.text.length / CPS + HOLD; }
+  const bodyEnd = t0, penRows = wrap(pen, FP, W * 0.7);
+  const penStart = bodyEnd + 1.6, penEnd = penStart + pen.length / (CPS * 0.85) + 2.8;
+  const tagStart = penEnd + 1.2, tagEnd = tagStart + tag.length / 8 + 3.6, endStart = tagEnd + 1.0, total = endStart + 5.5;
   let t = 0;
+
+  // type `count` characters of a wrapped block; each row centred on its final width
+  const typeRows = (ctx: CanvasRenderingContext2D, rows: { r: string; w: number }[], count: number, top: number, rowH: number, font: string) => {
+    ctx.font = font; let left = count, caret: [number, number] | null = null;
+    rows.forEach((row, i) => {
+      if (left <= 0) return;
+      const shown = row.r.slice(0, left), x = W / 2 - row.w / 2, yy = top + i * rowH;
+      ctx.fillText(shown, x, yy); caret = [x + ctx.measureText(shown).width, yy];
+      left -= row.r.length + 1;
+    });
+    return caret as [number, number] | null;
+  };
+  const block = (ctx: CanvasRenderingContext2D, at: [number, number] | null, size: number, on: boolean) => {
+    if (!at || !on) return;
+    const s = size * 0.56; ctx.save(); ctx.fillStyle = GREEN; ctx.beginPath();
+    ctx.roundRect(at[0] + size * 0.14, at[1] - size * 0.68, s, s * 1.12, s * 0.12); ctx.fill(); ctx.restore();
+  };
+  const blink = () => Math.floor(t * 1.8) % 2 === 0;
+
   return {
     step(dt) { t += dt; if (t > total) t = 0; },
     draw(ctx) {
       bg(ctx, W, H);
-      ctx.save(); ctx.font = `600 ${fs}px Geist, sans-serif`; ctx.textBaseline = "alphabetic";
-      const out = clamp((t - textEnd - 2.2) / 0.8);
-      ctx.globalAlpha = 1 - out;
-      let caret: [number, number] | null = null;
-      rows.forEach((r, ri) => {
-        const i = r.src; if (t < starts[i]) return;
-        const line = CRAZY_ONES[i], n = Math.min(line.length, Math.floor((t - starts[i]) * CPS));
-        if (n <= r.from) return;
-        const current = t < (starts[i + 1] ?? textEnd + 1.2);
-        const shown = line.slice(r.from, Math.min(r.to, n)), y = y0 + ri * lh;
-        ctx.fillStyle = current || few ? "#ececef" : "rgba(236,236,239,.5)";
-        ctx.fillText(shown, x0, y);
-        if (current) caret = [x0 + ctx.measureText(shown).width + fs * 0.2, y - fs * 0.74];
-      });
-      const typing = CRAZY_ONES.some((l, i) => t >= starts[i] && (t - starts[i]) * CPS < l.length);
-      if (caret && (typing || Math.floor(t * 2.4) % 2 === 0)) head(ctx, caret[0], caret[1], fs * 0.72, 1, 0, GREEN);
-      const cr = clamp((t - textEnd + 0.4) / 0.6);
-      ctx.globalAlpha = cr * (1 - out); ctx.font = `500 ${Math.max(11, fs * (few ? 0.28 : 0.5))}px Geist, sans-serif`; ctx.fillStyle = MUTED;
-      ctx.fillText(`— ${CRAZY_CREDIT}`, x0, y0 + rows.length * lh + fs * 0.2);
+      ctx.save(); ctx.textBaseline = "alphabetic"; ctx.fillStyle = "#ececef";
+      // ---- body: the current line sits at centre; everything glides up as lines arrive
+      if (t < penStart) {
+        let cur = 0; for (let i = 0; i < blocks.length; i++) if (t >= starts[i]) cur = i;
+        // ease the scroll from the previous line's position to the current one over ~1.1s
+        const k = blocks.length ? 1 - Math.pow(1 - clamp((t - starts[cur]) / 1.1), 3) : 1;
+        const prevTop = cur ? tops[cur - 1] + (blocks[cur - 1].rows.length * lh) / 2 : 0, curTop = blocks.length ? tops[cur] + (blocks[cur].rows.length * lh) / 2 : 0;
+        const scroll = prevTop + (curTop - prevTop) * k, fadeAll = 1 - clamp((t - bodyEnd - 0.2) / 1.2);
+        const lift = clamp((t - bodyEnd - 0.2) / 1.4) * H * 0.08;
+        let caret: [number, number] | null = null;
+        blocks.forEach((b, i) => {
+          if (t < starts[i]) return;
+          const top = H / 2 - scroll + tops[i] + lh * 0.7 - lift, dist = cur - i;
+          const a = i === cur ? 1 : Math.max(0, 0.42 - (dist - 1) * 0.1) * clamp((top - H * 0.08) / (H * 0.2));
+          ctx.globalAlpha = a * fadeAll;
+          const c = typeRows(ctx, b.rows, Math.floor((t - starts[i]) * CPS), top, lh, F1);
+          if (i === cur) caret = c;
+        });
+        const typing = blocks.length > 0 && (t - starts[cur]) * CPS < blocks[cur].text.length;
+        ctx.globalAlpha = fadeAll; block(ctx, caret, fs, typing || blink());
+      }
+      // ---- finale 1: the second-to-last line, larger, alone
+      if (pen && t >= penStart && t < tagStart) {
+        const a = 1 - clamp((t - penEnd + 0.9) / 0.9), top = H / 2 - (penRows.length * lhP) / 2 + fsP * 0.75 - clamp((t - penEnd + 0.9) / 0.9) * H * 0.04;
+        ctx.globalAlpha = a; ctx.fillStyle = "#f4f4f6";
+        const c = typeRows(ctx, penRows, Math.floor((t - penStart) * CPS * 0.85), top, lhP, FP);
+        block(ctx, c, fsP, (t - penStart) * CPS * 0.85 < pen.length || blink());
+      }
+      // ---- finale 2: the tagline, huge, then the credit
+      if (t >= tagStart && t < endStart + 0.8) {
+        const a = 1 - clamp((t - tagEnd) / 0.9);
+        ctx.globalAlpha = a; ctx.fillStyle = "#ffffff";
+        const rows = wrap(tag, FT, W * 0.86), top = H / 2 - (rows.length * fsT * 1.1) / 2 + fsT * 0.72;
+        const typed = Math.floor((t - tagStart) * 8);
+        const c = typeRows(ctx, rows, typed, top, fsT * 1.1, FT);
+        block(ctx, c, fsT, typed < tag.length || blink());
+        ctx.globalAlpha = a * clamp((t - tagStart - tag.length / 8 - 0.6) / 0.8);
+        ctx.font = `500 ${Math.max(13, fsT * 0.16)}px Geist, sans-serif`; ctx.fillStyle = MUTED; ctx.textAlign = "center";
+        ctx.fillText(CRAZY_CREDIT, W / 2, top + (rows.length - 1) * fsT * 1.1 + fsT * 0.62);
+        ctx.textAlign = "left";
+      }
       ctx.restore();
-      const end = clamp((t - textEnd - 3.0) / 0.8) * (1 - clamp((t - total + 0.6) / 0.6));
+      // ---- the F
+      const end = clamp((t - endStart) / 0.9) * (1 - clamp((t - total + 0.7) / 0.7));
       if (end > 0) {
         const bmp = markBitmap(H * 0.15 * (window.devicePixelRatio || 1)), mh = H * 0.15, mw = mh * MARK_RATIO;
         ctx.save(); ctx.globalAlpha = end;
         if (bmp) ctx.drawImage(bmp, W / 2 - mw / 2, H * 0.42 - mh / 2, mw, mh);
         ctx.font = `650 ${H * 0.04}px Geist, sans-serif`; ctx.textBaseline = "middle";
-        const a = "Tianchi", b = " OS", wa = ctx.measureText(a).width, wb = ctx.measureText(b).width;
+        const a = "Tianchi", b2 = " OS", wa = ctx.measureText(a).width, wb = ctx.measureText(b2).width;
         ctx.fillStyle = "#ececef"; ctx.fillText(a, W / 2 - (wa + wb) / 2, H * 0.42 + H * 0.12);
-        ctx.fillStyle = MUTED; ctx.fillText(b, W / 2 - (wa + wb) / 2 + wa, H * 0.42 + H * 0.12);
+        ctx.fillStyle = MUTED; ctx.fillText(b2, W / 2 - (wa + wb) / 2 + wa, H * 0.42 + H * 0.12);
         ctx.restore();
       }
     },
