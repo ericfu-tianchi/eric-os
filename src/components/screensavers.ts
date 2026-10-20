@@ -255,8 +255,8 @@ function makeCorner(W: number, H: number): Saver {
 // A slow teleprompter: each line types out big in the middle of the screen
 // behind a blinking green block, then the whole text drifts up and fades as
 // the next one arrives. The last two lines are the finale: the screen clears,
-// the second-to-last line comes in larger on its own, then the last line
-// (the tagline) alone and huge. Then the F. CRAZY_ONES is the text.
+// the second-to-last line comes in on its own, a touch larger, then the last
+// line (the tagline) alone, a little larger again. Then the F. CRAZY_ONES is the text.
 // =====================================================================
 export const CRAZY_ONES = [
   "Here's to the crazy ones.",
@@ -285,9 +285,9 @@ function makeCrazy(W: number, H: number): Saver {
   };
   const n = CRAZY_ONES.length, body = CRAZY_ONES.slice(0, Math.max(0, n - 2)), [pen, tag] = n >= 2 ? CRAZY_ONES.slice(-2) : ["", CRAZY_ONES[0] ?? ""];
   const fs = Math.min(H * 0.072, W * 0.046), lh = fs * 1.4, F1 = `540 ${fs}px Geist, sans-serif`;
-  const fsP = Math.min(H * 0.084, W * 0.056), lhP = fsP * 1.3, FP = `650 ${fsP}px Geist, sans-serif`;
-  const fsT = Math.min(H * 0.15, W * 0.1), FT = `700 ${fsT}px Geist, sans-serif`;
-  const CPS = 17, HOLD = 1.3; // characters a second, pause after each line
+  const fsP = fs * 1.08, lhP = fsP * 1.36, FP = `600 ${fsP}px Geist, sans-serif`; // a touch more than the body, not a shout
+  const fsT = fs * 1.4, FT = `650 ${fsT}px Geist, sans-serif`;
+  const CPS = 14, HOLD = 1.7; // characters a second, pause after each line
 
   // body: every line wrapped to rows; a line's block is laid out from its own top
   const blocks = body.map((text) => ({ text, rows: wrap(text, F1, W * 0.78) }));
@@ -295,7 +295,7 @@ function makeCrazy(W: number, H: number): Saver {
   for (const b of blocks) { tops.push(y); y += b.rows.length * lh + fs * 0.25; starts.push(t0); t0 += b.text.length / CPS + HOLD; }
   const bodyEnd = t0, penRows = wrap(pen, FP, W * 0.7);
   const penStart = bodyEnd + 1.6, penEnd = penStart + pen.length / (CPS * 0.85) + 2.8;
-  const tagStart = penEnd + 1.2, tagEnd = tagStart + tag.length / 8 + 3.6, endStart = tagEnd + 1.0, total = endStart + 5.5;
+  const tagStart = penEnd + 1.4, tagEnd = tagStart + tag.length / 7 + 3.8, endStart = tagEnd + 1.0, total = endStart + 5.5;
   let t = 0;
 
   // type `count` characters of a wrapped block; each row centred on its final width
@@ -325,7 +325,7 @@ function makeCrazy(W: number, H: number): Saver {
       if (t < penStart) {
         let cur = 0; for (let i = 0; i < blocks.length; i++) if (t >= starts[i]) cur = i;
         // ease the scroll from the previous line's position to the current one over ~1.1s
-        const k = blocks.length ? 1 - Math.pow(1 - clamp((t - starts[cur]) / 1.1), 3) : 1;
+        const k = blocks.length ? 1 - Math.pow(1 - clamp((t - starts[cur]) / 1.4), 3) : 1;
         const prevTop = cur ? tops[cur - 1] + (blocks[cur - 1].rows.length * lh) / 2 : 0, curTop = blocks.length ? tops[cur] + (blocks[cur].rows.length * lh) / 2 : 0;
         const scroll = prevTop + (curTop - prevTop) * k, fadeAll = 1 - clamp((t - bodyEnd - 0.2) / 1.2);
         const lift = clamp((t - bodyEnd - 0.2) / 1.4) * H * 0.08;
@@ -353,12 +353,12 @@ function makeCrazy(W: number, H: number): Saver {
         const a = 1 - clamp((t - tagEnd) / 0.9);
         ctx.globalAlpha = a; ctx.fillStyle = "#ffffff";
         const rows = wrap(tag, FT, W * 0.86), top = H / 2 - (rows.length * fsT * 1.1) / 2 + fsT * 0.72;
-        const typed = Math.floor((t - tagStart) * 8);
+        const typed = Math.floor((t - tagStart) * 7);
         const c = typeRows(ctx, rows, typed, top, fsT * 1.1, FT);
         block(ctx, c, fsT, typed < tag.length || blink());
-        ctx.globalAlpha = a * clamp((t - tagStart - tag.length / 8 - 0.6) / 0.8);
-        ctx.font = `500 ${Math.max(13, fsT * 0.16)}px Geist, sans-serif`; ctx.fillStyle = MUTED; ctx.textAlign = "center";
-        ctx.fillText(CRAZY_CREDIT, W / 2, top + (rows.length - 1) * fsT * 1.1 + fsT * 0.62);
+        ctx.globalAlpha = a * clamp((t - tagStart - tag.length / 7 - 0.6) / 0.8);
+        ctx.font = `500 ${Math.max(13, fsT * 0.24)}px Geist, sans-serif`; ctx.fillStyle = MUTED; ctx.textAlign = "center";
+        ctx.fillText(CRAZY_CREDIT, W / 2, top + (rows.length - 1) * fsT * 1.1 + fsT * 0.9);
         ctx.textAlign = "left";
       }
       ctx.restore();
