@@ -93,12 +93,12 @@ export function WindowFrame({
         onDoubleClick={() => toggleMax(win.id)}
       >
         <div className="controls">
-          <button className="ctrl close" aria-label="关闭窗口" onClick={requestClose}>
+          <button className="ctrl close" aria-label="Close window" onClick={requestClose}>
             <svg viewBox="0 0 8 8" aria-hidden>
               <path d="M1 1l6 6M7 1L1 7" stroke="rgba(0,0,0,0.6)" strokeWidth="1.8" strokeLinecap="square" />
             </svg>
           </button>
-          <button className="ctrl max" aria-label="最大化窗口" onClick={() => toggleMax(win.id)}>
+          <button className="ctrl max" aria-label={win.maximized ? "Restore window" : "Maximize window"} onClick={() => toggleMax(win.id)}>
             <svg viewBox="0 0 13 13" aria-hidden>
               {/* macOS full-screen arrows, optically balanced: both states share the triangles' centroids */}
               <path
@@ -112,15 +112,15 @@ export function WindowFrame({
         </div>
         {chrome?.navigation && (
           <div className="finder-nav" onPointerDown={(e) => e.stopPropagation()}>
-            <button type="button" aria-label="后退" disabled={!chrome.navigation.canGoBack} onClick={chrome.navigation.onBack}>
+            <button type="button" aria-label="Back" disabled={!chrome.navigation.canGoBack} onClick={chrome.navigation.onBack}>
               <svg viewBox="0 0 16 16" aria-hidden><path d="M10 3.5 5.5 8l4.5 4.5" /></svg>
             </button>
-            <button type="button" aria-label="前进" disabled={!chrome.navigation.canGoForward} onClick={chrome.navigation.onForward}>
+            <button type="button" aria-label="Forward" disabled={!chrome.navigation.canGoForward} onClick={chrome.navigation.onForward}>
               <svg viewBox="0 0 16 16" aria-hidden><path d="m6 3.5 4.5 4.5L6 12.5" /></svg>
             </button>
           </div>
         )}
-        <nav className="window-crumb" aria-label="当前位置" onPointerDown={(e) => e.stopPropagation()}>
+        <nav className="window-crumb" aria-label="Location" onPointerDown={(e) => e.stopPropagation()}>
           {trail.map((crumb, index) => (
             <span className="crumb-part" key={`${crumb.label}-${index}`}>
               {index > 0 && <span className="crumb-sep">/</span>}
@@ -134,11 +134,11 @@ export function WindowFrame({
         </nav>
         <span className="spacer" />
         {chrome?.viewControls && (
-          <div className="finder-views" onPointerDown={(e) => e.stopPropagation()} aria-label="视图切换">
-            <button type="button" className={chrome.viewControls.mode === "icon" ? "active" : ""} aria-label="图标视图" onClick={() => chrome.viewControls?.onChange("icon")}>
+          <div className="finder-views" onPointerDown={(e) => e.stopPropagation()} aria-label="View">
+            <button type="button" className={chrome.viewControls.mode === "icon" ? "active" : ""} aria-label="Icon view" onClick={() => chrome.viewControls?.onChange("icon")}>
               <svg viewBox="0 0 16 16" aria-hidden><rect x="2" y="2" width="5" height="5" rx="1.2" /><rect x="9" y="2" width="5" height="5" rx="1.2" /><rect x="2" y="9" width="5" height="5" rx="1.2" /><rect x="9" y="9" width="5" height="5" rx="1.2" /></svg>
             </button>
-            <button type="button" className={chrome.viewControls.mode === "list" ? "active" : ""} aria-label="列表视图" onClick={() => chrome.viewControls?.onChange("list")}>
+            <button type="button" className={chrome.viewControls.mode === "list" ? "active" : ""} aria-label="List view" onClick={() => chrome.viewControls?.onChange("list")}>
               <svg viewBox="0 0 16 16" aria-hidden><rect x="2" y="3" width="2" height="2" rx=".6" /><rect x="5.5" y="3.25" width="8.5" height="1.5" rx=".75" /><rect x="2" y="7" width="2" height="2" rx=".6" /><rect x="5.5" y="7.25" width="8.5" height="1.5" rx=".75" /><rect x="2" y="11" width="2" height="2" rx=".6" /><rect x="5.5" y="11.25" width="8.5" height="1.5" rx=".75" /></svg>
             </button>
           </div>
@@ -151,7 +151,7 @@ export function WindowFrame({
       {!win.maximized && (
         <div
           className="resize-grip"
-          aria-label="拖拽调整窗口大小"
+          aria-label="Resize window"
           onPointerDown={(e) => {
             e.stopPropagation();
             grip.current = { pid: e.pointerId };

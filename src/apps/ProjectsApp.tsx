@@ -32,7 +32,7 @@ export function ProjectsApp() {
       <div className="win-pad">
         <div className="folder-grid">
           {GROUPS.map((g) => (
-            <button key={g.id} className="folder-tile" onDoubleClick={() => setGroup(g.id)} title="双击打开">
+            <button key={g.id} className="folder-tile" onDoubleClick={() => setGroup(g.id)} title="Double-click to open">
               <PixIcon name="folder" size={54} />
               <span className="fname">{g.label}</span>
               <span className="fcount">{byGroup(g.id).length} items · {g.blurb}</span>
@@ -172,7 +172,7 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
     return () => scroller.removeEventListener("scroll", onScroll);
   }, [slug]);
 
-  if (!p) return <div className="win-pad">项目不存在。</div>;
+  if (!p) return <div className="win-pad">This project doesn't exist.</div>;
   const cs = caseOf(p);
   const hero = heroOf(p.slug);
   // Jumping past lazy images used to stop short: they load mid-scroll and push the target down.

@@ -17,7 +17,7 @@ export function BootSplash({ onDone }: { onDone: () => void }) {
     window.setTimeout(onDone, 120);
   };
   return (
-    <div className={`boot ${leaving ? "leaving" : ""}`} onClick={skip} role="status" aria-label="Tianchi OS 启动中">
+    <div className={`boot ${leaving ? "leaving" : ""}`} onClick={skip} role="status" aria-label="Tianchi OS is starting">
       <span className="wordmark" style={{ display: "flex", alignItems: "center", gap: 18 }}>
         <img className="boot-mark" src={fuWingMark} alt="" style={{ height: 54, width: "auto" }} draggable={false} />
         <PixelWordmark text="TIANCHI OS" cell={7} />

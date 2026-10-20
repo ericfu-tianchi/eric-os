@@ -193,20 +193,20 @@ export function SnakeApp() {
             <span className="big">{phase === "over" ? "GAME OVER" : "Snake"}</span>
             {phase === "over" && (
               <span style={{ fontFamily: "var(--font-system)", fontSize: 13, fontWeight: 700 }}>
-                得分 {score}{score >= snakeBest && score > 0 ? " · 新纪录!" : ""}
+                Score {score}{score >= snakeBest && score > 0 ? " · New best!" : ""}
               </span>
             )}
             <button className="arcade-btn primary" onClick={start}>
-              {phase === "over" ? "再来一局" : "开始游戏"}
+              {phase === "over" ? "Play again" : "Start"}
             </button>
             <span style={{ fontFamily: "var(--font-system)", fontSize: 10.5, color: "var(--muted)", letterSpacing: "0.08em" }}>
-              方向键 / WASD 控制
+              Arrow keys or WASD to steer
             </span>
           </div>
         )}
       </div>
       <p style={{ margin: 0, fontFamily: "var(--font-system)", fontSize: 10.5, color: "var(--faint)", letterSpacing: "0.06em" }}>
-        // 未来版本:果实=项目图标,吃到哪个开哪个
+        // Next: fruit = project icons; eat one to open it
       </p>
     </div>
   );

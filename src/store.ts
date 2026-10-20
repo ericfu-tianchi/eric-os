@@ -77,7 +77,7 @@ const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
   about: { w: 600, h: 560 },
   resume: { w: 720, h: 680 },
   readme: { w: 540, h: 470 },
-  prefs: { w: 470, h: 470 },
+  prefs: { w: 560, h: 640 },
   snake: { w: 424, h: 434 },
   filesystem: { w: 860, h: 590 },
   "soul-blade": { w: 1120, h: 720 },

@@ -27,7 +27,7 @@ export function MobileShell() {
             PRODUCT MANAGER · DESIGNER · BUILDER
           </p>
           <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.85, color: "var(--muted)" }}>
-            工程背景的产品经理,专注 AI 产品。相信技术是给人带来快乐的东西。
+            An AI product manager with an engineer's background, who believes technology should bring people joy.
           </p>
           <div className="contact-row">
             <a className="arcade-btn" href="https://github.com/ericfu-tianchi" target="_blank" rel="noopener noreferrer">GITHUB</a>

@@ -8,7 +8,7 @@ export const heroOf = (slug: string): string | undefined =>
   heroes[`../assets/old-site/heroes/${slug}.png`] ?? heroes[`../assets/old-site/heroes/${slug}.webp`];
 
 // Page thumbnails: each reading page's real first screen in the S4 file frame
-// (fine hairline, stepped corners, small dog-ear). Keyed by project slug, plus "about".
+// (fine hairline, stepped corners, no dog-ear). Keyed by project slug, plus "about".
 const fileIcons = import.meta.glob("../assets/file-icons/*.webp", { eager: true, import: "default" }) as Record<string, string>;
 export const fileIconOf = (key: string): string | undefined => fileIcons[`../assets/file-icons/${key}.webp`];
 

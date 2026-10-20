@@ -23,7 +23,7 @@ export function Dock({ leaving = false }: { leaving?: boolean }) {
                 ? setSnakeMode(true)
                 : open(item.app, { title: item.title, payload: item.app === "filesystem" ? "tianchintosh" : undefined })
             )}
-            aria-label={`打开 ${item.label}`}
+            aria-label={`Open ${item.label}`}
           >
             <span className="tip">{item.label}</span>
             <PixIcon name={item.glyph} size={46} />

@@ -100,7 +100,7 @@ function DesktopIcon({
           ? setSnakeMode(true)
           : open(def.app, { title: def.title, payload: def.payload, maximized: def.maximized })
       )}
-      aria-label={`${def.label},双击打开`}
+      aria-label={`${def.label} — double-click to open`}
     >
       {iconArt}
     </button>

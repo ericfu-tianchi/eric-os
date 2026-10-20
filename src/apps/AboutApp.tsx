@@ -48,9 +48,9 @@ export function AboutApp() {
       </div>
 
       <div className="contact-row" style={{ marginTop: 18 }}>
-        <a className="btn" href="https://github.com/ericfu-tianchi" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a className="btn" href="https://www.linkedin.com/in/tianchi-fu-60821b228" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a className="btn primary" href="mailto:ericfu-tianchi@outlook.com">🍎 Email me</a>
+        <a className="btn lg" href="https://github.com/ericfu-tianchi" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a className="btn lg" href="https://www.linkedin.com/in/tianchi-fu-60821b228" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a className="btn lg primary" href="mailto:ericfu-tianchi@outlook.com">🍎 Email me</a>
       </div>
     </div>
   );
