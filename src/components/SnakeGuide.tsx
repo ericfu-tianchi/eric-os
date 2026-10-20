@@ -58,7 +58,7 @@ const rand = ([a, b]: number[]) => (a + Math.random() * (b - a)) * 1000;
 function MiniHead({ hat, size = 40 }: { hat: SnakeHat; size?: number }) {
   const c = 44, er = c * 0.125, pr = er * 0.42, fa = c / 2 - er * 1.5, pb = c * 0.21;
   return (
-    <svg width={size} height={size} viewBox="-40 -37 76 74" aria-hidden>
+    <svg width={size} height={size} viewBox="-40 -37 76 74" overflow="visible" aria-hidden>
       <rect x={-21} y={-21} width={42} height={42} rx={4.4} style={{ fill: "var(--snake)" }} />
       {[-1, 1].map((s) => (
         <g key={s}>

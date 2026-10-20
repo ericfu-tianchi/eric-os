@@ -141,7 +141,8 @@ export const NY_LOGO_D = "M31.554,86.643c3.799.142,23.85-21.491,26.791-23.703,21
 export type CapColors = { crown: string; crownHi: string; seam: string; brim: string; brimHi: string; stitch: string; logo: string; eyelet: string };
 
 export function nyCap(id: string, c: CapColors, sticker: boolean) {
-  const cx = -8.5, rx = 19.5, ry = 19.5 * 0.97, bx = cx + 1.2; // crown centre / radii / top button
+  // crown centre / radii / top button. Pushed back so the crown ends just behind the eyes (edge ≈ x 7.2, eyes start at 8.25)
+  const cx = -12.5, rx = 19.5, ry = 19.5 * 0.97, bx = cx + 1.2;
   const pt = (deg: number, k = 1) => {
     const a = (deg * Math.PI) / 180;
     return [cx + rx * k * Math.cos(a), ry * k * Math.sin(a)] as const;
@@ -171,7 +172,7 @@ export function nyCap(id: string, c: CapColors, sticker: boolean) {
       <linearGradient id="${id}-brim" x1="${f(tip)}" y1="0" x2="${f(p1x)}" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${c.brimHi}"/><stop offset="1" stop-color="${c.brim}"/></linearGradient>
       <clipPath id="${id}-bclip"><path d="${brim(1)}Z"/></clipPath>
     </defs>
-    <g transform="scale(.95)">
+    <g transform="scale(1.03)">
       <path d="${brim(1)}Z" fill="url(#${id}-brim)" stroke="${c.seam}" stroke-width=".7"/>
       ${[0.94, 0.89, 0.84, 0.79].map((k) => `<path d="${brim(k)}" fill="none" stroke="${c.stitch}" stroke-width=".3" stroke-dasharray=".8 .5"/>`).join("")}
       <ellipse cx="${f(cx - 1.4)}" cy=".6" rx="${rx}" ry="${f(ry)}" fill="rgba(0,0,0,.35)" clip-path="url(#${id}-bclip)"/>
