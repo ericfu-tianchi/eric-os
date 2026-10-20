@@ -923,6 +923,8 @@ button { font-family: inherit; color: inherit; }
 .cs {
   --cs: #4f7cac;
   --cs-tint: color-mix(in srgb, var(--cs) 16%, white);
+  --cs-mark: color-mix(in oklch, var(--cs) 24%, white);   /* oklch keeps the hue vivid instead of greying it */
+  --cs-mark-on-tint: color-mix(in oklch, var(--cs) 34%, white);
   --cs-mist: #f6f6f7;
   --cs-col: 880px;
   --cs-gutter: clamp(24px, 7cqi, 80px);
@@ -960,17 +962,15 @@ button { font-family: inherit; color: inherit; }
 .cs-sub { display: flex; align-items: center; gap: 12px; margin: 48px 0 18px; font-family: var(--font-display); font-weight: 700; font-size: 22px; line-height: 1.4; color: #181818; }
 .cs-sub::before { content: ""; flex: none; width: 9px; height: 9px; background: var(--cs); transform: translateY(1px); }
 .cs-p { margin: 0 0 18px; font-family: var(--font-sans); font-size: 16px; line-height: 1.7; color: #181818; }
-/* highlights: a marker stroke across the lower half, in the page accent. Reads on white, on mist and inside tinted panels alike */
-.cs mark {
-  background: linear-gradient(transparent 50%, color-mix(in srgb, var(--cs) 36%, transparent) 50%, color-mix(in srgb, var(--cs) 36%, transparent) 92%, transparent 92%);
-  color: inherit; padding: 0 1px; -webkit-box-decoration-break: clone; box-decoration-break: clone;
-}
+/* highlights: a full-height tint behind the words (as before), one step stronger so it isn't dull */
+.cs mark { background: var(--cs-mark); color: inherit; padding: 1px 0; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 .cs b { font-weight: 700; }
 
 .cs-callout { margin: 56px calc(-1 * min(64px, var(--cs-gutter))); padding: 40px clamp(24px, 6cqi, 64px); background: var(--cs); color: #fff; }
 .cs-callout-label { margin: 0 0 20px; font-family: var(--font-display); font-weight: 700; font-size: 18px; text-transform: uppercase; }
 .cs-callout p:last-child { margin: 0; font-family: var(--font-sans); font-size: 19px; line-height: 1.7; }
-.cs-callout mark { background: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.28) 92%, transparent 92%); color: #fff; }
+.cs-callout mark { background: rgba(0, 0, 0, 0.22); color: #fff; }
+.cs-list mark { background: var(--cs-mark-on-tint); } /* inside a tinted panel: a deeper tint of the same accent, never white */
 
 .cs-quote { margin: 56px auto; max-width: 680px; padding: 0 8px; text-align: center; font-family: var(--font-sans); font-weight: 600; font-size: 20px; line-height: 1.6; color: #181818; text-wrap: balance; }
 .cs-quote::before, .cs-quote::after { content: ""; display: block; width: 48px; height: 1px; margin: 0 auto; background: #494949; }
