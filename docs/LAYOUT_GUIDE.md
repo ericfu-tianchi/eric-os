@@ -152,7 +152,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 A reading page's icon is its **cover**, cropped to fill a landscape 4:3 card (never the whole
 page shrunk: at 1/12 scale nothing reads). Pages without a cover get their name in Montserrat 800
 on the accent color; About uses its portrait and greeting. The card sits in the S4 frame
-(one-pixel light-gray hairline, stepped corners, small stepped dog-ear top-right); the content
+(one-pixel light-gray hairline, four matching stepped corners, no dog-ear); the content
 itself is never pixelated.
 
 In Finder icon view these thumbnails get a 104px slot (other icons stay 66px; a folder that

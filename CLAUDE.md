@@ -51,6 +51,10 @@ v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(明暗�
 - **内容扩展**:新增 case 仍以 `src/data/projects.ts` / `cases*.ts` 为主；在批量引入 HTML、Markdown、PDF、视频前，应先建立统一 content manifest + renderer registry，避免分散的 app 判断。
 - **全站纪录**:只存一条全站最高分(分数 + 署名),在 Worker 的 KV(`SNAKE` 命名空间,`/api/record`)。`src/data/snakeRecord.ts` 负责读写并在本地缓存最后一次看到的纪录;Worker 拒绝明显伪造的分数(超过游戏时长可能达到的分数)。个人 BEST 仍存在访客自己的浏览器里。
 
+## OS 设计规范(2026-10-20)
+
+OS 层(菜单、Settings、Finder、蛇的对话/换装、tooltip、窗口)只用一套:字体 Geist;字号只用 `--ui-fine 10.5 / --ui-meta 11.5 / --ui-control 12.5 / --ui-body 13.5 / --ui-title 20`(文件名 12、菜单栏品牌 15 为既有特例);圆角只用 `--r-xs 4 / --r-sm 6 / --r-md 8 / --r-pill`(窗口 4、聊天气泡 12、Dock 14 为特例);四种表面:桌面台面、白窗口、深色玻璃菜单、白色浮层面板;tooltip 一律近黑底白字;按钮一个家族 `.btn`(白底细边 / 墨黑 primary / `.lg`),UI 不用彩色,`--select` 蓝只代表"访客自己"。全站英文。阅读页(案例、About)仍按 `docs/LAYOUT_GUIDE.md`。完整规范:Design System artifact https://claude.ai/artifact/H3kdSW5jdA33qbSXsRWBqn
+
 ## V0.6 蛇助手(壁纸蛇 = Tianchi 的小跟班)
 
 - **入口**:`SnakeGuide.tsx` 挂在桌面上。蛇头是菜单:悬停/点击 → 扇形三朵想法泡泡(Play / Dress me up / Ask about Tianchi)。没被发现时每次加载 5–10 s 冒第一个,之后每 20–30 s 随机一个;一旦发现(悬停 0.8 s / 点头 / 点泡泡)本次访问不再冒。不跨访问记忆。

@@ -395,7 +395,7 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
   const d = dir.current;
   const cx = hx * cellW + cellW / 2;
   const cy = hy * cellH + cellH / 2;
-  const er = cellH * 0.125; // 中大
+  const er = cellH * 0.125; // medium-large eyes
   const pr = er * 0.42;
   const fa = cellW / 2 - er * 1.5;
   const pb = cellH * 0.21;
@@ -418,7 +418,7 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
           <span key={scorePulse} className="score-readout">SCORE {score.current}</span>
           <span>BEST {shown}</span>
           <span>RECORD {record.score}</span>
-          <span className="esc">↑↓←→ 控制蛇 · M 键{muted ? "打开声音" : "静音"} · ESC 退出</span>
+          <span className="esc">↑↓←→ to steer · M to {muted ? "unmute" : "mute"} · ESC to exit</span>
         </div>
       )}
       {!frozen &&
@@ -535,7 +535,7 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
             </div>
           </div>
           <div className="tut-cap">
-            <span>用</span><span className="tut-inline-keys" aria-label="上下左右"><span>↑</span><span>↓</span><span>←</span><span>→</span></span><span>控制蛇去吃苹果</span>
+            <span>Use</span><span className="tut-inline-keys" aria-label="arrow keys"><span>↑</span><span>↓</span><span>←</span><span>→</span></span><span>to steer the snake to the apple</span>
           </div>
         </div>
       )}
@@ -556,16 +556,16 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
           >
             <div className="dsover-kicker">NEW RECORD</div>
             <div className="dsover-record-score">{score.current}</div>
-            <div className="dsover-record-copy">留下署名？不填将显示 Anonymous</div>
+            <div className="dsover-record-copy">Sign your record — or leave it blank to stay Anonymous.</div>
             <input
               autoFocus
               maxLength={16}
               value={recordName}
               onChange={(e) => setRecordName(e.target.value)}
               placeholder="Your name (optional)"
-              aria-label="全站纪录署名"
+              aria-label="Name for the all-time record"
             />
-            {claimState === "error" && <div className="dsover-record-copy dsover-error">没能保存，检查网络后再试一次</div>}
+            {claimState === "error" && <div className="dsover-record-copy dsover-error">Couldn't save. Check your connection and try again.</div>}
             <button type="submit" disabled={claimState === "saving"}>{claimState === "saving" ? "SAVING…" : claimState === "error" ? "TRY AGAIN" : "SAVE RECORD"}</button>
           </form>
         ) : (
@@ -583,7 +583,7 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
             </div>
             <div className="dsover-actions">
               <span><b>R</b> REPLAY</span>
-              <span><b>M</b> {muted ? "打开声音" : "静音"}</span>
+              <span><b>M</b> {muted ? "UNMUTE" : "MUTE"}</span>
               <button type="button" className="dsover-action" onClick={() => setSnakeMode(false)}><b className="wide">ESC</b> EXIT</button>
             </div>
           </div>

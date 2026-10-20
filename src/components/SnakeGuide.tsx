@@ -71,12 +71,27 @@ function MiniHead({ hat, size = 40 }: { hat: SnakeHat; size?: number }) {
   );
 }
 
+/** The wardrobe grid — the same picker in the snake's "Dress me up" card and in Settings. */
+export function HatPicker() {
+  const hat = useOS((s) => s.snakeHat);
+  const setSnakeHat = useOS((s) => s.setSnakeHat);
+  return (
+    <div className="sguide-hats" role="radiogroup" aria-label="Snake accessory">
+      {HATS.map((h) => (
+        <button type="button" role="radio" aria-checked={hat === h.id} key={h.id} className={hat === h.id ? "on" : ""} onClick={() => setSnakeHat(h.id)}>
+          <MiniHead hat={h.id} size={56} />
+          <span>{h.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function SnakeGuide() {
   const spec = useGridSpec();
   const open = useOS((s) => s.open);
   const setSnakeMode = useOS((s) => s.setSnakeMode);
   const hat = useOS((s) => s.snakeHat);
-  const setSnakeHat = useOS((s) => s.setSnakeHat);
   const windows = useOS((s) => s.windows);
 
   const [nudge, setNudge] = useState<Topic | null>(null);
@@ -228,14 +243,7 @@ export function SnakeGuide() {
             <b>Dress me up</b>
             <button type="button" className="sguide-x" aria-label="Close" onClick={() => setPanel(null)}>×</button>
           </header>
-          <div className="sguide-hats">
-            {HATS.map((h) => (
-              <button type="button" key={h.id} className={hat === h.id ? "on" : ""} onClick={() => setSnakeHat(h.id)}>
-                <MiniHead hat={h.id} size={56} />
-                <span>{h.label}</span>
-              </button>
-            ))}
-          </div>
+          <HatPicker />
           <footer>
             <span>Saved on this device.</span>
             <button type="button" onClick={() => { setPanel(null); open("prefs", { title: "Settings" }); }}>More in Settings</button>

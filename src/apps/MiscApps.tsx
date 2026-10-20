@@ -1,4 +1,5 @@
-import { useOS, type Wallpaper, type IconSet, type Theme, type SnakeHat, type AppId } from "../store";
+import { useOS, type Wallpaper, type Theme, type AppId } from "../store";
+import { HatPicker } from "../components/SnakeGuide";
 import { PixIcon, type PixIconName } from "../components/Pixel";
 import resumePage from "../assets/resume-page.png";
 import resume from "../data/resumeLinks.json";
@@ -73,126 +74,73 @@ export function ReadmeApp() {
 }
 
 const WALLPAPERS: { id: Wallpaper; label: string; desc: string }[] = [
-  { id: "snake", label: "SNAKE BOARD", desc: "棋盘网格 + 贪吃蛇(默认)" },
-  { id: "clean", label: "CLEAN", desc: "纯网格,极简" },
-  { id: "noir", label: "NOIR", desc: "老站同款暗色棋盘,夜场模式" },
-];
-
-const ICON_SETS: { id: IconSet; label: string; desc: string }[] = [
-  { id: "a", label: "SET A · CONSOLE", desc: "经典 16-bit,描边+三阶明暗" },
-  { id: "d", label: "SET D · INK", desc: "粗墨版画,单 accent" },
-];
-
-const HATS: { id: SnakeHat; label: string; desc: string }[] = [
-  { id: "none", label: "无", desc: "素颜蛇" },
-  { id: "glasses", label: "眼镜", desc: "黑色板材圆框" },
-  { id: "cap", label: "学士帽", desc: "密歇根 M" },
-  { id: "phones", label: "耳机", desc: "奶油薄荷" },
-  { id: "bow", label: "蝴蝶结", desc: "缎面粉" },
-  { id: "shades", label: "墨镜", desc: "Deal with it" },
-  { id: "cat", label: "猫耳", desc: "后掠猫耳发箍" },
-  { id: "nycap", label: "纽约帽", desc: "反戴的 NY 棒球帽" },
+  { id: "snake", label: "Snake", desc: "The grid, with the hello snake and its guide." },
+  { id: "clean", label: "Clean", desc: "Just the grid. The snake takes a day off." },
+  { id: "noir", label: "Noir", desc: "The old site's dark board, for night owls." },
 ];
 
 const THEMES: { id: Theme; label: string; desc: string }[] = [
-  { id: "dark", label: "DARK", desc: "炭灰暗台 + 白窗(默认)" },
-  { id: "light", label: "LIGHT", desc: "浅色底 + 白窗孪生" },
+  { id: "dark", label: "Dark", desc: "Charcoal desk under white windows." },
+  { id: "light", label: "Light", desc: "Light gray desk under white windows." },
 ];
 
-export function PrefsApp() {
-  const { wallpaper, setWallpaper, iconSet, setIconSet, theme, setTheme, snakeHat, setSnakeHat, resetDesktop } = useOS();
+/** A macOS-style segmented control: one choice of a few. */
+function Segmented<T extends string>({ value, options, onChange, label }: {
+  value: T; options: { id: T; label: string }[]; onChange: (v: T) => void; label: string;
+}) {
   return (
-    <div className="win-pad">
-      <p className="mono-label">SYSTEM PREFERENCES</p>
-      <h1 style={{ fontSize: 24, fontWeight: 900, margin: "6px 0 16px" }}>系统偏好设置</h1>
+    <div className="segmented" role="radiogroup" aria-label={label}>
+      {options.map((o) => (
+        <button key={o.id} type="button" role="radio" aria-checked={value === o.id} className={value === o.id ? "on" : ""} onClick={() => onChange(o.id)}>
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
 
-      <div className="prefs-group">
-        <b style={{ fontSize: 14 }}>外观(明暗)</b>
-        <div className="options">
-          {THEMES.map((t) => (
-            <button
-              key={t.id}
-              className={`tab ${theme === t.id ? "active" : ""}`}
-              onClick={() => setTheme(t.id)}
-              title={t.desc}
-            >
-              {t.label}
-            </button>
-          ))}
+export function PrefsApp() {
+  const { wallpaper, setWallpaper, theme, setTheme, resetDesktop } = useOS();
+  return (
+    <div className="settings">
+      <header>
+        <h1>Settings</h1>
+        <p>Make Tianchi OS yours. Everything saves on this device.</p>
+      </header>
+
+      <section className="set-group">
+        <div className="set-row">
+          <div className="set-label"><b>Appearance</b><span>{THEMES.find((t) => t.id === theme)?.desc}</span></div>
+          <Segmented label="Appearance" value={theme} options={THEMES} onChange={setTheme} />
         </div>
-      </div>
-
-      <div className="prefs-group">
-        <b style={{ fontSize: 14 }}>图标风格</b>
-        <div className="options">
-          {ICON_SETS.map((s) => (
-            <button
-              key={s.id}
-              className={`tab ${iconSet === s.id ? "active" : ""}`}
-              onClick={() => setIconSet(s.id)}
-              title={s.desc}
-            >
-              {s.label}
-            </button>
-          ))}
+        <div className="set-row">
+          <div className="set-label"><b>Wallpaper</b><span>{WALLPAPERS.find((w) => w.id === wallpaper)?.desc}</span></div>
+          <Segmented label="Wallpaper" value={wallpaper} options={WALLPAPERS} onChange={setWallpaper} />
         </div>
-      </div>
+      </section>
 
-      <div className="prefs-group">
-        <b style={{ fontSize: 14 }}>桌面壁纸</b>
-        <div className="options">
-          {WALLPAPERS.map((w) => (
-            <button
-              key={w.id}
-              className={`tab ${wallpaper === w.id ? "active" : ""}`}
-              onClick={() => setWallpaper(w.id)}
-              title={w.desc}
-            >
-              {w.label}
-            </button>
-          ))}
+      <section className="set-group">
+        <div className="set-row stack">
+          <div className="set-label"><b>Snake accessory</b><span>What the snake wears on your desktop.</span></div>
+          <HatPicker />
         </div>
-      </div>
+      </section>
 
-      <div className="prefs-group">
-        <b style={{ fontSize: 14 }}>蛇头装饰</b>
-        <div className="options">
-          {HATS.map((h) => (
-            <button
-              key={h.id}
-              className={`tab ${snakeHat === h.id ? "active" : ""}`}
-              onClick={() => setSnakeHat(h.id)}
-              title={h.desc}
-            >
-              {h.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="prefs-group">
-        <b style={{ fontSize: 14 }}>系统音效</b>
-        <div className="options">
-          <button className="tab" disabled>
-            OFF · 下版本再见
-          </button>
-        </div>
-      </div>
-
-      <div className="prefs-group">
-        <b style={{ fontSize: 14 }}>危险区</b>
-        <div className="options">
+      <section className="set-group">
+        <div className="set-row">
+          <div className="set-label"><b>Reset desktop</b><span>Puts every icon and window back where it started.</span></div>
           <button
-            className="arcade-btn"
+            type="button"
+            className="btn"
             onClick={() => {
               resetDesktop();
               window.location.reload();
             }}
           >
-            重置桌面布局
+            Reset
           </button>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

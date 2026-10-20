@@ -50,26 +50,18 @@ export function MenuBar() {
 
       {menuOpen && (
         <div className="menu-pop" role="menu">
-          <button onClick={item(() => open("about", { title: "About_Me.md" }))}>
-            关于 Tianchi OS <span className="k">ABOUT</span>
-          </button>
-          <button onClick={item(() => open("filesystem", { title: "Tianchintosh HD", payload: "tianchintosh" }))}>
-            文件系统 <span className="k">DISK</span>
-          </button>
-          <button onClick={item(() => open("prefs", { title: "Settings" }))}>
-            系统偏好设置 <span className="k">SETTINGS</span>
-          </button>
+          <button onClick={item(() => open("about", { title: "About_Me.md" }))}>About Tianchi</button>
+          <button onClick={item(() => open("filesystem", { title: "Tianchintosh HD", payload: "tianchintosh" }))}>Tianchintosh HD</button>
+          <button onClick={item(() => open("prefs", { title: "Settings" }))}>Settings…</button>
           <hr />
-          <button onClick={item(() => open("resume", { title: "resume.pdf" }))}>
-            简历 <span className="k">PDF</span>
-          </button>
+          <button onClick={item(() => open("resume", { title: "resume.pdf" }))}>Resume</button>
           <button
             onClick={item(() => {
               resetDesktop();
               window.location.reload();
             })}
           >
-            重启桌面 <span className="k">RESET</span>
+            Restart Desktop
           </button>
         </div>
       )}
