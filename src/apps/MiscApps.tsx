@@ -1,4 +1,4 @@
-import { useOS, DOCK_SIZE, type Theme, type AppId } from "../store";
+import { useOS, DOCK_SIZE, type Theme, type AppId, type SaverId } from "../store";
 import { HatPicker } from "../components/SnakeGuide";
 import { PixIcon, type PixIconName } from "../components/Pixel";
 import resumePage from "../assets/resume-page.png";
@@ -74,6 +74,14 @@ export function ReadmeApp() {
 }
 
 
+const SAVER_OPTIONS: { id: SaverId; label: string; desc: string }[] = [
+  { id: "duel", label: "Snake duel", desc: "Two snakes race for apples. First to 20 wins." },
+  { id: "corner", label: "Corner hit", desc: "The F bounces around. Wait for the corner." },
+];
+const DELAYS = [
+  { id: "1", label: "1 min" }, { id: "3", label: "3 min" }, { id: "5", label: "5 min" }, { id: "0", label: "Never" },
+];
+
 const THEMES: { id: Theme; label: string; desc: string }[] = [
   { id: "dark", label: "Dark", desc: "Charcoal desk under white windows." },
   { id: "light", label: "Light", desc: "Cool gray desk, same white windows." },
@@ -114,7 +122,7 @@ function Slider({ value, min, max, onChange, label, ends }: {
 }
 
 export function PrefsApp() {
-  const { theme, setTheme, resetDesktop, dockSize, setDockSize, dockAutoHide, setDockAutoHide, open } = useOS();
+  const { theme, setTheme, resetDesktop, dockSize, setDockSize, dockAutoHide, setDockAutoHide, open, saver, setSaver, saverDelay, setSaverDelay, setSaverActive } = useOS();
   return (
     <div className="settings">
       <header>
@@ -133,6 +141,20 @@ export function PrefsApp() {
         <div className="set-row stack">
           <div className="set-label"><b>Snake accessory</b><span>What the snake wears on your desktop.</span></div>
           <HatPicker />
+        </div>
+      </section>
+
+      <section className="set-group">
+        <div className="set-row">
+          <div className="set-label"><b>Screen saver</b><span>{SAVER_OPTIONS.find((o) => o.id === saver)?.desc}</span></div>
+          <div className="set-actions">
+            <button type="button" className="btn" onClick={() => setSaverActive(true)}>Preview</button>
+            <Segmented label="Screen saver" value={saver} options={SAVER_OPTIONS} onChange={setSaver} />
+          </div>
+        </div>
+        <div className="set-row">
+          <div className="set-label"><b>Start after</b><span>{saverDelay ? "Idle time before the screen saver starts." : "The screen saver never starts on its own."}</span></div>
+          <Segmented label="Start after" value={String(saverDelay)} options={DELAYS} onChange={(v) => setSaverDelay(Number(v))} />
         </div>
       </section>
 

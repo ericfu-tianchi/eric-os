@@ -19,6 +19,7 @@ import { FileSystemApp } from "./apps/FileSystemApp";
 import { ExternalGameApp } from "./apps/ExternalGameApp";
 import { HtmlDocApp } from "./apps/HtmlDocApp";
 import { AboutOSApp } from "./apps/AboutOSApp";
+import { ScreenSaver } from "./components/ScreenSaver";
 
 /** App registry — add an app: one component + one entry here. */
 const APP_VIEWS: Record<AppId, (w: WinInstance) => React.ReactNode> = {
@@ -215,6 +216,7 @@ export default function App() {
       )}
       {snakeMode && <DesktopSnake windowsOpen={order.length > 0} />}
       {(!snakeMode || exiting) && !order.some((id) => windows[id]?.maximized) && <Dock leaving={snakeMode} />}
+      <ScreenSaver />
     </>
   );
 }

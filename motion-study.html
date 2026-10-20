@@ -59,7 +59,8 @@
 </div>
 <div class="bar"><span>Picks</span><code id="picks">none yet</code><button id="copy">Copy</button></div>
 
-<script>
+<script type="module">
+import { SAVERS as SHIP, markBitmap } from "/src/components/screensavers.ts";
 // ---------- shared look ----------
 const GREEN = "#06C268", PAPER = "#1c1d21", GRIDL = "rgba(255,255,255,.045)", INK = "#ececef", MUTED = "#8a8b92";
 const GEMS = ["#06C268", "#FF4D7E", "#21C4C4", "#4D8BFF", "#F5B027", "#A77BFF"];
@@ -113,20 +114,9 @@ function wordmark(ctx, x, y, size, align = "center", alpha = 1) {
   ctx.restore(); return wa + wb;
 }
 function mark(ctx, cx, cy, h, alpha = 1, tint) {
-  if (!FMARK.complete || !FMARK.naturalWidth) return;
-  const w = h * FMARK.naturalWidth / FMARK.naturalHeight;
-  ctx.save(); ctx.globalAlpha = alpha;
-  if (tint) {
-    const o = tintCache(tint, Math.ceil(w), Math.ceil(h)); ctx.drawImage(o, cx - w / 2, cy - h / 2, w, h);
-  } else ctx.drawImage(FMARK, cx - w / 2, cy - h / 2, w, h);
-  ctx.restore();
-}
-const _tc = {};
-function tintCache(color, w, h) {
-  const k = color + w + "x" + h; if (_tc[k]) return _tc[k];
-  const o = document.createElement("canvas"); o.width = w; o.height = h; const x = o.getContext("2d");
-  x.drawImage(FMARK, 0, 0, w, h); x.globalCompositeOperation = "source-in"; x.fillStyle = color; x.fillRect(0, 0, w, h);
-  return (_tc[k] = o);
+  const bmp = markBitmap(h * (devicePixelRatio || 1), tint); if (!bmp) return;
+  const w = h * 545 / 886;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.drawImage(bmp, cx - w / 2, cy - h / 2, w, h); ctx.restore();
 }
 function lockupRow(ctx, cx, cy, s, alpha = 1) { // mark left of name, centered as a unit
   ctx.save(); ctx.font = `650 ${s}px Geist`; const tw = ctx.measureText("Tianchi OS").width; ctx.restore();
@@ -473,39 +463,6 @@ function makeClock(W, H, fast) {
   };
 }
 
-function makeBounce(W, H) {
-  const s = H * 0.06; let x = W * 0.3, y = H * 0.4, vx = W * 0.12, vy = H * 0.13, ci = 0, corners = 0, party = [], since = 0;
-  const size = () => { const mh = s * 1.6; return { w: mh * 545 / 886 + s * 0.5 + s * 5.0, h: mh }; };
-  return {
-    step(dt) {
-      const { w, h } = size(); x += vx * dt; y += vy * dt; since += dt; let hx = false, hy = false;
-      if (x < 0) { x = 0; vx = Math.abs(vx); hx = true; } if (x + w > W) { x = W - w; vx = -Math.abs(vx); hx = true; }
-      if (y < 0) { y = 0; vy = Math.abs(vy); hy = true; } if (y + h > H) { y = H - h; vy = -Math.abs(vy); hy = true; }
-      if (hx || hy) {
-        ci = (ci + 1) % GEMS.length;
-        // nudge, now and then, so the corner you're all waiting for actually happens
-        if (since > 9 && Math.random() < 0.5) {
-          const tx = (vx > 0 ? W - w - x : x) / Math.abs(vx), dy = vy > 0 ? H - h - y : y, need = dy / tx;
-          if (need > Math.abs(vy) * 0.6 && need < Math.abs(vy) * 1.6) vy = Math.sign(vy) * need;
-        }
-      }
-      if ((hx && hy) || (hx && (y < 2 || y + h > H - 2)) || (hy && (x < 2 || x + w > W - 2))) {
-        corners++; since = 0;
-        for (let i = 0; i < 70; i++) party.push({ x: x + w / 2, y: y + h / 2, vx: rnd(-1, 1) * W * 0.4, vy: rnd(-1.2, 0.2) * H * 0.6, life: rnd(1, 2), c: GEMS[ri(GEMS.length)] });
-      }
-      party.forEach((p) => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += H * 0.9 * dt; p.life -= dt; }); party = party.filter((p) => p.life > 0);
-    },
-    draw(ctx) {
-      bg(ctx, W, H);
-      const mh = s * 1.6, mw = mh * 545 / 886, col = GEMS[ci];
-      mark(ctx, x + mw / 2, y + mh / 2, mh, 1, col);
-      ctx.save(); ctx.font = `650 ${s}px Geist`; ctx.fillStyle = col; ctx.textBaseline = "middle"; ctx.fillText("Tianchi OS", x + mw + s * 0.5, y + mh / 2); ctx.restore();
-      for (const p of party) { ctx.globalAlpha = clamp(p.life); cell(ctx, p.x, p.y, s * 0.28, p.c); } ctx.globalAlpha = 1;
-      if (corners) { ctx.save(); ctx.font = `600 ${s * 0.32}px Geist`; ctx.fillStyle = MUTED; ctx.textAlign = "right"; ctx.fillText(`Corner hits: ${corners}`, W - s * 0.5, H - s * 0.5); ctx.restore(); }
-    },
-  };
-}
-
 function makeLife(W, H) {
   const cols = 64, c = W / cols, rows = Math.ceil(H / c);
   let a = new Uint8Array(cols * rows), age = new Uint16Array(cols * rows), acc = 0, gen = 0, hist = [];
@@ -585,53 +542,141 @@ function makePipes(W, H) {
   };
 }
 
-function makeDuel(W, H) {
-  const cols = 36, c = W / cols, rows = Math.floor(H / c), oy = (H - rows * c) / 2;
-  const S = [{ color: GREEN, name: "Green", score: 0 }, { color: "#FF4D7E", name: "Pink", score: 0 }];
-  let ap, acc = 0, booms = [];
-  const spawn = (s, i) => { const y = i ? rows - 4 : 3, x = i ? cols - 4 : 3, dx = i ? 1 : -1; s.body = [[x, y], [x + dx, y], [x + 2 * dx, y], [x + 3 * dx, y]]; };
-  S.forEach(spawn);
-  const mask = () => { const m = new Uint8Array(cols * rows); for (const s of S) for (const [x, y] of s.body) m[y * cols + x] = 1; return m; };
-  ap = placeApple(cols, rows, mask(), 2);
+// ---------- new round: three more ----------
+const MANIFESTO = [
+  "Here's to the curious ones.",
+  "The tinkerers. The prototypers. The ones who ask “why not?”",
+  "They read the docs, then rewrite the rules.",
+  "They test the model before they trust the model.",
+  "They sketch on napkins and ship before the meeting ends.",
+  "You can doubt them, debug them, or roadmap around them.",
+  "About the only thing you can't do is stop them building.",
+  "Because they make technology feel like joy.",
+  "And the people curious enough to think they can",
+  "are the ones who do.",
+];
+function makeCurious(W, H) {
+  const fs = Math.min(H * 0.046, W * 0.028), lh = fs * 1.55, CPS = 30;
+  const starts = []; let acc = 0.6; for (const l of MANIFESTO) { starts.push(acc); acc += l.length / CPS + 0.55; }
+  const textEnd = acc, total = textEnd + 6.2; let t = 0;
   return {
-    step(dt) {
-      acc += dt;
-      while (acc > 0.11) {
-        acc -= 0.11;
-        S.forEach((s, i) => {
-          const m = mask(); const t = s.body[s.body.length - 1]; m[t[1] * cols + t[0]] = 0;
-          const o = S[1 - i].body[0]; // don't step where the rival's head could land
-          for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) { const nx = o[0] + dx, ny = o[1] + dy; if (nx >= 0 && ny >= 0 && nx < cols && ny < rows) m[ny * cols + nx] = 1; }
-          const nx = autoStep(cols, rows, s.body, ap, m);
-          if (!nx) { booms.push(...s.body.map(([x, y]) => ({ x, y, life: 0.8, c: s.color }))); S[1 - i].score += 3; spawn(s, i); return; }
-          s.body.unshift(nx);
-          if (nx[0] === ap[0] && nx[1] === ap[1]) { s.score++; ap = placeApple(cols, rows, mask(), 2); if (s.body.length > 22) s.body.length = 12; } else s.body.pop();
-        });
-      }
-      booms.forEach((b) => (b.life -= dt)); booms = booms.filter((b) => b.life > 0);
-    },
-    draw(ctx, now) {
-      bg(ctx, W, H); grid(ctx, W, H, c, 1, 0, oy);
-      for (const b of booms) { ctx.globalAlpha = b.life / 0.8; cell(ctx, b.x * c, oy + b.y * c, c, b.c, 0.4 + b.life * 0.6); } ctx.globalAlpha = 1;
-      apple(ctx, ap[0] * c, oy + ap[1] * c, c, now);
-      S.forEach((s) => drawSnake(ctx, s.body, c, 0, oy, s.color, [ap[0] - s.body[0][0], ap[1] - s.body[0][1]]));
-      ctx.save(); ctx.font = `650 ${c * 0.75}px Geist`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      const y = oy + c * 0.9; ctx.fillStyle = GREEN; ctx.fillText(String(S[0].score), W / 2 - c * 1.2, y); ctx.fillStyle = MUTED; ctx.fillText("–", W / 2, y); ctx.fillStyle = "#FF4D7E"; ctx.fillText(String(S[1].score), W / 2 + c * 1.2, y);
+    step(dt) { t += dt; if (t > total) t = 0; },
+    draw(ctx) {
+      bg(ctx, W, H);
+      ctx.save(); ctx.font = `600 ${fs}px Geist`; ctx.textBaseline = "alphabetic";
+      const widest = Math.max(...MANIFESTO.map((l) => ctx.measureText(l).width));
+      const x0 = W / 2 - widest / 2, y0 = H / 2 - (MANIFESTO.length * lh) / 2 + fs;
+      const out = clamp((t - textEnd - 1.4) / 0.8);
+      ctx.globalAlpha = 1 - out;
+      MANIFESTO.forEach((l, i) => {
+        if (t < starts[i]) return;
+        const n = Math.min(l.length, Math.floor((t - starts[i]) * CPS)), current = t < (starts[i + 1] ?? textEnd);
+        ctx.fillStyle = current ? INK : i === 0 ? INK : "rgba(236,236,239,.5)";
+        const shown = l.slice(0, n); ctx.fillText(shown, x0, y0 + i * lh);
+        if (current) { // the caret is the snake's head, nosing the words along
+          const cw = fs * 0.78, cx = x0 + ctx.measureText(shown).width + fs * 0.22;
+          head(ctx, cx, y0 + i * lh - fs * 0.78, cw, 1, 0);
+        }
+      });
       ctx.restore();
+      const end = clamp((t - textEnd - 2.2) / 0.8) * (1 - clamp((t - total + 0.6) / 0.6));
+      if (end > 0) {
+        mark(ctx, W / 2, H * 0.42, H * 0.16, end);
+        wordmark(ctx, W / 2, H * 0.42 + H * 0.13, H * 0.042, "center", end);
+        ctx.save(); ctx.globalAlpha = end; ctx.font = `500 ${H * 0.022}px Geist`; ctx.fillStyle = MUTED; ctx.textAlign = "center";
+        ctx.fillText("Stay curious.", W / 2, H * 0.42 + H * 0.2); ctx.restore();
+      }
     },
   };
 }
+
+const REEL = [
+  ["refugeeone.webp", "RefugeeOne Job Finding App", "2023 · A job-finding app for a refugee resettlement agency"],
+  ["lego-world.webp", "My Lego World", "2026 · Every country I've been to, in real LEGO on a 3D globe"],
+  ["neurobot.png", "Neurobot", "2022 · Neuroscience robot app redesign, HCI Expo first prize"],
+  ["homesoffcampus.png", "HomesOffCampus", "2021 · Housing for international students, designed and built solo"],
+  ["huawei.png", "Huawei Foldable Window Management", "2022 · Window management for foldable PCs"],
+  ["subtension.png", "SubTension", "2022 · UX for a 2D submarine RTS"],
+  ["connectr.png", "Connectr", "2021 · An MBTI-driven friend-making app"],
+  ["rutabagga.png", "Rutabagga", "2022 · Brand and logo for a seasonal vegetarian food app"],
+].map(([f, name, sub]) => ({ img: img(`/src/assets/old-site/heroes/${f}`), name, sub }));
+function makeReel(W, H) {
+  const SLIDE = 7, FADE = 1.2; let t = 0;
+  const paint = (ctx, s, k, a, dir) => {
+    if (!s.img.naturalWidth) return;
+    const sc = Math.max(W / s.img.naturalWidth, H / s.img.naturalHeight) * (1.06 + 0.1 * k);
+    const w = s.img.naturalWidth * sc, h = s.img.naturalHeight * sc, dx = (W - w) / 2 + dir * (k - 0.5) * W * 0.04;
+    ctx.save(); ctx.globalAlpha = a; ctx.drawImage(s.img, dx, (H - h) / 2, w, h); ctx.restore();
+  };
+  return {
+    step(dt) { t += dt; },
+    draw(ctx) {
+      bg(ctx, W, H);
+      const i = Math.floor(t / SLIDE) % REEL.length, local = t % SLIDE, k = local / SLIDE;
+      const prev = REEL[(i + REEL.length - 1) % REEL.length];
+      if (local < FADE && t > SLIDE) paint(ctx, prev, 1 + local / SLIDE, 1, (i - 1) % 2 ? 1 : -1);
+      paint(ctx, REEL[i], k, t > SLIDE ? clamp(local / FADE) : 1, i % 2 ? 1 : -1);
+      const g = ctx.createLinearGradient(0, H * 0.55, 0, H); g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,.6)");
+      ctx.fillStyle = g; ctx.fillRect(0, H * 0.55, W, H * 0.45);
+      const ca = clamp((local - 0.8) / 0.6) * (1 - clamp((local - SLIDE + 0.9) / 0.6)), fs = Math.max(13, H * 0.034);
+      ctx.save(); ctx.globalAlpha = ca; ctx.shadowColor = "rgba(0,0,0,.4)"; ctx.shadowBlur = 12;
+      ctx.fillStyle = "#fff"; ctx.font = `650 ${fs}px Geist`; ctx.fillText(REEL[i].name, W * 0.05, H - H * 0.1);
+      ctx.fillStyle = "rgba(255,255,255,.75)"; ctx.font = `500 ${fs * 0.5}px Geist`; ctx.fillText(REEL[i].sub, W * 0.05, H - H * 0.1 + fs * 0.95);
+      ctx.restore();
+      lockupRow(ctx, W - W * 0.05 - H * 0.09, H - H * 0.1 - fs * 0.25, fs * 0.5, 0.85);
+    },
+  };
+}
+
+const WORDS_OF_DAY = [
+  ["Tianchi", "/tyen·chee/", "noun", "The person behind this OS. An AI product manager with an engineer's logic and a designer's hands. Also answers to Eric.", "“Ask Tianchi. He writes the PRD and builds the prototype.”"],
+  ["eval", "/ee·val/", "noun", "A test that tells you which AI model is actually better, not just newer.", "Tianchi built OpusClip's video and image model eval system from zero."],
+  ["prototype", "/proh·tuh·type/", "verb", "To build the thing so the meeting about the thing goes faster.", "What Tianchi does right after writing the PRD."],
+  ["wanderlust", "/won·der·lust/", "noun", "A strong desire to travel and see the world.", "Tianchi has explored 20+ countries, and rebuilt them in LEGO."],
+  ["wiki", "/wik·ee/", "noun", "A collection of linked notes anyone (or one person) keeps adding to.", "Tianchi's personal one runs to 50,000 words on tech and philosophy."],
+  ["ouroboros", "/or·uh·bor·us/", "noun", "A snake eating its own tail; a symbol of endless cycles.", "See also: the snake on this desktop, on a bad day."],
+];
+function makeWord(W, H) {
+  const SHOW = 9; let t = 0;
+  return {
+    step(dt) { t += dt; },
+    draw(ctx) {
+      bg(ctx, W, H);
+      const i = Math.floor(t / SHOW) % WORDS_OF_DAY.length, local = t % SHOW, a = clamp(local / 0.8) * (1 - clamp((local - SHOW + 0.8) / 0.8));
+      const [w, pron, pos, def, ex] = WORDS_OF_DAY[i], x = W * 0.12, big = Math.min(H * 0.13, W * 0.09);
+      ctx.save(); ctx.globalAlpha = a; ctx.textBaseline = "alphabetic";
+      ctx.font = `700 ${big}px Geist`; ctx.fillStyle = INK; ctx.fillText(w, x, H * 0.42);
+      ctx.font = `500 ${big * 0.2}px Geist`; ctx.fillStyle = MUTED; ctx.fillText(`${pron}   ${pos}`, x, H * 0.42 + big * 0.45);
+      const wrap = (text, y, size, color, weight = 500) => {
+        ctx.font = `${weight} ${size}px Geist`; ctx.fillStyle = color; const words = text.split(" "); let line = "";
+        for (const wd of words) { const tr = line ? line + " " + wd : wd; if (ctx.measureText(tr).width > W * 0.62 && line) { ctx.fillText(line, x, y); y += size * 1.45; line = wd; } else line = tr; }
+        ctx.fillText(line, x, y); return y + size * 1.45;
+      };
+      let y = wrap(def, H * 0.42 + big * 0.95, big * 0.26, "rgba(236,236,239,.92)");
+      wrap(ex, y + big * 0.12, big * 0.22, MUTED, 400);
+      ctx.restore();
+      ctx.save(); ctx.font = `600 ${H * 0.016}px Geist`; ctx.fillStyle = MUTED; ctx.textAlign = "right";
+      ctx.fillText("Tianchi's Word of the Day", W - W * 0.05, H - H * 0.06); ctx.restore();
+      // progress dots
+      WORDS_OF_DAY.forEach((_, j) => cell(ctx, x + j * H * 0.02, H - H * 0.075, H * 0.014, j === i ? GREEN : "rgba(255,255,255,.12)"));
+    },
+  };
+}
+
 
 const SAVERS = [
   { id: "S1", title: "Wander", note: "The snake roams the grid on its own, hunting apples. When it gets long it sheds its skin and starts small again.", make: makeWander },
   { id: "S2", title: "Hello, world", note: "Apple's Hello, our way: the snake writes hello in one language after another (你好, hola, bonjour, こんにちは…).", make: makeHello },
   { id: "S3", title: "Drift", note: "A dozen small snakes in the icon colours wander and wrap around the screen. Calm, a bit hypnotic.", make: makeDrift },
   { id: "S4", title: "Snake clock", note: "The time in big green cells with the date underneath; a snake circles it, and each minute the new digits pop in.", make: (W, H, fast) => makeClock(W, H, fast) },
-  { id: "S5", title: "Corner hit", note: "Not a snake. The F mark bounces around like the old DVD logo and changes colour on every wall. Hit a corner and it throws a party.", make: makeBounce },
+  { id: "S5", title: "Corner hit", note: "Now with the smooth F mark, and corners are rare again (a real one is worth the wait). Changes colour on every wall; a corner throws a party.", make: SHIP.corner.make },
   { id: "S6", title: "Life", note: "Not a snake. Conway's Game of Life on the desktop grid: new cells light up, old ones darken, gliders drop in.", make: makeLife },
   { id: "S7", title: "Floating icons", note: "Not a snake. The desktop's pixel icons drift slowly upward at different depths, like Apple's Floating.", make: makeFloat },
   { id: "S8", title: "Pipes", note: "Not a snake. The Windows 3D Pipes classic, flattened onto our grid in the icon colours. Fades and starts over when the screen fills.", make: makePipes },
-  { id: "S9", title: "Snake duel", note: "Two AI snakes fight over apples with a live score. Surprisingly hard to look away from.", make: makeDuel },
+  { id: "S9", title: "Snake duel", note: "Your pick for the default. Apple = +1; hit a wall, yourself or the rival and you burst (rival +3) and respawn. First to 20 wins the round.", make: SHIP.duel.make },
+  { id: "N1", title: "Here's to the curious ones", note: "New. Our take on Apple's Think Different, in our own words: the lines type out one by one, the caret is the snake's head, and it ends on the F and “Stay curious.”", make: makeCurious },
+  { id: "N2", title: "Project reel", note: "New. Like Apple's Aerial: slow pans across Tianchi's project covers, with the name and one line, bottom-left. The screen saver doubles as a portfolio.", make: makeReel },
+  { id: "N3", title: "Word of the Day", note: "New. macOS Word of the Day, but every word is about Tianchi: eval, prototype, wanderlust, ouroboros…", make: makeWord },
 ];
 
 // ---------- page plumbing ----------
