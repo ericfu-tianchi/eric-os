@@ -331,7 +331,7 @@ button { font-family: inherit; color: inherit; }
   cursor: default; background: none; color: inherit;
   font-weight: 800;
 }
-.menubar .brand.open { background: var(--menubar-hover); }
+.menubar .brand:hover, .menubar .brand.open { background: var(--menubar-hover); } /* hover = open: tells people it's a menu */
 :root[data-theme="light"] .fu-wing-mark { filter: invert(1); }
 .fu-wing-mark { display: block; width: auto; height: 20px; user-select: none; }
 .menubar .os-name {
@@ -960,13 +960,17 @@ button { font-family: inherit; color: inherit; }
 .cs-sub { display: flex; align-items: center; gap: 12px; margin: 48px 0 18px; font-family: var(--font-display); font-weight: 700; font-size: 22px; line-height: 1.4; color: #181818; }
 .cs-sub::before { content: ""; flex: none; width: 9px; height: 9px; background: var(--cs); transform: translateY(1px); }
 .cs-p { margin: 0 0 18px; font-family: var(--font-sans); font-size: 16px; line-height: 1.7; color: #181818; }
-.cs mark { background: var(--cs-tint); color: inherit; padding: 1px 0; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+/* highlights: a marker stroke across the lower half, in the page accent. Reads on white, on mist and inside tinted panels alike */
+.cs mark {
+  background: linear-gradient(transparent 50%, color-mix(in srgb, var(--cs) 36%, transparent) 50%, color-mix(in srgb, var(--cs) 36%, transparent) 92%, transparent 92%);
+  color: inherit; padding: 0 1px; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
 .cs b { font-weight: 700; }
 
 .cs-callout { margin: 56px calc(-1 * min(64px, var(--cs-gutter))); padding: 40px clamp(24px, 6cqi, 64px); background: var(--cs); color: #fff; }
 .cs-callout-label { margin: 0 0 20px; font-family: var(--font-display); font-weight: 700; font-size: 18px; text-transform: uppercase; }
 .cs-callout p:last-child { margin: 0; font-family: var(--font-sans); font-size: 19px; line-height: 1.7; }
-.cs-callout mark { background: rgba(0, 0, 0, 0.22); color: #fff; }
+.cs-callout mark { background: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.28) 92%, transparent 92%); color: #fff; }
 
 .cs-quote { margin: 56px auto; max-width: 680px; padding: 0 8px; text-align: center; font-family: var(--font-sans); font-weight: 600; font-size: 20px; line-height: 1.6; color: #181818; text-wrap: balance; }
 .cs-quote::before, .cs-quote::after { content: ""; display: block; width: 48px; height: 1px; margin: 0 auto; background: #494949; }
@@ -976,7 +980,26 @@ button { font-family: inherit; color: inherit; }
 .cs-list { list-style: disc; margin: 32px 0; padding: 28px 32px 28px 52px; background: var(--cs-tint); font-family: var(--font-sans); font-size: 16px; line-height: 1.7; color: #333; }
 .cs-list li + li { margin-top: 14px; }
 .cs-list.plain { padding: 0 0 0 22px; background: none; color: #181818; }
-.cs-list mark { background: rgba(255, 255, 255, 0.7); }
+
+/* status plan: priority-ordered rows with a coloured status pill, and a summary bar on top */
+.cs-status { --st-done: #1f9e57; --st-partly: #d08a0e; --st-todo: #9a9aa2; margin: 28px 0 40px; font-family: var(--font-sans); }
+.cs-status-sum { display: flex; align-items: center; gap: 20px; margin-bottom: 14px; }
+.cs-status-sum .bar { flex: 1; display: flex; gap: 3px; height: 8px; }
+.cs-status-sum .bar i { border-radius: 2px; }
+.cs-status-sum .legend { display: flex; gap: 16px; font-size: 14px; color: #494949; white-space: nowrap; }
+.cs-status-sum .legend span { display: inline-flex; align-items: center; gap: 6px; }
+.cs-status-sum .legend i { width: 8px; height: 8px; border-radius: 2px; }
+.cs-status .done { --st: var(--st-done); } .cs-status .partly { --st: var(--st-partly); } .cs-status .todo { --st: var(--st-todo); }
+.cs-status-sum .bar i, .cs-status-sum .legend i { background: var(--st); }
+.cs-status ol { list-style: none; margin: 0; padding: 0; border-top: 1px solid #e6e6ea; }
+.cs-status li { display: grid; grid-template-columns: 36px 1fr auto; align-items: baseline; gap: 14px; padding: 14px 4px; border-bottom: 1px solid #e6e6ea; font-size: 16px; line-height: 1.6; color: #181818; }
+.cs-status li .n { font-family: var(--font-display); font-weight: 700; font-size: 14px; color: #b4b4ba; }
+.cs-status li .pill {
+  align-self: center; padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; white-space: nowrap;
+  color: var(--st); background: color-mix(in srgb, var(--st) 12%, white);
+}
+.cs-status li.todo .t { color: #6b6b72; }
+@container (max-width: 560px) { .cs-status-sum { flex-direction: column; align-items: stretch; gap: 8px; } }
 
 .cs-stat { display: flex; align-items: baseline; gap: 16px; margin: 0 0 12px; }
 .cs-stat + .cs-stat { margin-top: 4px; }
@@ -1474,6 +1497,8 @@ button { font-family: inherit; color: inherit; }
 /* the head is a menu: thought bubbles fan out from it (all three on hover, one at a time when idle) */
 .sguide-zone { position: absolute; width: 0; height: 0; }
 .sguide-zone > button.sguide-head { position: absolute; }
+/* while the fan is open, an invisible bridge covers head → bubbles so the pointer can travel without the menu closing */
+.sguide-bridge { position: absolute; background: transparent; }
 .sguide-dot, .sguide-bubble { position: absolute; transform: translate(-50%, -50%); }
 .sguide-dot {
   border-radius: 50%; background: var(--surface); box-shadow: var(--stage-float-ring), var(--soft-m);

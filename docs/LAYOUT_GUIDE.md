@@ -112,7 +112,7 @@ Whitespace is the design. When unsure, add space rather than a divider line.
   Rutabagga `#764c99`, Huawei `#e71b23`, ECE `#0c2649`, Hand-coded site `#494949`.
 - The accent is used only for: labels, the sub-heading square, meta labels, stat numbers,
   feature titles, the callout band, the pill button, the active nav dot.
-- Highlights use a 16% tint of the accent (`--cs-tint`); findings panels use the same tint.
+- Highlights are a marker stroke across the lower half of the line in the accent at 36%, the same on white, mist and inside tinted panels (inside the solid callout band it is white at 28%). Findings panels use the 16% tint (`--cs-tint`).
 - Everything else is grayscale. No second accent, no gradients.
 - Accent text must stay readable on white; if a brand color is neon, use a deeper shade.
 
@@ -128,6 +128,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `callout` | Full accent band, white 19px text | The one problem statement per page (max 1–2 per page) |
 | `quote` | Pull quote: centered, 20px weight 600, two 48px hairlines above and below | A definition: problem statement, design principle |
 | `list` | Bullets in a tinted panel; `plain: true` for ordinary bullets | Panel only when the findings deserve emphasis; most lists are plain |
+| `status` | Priority-ordered rows (01, 02 …) with a Done / Partly / Not yet pill (green / amber / gray) and a summary bar with counts on top | A feature plan or roadmap where each item has a state. Never as plain "**Done** · …" bullets |
 | `stat` | Big accent number + label | A number that proves the point |
 | `feature` | Screenshot + title + text, sides alternate | Showcasing screens, features or a gallery of results |
 | `step` | Auto-numbered 01, 02 … with title + text, hairline rules | How-to sequences and pipelines |

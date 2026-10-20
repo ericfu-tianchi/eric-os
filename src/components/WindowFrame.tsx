@@ -121,7 +121,7 @@ export function WindowFrame({
             </button>
           </div>
         )}
-        <nav className="window-crumb" aria-label="Location" onPointerDown={(e) => e.stopPropagation()}>
+        <nav className="window-crumb" aria-label="Location" onPointerDown={(e) => { if ((e.target as HTMLElement).closest("button")) e.stopPropagation(); }}>
           {trail.map((crumb, index) => (
             <span className="crumb-part" key={`${crumb.label}-${index}`}>
               {index > 0 && <span className="crumb-sep">/</span>}
