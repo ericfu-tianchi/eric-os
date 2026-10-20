@@ -219,7 +219,7 @@ const shortY = (y) => y;
 const DIRS = [
   { id: "A", title: "Poster", note: "Light, editorial, loud type. The colour cutout huge on the right with the old site's pink offset; a horizontal path timeline.", html: () => `
   <div class="A">
-    <img class="photo" src="${P}p0-cutout.png" alt="">
+    <img class="photo" src="${P}p0-cutout.webp" alt="">
     <div class="kicker">ABOUT_ME.MD</div>
     <h2><span>${C.name[0]}</span><span>${C.name[1]}.</span></h2>
     <p class="aka">${C.aka}</p>
@@ -231,7 +231,7 @@ const DIRS = [
   </div>` },
   { id: "B", title: "Night stage", note: "The page becomes the desk: charcoal, the 44px grid, the photo in neon green. Big name on the right, philosophy as a centre band.", html: () => `
   <div class="B">
-    <div class="hero"><div class="glow"></div><img class="photo" src="${P}p2-duo.png" alt="">
+    <div class="hero"><div class="glow"></div><img class="photo" src="${P}p2-duo.webp" alt="">
       <div class="name"><div class="k">ABOUT_ME.MD</div><h2>${C.name[0]}<br>${C.name[1]}</h2><div class="aka">${C.aka}</div><p class="lead">${C.lead}</p></div>
     </div>
     <p class="quote">${C.phil}</p>
@@ -244,7 +244,7 @@ const DIRS = [
   { id: "C", title: "Spec sheet", note: "The most Tianchi OS one: About This Mac for a person. Pixel-dithered photo on a little screen, specs, a blinking-caret philosophy, path as release notes.", html: () => `
   <div class="C">
     <div class="top">
-      <div><div class="screen"><img src="${P}p3-pixel.png" alt=""></div><div class="stand"></div></div>
+      <div><div class="screen"><img src="${P}p3-pixel.webp" alt=""></div><div class="stand"></div></div>
       <div>
         <h2>Tianchi Fu</h2><p class="ver">Version 2026 · Singapore · ${C.aka}</p>
         <dl><dt>Engineered at</dt><dd>Shanghai Jiao Tong (ECE)</dd><dt>Designed at</dt><dd>University of Michigan (HCI)</dd><dt>Shipped at</dt><dd>Huawei Cloud, OpusClip</dd><dt>Now running</dt><dd>MSc AI at NUS</dd><dt>Powered by</dt><dd>Curiosity, coffee and a guitar</dd></dl>
@@ -260,7 +260,7 @@ const DIRS = [
   </div>` },
   { id: "D", title: "Bento", note: "Everything at a glance in tiles: big photo, name, a dark philosophy tile, four proof numbers, values, path, links. Fits one screen.", html: () => `
   <div class="D"><div class="grid">
-    <div class="t photo"><img src="${P}p1-mono.png" alt=""><span class="tag">ABOUT_ME.MD</span></div>
+    <div class="t photo"><img src="${P}p1-mono.webp" alt=""><span class="tag">ABOUT_ME.MD</span></div>
     <div class="t name"><h2>${C.name[0]}<br>${C.name[1]}</h2><p>${C.lead}</p></div>
     <div class="t phil"><p>“${C.phil}”</p></div>
     ${C.stats.map(([b, s], i) => `<div class="t stat ${i === 0 ? "g" : ""}"><b>${b}</b><span>${s}</span></div>`).join("")}
@@ -270,7 +270,7 @@ const DIRS = [
   </div></div>` },
   { id: "E", title: "Magazine split", note: "A tall black-and-white portrait on the left, numbered chapters on the right: philosophy, what I bring, path, off-screen. Quiet and grown-up.", html: () => `
   <div class="E">
-    <div class="left"><img src="${P}p1-mono.png" alt=""><span class="cap">ABOUT_ME.MD</span><span class="sig">Tianchi, with a guitar</span></div>
+    <div class="left"><img src="${P}p1-mono.webp" alt=""><span class="cap">ABOUT_ME.MD</span><span class="sig">Tianchi, with a guitar</span></div>
     <div class="right">
       <h2>${C.name[0]} ${C.name[1]}</h2><p class="aka">${C.aka}</p><p class="lead">${C.lead}</p>
       <section><span class="n">01</span><div><h4>Philosophy</h4><p class="phil">${C.phil.replace(/<\/?em>/g, "")}</p></div></section>
