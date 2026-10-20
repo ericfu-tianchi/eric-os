@@ -73,8 +73,7 @@ html, body { margin: 0; background: #0b0b0d; color: #ececef; font-family: var(--
 .photo { position: relative; z-index: 1; display: block; width: 100%; }
 /* the old site's rough offset shadow, two ways: a hard copy of the silhouette, or a blocky pixel one */
 .me[data-shadow="hard"] .photo { filter: drop-shadow(14px 12px 0 var(--ac2)); }
-.pshadow { position: absolute; inset: 0; transform: translate(16px, 14px); background: var(--ac2); display: none;
-  -webkit-mask: url(/about-study/b-mask-px.png) center / 100% 100% no-repeat; mask: url(/about-study/b-mask-px.png) center / 100% 100% no-repeat; }
+.pshadow { position: absolute; inset: 0; background: var(--ac2); display: none; -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
 .me[data-shadow="pixel"] .pshadow { display: block; }
 .me[data-px="1"] .photo { image-rendering: pixelated; }
 .me[data-c2="pink"] { --ac2: #ff2e6e; } .me[data-c2="red"] { --ac2: #ff3b3b; } .me[data-c2="coral"] { --ac2: #ff6a55; } .me[data-c2="none"] { --ac2: transparent; }
@@ -198,11 +197,11 @@ a { color: inherit; text-decoration: none; }
 <body>
 <div class="study">
   <h1>About_Me.md · v2</h1>
-  <p class="lede">Round 7. Pink pixel shadow + green accent. The smeared hands are fixed: GPT Image redrew only the forearms, hands and strings and everything else is your original pixels (face untouched). Comic / Bold ink / Cel turn the whole picture into one consistent US-comic style.</p>
+  <p class="lede">Round 9. Clean hands A blended with Cel at 30 / 50 / 70 / 85%: the body, hands and guitar take on the Cel look, the face always stays as in Clean hands A. Six shadow outlines; all stop at the photo's bottom edge.</p>
   <div class="ctrl">
     <div class="grp" id="acs"><span>ACCENT</span></div>
     <div class="grp" id="lks"><span>LOOK</span></div>
-    <div class="grp" id="dts"><span>DOTS</span></div>
+    <div class="grp" id="shs"><span>SHADOW SHAPE</span></div>
     <div class="grp" id="c2s"><span>SHADOW</span></div>
     <div class="grp" id="tls"><span>PATH</span></div>
     <button class="replay" id="replay">Replay intro</button>
@@ -221,14 +220,22 @@ const ACCENTS = [["blue", "Blue", "#4d8dff"], ["green", "Green", "#06c268"], ["v
 // the portrait: your original photo, untouched; GPT only painted the missing cap top and guitar bottom (A/B/C = three tries); logo removed
 // Original B, styled seven ways. img = b-<img>.webp; shadow: hard (old-site offset), pixel (blocky), none
 const LOOKS = [
-  ["pxshadow", "As is (smeared hands)", { img: "b-colour", mask: "b-mask-px.png", shadow: "pixel" }],
-  ["h1", "Clean hands A", { img: "h1-colour", mask: "h1-mask-px.png", shadow: "pixel" }],
-  ["h2", "Clean hands B", { img: "h2-colour", mask: "h2-mask-px.png", shadow: "pixel" }],
-  ["h1comic", "Comic A", { img: "h1-comic", mask: "h1-mask-px.png", shadow: "pixel" }],
-  ["h2comic", "Comic B", { img: "h2-comic", mask: "h2-mask-px.png", shadow: "pixel" }],
-  ["h1bold", "Bold ink", { img: "h1-bold", mask: "h1-mask-px.png", shadow: "pixel" }],
-  ["h1cel", "Cel", { img: "h1-cel", mask: "h1-mask-px.png", shadow: "pixel" }],
-  ["ht3", "Halftone · true face", { img: "ht3", shadow: "none" }],
+  ["h1", "Clean hands A", { img: "h1-colour" }],
+  ["mix30", "A + 30% Cel", { img: "h1-mix30" }],
+  ["mix50", "A + 50% Cel", { img: "h1-mix50" }],
+  ["mix70", "A + 70% Cel", { img: "h1-mix70" }],
+  ["mix85", "A + 85% Cel", { img: "h1-mix85" }],
+  ["cel", "Cel", { img: "h1-cel" }],
+  ["soft2", "A · comic, medium", { img: "h1-soft2" }],
+];
+// shadow outline: mask + offset (dx, dy); "clip" stops it at the photo's bottom edge so nothing hangs under the guitar
+const SHAPES = [
+  ["tidy", "Tidy pixel", { mask: "sh-tidy.png", dx: 14, dy: 12, clip: true }],
+  ["fine", "Fine pixel", { mask: "sh-fine.png", dx: 12, dy: 10, clip: true }],
+  ["rough", "Rough print", { mask: "sh-rough.png", dx: 14, dy: 12, clip: true }],
+  ["smooth", "Smooth (old site)", { mask: "sh-smooth.png", dx: 14, dy: 12, clip: true }],
+  ["up", "Up-right", { mask: "sh-tidy.png", dx: 16, dy: -12, clip: true }],
+  ["ring", "Pixel outline", { mask: "sh-ring.png", dx: 0, dy: 0, clip: false }],
 ];
 const DOTS = [["pink", "Pink", "#ff2e6e"], ["blue", "Blue", "#4d8dff"]];
 const C2 = [["pink", "Pink", "#ff2e6e"], ["red", "Red", "#ff3b3b"], ["coral", "Coral", "#ff6a55"], ["none", "No second colour", "#3a3b40"]];
@@ -270,14 +277,14 @@ const PHIL = "Tech is never the end, but a powerful means. I'm driven by the pos
 const KEY = ["positive", "human", "impact"];
 
 function page(ac, tl) {
-  const L = LOOKS.find((x) => x[0] === state.look)[2];
+  const L = LOOKS.find((x) => x[0] === state.look)[2]; const SH = SHAPES.find((x) => x[0] === state.shape)[2];
   const words = PHIL.split(" ").map((w) => `<span class="w ${KEY.includes(w) ? "k" : ""}">${w}</span>`).join(" ");
-  return `<div class="me play" data-ac="${ac}" data-shadow="${L.shadow}" data-px="${L.px ? 1 : 0}" data-c2="${state.c2}">
+  return `<div class="me play" data-ac="${ac}" data-shadow="pixel" data-px="${L.px ? 1 : 0}" data-c2="${state.c2}">
   <section class="hero">
     <div class="grid"></div><div class="glow"></div>
     <div class="meta"><span>About_Me.md</span><span class="now"><i></i>Now · AI PM at OpusClip · Singapore</span></div>
     <h2 class="name"><span class="l l1"><span>Tianchi</span></span><span class="l l2"><span><span class="eric">(Eric)</span> Fu<span class="dot">.</span></span></span></h2>
-    <div class="pwrap"><i class="pshadow" style="${L.mask ? `-webkit-mask-image:url(/about-study/${L.mask});mask-image:url(/about-study/${L.mask})` : ""}"></i><img class="photo" src="/about-study/${L.img.startsWith("ht") ? `${L.img}-${state.dot}` : L.img}.webp" alt="Tianchi playing guitar"></div>
+    <div class="pwrap"><i class="pshadow" style="-webkit-mask-image:url(/about-study/${SH.mask});mask-image:url(/about-study/${SH.mask});transform:translate(${SH.dx}px,${SH.dy}px);${SH.clip ? `clip-path:inset(-40px -40px ${Math.max(0, SH.dy)}px -40px)` : ""}"></i><img class="photo" src="/about-study/${L.img.startsWith("ht") ? `${L.img}-${state.dot}` : L.img}.webp" alt="Tianchi playing guitar"></div>
     <p class="lead">I turn what AI models can do into products people <b>actually enjoy</b>, with an engineer's logic and a designer's hands.</p>
     <div class="cta"><a href="#" class="primary">${ICON.mail}Email me</a><a href="#">${ICON.li}LinkedIn</a><a href="#">${ICON.gh}GitHub</a></div>
     <div class="proof"><div><b>3 yrs</b><span>AI products</span></div><div><b>10M+</b><span>inferences / mo</span></div><div><b>80+</b><span>agents shipped</span></div></div>
@@ -297,10 +304,11 @@ function page(ac, tl) {
 </div>`;
 }
 
-let state = { ac: "green", tl: "years", look: "h1comic", c2: "pink", dot: "pink" };
-try { Object.assign(state, JSON.parse(localStorage.getItem("about-v7") || "{}")); } catch {}
+let state = { ac: "green", tl: "years", look: "mix50", c2: "pink", dot: "pink", shape: "tidy" };
+try { Object.assign(state, JSON.parse(localStorage.getItem("about-v9") || "{}")); } catch {}
 if (!ACCENTS.some((a) => a[0] === state.ac)) state.ac = "green";
-if (!LOOKS.some((a) => a[0] === state.look)) state.look = "h1comic";
+if (!LOOKS.some((a) => a[0] === state.look)) state.look = "mix50";
+if (!SHAPES.some((a) => a[0] === state.shape)) state.shape = "tidy";
 if (!DOTS.some((a) => a[0] === state.dot)) state.dot = "pink";
 if (!ACCENTS.some((a) => a[0] === state.ac)) state.ac = "blue";
 if (!C2.some((a) => a[0] === state.c2)) state.c2 = "pink";
@@ -315,13 +323,13 @@ function render(keepScroll) {
   document.querySelectorAll("#tls button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.tl));
   document.querySelectorAll("#lks button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.look));
   document.querySelectorAll("#c2s button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.c2));
-  document.querySelectorAll("#dts button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.dot));
-  document.getElementById("pick").textContent = `look: ${state.look}, dots: ${state.dot}, shadow: ${state.c2}, accent: ${state.ac}, path: ${state.tl}`;
-  try { localStorage.setItem("about-v7", JSON.stringify(state)); } catch {}
+  document.querySelectorAll("#shs button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.shape));
+  document.getElementById("pick").textContent = `look: ${state.look}, shape: ${state.shape}, shadow: ${state.c2}, accent: ${state.ac}, path: ${state.tl}`;
+  try { localStorage.setItem("about-v9", JSON.stringify(state)); } catch {}
 }
 for (const [k, l, c] of ACCENTS) { const b = document.createElement("button"); b.dataset.k = k; b.innerHTML = `<i style="background:${c}"></i>${l}`; b.onclick = () => { state.ac = k; render(true); }; document.getElementById("acs").appendChild(b); }
 for (const [k, l] of LOOKS) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.look = k; render(true); }; document.getElementById("lks").appendChild(b); }
-for (const [k, l, c] of DOTS) { const b = document.createElement("button"); b.dataset.k = k; b.innerHTML = `<i style="background:${c}"></i>${l}`; b.onclick = () => { state.dot = k; render(true); }; document.getElementById("dts").appendChild(b); }
+for (const [k, l] of SHAPES) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.shape = k; render(true); }; document.getElementById("shs").appendChild(b); }
 for (const [k, l, c] of C2) { const b = document.createElement("button"); b.dataset.k = k; b.innerHTML = `<i style="background:${c}"></i>${l}`; b.onclick = () => { state.c2 = k; render(true); }; document.getElementById("c2s").appendChild(b); }
 for (const [k, l] of TLS) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.tl = k; render(true); vp.querySelector(".path").scrollIntoView({ block: "start" }); }; document.getElementById("tls").appendChild(b); }
 document.getElementById("replay").onclick = () => { vp.scrollTop = 0; render(); };
