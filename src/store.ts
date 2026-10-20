@@ -85,7 +85,7 @@ interface OSState {
 
 const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
   projects: { w: 680, h: 540 },
-  about: { w: 600, h: 560 },
+  about: { w: 960, h: 720 },
   resume: { w: 720, h: 680 },
   readme: { w: 540, h: 470 },
   prefs: { w: 560, h: 640 },
