@@ -227,6 +227,13 @@ const LOOKS = [
   ["mix85", "A + 85% Cel", { img: "h1-mix85" }],
   ["cel", "Cel", { img: "h1-cel" }],
   ["soft2", "A · comic, medium", { img: "h1-soft2" }],
+  ["g-amber", "Guitar · calm amber", { img: "g-amber" }],
+  ["g-walnut", "Guitar · walnut", { img: "g-walnut" }],
+  ["g-black", "Guitar · black", { img: "g-black" }],
+  ["g-mono", "Guitar · grey", { img: "g-mono" }],
+  ["g-natural", "Guitar · natural wood", { img: "g-natural" }],
+  ["g-pink", "Guitar · pink", { img: "g-pink" }],
+  ["g-green", "Guitar · green", { img: "g-green" }],
 ];
 // shadow outline: mask + offset (dx, dy); "clip" stops it at the photo's bottom edge so nothing hangs under the guitar
 const SHAPES = [
@@ -313,8 +320,8 @@ function page(ac, tl) {
 </div>`;
 }
 
-let state = { ac: "green", tl: "years", look: "soft2", c2: "pink", dot: "pink", shape: "r2" };
-try { Object.assign(state, JSON.parse(localStorage.getItem("about-v11") || "{}")); } catch {}
+let state = { ac: "green", tl: "years", look: "g-walnut", c2: "pink", dot: "pink", shape: "r2" };
+try { Object.assign(state, JSON.parse(localStorage.getItem("about-v12") || "{}")); } catch {}
 if (!ACCENTS.some((a) => a[0] === state.ac)) state.ac = "green";
 if (!LOOKS.some((a) => a[0] === state.look)) state.look = "mix50";
 if (!SHAPES.some((a) => a[0] === state.shape)) state.shape = "tidy";
@@ -334,7 +341,7 @@ function render(keepScroll) {
   document.querySelectorAll("#c2s button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.c2));
   document.querySelectorAll("#shs button").forEach((b) => b.classList.toggle("on", b.dataset.k === state.shape));
   document.getElementById("pick").textContent = `look: ${state.look}, shape: ${state.shape}, shadow: ${state.c2}, accent: ${state.ac}, path: ${state.tl}`;
-  try { localStorage.setItem("about-v11", JSON.stringify(state)); } catch {}
+  try { localStorage.setItem("about-v12", JSON.stringify(state)); } catch {}
 }
 for (const [k, l, c] of ACCENTS) { const b = document.createElement("button"); b.dataset.k = k; b.innerHTML = `<i style="background:${c}"></i>${l}`; b.onclick = () => { state.ac = k; render(true); }; document.getElementById("acs").appendChild(b); }
 for (const [k, l] of LOOKS) { const b = document.createElement("button"); b.dataset.k = k; b.textContent = l; b.onclick = () => { state.look = k; render(true); }; document.getElementById("lks").appendChild(b); }
