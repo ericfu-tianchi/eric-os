@@ -29,7 +29,6 @@ export interface WinInstance {
   maximized: boolean;
 }
 
-export type Wallpaper = "snake" | "clean" | "noir";
 export type IconSet = "a" | "d";
 export type Theme = "dark" | "light";
 export const SNAKE_HAT_IDS = ["none", "glasses", "cap", "phones", "bow", "shades", "cat", "nycap"] as const;
@@ -46,7 +45,6 @@ interface OSState {
   windows: Record<string, WinInstance>;
   order: string[]; // z-order, last = front
   iconPos: Record<string, IconPosition>;
-  wallpaper: Wallpaper;
   iconSet: IconSet;
   theme: Theme;
   snakeBest: number;
@@ -62,7 +60,6 @@ interface OSState {
   resize: (id: string, w: number, h: number) => void;
   toggleMax: (id: string) => void;
   setIconPos: (key: string, x: number, y: number, cell?: { row?: number; col?: number; right?: number; rightPx?: number }) => void;
-  setWallpaper: (w: Wallpaper) => void;
   setIconSet: (s: IconSet) => void;
   setTheme: (t: Theme) => void;
   setSnakeBest: (n: number) => void;
@@ -95,7 +92,6 @@ export const useOS = create<OSState>()(
       windows: {},
       order: [],
       iconPos: {},
-      wallpaper: "snake",
       iconSet: "d",
       theme: "dark",
       snakeBest: 0,
@@ -167,7 +163,6 @@ export const useOS = create<OSState>()(
       setIconPos: (key, x, y, cell) =>
         set({ iconPos: { ...get().iconPos, [key]: { x, y, ...cell } } }),
 
-      setWallpaper: (wallpaper) => set({ wallpaper }),
       setIconSet: (iconSet) => set({ iconSet }),
       setTheme: (theme) => set({ theme }),
       setSnakeBest: (snakeBest) => set({ snakeBest }),
@@ -176,7 +171,7 @@ export const useOS = create<OSState>()(
       setBooted: () => set({ booted: true }),
 
       resetDesktop: () =>
-        set({ windows: {}, order: [], iconPos: {}, wallpaper: "snake" }),
+        set({ windows: {}, order: [], iconPos: {} }),
     }),
     {
       name: "eric-os-v1",
@@ -184,7 +179,6 @@ export const useOS = create<OSState>()(
         windows: s.windows,
         order: s.order,
         iconPos: s.iconPos,
-        wallpaper: s.wallpaper,
         iconSet: s.iconSet,
         theme: s.theme,
         snakeBest: s.snakeBest,
@@ -195,6 +189,7 @@ export const useOS = create<OSState>()(
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<OSState>;
         const snakeHat = (SNAKE_HAT_IDS as readonly string[]).includes(p.snakeHat ?? "") ? p.snakeHat! : "none";
+        delete (p as { wallpaper?: unknown }).wallpaper; // retired setting: the snake wallpaper is the only one
         return { ...current, ...p, snakeHat };
       },
     }

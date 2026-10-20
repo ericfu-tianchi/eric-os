@@ -22,12 +22,24 @@ There are four, and every new element belongs to one of them.
 
 | Surface | Look | Used for |
 | --- | --- | --- |
-| Stage | `paper`, `stage-ink`, `stage-muted` | The desktop, menubar, dock and file labels. The only layer the Light theme changes. |
+| Stage | `paper`, `gridline`, `stage-ink`, `stage-muted`, `menubar-*`, `dock-*` | The desktop, menubar, dock and file labels. The layer the Light theme redraws. |
 | Window | `surface`, `ink`, 1px `hairline`, `r-window`, `soft-l` | Every app. White in both themes. Unfocused windows drop to `soft-m` and a `surface-2` titlebar. |
 | Menu | `menu-bg` dark glass with backdrop blur, `menu-ink`, 1px `menu-line`, `r-md`, `shadow-menu` | The Tianchi OS menu and the desktop context menu. Both look the same. |
 | Panel | `surface`, `r-md`, `soft-l`, an 8px tail pointing at its anchor | Floating cards from the snake: Ask the snake, Dress me up. |
 
 Tooltips are near-black (`tooltip-bg`) with white `ui-meta` text, `r-xs`, padding 4 × 8. Every tooltip in the OS looks like this, from the dock and from the snake's thought bubbles.
+
+## Themes
+
+Dark is the default and the hero. Light is a full twin of the OS layer, not an inverted afterthought:
+
+- **Desk**: `paper` turns cool gray (#e9e9ec) and the 44px grid stays visible (`gridline` flips to a dark 6% line). The snake, the hello pose and the game play exactly as in Dark.
+- **Menubar and dock**: frosted light glass with dark text (`menubar-*`, `dock-*`); the wordmark inverts to ink.
+- **Menus**: light glass (`menu-*` light values). Tooltips stay near-black in both themes.
+- **Icons**: no drop shadow under desktop icons and no text shadow under their names; selection uses a dark 7% tile and the same `select` pill.
+- **Windows and panels**: identical white surfaces; shadows soften (`soft-m`, `soft-l` light values) and white bubbles on the desk get a hairline ring so they don't dissolve.
+- **Game**: HUD text uses `menubar-ink` with a deeper green hint (`hud-accent`); the game-over and tutorial cards keep their dark glass.
+- Reading pages are not themed: they stay white in both.
 
 ## Typography
 
@@ -81,7 +93,7 @@ Tooltips are near-black (`tooltip-bg`) with white `ui-meta` text, `r-xs`, paddin
 
 Every token below exists in `src/styles.css` under the same name. Type styles map to `--ui-fine` … `--ui-title` (file labels 12px and the 15px wordmark keep their own `--os-size-*` tokens).
 
-### Colour (Dark is the default theme; Light only flips the stage)
+### Colour (Dark is the default theme; Light redraws the stage chrome — see Themes)
 
 | Token | Value | Use |
 |---|---|---|
@@ -107,6 +119,16 @@ Every token below exists in `src/styles.css` under the same name. Type styles ma
 | `--menu-hover` | `rgba(255, 255, 255, 0.11)` | Hovered menu item. |
 | `--menu-line` | `rgba(255, 255, 255, 0.12)` | Menu border and separators. |
 | `--tooltip-bg` | `#0e0f11` | Every tooltip (dock, thought-bubble captions). White text on it. |
+| `--gridline` | dark: `rgba(255, 255, 255, 0.045)` / light: `rgba(0, 0, 0, 0.06)` | The 44px desktop grid lines. Always visible in both themes. |
+| `--menubar-bg` | dark: `#2d2e34` / light: `rgba(246, 246, 248, 0.86)` | Menubar fill (dark is a #323339 → #292a30 gradient in code); light is frosted glass. |
+| `--menubar-ink` | dark: `#f1f1f3` / light: `#17171a` | Wordmark and status text in the menubar; the Snake HUD in light. |
+| `--menubar-muted` | dark: `rgba(241, 241, 243, 0.68)` / light: `rgba(23, 23, 26, 0.62)` | The clock and secondary menubar text. |
+| `--menubar-hover` | dark: `rgba(255, 255, 255, 0.14)` / light: `rgba(0, 0, 0, 0.07)` | The Tianchi OS title while its menu is open. |
+| `--dock-bg` | dark: `rgba(32, 33, 38, 0.8)` / light: `rgba(255, 255, 255, 0.62)` | Dock glass (dark is a graphite gradient in code). |
+| `--dock-border` | dark: `rgba(255, 255, 255, 0.1)` / light: `rgba(0, 0, 0, 0.08)` | Dock edge. |
+| `--stage-select-tile` | dark: `rgba(255, 255, 255, 0.14)` / light: `rgba(0, 0, 0, 0.07)` | The tile behind a selected desktop icon. |
+| `--marquee-line` | dark: `rgba(255, 255, 255, 0.52)` / light: `rgba(10, 100, 224, 0.55)` | Desktop lasso border. |
+| `--hud-accent` | dark: `#3fbf6e` / light: `#1f9e57` | The Snake HUD hint text in the menubar. |
 
 ### Type
 

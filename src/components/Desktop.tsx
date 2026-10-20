@@ -119,7 +119,7 @@ function DesktopIcon({
 }
 
 export function Desktop({ children }: { children?: React.ReactNode }) {
-  const { wallpaper, snakeMode, iconPos, setIconPos, open, setSnakeMode } = useOS();
+  const { snakeMode, iconPos, setIconPos, open, setSnakeMode } = useOS();
   const spec = useGridSpec();
   const desktopRef = useRef<HTMLElement>(null);
   const iconDrag = useRef<IconDrag | null>(null);
@@ -302,7 +302,7 @@ export function Desktop({ children }: { children?: React.ReactNode }) {
   return (
     <main
       ref={desktopRef}
-      className={`desktop wp-${wallpaper}`}
+      className="desktop"
       style={vars}
       onPointerDown={onDesktopPointerDown}
       onPointerMove={onDesktopPointerMove}
@@ -310,8 +310,8 @@ export function Desktop({ children }: { children?: React.ReactNode }) {
       onContextMenu={onDesktopContext}
     >
       <div className="gridlayer" aria-hidden />
-      {!snakeMode && wallpaper !== "clean" && <DesktopSnake frozen />}
-      {!snakeMode && wallpaper !== "clean" && <SnakeGuide />}
+      {!snakeMode && <DesktopSnake frozen />}
+      {!snakeMode && <SnakeGuide />}
       {!snakeMode && ICONS.map((icon) => (
         <DesktopIcon
           key={icon.key}
