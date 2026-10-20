@@ -34,7 +34,8 @@ export type IconSet = "a" | "d";
 export type Theme = "dark" | "light";
 export const SNAKE_HAT_IDS = ["none", "glasses", "cap", "phones", "bow", "shades", "cat", "nycap"] as const;
 export const DOCK_SIZE = { min: 32, max: 64, default: 46 };
-export type SaverId = "duel" | "corner";
+export type SaverId = "duel" | "corner" | "crazy" | "reel";
+export const SAVER_IDS: SaverId[] = ["duel", "corner", "crazy", "reel"];
 export type SnakeHat = (typeof SNAKE_HAT_IDS)[number];
 /**
  * Desktop files are anchored to the right edge, independently of the
@@ -218,6 +219,7 @@ export const useOS = create<OSState>()(
         const p = (persisted ?? {}) as Partial<OSState>;
         const snakeHat = (SNAKE_HAT_IDS as readonly string[]).includes(p.snakeHat ?? "") ? p.snakeHat! : "none";
         delete (p as { wallpaper?: unknown }).wallpaper; // retired setting: the snake wallpaper is the only one
+        if (p.saver && !SAVER_IDS.includes(p.saver)) p.saver = "duel";
         return { ...current, ...p, snakeHat };
       },
     }

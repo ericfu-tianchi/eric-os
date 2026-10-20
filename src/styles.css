@@ -787,7 +787,16 @@ button { font-family: inherit; color: inherit; }
 .aboutos dd { margin: 0; text-align: left; color: var(--muted); }
 .aboutos footer { margin-top: auto; padding-top: 18px; display: flex; flex-direction: column; gap: 2px; font-size: var(--ui-fine); color: var(--faint); }
 
-.set-actions { flex: none; display: flex; align-items: center; gap: 8px; }
+.set-row-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+/* screen saver picker: live 16:10 thumbnails, the chosen one ringed in select (the visitor's own choice) */
+.saver-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.saver-picker button {
+  display: flex; flex-direction: column; gap: 6px; padding: 4px 4px 6px; border: 1px solid transparent; border-radius: var(--r-sm);
+  background: none; color: var(--muted); font-family: var(--font-system); font-size: var(--ui-meta); cursor: pointer;
+}
+.saver-picker canvas { display: block; width: 100%; aspect-ratio: 16 / 10; border-radius: var(--r-xs); background: #1c1d21; box-shadow: var(--soft-s); }
+.saver-picker button:hover { background: var(--surface-2); }
+.saver-picker button.on { border-color: var(--select); color: var(--ink); background: rgba(10, 100, 224, 0.06); }
 
 /* screen saver: above everything, no cursor */
 .screensaver { position: fixed; inset: 0; z-index: 2000; background: #1c1d21; cursor: none; }

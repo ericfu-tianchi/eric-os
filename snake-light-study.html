@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Snake in Light</title>
+<style>
+  @font-face { font-family: "Geist"; src: url("/src/assets/fonts/geist-sans-variable.woff2") format("woff2"); font-weight: 100 900; }
+  :root { --ink: #17171a; --muted: #5e5e66; --pick: #0a64e0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f6f6f8; color: var(--ink); font-family: "Geist", -apple-system, sans-serif; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 24px 120px; }
+  h1 { font-size: 34px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 6px; }
+  .lede { color: var(--muted); margin: 0 0 28px; font-size: 15px; line-height: 1.6; max-width: 76ch; }
+  .card { background: #fff; border: 1px solid #e6e6ea; border-radius: 10px; padding: 10px 10px 14px; margin-bottom: 18px; cursor: pointer; }
+  .card.on { border-color: var(--pick); box-shadow: 0 0 0 1px var(--pick); }
+  .stage { border-radius: 6px; overflow: hidden; }
+  .stage svg { display: block; width: 100%; height: auto; }
+  .meta { padding: 12px 4px 0; display: flex; gap: 12px; align-items: baseline; }
+  .meta .id { font: 600 11px ui-monospace, Menlo, monospace; color: var(--muted); }
+  .meta b { font-size: 15px; }
+  .meta p { margin: 0; font-size: 13px; color: var(--muted); }
+  .bar { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; background: #17171a; color: #fff; padding: 9px 9px 9px 16px; border-radius: 12px; box-shadow: 0 18px 50px rgba(0,0,0,.3); font-size: 13px; }
+  .bar code { font: 600 12.5px ui-monospace, Menlo, monospace; }
+  .bar button { border: 0; border-radius: 8px; background: #fff; color: #17171a; padding: 8px 12px; cursor: pointer; font: 600 12.5px "Geist", sans-serif; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Snake in Light</h1>
+  <p class="lede">Real size, real Light desk (#e9e9ec + grid). Why the snake looks off in Light: on charcoal, the neon green glows; on pale gray it has almost no depth, so it reads as a flat sticker, and the bright green fights the soft gray instead of sitting on it. Each card fixes that a different way. D0 is Dark for reference. Click to pick.</p>
+  <div id="root"></div>
+</div>
+<div class="bar"><span>Pick</span><code id="pick">none yet</code><button id="copy">Copy</button></div>
+<script type="module">
+const POSE = [[0,11],[1,11],[2,11],[2,10],[2,9],[2,8],[2,7],[2,6],[2,5],[2,4],[3,4],[3,5],[3,6],[3,7],[4,7],[4,8],[4,9],[4,10],[4,11],[5,11],[6,11],[6,10],[6,9],[6,8],[6,7],[7,7],[8,7],[8,8],[8,9],[7,9],[7,10],[7,11],[8,11],[9,11],[10,11],[10,10],[10,9],[10,8],[10,7],[10,6],[10,5],[10,4],[11,4],[12,4],[12,5],[12,6],[12,7],[12,8],[12,9],[12,10],[12,11],[13,11],[14,11],[14,10],[14,9],[14,8],[14,7],[14,6],[14,5],[14,4],[15,4],[16,4],[16,5],[16,6],[16,7],[16,8],[16,9],[16,10],[16,11],[17,11],[18,11],[18,10],[18,9],[18,8],[18,7],[19,7],[20,7],[20,8],[20,9],[20,10],[20,11],[21,11],[22,11],[23,11]];
+const C = 44, COLS = 26, Y0 = 3, ROWS = 10;
+const TONGUE = "M0 -1.4 C10 -2.2 15 -5 23 -12.5 C18 -5.5 14 -2.6 8 -0.6 C15 1.2 20 4.5 27 10 C18 4.8 11 2.2 0 1.6 Z";
+
+const V = [
+  { id: "D0", title: "Dark (reference)", note: "What it looks like on charcoal.", paper: "#1c1d21", grid: "rgba(255,255,255,.045)", fill: "#06C268" },
+  { id: "L0", title: "Light today", note: "Same neon green, no depth.", fill: "#06C268" },
+  { id: "L1", title: "Deeper green", note: "Body one step darker (#06A85A). Calmer, sits on the gray instead of buzzing.", fill: "#06A85A" },
+  { id: "L2", title: "Soft shadow", note: "Same green, a soft drop shadow like the windows have. It sits on the desk.", fill: "#06C268", shadow: "drop-shadow(0 2px 3px rgba(0,0,0,.16)) drop-shadow(0 6px 12px rgba(0,0,0,.08))" },
+  { id: "L3", title: "Bevel", note: "Each block gets a light top edge and a darker bottom edge, like a pressed tile.", fill: "#06C268", bevel: true },
+  { id: "L4", title: "Hairline outline", note: "A thin darker-green outline on every block.", fill: "#06C268", stroke: "rgba(0,80,40,.35)" },
+  { id: "L5", title: "Deeper green + soft shadow", note: "L1 and L2 together. My pick: calm colour, real depth, still the same snake.", fill: "#06A85A", shadow: "drop-shadow(0 2px 3px rgba(0,0,0,.16)) drop-shadow(0 6px 12px rgba(0,0,0,.08))" },
+  { id: "L6", title: "Deeper green + bevel", note: "L1 and L3 together. The most tactile one.", fill: "#06A85A", bevel: true },
+];
+
+function svg(v) {
+  const paper = v.paper ?? "#e9e9ec", gridc = v.grid ?? "rgba(0,0,0,.06)", W = COLS * C, H = ROWS * C;
+  let g = "";
+  for (let x = 0; x <= W; x += C) g += `<line x1="${x + .5}" y1="0" x2="${x + .5}" y2="${H}"/>`;
+  for (let y = 0; y <= H; y += C) g += `<line x1="0" y1="${y + .5}" x2="${W}" y2="${y + .5}"/>`;
+  const cells = POSE.map(([x, y]) => {
+    const px = x * C + 1, py = (y - Y0) * C + 1, s = C - 2;
+    let r = `<rect x="${px}" y="${py}" width="${s}" height="${s}" rx="4.4" fill="${v.fill}" ${v.stroke ? `stroke="${v.stroke}" stroke-width="1"` : ""}/>`;
+    if (v.bevel) r += `<rect x="${px}" y="${py}" width="${s}" height="${s}" rx="4.4" fill="url(#bev)"/>`;
+    return r;
+  }).join("");
+  const [hx, hy] = POSE[POSE.length - 1], cx = hx * C + 22, cy = (hy - Y0) * C + 22;
+  const eyes = [-1, 1].map((k) => `<circle cx="${cx + 13.75}" cy="${cy + k * 9.24}" r="5.5" fill="#fafafa"/><circle cx="${cx + 15.6}" cy="${cy + k * 9.24}" r="2.3" fill="#363636"/>`).join("");
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
+    <defs><linearGradient id="bev" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".12" stop-color="#fff" stop-opacity="0"/><stop offset=".86" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".16"/></linearGradient></defs>
+    <rect width="${W}" height="${H}" fill="${paper}"/><g stroke="${gridc}" stroke-width="1">${g}</g>
+    <g style="filter:${v.shadow ?? "none"}">${cells}<path d="${TONGUE}" transform="translate(${cx + 23} ${cy})" fill="#F04E38"/>${eyes}</g>
+  </svg>`;
+}
+const KEY = "snake-light-pick"; let pick = ""; try { pick = localStorage.getItem(KEY) || ""; } catch {}
+const root = document.getElementById("root"), pe = document.getElementById("pick");
+const sync = () => { pe.textContent = pick || "none yet"; document.querySelectorAll(".card").forEach((c) => c.classList.toggle("on", c.dataset.id === pick)); try { localStorage.setItem(KEY, pick); } catch {} };
+for (const v of V) {
+  const el = document.createElement("div"); el.className = "card"; el.dataset.id = v.id;
+  el.innerHTML = `<div class="stage">${svg(v)}</div><div class="meta"><span class="id">${v.id}</span><b>${v.title}</b><p>${v.note}</p></div>`;
+  if (v.id !== "D0") el.onclick = () => { pick = v.id; sync(); };
+  root.appendChild(el);
+}
+sync();
+document.getElementById("copy").onclick = async (e) => { try { await navigator.clipboard.writeText(pick); e.target.textContent = "Copied"; setTimeout(() => (e.target.textContent = "Copy"), 1200); } catch {} };
+</script>
+</body>
+</html>
