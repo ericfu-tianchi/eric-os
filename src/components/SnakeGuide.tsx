@@ -228,7 +228,7 @@ export function SnakeGuide() {
                 aria-label={CAPTION[t]}
               >
                 {t === "play" && <PixIcon name="snake" size={32} />}
-                {t === "dress" && <span className="cycle">{HATS.slice(1).map((h) => <MiniHead key={h.id} hat={h.id} size={56} />)}</span>}
+                {t === "dress" && <span className="cycle">{HATS.slice(1).map((h) => <MiniHead key={h.id} hat={h.id} size={50} />)}</span>}
                 {t === "ask" && <svg width={30} height={30} viewBox="0 0 32 32" aria-hidden dangerouslySetInnerHTML={{ __html: ASK_GLYPH.svg }} />}
                 <span className="cap">{CAPTION[t]}</span>
               </button>

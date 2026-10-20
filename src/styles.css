@@ -1487,7 +1487,7 @@ button { font-family: inherit; color: inherit; }
 }
 .sguide-bubble:hover { scale: 1.1; z-index: 1; }
 @keyframes sguide-in { from { opacity: 0; scale: 0.3; } to { opacity: 1; scale: 1; } }
-.sguide-bubble .cycle { position: relative; width: 56px; height: 56px; }   /* head reads the same size as the snake icon */
+.sguide-bubble .cycle { position: relative; width: 50px; height: 50px; }   /* head reads the same size as the snake icon */
 .sguide-bubble .cycle svg { position: absolute; inset: 0; opacity: 0; animation: sguide-cycle 9.1s steps(1) infinite; } /* 1.3s per look */
 .sguide-bubble .cycle svg:nth-child(2) { animation-delay: 1.3s; }
 .sguide-bubble .cycle svg:nth-child(3) { animation-delay: 2.6s; }
