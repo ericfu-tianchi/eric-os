@@ -69,7 +69,7 @@ html, body { margin: 0; background: #0b0b0d; color: #ececef; font-family: var(--
 .name .eric { color: color-mix(in srgb, var(--ink) 30%, transparent); font-weight: 800; }
 .name .dot { color: var(--ac); }
 .photo { position: absolute; z-index: 2; right: -30px; bottom: 0; width: 560px; image-rendering: auto; }
-.me[data-ph="px"] .photo, .me[data-ph="bit"] .photo { image-rendering: pixelated; }
+.me[data-ph="fix1px"] .photo { image-rendering: pixelated; }
 .photo { pointer-events: none; }
 .lead { position: relative; z-index: 3; margin: 26px 0 0; max-width: 380px; font-size: 21px; line-height: 1.45; color: #d8d8dd; font-weight: 450; }
 .lead b { color: var(--ink); font-weight: 650; }
@@ -190,7 +190,7 @@ a { color: inherit; text-decoration: none; }
 <body>
 <div class="study">
   <h1>About_Me.md · v2</h1>
-  <p class="lede">Round 3. The portrait is now GPT Image's completed version (whole cap, whole guitar). Try Photo × Tone × Accent; colour stays off your face unless you pick a tinted tone. One direction, done properly: Night stage, your pick. Switch the accent colour and the Path layout at the top; the page inside the window is live (scroll it, hover the rows and cards). The window is the real 960 × 720 size. Use Pick to send me your combo.</p>
+  <p class="lede">Round 4. The portrait is your original photo again, pixel for pixel; GPT only filled in the missing cap top and guitar bottom (three tries: A, B, C), and the shirt logo is gone. Try Photo × Tone × Accent; colour stays off your face unless you pick a tinted tone. One direction, done properly: Night stage, your pick. Switch the accent colour and the Path layout at the top; the page inside the window is live (scroll it, hover the rows and cards). The window is the real 960 × 720 size. Use Pick to send me your combo.</p>
   <div class="ctrl">
     <div class="grp" id="acs"><span>ACCENT</span></div>
     <div class="grp" id="phs"><span>PHOTO</span></div>
@@ -209,8 +209,8 @@ const ICON = {
   mail: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M2 4l6 5 6-5"/></svg>',
 };
 const ACCENTS = [["green", "Green", "#06c268"], ["vermilion", "Vermilion", "#ff5b35"], ["champagne", "Champagne", "#d9bd8c"], ["crimson", "Crimson", "#e2263f"], ["pink", "Pink", "#ff2e6e"]];
-// the portrait: GPT Image completed the cap and the guitar; "px" adds a touch of pixel, "bit" is GPT's 16-bit take
-const PHOTOS = [["real", "Real"], ["px", "A touch of pixel"], ["bit", "16-bit"]];
+// the portrait: your original photo, untouched; GPT only painted the missing cap top and guitar bottom (A/B/C = three tries); logo removed
+const PHOTOS = [["fix1", "Original A"], ["fix2", "Original B"], ["fix3", "Original C"], ["fix1px", "A + touch of pixel"]];
 const TONES = [["colour", "Colour"], ["mono", "B&W"], ["warm", "Warm B&W"], ["crimson", "Crimson"], ["pink", "Pink"]];
 const TLS = [["gantt", "Gantt"], ["years", "Big years"], ["spine", "Spine"], ["rail", "Rail"]];
 
@@ -275,10 +275,10 @@ function page(ac, tl) {
 </div>`;
 }
 
-let state = { ac: "green", tl: "years", ph: "real", tone: "colour" };
+let state = { ac: "green", tl: "years", ph: "fix1", tone: "colour" };
 try { Object.assign(state, JSON.parse(localStorage.getItem("about-v4") || "{}")); } catch {}
 if (!ACCENTS.some((a) => a[0] === state.ac)) state.ac = "green";
-if (!PHOTOS.some((a) => a[0] === state.ph)) state.ph = "real";
+if (!PHOTOS.some((a) => a[0] === state.ph)) state.ph = "fix1";
 if (!TONES.some((a) => a[0] === state.tone)) state.tone = "colour";
 const vp = document.getElementById("vp");
 function render(keepScroll) {
