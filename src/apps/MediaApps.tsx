@@ -5,7 +5,7 @@ import { useWindowChrome } from "../components/WindowChrome";
 /**
  * Preview (images) and Player (videos), after macOS Preview / Quick Look and QuickTime:
  * a dark stage, the file fitted inside, controls that appear on hover.
- * Window: green control maximizes. Real full screen: the ⤢ button, F, or double-click.
+ * Window: green control maximizes. Real full screen: the ⤢ button or F. Double-click an image zooms (fit ↔ width).
  * ←/→ step through the folder (Preview). Space plays / pauses (Player). Esc leaves full screen.
  */
 
@@ -38,6 +38,15 @@ export function PreviewApp({ mediaId }: { mediaId?: string }) {
   const item = folder?.items[index];
   const count = folder?.items.length ?? 0;
   const go = (d: number) => count && setIndex((i) => (i + d + count) % count);
+  // zoom: tall images open filling the width (scroll to read them), the rest open fitted
+  const [zoom, setZoom] = useState<"fit" | "width">("fit");
+  const frame = useRef<HTMLDivElement>(null);
+  const onLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const im = e.currentTarget, f = frame.current;
+    const tall = f ? im.naturalHeight / im.naturalWidth > (f.clientHeight / f.clientWidth) * 1.35 : false;
+    setZoom(tall ? "width" : "fit");
+    f?.scrollTo(0, 0);
+  };
 
   const chrome = useMemo(() => ({ trail: [{ label: item?.name ?? "Preview" }], meta: count > 1 ? `${index + 1} of ${count}` : undefined }), [item, index, count]);
   useWindowChrome(chrome);
@@ -60,18 +69,20 @@ export function PreviewApp({ mediaId }: { mediaId?: string }) {
         else if (e.key === "f" || e.key === "F") toggleFull();
       }}
     >
-      <div className="media-frame"><img key={item.src} className="media-img" src={item.src} alt={item.name} draggable={false} onDoubleClick={toggleFull} /></div>
+      <div ref={frame} className={`media-frame ${zoom}`}>
+        <img key={item.src} className="media-img" src={item.src} alt={item.name} draggable={false} onLoad={onLoad}
+          onDoubleClick={() => setZoom((z) => (z === "fit" ? "width" : "fit"))} />
+      </div>
+      {full && <div className="media-ftitle">{item.name}{count > 1 ? ` · ${index + 1} of ${count}` : ""}</div>}
       {count > 1 && <>
         <button type="button" className="media-nav prev" aria-label="Previous image" onClick={() => go(-1)}><svg viewBox="0 0 16 16" aria-hidden><path d="M10 3.5 5.5 8l4.5 4.5" /></svg></button>
         <button type="button" className="media-nav next" aria-label="Next image" onClick={() => go(1)}><svg viewBox="0 0 16 16" aria-hidden><path d="m6 3.5 4.5 4.5L6 12.5" /></svg></button>
       </>}
       <div className="media-bar">
-        <div className="media-cap">
-          {full && <b>{item.name}</b>}
-          {item.caption && <span>{item.caption}</span>}
-          {item.credit && <small>{item.credit}</small>}
-        </div>
-        {full && count > 1 && <span className="media-count">{index + 1} / {count}</span>}
+        <div className="media-cap">{item.credit && <small>{item.credit}</small>}</div>
+        <button type="button" className="media-btn" aria-label={zoom === "fit" ? "Zoom to width" : "Zoom to fit"} title={zoom === "fit" ? "Zoom to width" : "Zoom to fit"} onClick={() => setZoom((z) => (z === "fit" ? "width" : "fit"))}>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden><circle cx="7" cy="7" r="4.5" /><path d="M10.5 10.5 14 14M5 7h4" />{zoom === "fit" && <path d="M7 5v4" />}</svg>
+        </button>
         <button type="button" className="media-btn" aria-label={full ? "Exit full screen" : "Full screen"} onClick={toggleFull}>{FS_ICON(full)}</button>
       </div>
     </div>
