@@ -4,7 +4,7 @@ import { MenuBar } from "./components/MenuBar";
 import { Desktop } from "./components/Desktop";
 import { Dock } from "./components/Dock";
 import { WindowFrame } from "./components/WindowFrame";
-import { DesktopSnake } from "./components/DesktopSnake";
+import { DesktopSnake, ERIC_POSE } from "./components/DesktopSnake";
 import { gridSpec } from "./components/Pixel";
 import { PROJECTS } from "./data/projects";
 import { TOPBAR } from "./components/desktopGrid";
@@ -136,13 +136,23 @@ export default function App() {
     return () => { delete root.dataset.canvas; };
   }, [canvasVariant, canvasStudy, theme]);
 
-  // first visit: never an empty desktop
+  // every visit starts with About Me open (once per browser session, only on an empty desktop),
+  // placed so the snake's head still peeks out beside it: visitors notice there's a snake underneath.
   useEffect(() => {
     if (isMobile) return;
     if (new URLSearchParams(window.location.search).get("snake")) useOS.getState().setSnakeMode(true);
-    if (Object.keys(useOS.getState().windows).length === 0 && !localStorage.getItem("eric-os-welcomed")) {
-      open("about", { title: "About Me" });
-      localStorage.setItem("eric-os-welcomed", "1");
+    if (Object.keys(useOS.getState().windows).length === 0 && !sessionStorage.getItem("eric-os-about-shown")) {
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const s = gridSpec(vw, vh - TOPBAR);
+      const [hc, hr] = ERIC_POSE[ERIC_POSE.length - 1];
+      const headX = hc * s.cellW, headY = (hr + s.rows - 16) * s.cellH; // same bottom anchoring as the wallpaper; window coords start under the menubar
+      const gap = 16, y = 64;
+      const w = Math.min(880, vw - 40);
+      const x = Math.max(12, Math.min(90, headX - gap - w));
+      // too narrow to sit beside the head: stop the window above it instead
+      const h = x + w > headX - gap ? Math.max(360, Math.min(720, headY - gap - y)) : Math.min(720, vh - TOPBAR - y - 16);
+      open("about", { title: "About Me", w, h, x, y });
+      sessionStorage.setItem("eric-os-about-shown", "1");
     }
     // deep link: ?open=projects,life or ?open=project-detail:twist-solver
     const m = new URLSearchParams(window.location.search).get("open");
