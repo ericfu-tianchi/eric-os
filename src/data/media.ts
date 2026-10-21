@@ -10,8 +10,9 @@ export type MediaItem = {
   thumb?: string; // Finder icon; images default to <src>.thumb.webp
   youtube?: string; // video id: plays in the YouTube player instead of src
   credit?: string; // license / source line for photos that need one
+  portrait?: boolean; // 9:16 video: the player opens as a tall window
 };
-export type MediaFolder = { id: string; name: string; kind: "image" | "video"; items: MediaItem[] };
+export type MediaFolder = { id: string; name: string; kind: "image" | "video"; items: MediaItem[]; flat?: boolean }; // flat: items sit directly in Images / Videos
 
 const img = (folder: string, file: string, name: string, credit?: string): MediaItem => ({
   id: `${folder}-${file}`, name, credit,
@@ -51,8 +52,13 @@ export const MEDIA_FOLDERS: MediaFolder[] = [
     img("basketball", "westbrook-4", "Russell Westbrook", "Photo: Keith Allison, CC BY-SA 2.0"),
     img("basketball", "lebron-3", "LeBron James · Paris", "Photo: Nicolas Richoffer, CC BY-SA 4.0"),
   ] },
-  { id: "vid-samples", name: "Samples", kind: "video", items: [
-    { id: "vid-bbb", name: "Big Buck Bunny (trailer)", credit: "© Blender Foundation, CC BY 3.0", src: "/media/videos/big-buck-bunny.mp4", thumb: "/media/videos/big-buck-bunny.webp" },
+  // no notes on purpose: they speak for themselves
+  { id: "vid-wall", name: "Videos", kind: "video", flat: true, items: [
+    { id: "vid-goggins", name: "The main purpose is YOU · David Goggins", src: "", youtube: "NvIu-IWfubA", thumb: "/media/videos/yt-NvIu-IWfubA.webp", portrait: true },
+    { id: "vid-naval", name: "The only true test of intelligence · Naval", src: "", youtube: "V1S05-X-Q4Y", thumb: "/media/videos/yt-V1S05-X-Q4Y.webp", portrait: true },
+    { id: "vid-jobs", name: "Steve Jobs on the Liberal Arts", src: "", youtube: "KgHkAwaW_lk", thumb: "/media/videos/yt-KgHkAwaW_lk.webp" },
+    { id: "vid-heart", name: "Follow Your Heart: Stop Living Someone Else's Life", src: "/media/videos/follow-your-heart.mp4", thumb: "/media/videos/follow-your-heart.webp", portrait: true },
+    { id: "vid-youtuber", name: "I Never Gave Up on Becoming a YouTuber", src: "/media/videos/never-gave-up.mp4", thumb: "/media/videos/never-gave-up.webp", portrait: true },
   ] },
 ];
 

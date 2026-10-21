@@ -76,7 +76,7 @@ export const FILE_NODES: FileNode[] = [
   { id: "desktop", parent: "tianchintosh", name: "Desktop", kind: "folder", description: "13 items", icon: desktopIcon, sidebarIcon: desktopSideIcon },
   { id: "documents", parent: "tianchintosh", name: "Documents", kind: "folder", description: "0 items", icon: documentsIcon, sidebarIcon: documentsSideIcon },
   { id: "images", parent: "tianchintosh", name: "Images", kind: "folder", description: `${MEDIA_FOLDERS.filter((f) => f.kind === "image").length} folders`, icon: imagesIcon, sidebarIcon: imagesSideIcon },
-  { id: "videos", parent: "tianchintosh", name: "Videos", kind: "folder", description: `${MEDIA_FOLDERS.filter((f) => f.kind === "video").length} folder`, icon: videosIcon, sidebarIcon: videosSideIcon },
+  { id: "videos", parent: "tianchintosh", name: "Videos", kind: "folder", description: `${MEDIA_FOLDERS.filter((f) => f.kind === "video").reduce((n, f) => n + f.items.length, 0)} videos`, icon: videosIcon, sidebarIcon: videosSideIcon },
 
   { id: "snake", parent: "applications", name: "Snake", kind: "app", app: "snake", description: "Playable game" },
   { id: "soul-blade-app", parent: "applications", name: "Soul Blade", kind: "shortcut", targetId: "soul-blade", description: "Playable game" },
@@ -123,10 +123,13 @@ export const FILE_NODES: FileNode[] = [
   { id: "settings", parent: "desktop", name: "Settings", kind: "app", app: "prefs", description: "System preferences" },
 
   // Images / Videos: generated from src/data/media.ts
-  ...MEDIA_FOLDERS.flatMap((f): FileNode[] => [
-    { id: f.id, parent: f.kind === "image" ? "images" : "videos", name: f.name, kind: "folder", description: `${f.items.length} item${f.items.length === 1 ? "" : "s"}` },
-    ...f.items.map((i): FileNode => ({ id: i.id, parent: f.id, name: i.name, kind: f.kind, mediaId: i.id, thumb: i.thumb, description: f.kind === "image" ? "Image" : "Video" })),
-  ]),
+  ...MEDIA_FOLDERS.flatMap((f): FileNode[] => {
+    const root = f.kind === "image" ? "images" : "videos";
+    return [
+      ...(f.flat ? [] : [{ id: f.id, parent: root, name: f.name, kind: "folder" as const, description: `${f.items.length} item${f.items.length === 1 ? "" : "s"}` }]),
+      ...f.items.map((i): FileNode => ({ id: i.id, parent: f.flat ? root : f.id, name: i.name, kind: f.kind, mediaId: i.id, thumb: i.thumb, description: f.kind === "image" ? "Image" : "Video" })),
+    ];
+  }),
 ];
 
 export const filesystemNode = (id: string) => FILE_NODES.find((node) => node.id === id);
