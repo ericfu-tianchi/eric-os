@@ -1,18 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useOS } from "../store";
 import fuWingMark from "../assets/fu-wing-mark.png";
+import portrait from "../assets/about/portrait.webp";
+import portraitShadow from "../assets/about/shadow.png";
 
 /**
  * About Me: a dark, one-page profile (design picked in public/about-study/v2.html:
  * walnut guitar, faint pixel shadow, green accent, "big years" path).
  * "What I bring" and the philosophy line are Tianchi's LinkedIn About, verbatim.
- * Open with ?aboutstudy to get a small picker for the options still being chosen.
  */
 
-const PORTRAITS = import.meta.glob("../assets/about/portrait-*.webp", { eager: true, import: "default" }) as Record<string, string>;
-const SHADOWS = import.meta.glob("../assets/about/shadow-*.png", { eager: true, import: "default" }) as Record<string, string>;
-const portraitOf = (k: string) => PORTRAITS[`../assets/about/portrait-${k}.webp`];
-const shadowOf = (k: string) => SHADOWS[`../assets/about/shadow-${k}.png`];
 
 const PHIL = "Tech is never the end, but a powerful means. I'm driven by the positive human impact tech enables.";
 const KEY = new Set(["positive", "human", "impact"]);
@@ -23,24 +20,6 @@ const BRING = [
   { h: "Model Eval", p: "Building framework and platform for evaluating LLM, video, and image models, and using the results to drive what ships.", tags: ["LLM", "Video / Image", "Agent"] },
 ];
 
-/* ---- options still being picked (?aboutstudy); the first of each is the default ---- */
-const OPT = {
-  face: [["b2", "Balance 50%"], ["b1", "Balance 30%"], ["b3", "Balance 70%"], ["f0", "As is"], ["f1", "Face +10%"], ["f2", "Face +18%"], ["f3", "Face +26%"]],
-  shadow: [["ru-bitten", "RU · bitten edge"], ["r2", "RU · current"], ["ru-big", "RU · bigger, 10px"], ["ru-echo", "RU · echo (two steps)"], ["ru-dither", "RU · dithered"], ["ru-scan", "RU · scanlines"], ["ru-line", "RU · pixel outline"], ["l-up", "Left · up"], ["l-down8", "Left · down, chunky"], ["l-rough", "Left · down, rough"], ["l-fine", "Left · down, fine"], ["l-smooth", "Left · down, smooth"]],
-  nus: [
-    ["a", "Back in school for AI, and still building with it on the side."],
-    ["b", "Back in school, still working on the AI side."],
-    ["c", "Studying AI by day, shipping it on the side."],
-    ["d", "Back in school, learning AI while building with it."],
-  ],
-  offLabel: [["Off the clock", "Off the clock"], ["Away from the desk", "Away from the desk"], ["Also me", "Also me"], ["When I'm not shipping", "When I'm not shipping"]],
-  lang: [["🗣️", "🗣️ speaking head"], ["💬", "💬 speech bubble"], ["🌐", "🌐 globe"], ["文A", "文A type mark"], ["あ", "あ kana"], ["Aa", "Aa letters"]],
-  offLayout: [["cards", "Cards"], ["rows", "Rows"], ["sentence", "Sentence"], ["chips", "Chips"]],
-} as const;
-type Pick = { [K in keyof typeof OPT]: string };
-const DEFAULT: Pick = { face: "b3", shadow: "r2", lang: "🗣️", nus: "a", offLabel: "Off the clock", offLayout: "cards" };
-const STORE = "about-study-picks-4";
-
 type Stop = { org: string; role: string; x: string; folder?: { id: string; title: string } };
 
 const ICON = {
@@ -50,30 +29,14 @@ const ICON = {
   gh: <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>,
 };
 
-function usePicks(): [Pick, (k: keyof Pick, v: string) => void, boolean] {
-  const study = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("aboutstudy");
-  const [p, setP] = useState<Pick>(() => {
-    if (!study) return DEFAULT;
-    try { return { ...DEFAULT, ...JSON.parse(localStorage.getItem(STORE) || "{}") }; } catch { return DEFAULT; }
-  });
-  const set = (k: keyof Pick, v: string) => setP((old) => {
-    const next = { ...old, [k]: v };
-    try { localStorage.setItem(STORE, JSON.stringify(next)); } catch { /* no storage */ }
-    return next;
-  });
-  return [p, set, study];
-}
-
 export function AboutApp() {
   const open = useOS((s) => s.open);
   const philRef = useRef<HTMLParagraphElement>(null);
-  const [pick, setPick, study] = usePicks();
-  const nusLine = OPT.nus.find(([k]) => k === pick.nus)?.[1] ?? OPT.nus[0][1];
 
   const PATH: { year: string; now?: boolean; stops: Stop[] }[] = [
     { year: "2026", now: true, stops: [
       { org: "OpusClip", role: "AI Product Manager · Singapore", x: "Own model eval for video and image generation; ship AI music in Agent Opus.", folder: { id: "opus", title: "Work at Opus Clip" } },
-      { org: "National University of Singapore", role: "MSc, AI & Innovation · Singapore", x: nusLine },
+      { org: "National University of Singapore", role: "MSc, AI & Innovation · Singapore", x: "Back in school, learning AI while building with it." },
     ] },
     { year: "2023", stops: [
       { org: "Huawei Cloud", role: "AI Product Manager · Shenzhen", x: "Prompt Studio · Copilot Builder · Model Eval Center · AI SaaS (BI & Enterprise Search)", folder: { id: "huawei", title: "Work at Huawei" } },
@@ -90,7 +53,7 @@ export function AboutApp() {
     { icon: "🎸", t: "Guitar", s: "Learned in high school" },
     { icon: "🌍", t: "20+ countries traveled", s: "Rebuilt in LEGO →", onClick: () => open("lego-world", { title: "My Lego World" }) },
     { icon: "📚", t: "A 50,000-word personal wiki", s: "On tech and philosophy" },
-    { icon: pick.lang, t: "English · 中文 · 日本語", s: "Duolingo 700+ day streak" },
+    { icon: "🗣️", t: "English · 中文 · 日本語", s: "Duolingo 700+ day streak" },
   ];
 
   // philosophy: the words light up one by one when the line scrolls into view
@@ -124,8 +87,8 @@ export function AboutApp() {
             <button type="button" onClick={() => open("resume", { title: "resume.pdf" })}>{ICON.doc}Resume</button>
           </div>
           <div className="am-photo">
-            <i className="am-shadow" style={{ WebkitMaskImage: `url(${shadowOf(pick.shadow)})`, maskImage: `url(${shadowOf(pick.shadow)})` }} />
-            <img src={portraitOf(pick.face)} alt="Tianchi playing guitar" draggable={false} />
+            <i className="am-shadow" style={{ WebkitMaskImage: `url(${portraitShadow})`, maskImage: `url(${portraitShadow})` }} />
+            <img src={portrait} alt="Tianchi playing guitar" draggable={false} />
           </div>
         </div>
       </section>
@@ -172,21 +135,15 @@ export function AboutApp() {
       </section>
 
       <section className="am-sec am-off">
-        <div className="am-label">{pick.offLabel}</div>
-        {pick.offLayout === "sentence" ? (
-          <p className="off-sentence">
-            I have played guitar since high school, traveled to 20+ countries and <button type="button" onClick={OFF[1].onClick}>rebuilt them in LEGO</button>, keep a 50,000-word personal wiki, and speak English, 中文 and a little 日本語 (Duolingo 700+ day streak).
-          </p>
-        ) : (
-          <div className={`off-${pick.offLayout}`}>
-            {OFF.map((o) => {
-              const inner = <><span className={`ic${/^\p{Extended_Pictographic}/u.test(o.icon) ? "" : " glyph"}`} aria-hidden>{o.icon}</span><span className="tx"><b>{o.t}</b>{o.s && <small>{o.s}</small>}</span></>;
-              return o.onClick
-                ? <button type="button" className="off-item link" key={o.t} onClick={o.onClick}>{inner}</button>
-                : <div className="off-item" key={o.t}>{inner}</div>;
-            })}
-          </div>
-        )}
+        <div className="am-label">Off the clock</div>
+        <div className="off-cards">
+          {OFF.map((o) => {
+            const inner = <><span className="ic" aria-hidden>{o.icon}</span><span className="tx"><b>{o.t}</b>{o.s && <small>{o.s}</small>}</span></>;
+            return o.onClick
+              ? <button type="button" className="off-item link" key={o.t} onClick={o.onClick}>{inner}</button>
+              : <div className="off-item" key={o.t}>{inner}</div>;
+          })}
+        </div>
       </section>
 
       <footer className="am-foot">
@@ -196,19 +153,6 @@ export function AboutApp() {
         <span>Made in Singapore, 2026</span>
       </footer>
 
-      {study && (
-        <aside className="am-study" aria-label="About options">
-          {(Object.keys(OPT) as (keyof Pick)[]).map((k) => (
-            <label key={k}>
-              <span>{k}</span>
-              <select value={pick[k]} onChange={(e) => setPick(k, e.target.value)}>
-                {OPT[k].map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-              </select>
-            </label>
-          ))}
-          <code>{`face: ${pick.face}, shadow: ${pick.shadow}, nus: ${pick.nus}, label: ${pick.offLabel}, layout: ${pick.offLayout}`}</code>
-        </aside>
-      )}
     </div>
   );
 }
