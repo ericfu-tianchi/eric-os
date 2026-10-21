@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mobile 方案调研</title>
+<style>
+@font-face{font-family:Geist;src:url(/src/assets/fonts/geist-sans-variable.woff2);font-weight:100 900}
+:root{--bg:#0e0f11;--card:#17181b;--line:#2a2b30;--ink:#ececee;--mute:#9a9ba1;--ac:#06c268}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 Geist,-apple-system,"PingFang SC",sans-serif}
+main{max-width:1080px;margin:0 auto;padding:48px 20px 96px}
+h1{font-size:34px;line-height:1.2;margin:0 0 8px;letter-spacing:-.01em}h2{font-size:20px;margin:56px 0 14px}
+.lead{color:var(--mute);margin:0 0 28px}
+.verdict{border:1px solid var(--ac);border-radius:14px;padding:18px 22px;background:rgba(6,194,104,.07)}
+.verdict b{color:var(--ac)}
+a{color:var(--ac)}
+.btn{display:inline-block;margin-top:12px;padding:8px 16px;border-radius:999px;background:var(--ac);color:#04130b;font-weight:650;text-decoration:none}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--mute);font-weight:600}
+td:first-child{white-space:nowrap;font-weight:600}
+.ok{color:var(--ac)}.mid{color:#f5a524}.bad{color:#ff6b6b}
+.shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px}
+.shots figure{margin:0}.shots img{width:100%;border-radius:22px;display:block;border:1px solid var(--line)}
+.shots figcaption{font-size:12.5px;color:var(--mute);margin-top:6px}
+ul{padding-left:20px}li{margin:4px 0}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.cols>div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.cols h3{margin:0 0 6px;font-size:16px}
+@media(max-width:760px){.cols{grid-template-columns:1fr}td:first-child{white-space:normal}}
+</style></head><body><main>
+<h1>Tianchi OS 的 Mobile 版：三个方案</h1>
+<p class="lead">调研 + 可交互 demo，2026-10-21。demo 用的是网站里真实的 app 和数据，不是图片拼的。</p>
+
+<div class="verdict">
+<b>结论：推荐方案 3（iOS 化），可行，而且比想象中便宜。</b><br>
+关键发现：现有的每个 app 都能原样跑在 iOS 壳里。主屏图标调用的就是桌面版同一个 <code>open()</code>，最新打开的窗口就是前台全屏 app；“窗口”= iOS 的“后台 app”，所以 App Switcher 几乎白送。壳本身（锁屏、主屏、灵动岛、Messages、Settings）约 500 行，demo 用了半天。<br>
+<a class="btn" href="/?ios">打开 demo（/?ios）</a>
+<span style="color:var(--mute);font-size:13px;margin-left:8px">桌面浏览器里会画一个手机外框；手机上直接全屏</span>
+</div>
+
+<h2>三个方案对比</h2>
+<div class="cols">
+<div><h3>1 · 缩小版桌面（ryOS 式）</h3>
+<p>一眼就是“桌面 OS 在手机上”。窗口在手机上只能全屏，拖拽、菜单栏、Dock 在触屏上都别扭；蛇的“hello”壁纸在竖屏放不下。</p>
+<p>工期 ≈ 2–3 天 · 惊艳度 中 · 可用性 <span class="mid">中低</span></p></div>
+<div><h3>2 · 内容卡片流（现状加强）</h3>
+<p>最好用、最便宜，但丢掉了 OS 隐喻和蛇，跟桌面版像两个网站。你自己也不想要。</p>
+<p>工期 ≈ 1 天 · 惊艳度 低 · 可用性 <span class="ok">高</span></p></div>
+<div><h3>3 · iOS 化（macOS ↔ iOS）</h3>
+<p>隐喻一致：桌面是 macOS，手机是 iOS。触屏交互本来就是 iOS 的母语，所以反而比方案 1 更好用。蛇住进灵动岛。</p>
+<p>工期 ≈ MVP 4–5 天，打磨到上线 1.5–2 周 · 惊艳度 <span class="ok">高</span> · 可用性 <span class="ok">高</span></p></div>
+</div>
+
+<h2>Demo 截图（真实运行）</h2>
+<div class="shots">
+<figure><img src="shots/01-lock.webp"><figcaption>锁屏：通知就是自我介绍</figcaption></figure>
+<figure><img src="shots/02-home.webp"><figcaption>主屏：About 小组件 + app + 蛇壁纸</figcaption></figure>
+<figure><img src="shots/03-island-peek.webp"><figcaption>灵动岛：蛇探头“Psst. Tap me.”</figcaption></figure>
+<figure><img src="shots/04-island-open.webp"><figcaption>灵动岛展开 = 原来的蛇助手菜单</figcaption></figure>
+<figure><img src="shots/05-about.webp"><figcaption>About Me（原组件，零改动）</figcaption></figure>
+<figure><img src="shots/06-folder.webp"><figcaption>School 文件夹 = iOS 文件夹</figcaption></figure>
+<figure><img src="shots/07-case.webp"><figcaption>案例页（原组件）</figcaption></figure>
+<figure><img src="shots/08-longpress.webp"><figcaption>长按 Soul Blade：Play / How I Built It</figcaption></figure>
+<figure><img src="shots/10-messages.webp"><figcaption>Messages = Ask about Tianchi（原 AI 对话）</figcaption></figure>
+<figure><img src="shots/11-settings.webp"><figcaption>Settings：个人卡、给蛇换装、联系方式</figcaption></figure>
+<figure><img src="shots/13-photos-folder.webp"><figcaption>Photos（原 Finder，去掉侧栏 + iOS 返回）</figcaption></figure>
+<figure><img src="shots/14-snake.webp"><figcaption>Snake：滑动 = 方向键，点一下 = 开始</figcaption></figure>
+<figure><img src="shots/15-switcher.webp"><figcaption>按住底部横条 = App Switcher</figcaption></figure>
+</div>
+
+<h2>现有内容怎么 fit</h2>
+<table>
+<tr><th>桌面（macOS）</th><th>手机（iOS）</th><th>状态</th></tr>
+<tr><td>Boot splash</td><td>锁屏（时间、日期、一条来自 Tianchi 的通知）</td><td class="ok">demo 已做</td></tr>
+<tr><td>桌面 + 蛇壁纸</td><td>主屏；“hello”蛇按 15px 格子画在壁纸下半部</td><td class="ok">已做</td></tr>
+<tr><td>菜单栏</td><td>状态栏（真手机上用系统自带的，见风险 1）</td><td class="ok">已做</td></tr>
+<tr><td>Dock</td><td>iOS Dock：Messages · Photos · About · Settings</td><td class="ok">已做</td></tr>
+<tr><td>蛇助手（头上冒泡泡）</td><td><b>灵动岛</b>：探头提示 → 点开三个动作</td><td class="ok">已做，最有记忆点</td></tr>
+<tr><td>Ask about Tianchi</td><td>Messages app（同一个对话组件和后端）</td><td class="mid">能用；气泡要改成 iMessage 样式</td></tr>
+<tr><td>窗口 / 多窗口</td><td>全屏 app / App Switcher</td><td class="ok">架构直接复用</td></tr>
+<tr><td>Finder 文件夹</td><td>主屏文件夹（School、Work）+ Files / Photos / Videos</td><td class="mid">能用；Photos 应改成 iOS 相册网格</td></tr>
+<tr><td>About Me</td><td>About Me（主屏小组件也指向它）</td><td class="mid">能用；393px 下要单独调排版</td></tr>
+<tr><td>案例页（13 个）</td><td>同一个阅读页 + iOS 导航栏</td><td class="ok">容器查询已经适配窄屏</td></tr>
+<tr><td>Preview / Player</td><td>Photos / TV 的查看器</td><td class="mid">要加左右滑切图、双指缩放</td></tr>
+<tr><td>Snake（窗口版）</td><td>Snake app，滑动操作</td><td class="mid">能玩；提示文案和画布尺寸要改</td></tr>
+<tr><td>桌面蛇大作战（SNAKE.SYS）</td><td>改成灵动岛里的“Play”，或锁屏小游戏</td><td class="mid">待定</td></tr>
+<tr><td>Soul Blade</td><td>长按：Play / How I Built It</td><td class="bad">游戏要键盘：要么在那个仓库加触屏，要么显示“Best on desktop”</td></tr>
+<tr><td>Lego World / Twist Solver</td><td>同上</td><td class="mid">Twist 已有手机版；Lego 需实测</td></tr>
+<tr><td>Settings</td><td>iOS Settings：个人卡、换装、联系方式、About Tianchi OS</td><td class="ok">已做；Dock 大小、屏保等桌面专属项不出现</td></tr>
+<tr><td>屏保</td><td>息屏 → 回锁屏</td><td class="mid">可选</td></tr>
+<tr><td>resume.pdf</td><td>Resume app</td><td class="mid">iOS Safari 的 PDF 内嵌要实测</td></tr>
+</table>
+
+<h2>风险与必须解决的点</h2>
+<ul>
+<li><b>1. 真机上的“iOS 套 iOS”。</b>在 Safari 里，系统自己的状态栏和底部横条都在。我们的假状态栏会重复（demo 在真机宽度下已自动隐藏）；底部手势区属于系统，往上滑会退出 Safari，所以“回主屏”要换成别的手势或按钮。<br>
+<b>彩蛋机会：</b>如果访客把网站“添加到主屏幕”（PWA 全屏），我们的灵动岛可以正好贴着真的灵动岛展开，效果会非常惊艳。</li>
+<li><b>2. Android 用户也会看到 iOS。</b>作为作品集隐喻是成立的（你的品牌是“OS”，不是“像不像他们的手机”），但值得你拍板。</li>
+<li><b>3. 苹果的视觉语言。</b>只借交互范式（锁屏、主屏、灵动岛、文件夹），图标和字体用我们自己的像素图标和 Geist / 系统字体，不放苹果商标或 logo。</li>
+<li><b>4. 性能。</b>毛玻璃（backdrop-filter）在低端 Android 上会掉帧，需要降级方案。</li>
+<li><b>5. 外部游戏</b>（Soul Blade 键盘操作）不在这个仓库里，需要另外处理。</li>
+</ul>
+
+<h2>工期估算（按我们现在这种协作速度）</h2>
+<table>
+<tr><th>阶段</th><th>内容</th><th>工期</th></tr>
+<tr><td>MVP</td><td>壳打磨：手势、真机 safe-area、隐藏假状态栏；About 窄屏排版；Snake 触屏和提示；Photos 网格；Messages 改 iMessage 样式</td><td>4–5 天</td></tr>
+<tr><td>上线版</td><td>Preview 滑动 / 缩放、外部游戏处理、PWA 灵动岛彩蛋、真机 QA（iPhone / Android / iPad 竖屏）、性能降级</td><td>+1 周</td></tr>
+<tr><td>可选</td><td>主屏第二页（Images / Videos 小组件）、锁屏小游戏、屏保</td><td>按需</td></tr>
+</table>
+
+<h2>要你决定的</h2>
+<ul>
+<li>走方案 3 吗？如果走，先做 MVP 再看。</li>
+<li>Android 也给 iOS 吗？（我建议是）</li>
+<li>真机上“回主屏”用哪种：顶部灵动岛点一下？左上角 “‹ Home”？还是保留底部横条但抬高？</li>
+<li>Soul Blade 在手机上：加触屏操作，还是提示“Best on desktop”？</li>
+</ul>
+</main></body></html>
