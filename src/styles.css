@@ -558,6 +558,10 @@ button { font-family: inherit; color: inherit; }
 .finder-titlebar .window-crumb .crumb-part:last-child > span:last-child { color: var(--ink); font-weight: 650; }
 
 .win-body { flex: 1; overflow: auto; }
+/* windows are white even on the dark stage: give their scrollbars a light scheme (dark thumb) so they show;
+   dark-bodied windows (About Me) keep the dark one */
+.window { color-scheme: light; }
+.win-body:has(.aboutme) { color-scheme: dark; }
 .win-pad { padding: 26px 32px 32px; }
 /* Maximized windows read like a document: content keeps a comfortable measure,
    centered with quiet margins, instead of stretching edge to edge. */
@@ -1375,9 +1379,10 @@ button { font-family: inherit; color: inherit; }
 }
 
 /* Tianchintosh Finder — one location-aware surface for every folder. */
-.finder-browser { min-height: 100%; display: flex; color: var(--ink); background: var(--surface); }
+.win-body:has(.finder-browser) { overflow: hidden; } /* Finder: sidebar stays put, only the content pane scrolls */
+.finder-browser { height: 100%; display: flex; color: var(--ink); background: var(--surface); }
 .finder-sidebar {
-  flex: 0 0 186px; padding: 12px 8px 16px; background: #f6f6f8;
+  flex: 0 0 186px; padding: 12px 8px 16px; background: #f6f6f8; overflow-y: auto;
   border-right: 1px solid var(--hairline); font-family: var(--font-system);
 }
 .finder-side-root, .finder-side-item {
