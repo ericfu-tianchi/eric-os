@@ -102,6 +102,13 @@ export function IOSShell() {
   const [zoom, setZoom] = useState(fit);
   useEffect(() => { const f = () => setZoom(fit()); window.addEventListener("resize", f); return () => window.removeEventListener("resize", f); }, []);
 
+  // phone: the page behind the shell matches it (Safari tints its bars from it) and never rubber-bands
+  useEffect(() => {
+    const r = document.documentElement, b = document.body;
+    r.style.background = b.style.background = "#111214";
+    r.style.overscrollBehavior = b.style.overscrollBehavior = "none";
+  }, []);
+
   // a window that appears in the store = an app that just launched (from Home, or from inside another app)
   useEffect(() => {
     const fresh = order.filter((id) => !seen.current.has(id));
