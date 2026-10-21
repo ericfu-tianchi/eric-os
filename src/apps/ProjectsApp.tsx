@@ -91,6 +91,14 @@ function Rich({ text }: { text: string }) {
   );
 }
 
+/** Round white glyphs for the old-site feature panels (Connectr), drawn to match the originals. */
+const PANEL_ICON: Record<"mbti" | "group" | "puzzle" | "compass", React.ReactNode> = {
+  mbti: <svg viewBox="0 0 40 40"><path d="M14 33v-5.5c-3.6-2.2-5.6-5.6-5.6-9.8C8.4 10.9 13.6 6 20.3 6c6.5 0 11.3 4.5 11.3 10.7 0 1.4.9 2.4 1.9 3.9.4.6.1 1.3-.6 1.4l-1.4.3v3.6c0 1.6-1.3 2.9-2.9 2.9h-2.4V33z" fill="#fff" /><text x="20" y="19" textAnchor="middle" fontSize="5.6" fontWeight="700" fill="var(--pc)" fontFamily="Montserrat, sans-serif">MBTI</text><ellipse cx="20" cy="17" rx="8.2" ry="5.2" fill="none" stroke="var(--pc)" strokeWidth="1.3" /></svg>,
+  group: <svg viewBox="0 0 40 40"><path d="M11 9h18a3 3 0 0 1 3 3v15a3 3 0 0 1-3 3H15l-5 3.5V12a3 3 0 0 1 1-3z" fill="#fff" />{[[16.5, 16.5], [23.5, 16.5], [16.5, 23], [23.5, 23]].map(([x, y]) => <circle key={`${x}${y}`} cx={x} cy={y} r="2.7" fill="var(--pc)" />)}</svg>,
+  puzzle: <svg viewBox="0 0 40 40" fill="#fff"><path d="M9 9h9.5v3.2a2.6 2.6 0 1 0 3 0V9H31v9.5h-3.2a2.6 2.6 0 1 0 0 3H31V31h-9.5v-3.2a2.6 2.6 0 1 0-3 0V31H9v-9.5h3.2a2.6 2.6 0 1 0 0-3H9z" /><path d="M20 9v22M9 20h22" stroke="var(--pc)" strokeWidth="1.4" /></svg>,
+  compass: <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="12.5" fill="#fff" /><path d="m25.5 14.5-3.6 7.4-7.4 3.6 3.6-7.4z" fill="var(--pc)" /><circle cx="20" cy="20" r="1.6" fill="#fff" /></svg>,
+};
+
 function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number }) {
   if (b.t === "p") return <p className="cs-p"><Rich text={b.text} /></p>;
   if (b.t === "h") return <h3 className="cs-label">{b.text}</h3>;
@@ -156,6 +164,31 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
         </div>
         {b.caption && <figcaption>{b.caption}</figcaption>}
       </figure>
+    );
+  if (b.t === "chat")
+    return (
+      <div className="cs-chat">
+        <div className="q"><span className="face" aria-hidden>{b.qFace}</span><p className="bubble"><Rich text={b.q} /></p></div>
+        <div className="a">
+          <div className="bubble">{b.a.map((x) => <div key={x.h}><h4>{x.h}</h4><p><Rich text={x.text} /></p></div>)}</div>
+          <span className="face" aria-hidden>{b.aFace}</span>
+        </div>
+      </div>
+    );
+  if (b.t === "panels")
+    return (
+      <div className="cs-panels">
+        {b.items.map((x) => (
+          <section key={x.title} style={{ "--pc": x.color } as React.CSSProperties}>
+            <span className="ic" aria-hidden>{PANEL_ICON[x.icon]}</span>
+            <div className="body">
+              <h4>{x.title}</h4>
+              <p><Rich text={x.text} /></p>
+              {x.subs?.map((y) => <div key={y.h}><h5>&gt;&gt; {y.h}</h5><p><Rich text={y.text} /></p></div>)}
+            </div>
+          </section>
+        ))}
+      </div>
     );
   if (b.t === "item") {
     const src = b.src ? detailImg(b.src) : undefined;

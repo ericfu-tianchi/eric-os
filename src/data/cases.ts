@@ -33,6 +33,8 @@ export type CaseBlock =
   | { t: "embed"; src: string; kind: "youtube" | "figma" | "web"; caption?: string; ratio?: number } // live iframe; ratio = w/h
   | { t: "row"; items: { src: string; w: number }[]; caption?: string } // 2–3 images side by side at their old-site widths
   | { t: "img"; src: string; caption?: string; w?: number } // src = "<slug>/NN.png"; w = display width in px at 1440 (old-site size)
+  | { t: "chat"; q: string; qFace: string; a: { h: string; text: string }[]; aFace: string } // old-site speech bubbles: a question, then an answer bubble with headed paragraphs
+  | { t: "panels"; items: { icon: "mbti" | "group" | "puzzle" | "compass"; color: string; title: string; text: string; subs?: { h: string; text: string }[] }[] } // old-site feature panels: round icon + tinted panel per feature, highlights in its color
   | { t: "item"; title: string; text: string; src?: string; apps?: AppKey[]; plus?: boolean }; // numbered text + visual row, sides alternate; no src = the apps as big linked icons (plus: joined by "+"), else linked app chips under the text; "\n\n" splits paragraphs
 export interface CaseSection { id: string; label: string; blocks: CaseBlock[]; white?: boolean } // white: keep the band white (white-background slides)
 export interface CaseStudy {
