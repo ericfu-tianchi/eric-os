@@ -13,6 +13,8 @@ export type AppId =
   | "twist-solver"
   | "lego-world"
   | "html-doc"
+  | "preview"
+  | "player"
   | "life"
   | "playground"
   | "project-detail"
@@ -95,6 +97,8 @@ const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
   "twist-solver": { w: 1120, h: 720 },
   "lego-world": { w: 1120, h: 720 },
   "html-doc": { w: 820, h: 620 },
+  preview: { w: 860, h: 600 },
+  player: { w: 854, h: 510 },
   life: { w: 560, h: 500 },
   playground: { w: 600, h: 520 },
   "project-detail": { w: 700, h: 520 },
@@ -125,7 +129,7 @@ export const useOS = create<OSState>()(
         // File-system windows and project detail windows are keyed by location;
         // every other app remains single-instance.
         const existing = Object.values(s.windows).find(
-          (w) => w.app === app && (!["project-detail", "filesystem", "html-doc"].includes(app) || w.payload === opts?.payload)
+          (w) => w.app === app && (!["project-detail", "filesystem", "html-doc", "preview", "player"].includes(app) || w.payload === opts?.payload)
         );
         if (existing) return s.focus(existing.id);
         const id = `${app}-${s.seq}`;

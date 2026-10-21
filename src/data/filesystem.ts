@@ -11,9 +11,10 @@ import imagesIcon from "../assets/icons/b/sidebar-images.png";
 import imagesSideIcon from "../assets/icons/b/sidebar-images-bold.png";
 import videosIcon from "../assets/icons/b/sidebar-videos.png";
 import videosSideIcon from "../assets/icons/b/sidebar-videos-bold.png";
+import { MEDIA_FOLDERS } from "./media";
 
 export type ExternalGameId = "soul-blade" | "twist-solver" | "lego-world";
-export type FileNodeKind = "folder" | "project" | "game" | "document" | "app" | "shortcut" | "placeholder";
+export type FileNodeKind = "folder" | "project" | "game" | "document" | "app" | "shortcut" | "placeholder" | "image" | "video";
 
 export interface FileNode {
   id: string;
@@ -30,6 +31,10 @@ export interface FileNode {
   icon?: string;
   /** The same folder with a bigger, darker glyph, readable at the sidebar's 20px. */
   sidebarIcon?: string;
+  /** Image / video file: the MediaItem id in src/data/media.ts. */
+  mediaId?: string;
+  /** Finder thumbnail for media files. */
+  thumb?: string;
   /** A Desktop / Applications alias that resolves to a canonical node. */
   targetId?: string;
 }
@@ -70,8 +75,8 @@ export const FILE_NODES: FileNode[] = [
   { id: "applications", parent: "tianchintosh", name: "Applications", kind: "folder", description: "4 apps", icon: applicationsIcon, sidebarIcon: applicationsSideIcon },
   { id: "desktop", parent: "tianchintosh", name: "Desktop", kind: "folder", description: "13 items", icon: desktopIcon, sidebarIcon: desktopSideIcon },
   { id: "documents", parent: "tianchintosh", name: "Documents", kind: "folder", description: "0 items", icon: documentsIcon, sidebarIcon: documentsSideIcon },
-  { id: "images", parent: "tianchintosh", name: "Images", kind: "folder", description: "0 items", icon: imagesIcon, sidebarIcon: imagesSideIcon },
-  { id: "videos", parent: "tianchintosh", name: "Videos", kind: "folder", description: "0 items", icon: videosIcon, sidebarIcon: videosSideIcon },
+  { id: "images", parent: "tianchintosh", name: "Images", kind: "folder", description: `${MEDIA_FOLDERS.filter((f) => f.kind === "image").length} folders`, icon: imagesIcon, sidebarIcon: imagesSideIcon },
+  { id: "videos", parent: "tianchintosh", name: "Videos", kind: "folder", description: `${MEDIA_FOLDERS.filter((f) => f.kind === "video").length} folder`, icon: videosIcon, sidebarIcon: videosSideIcon },
 
   { id: "snake", parent: "applications", name: "Snake", kind: "app", app: "snake", description: "Playable game" },
   { id: "soul-blade-app", parent: "applications", name: "Soul Blade", kind: "shortcut", targetId: "soul-blade", description: "Playable game" },
@@ -116,6 +121,12 @@ export const FILE_NODES: FileNode[] = [
   { id: "desktop-snake", parent: "desktop", name: "Snake", kind: "shortcut", targetId: "snake", description: "Application shortcut" },
   { id: "desktop-disk", parent: "desktop", name: "Tianchintosh HD", kind: "shortcut", targetId: "tianchintosh", description: "System volume" },
   { id: "settings", parent: "desktop", name: "Settings", kind: "app", app: "prefs", description: "System preferences" },
+
+  // Images / Videos: generated from src/data/media.ts
+  ...MEDIA_FOLDERS.flatMap((f): FileNode[] => [
+    { id: f.id, parent: f.kind === "image" ? "images" : "videos", name: f.name, kind: "folder", description: `${f.items.length} item${f.items.length === 1 ? "" : "s"}` },
+    ...f.items.map((i): FileNode => ({ id: i.id, parent: f.id, name: i.name, kind: f.kind, mediaId: i.id, thumb: i.thumb, description: f.kind === "image" ? "Image" : "Video" })),
+  ]),
 ];
 
 export const filesystemNode = (id: string) => FILE_NODES.find((node) => node.id === id);

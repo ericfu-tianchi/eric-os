@@ -62,6 +62,7 @@ v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(Light �
 - **真实游戏**:桌面 Snake 的主实现是 `DesktopSnake.tsx`。Soul Blade / Twist Solver 定义在 `filesystem.ts` 的 `EXTERNAL_GAMES`，通过 `ExternalGameApp.tsx` 最大化 iframe 打开。
 - **内容页排版**:所有阅读型页面(项目详情、How I Built It、长文)**动工前先读 `docs/LAYOUT_GUIDE.md`**,并先说明用哪种格式(默认 case blocks 数据 + `ProjectDetailApp` 渲染;HTML 仅限需交互的例外;暂不用 Markdown)。
 - **内容扩展**:新增 case 仍以 `src/data/projects.ts` / `cases*.ts` 为主；在批量引入 HTML、Markdown、PDF、视频前，应先建立统一 content manifest + renderer registry，避免分散的 app 判断。
+- **Images / Videos**:内容清单在 `src/data/media.ts`(文件放 `public/media/`,图片配 `.thumb.webp`),Finder 自动生成文件夹和文件;双击图片开 `PreviewApp`、视频开 `PlayerApp`(`src/apps/MediaApps.tsx`,仿 macOS Preview / QuickTime:深色台面、悬停控件、←/→ 翻页、F 或双击全屏)。视频可填 `youtube` id 改用 YouTube 播放器。
 - **全站纪录**:只存一条全站最高分(分数 + 署名),在 Worker 的 KV(`SNAKE` 命名空间,`/api/record`)。`src/data/snakeRecord.ts` 负责读写并在本地缓存最后一次看到的纪录;Worker 拒绝明显伪造的分数(超过游戏时长可能达到的分数)。个人 BEST 仍存在访客自己的浏览器里。
 
 ## OS 设计规范(2026-10-20)

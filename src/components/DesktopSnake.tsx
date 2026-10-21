@@ -501,6 +501,9 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
         <g transform={`translate(${cx},${cy}) rotate(${ang}) scale(${cellH / 44})`}>
           <Hat hat={hat} ang={ang} />
         </g>
+      </svg>
+      {/* the "!" lives in its own layer above the desktop files, so no icon can cover it */}
+      <svg className="dsnake-svg dsnake-top" width="100%" height="100%">
         {/* the snake spots the apple: a thought bubble ("!") pops above its head, then it moves */}
         {!frozen && (phase.current === "alert" || phase.current === "tutorial") && (
           <g className="snake-alert" style={{ "--alert-ms": `${alertLifeMs.current}ms` } as React.CSSProperties}>
