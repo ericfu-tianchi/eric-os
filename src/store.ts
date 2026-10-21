@@ -36,7 +36,7 @@ export type IconSet = "a" | "d";
 export type Theme = "dark" | "light";
 export const SNAKE_HAT_IDS = ["none", "glasses", "cap", "phones", "bow", "shades", "cat", "nycap"] as const;
 /** Bump when the default desktop arrangement changes: saved icon positions reset once. */
-const ICON_LAYOUT = 2;
+const ICON_LAYOUT = 3;
 export const DOCK_SIZE = { stops: [32, 40, 48, 56, 64] as const, default: 48 };
 export type SaverId = "duel" | "corner" | "crazy" | "reel";
 export const SAVER_IDS: SaverId[] = ["duel", "corner", "crazy", "reel"];

@@ -73,7 +73,7 @@ export const FILE_NODES: FileNode[] = [
   { id: "tianchintosh", name: "Tianchintosh HD", kind: "folder", description: "Portfolio volume" },
 
   { id: "applications", parent: "tianchintosh", name: "Applications", kind: "folder", description: "5 apps", icon: applicationsIcon, sidebarIcon: applicationsSideIcon },
-  { id: "desktop", parent: "tianchintosh", name: "Desktop", kind: "folder", description: "9 items", icon: desktopIcon, sidebarIcon: desktopSideIcon },
+  { id: "desktop", parent: "tianchintosh", name: "Desktop", kind: "folder", description: "8 items", icon: desktopIcon, sidebarIcon: desktopSideIcon },
   { id: "documents", parent: "tianchintosh", name: "Documents", kind: "folder", description: "1 item", icon: documentsIcon, sidebarIcon: documentsSideIcon },
   { id: "images", parent: "tianchintosh", name: "Images", kind: "folder", description: `${MEDIA_FOLDERS.filter((f) => f.kind === "image").length} folders`, icon: imagesIcon, sidebarIcon: imagesSideIcon },
   { id: "videos", parent: "tianchintosh", name: "Videos", kind: "folder", description: `${MEDIA_FOLDERS.filter((f) => f.kind === "video").reduce((n, f) => n + f.items.length, 0)} videos`, icon: videosIcon, sidebarIcon: videosSideIcon },
@@ -113,14 +113,13 @@ export const FILE_NODES: FileNode[] = [
   { id: "lego-world-folder", parent: "ai", name: "My Lego World", kind: "folder", description: "2 items" },
   { id: "lego-world", parent: "lego-world-folder", name: "My Lego World", kind: "game", gameId: "lego-world", description: "Playable app" },
   { id: "lego-world-how", parent: "lego-world-folder", name: "How I Built It", kind: "project", projectSlug: "lego-world" },
-  { id: "how-i-ai", parent: "ai", name: "How I AI", kind: "placeholder", description: "Coming soon" },
+  { id: "how-i-ai", parent: "ai", name: "How I AI", kind: "project", projectSlug: "how-i-ai" },
 
   { id: "desktop-soul-blade", parent: "desktop", name: "Soul Blade", kind: "shortcut", targetId: "soul-blade", description: "Playable game" },
   { id: "desktop-lego-world", parent: "desktop", name: "My Lego World", kind: "shortcut", targetId: "lego-world", description: "Playable app" },
   { id: "about", parent: "desktop", name: "About Me", kind: "document", app: "about", description: "Profile" },
   { id: "resume", parent: "desktop", name: "resume.pdf", kind: "document", app: "resume", description: "PDF document" },
   { id: "desktop-snake", parent: "desktop", name: "Snake", kind: "shortcut", targetId: "snake", description: "Application shortcut" },
-  { id: "desktop-disk", parent: "desktop", name: "Tianchintosh HD", kind: "shortcut", targetId: "tianchintosh", description: "System volume" },
 
   // Images / Videos: generated from src/data/media.ts
   ...MEDIA_FOLDERS.flatMap((f): FileNode[] => {

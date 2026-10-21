@@ -23,7 +23,7 @@ const folderIcon = (key: "school" | "work" | "ai", cellRight: number, row: numbe
   return { key, label: node.name, icon: "folder", app: "filesystem", title: node.name, payload: node.id, cellRight, row };
 };
 
-/** Desktop = three project folders, the three games side by side, then About Me, the resume and the disk.
+/** Desktop = three project folders, the three games side by side, then About Me and the resume. Tianchintosh HD lives in the Dock.
     Settings lives in the Dock (and Applications). Each folder opens the same node Tianchintosh HD exposes. */
 export const ICONS: IconDef[] = [
   folderIcon("school", 8, 1),
@@ -34,7 +34,6 @@ export const ICONS: IconDef[] = [
   { key: "snake", label: "Snake", icon: "snake", app: "snake", title: "Snake", cellRight: 2, row: 4 },
   { key: "about", label: "About Me", icon: "about-page", app: "about", title: "About Me", cellRight: 5, row: 7 },
   { key: "resume", label: "resume.pdf", icon: "pdf", app: "resume", title: "resume.pdf", cellRight: 2, row: 7 },
-  { key: "disk", label: "Tianchintosh HD", icon: "computer", app: "filesystem", title: "Tianchintosh HD", payload: "tianchintosh", cellRight: 2, row: 10 },
 ];
 
 export type GridSpec = ReturnType<typeof gridSpec>;
