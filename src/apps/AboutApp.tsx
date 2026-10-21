@@ -19,7 +19,7 @@ const KEY = new Set(["positive", "human", "impact"]);
 
 const BRING = [
   { h: "Tech × Design", p: "A bilingual PM where tech meets design. I dig into the “why”, make complex logic intuitive, and bridge R&D, design, and business.", tags: ["PRD + Prototype"] },
-  { h: "AI Full-Stack", p: "3 years turning model capability into product: enterprise AI at Huawei Cloud, creative AI (video, image, audio) at OpusClip.", tags: ["PaaS → SaaS → Consumer"] },
+  { h: "AI Full-Stack", p: "3 years turning model capability into product: enterprise AI at Huawei Cloud, creative AI at OpusClip.", tags: ["PaaS → SaaS → Consumer"] },
   { h: "Model Eval", p: "Building framework and platform for evaluating LLM, video, and image models, and using the results to drive what ships.", tags: ["LLM", "Video / Image", "Agent"] },
 ];
 
@@ -38,8 +38,8 @@ const OPT = {
   offLayout: [["cards", "Cards"], ["rows", "Rows"], ["sentence", "Sentence"], ["chips", "Chips"]],
 } as const;
 type Pick = { [K in keyof typeof OPT]: string };
-const DEFAULT: Pick = { face: "b2", shadow: "ru-bitten", lang: "🗣️", nus: "a", offLabel: "Off the clock", offLayout: "cards" };
-const STORE = "about-study-picks-3";
+const DEFAULT: Pick = { face: "b3", shadow: "r2", lang: "🗣️", nus: "a", offLabel: "Off the clock", offLayout: "cards" };
+const STORE = "about-study-picks-4";
 
 type Stop = { org: string; role: string; x: string; folder?: { id: string; title: string } };
 
