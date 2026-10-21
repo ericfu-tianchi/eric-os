@@ -53,7 +53,10 @@ v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(Light �
   3. `store.ts` zustand + persist = 窗口/图标位/壁纸/蛇最高分,刷新不丢。
   4. z-index = `order` 数组下标,聚焦=挪到数组尾。
 - **像素系统**:`src/components/Pixel.tsx` 仍提供网格 SVG 图标与 `PixelWordmark`；当前选用的精致像素 Icon 是 `src/assets/icons/b/` 下的 PNG 资产。新 Icon 先复用 / 替换这套资产，除非 Eric 明确要求回到代码绘制。
-- **移动端**:由 `gridSpec` 决定；少于 27 列或 13 行即显示 `MobileShell`，`?forceDesktop=1` 可在窄屏强制桌面调试。
+- **移动端 = iOS 形态(src/mobile/)**:由 `gridSpec` 决定；少于 27 列或 13 行即显示 `IOSShell`(桌面 = macOS,手机 = iOS)。`?ios` 在大屏用手机外框预览,`?desktop`(或 `?forceDesktop=1`)在手机上强制桌面。
+  - 只共享内容层,不共享外壳:`model.ts` 从 `filesystem.ts / projects.ts / media.ts` 派生主屏文件夹、Files、Photos、Videos —— **新增项目/文件夹/图片/视频只改数据文件,手机端自动出现**;只有系统 app 和主屏顺序(`HOME`)手写。新顶级桌面目录加进 `DESKTOP_FOLDER_IDS` 即自动成为主屏文件夹(长名在 `SHORT` 里给短名)。
+  - 路由:`Route` → `routes.tsx` 的 `screenFor`;app 内部 `useNav().push` 压栈。返回:导航栏 Back/Home、底部横条(点按或上拉)、左边缘右滑、浏览器返回键(history 同步)全部可用。桌面组件里调用的 `useOS().open()` 会被转成手机路由。
+  - 网格 `--cell` = 屏宽 / 13,壁纸、Snake 棋盘、图标尺寸共用。手机版 Snake 是独立实现(`SnakeGame.tsx`,不吃文件)。
 
 ## V0.5 文件系统与内容入口
 

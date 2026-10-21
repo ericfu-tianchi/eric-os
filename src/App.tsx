@@ -9,12 +9,11 @@ import { gridSpec } from "./components/Pixel";
 import { PROJECTS } from "./data/projects";
 import { TOPBAR } from "./components/desktopGrid";
 import { BootSplash } from "./components/BootSplash";
-import { MobileShell } from "./components/MobileShell";
 import { ScreenSaver } from "./components/ScreenSaver";
 import { APP_VIEWS } from "./appViews";
 import { IOSShell } from "./mobile/IOSShell";
 
-// ?ios = the iOS-style phone shell (study for the mobile version; on a desktop it renders inside a phone frame)
+// ?ios = the phone shell on any screen (a desktop draws it inside a phone frame); ?desktop = the desktop on a phone
 const IOS = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("ios");
 
 /** App registry — add an app: one component + one entry here. */
@@ -47,7 +46,7 @@ function flyVec(w: WinInstance, count: number): { x: number; y: number } {
 }
 
 function useIsMobile() {
-  const force = typeof window !== "undefined" && window.location.search.includes("forceDesktop");
+  const force = typeof window !== "undefined" && /forceDesktop|[?&]desktop\b/.test(window.location.search);
   // The OS only works when the full "hello" pose and Snake's right-turn buffer fit:
   // 27 columns = head at col 23 + three open cells; 13 rows keeps the wordmark
   // whole while still leaving four cells below it. Below this, use the content view.
@@ -153,7 +152,7 @@ export default function App() {
   }, [isMobile]);
 
   if (IOS) return <IOSShell />;
-  if (isMobile) return <MobileShell />;
+  if (isMobile) return <IOSShell />;
 
   return (
     <>
