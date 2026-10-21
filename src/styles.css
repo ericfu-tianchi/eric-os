@@ -1712,15 +1712,10 @@ button { font-family: inherit; color: inherit; }
 .am-path .go { position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 600; color: var(--am-ac); opacity: 0; transition: opacity 0.2s; white-space: nowrap; }
 .am-path .stop.link:hover .go, .am-path .stop.link:focus-visible .go { opacity: 1; }
 
-/* off the clock: four ways to lay out the same four things */
+/* off the clock: four cards */
 .am-off { padding-bottom: 56px; }
 .am-off .off-cards { margin-top: 22px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .am-off .off-cards .off-item { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; padding: 18px; min-height: 132px; border-radius: 12px; background: rgba(255,255,255,.035); border: 1px solid var(--am-line); text-align: left; }
-.am-off .off-rows { margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; }
-.am-off .off-rows .off-item { display: flex; align-items: center; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--am-line); text-align: left; width: 100%; }
-.am-off .off-chips { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; }
-.am-off .off-chips .off-item { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 999px; background: rgba(255,255,255,.05); }
-.am-off .off-chips small { display: none; }
 .am-off .off-item { color: var(--am-ink); border: 0; background: none; }
 .am-off .ic { font-size: 22px; line-height: 1; }
 .am-off .tx { display: flex; flex-direction: column; gap: 4px; }
@@ -1730,19 +1725,12 @@ button { font-family: inherit; color: inherit; }
 .am-off .off-item.link small { color: var(--am-ac); }
 .am-off .off-item.link:hover { border-color: color-mix(in srgb, var(--am-ac) 55%, transparent); }
 .am-off .off-cards .off-item { border: 1px solid var(--am-line); background: rgba(255,255,255,.035); }
-.am-off .off-sentence { margin: 22px 0 0; max-width: 760px; font-size: 22px; line-height: 1.55; color: var(--am-body); }
-.am-off .off-sentence button { color: var(--am-ink); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-decoration-color: var(--am-ac); text-underline-offset: 4px; text-decoration-thickness: 2px; }
 
 /* footer: one quiet line, no extra rules */
 .am-foot { display: flex; align-items: center; gap: 10px; padding: 22px 56px 30px; font: 500 12px var(--font-system); color: var(--am-faint); box-sizing: content-box; }
 .am-foot img { height: 14px; width: auto; opacity: 0.55; }
 .am-foot .sp { flex: 1; }
 
-/* dev-only option picker (?aboutstudy) */
-.am-study { position: fixed; right: 16px; bottom: 16px; z-index: 50; display: grid; gap: 6px; padding: 12px; width: 300px; border-radius: 10px; background: #f4f4f6; color: #17171a; font: 500 12px var(--font-system); box-shadow: 0 12px 30px rgba(0,0,0,.4); }
-.am-study label { display: grid; grid-template-columns: 70px 1fr; align-items: center; gap: 8px; }
-.am-study select { font: inherit; padding: 4px; }
-.am-study code { font: 500 10.5px var(--font-mono); color: #5e5e66; word-break: break-word; }
 
 /* narrow windows: the photo sits behind, the columns stack */
 @container (max-width: 760px) {
@@ -1751,10 +1739,7 @@ button { font-family: inherit; color: inherit; }
   .am-photo { width: 440px; right: -150px; opacity: 0.55; }
   .am-sec, .am-foot { padding-inline: 28px; }
   .am-phil p { font-size: 28px; }
-  .am-bring .cols, .am-off .off-cards, .am-off .off-rows { grid-template-columns: 1fr 1fr; }
-  .am-bring .cols { grid-template-columns: 1fr; }
+  .am-bring .cols, .am-off .off-cards,   .am-bring .cols { grid-template-columns: 1fr; }
   .am-bring article + article { padding-left: 0; border-left: 0; border-top: 1px solid var(--am-line); }
   .am-path .yr { grid-template-columns: 1fr; gap: 0; }
 }
-.am-off .ic.glyph { font: 700 17px var(--font-display); letter-spacing: -0.02em; color: var(--am-ac); }
-.am-off .ic.glyph { font: 700 17px var(--font-display); letter-spacing: -0.02em; color: var(--am-ac); line-height: 22px; }
