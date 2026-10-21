@@ -131,7 +131,7 @@
 .ios-ic.folder .ios-ic { width: 100%; height: auto; aspect-ratio: 1; border-radius: 22%; box-shadow: none; }
 
 /* folder open */
-.ios-folder { position: absolute; inset: 0; z-index: 70; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 22px 40px;
+.ios-folder { position: absolute; inset: 0; z-index: 25; /* under running apps: an app opened from here lands back in it */ display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 22px 40px;
   background: rgba(10,10,12,.42); backdrop-filter: blur(26px) saturate(1.4); -webkit-backdrop-filter: blur(26px) saturate(1.4); animation: ios-fade .28s both; }
 .ios-folder h3 { margin: 0 0 18px; font: 700 30px var(--font); letter-spacing: -.01em; text-align: center; }
 .ios-folder .box { width: 100%; max-width: 340px; padding: 24px 10px 20px; border-radius: 38px; background: rgba(255,255,255,.17); display: grid; grid-template-columns: repeat(3, 1fr); row-gap: 20px; justify-items: center;
@@ -173,6 +173,8 @@
 .ios-banner .h { display: flex; justify-content: space-between; } .ios-banner small { color: rgba(255,255,255,.5); font-size: 13px; }
 
 /* ---------- running apps ---------- */
+.ios-ghost { position: absolute; left: 0; top: 0; z-index: 50; transform-origin: 0 0; pointer-events: none; opacity: 0; }
+.ios-ghost > * { display: block; }
 .ios-layer { position: absolute; inset: 0; z-index: 30; overflow: hidden; background: #000; will-change: transform; }
 .ios-layer[hidden] { display: none; }
 .ios-screen { position: absolute; inset: 0; display: flex; flex-direction: column; background: #fff; color: #000; }

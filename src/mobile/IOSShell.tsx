@@ -21,6 +21,20 @@ type App = { key: string; route: Route; stack: Screen[]; opener?: string };
 let seq = 0;
 const sk = () => `s${++seq}`;
 const EASE = "cubic-bezier(.2,.9,.25,1)";
+
+/** A damped spring sampled into a CSS linear() curve: the motion iOS uses for app launch / close (no linear tweening, settles softly). */
+function springEasing(damping = 0.86, response = 0.42, dur = 0.56) {
+  const w = (2 * Math.PI) / response, wd = w * Math.sqrt(1 - damping * damping);
+  const pts: string[] = [];
+  for (let i = 0; i <= 48; i++) {
+    const t = (i / 48) * dur;
+    const x = 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t));
+    pts.push((i === 48 ? 1 : x).toFixed(4));
+  }
+  return `linear(${pts.join(",")})`;
+}
+const SPRING_MS = 560;
+const SPRING = typeof CSS !== "undefined" && CSS.supports("transition-timing-function", "linear(0, 1)") ? springEasing() : "cubic-bezier(.2,.95,.25,1)";
 const LOCK_KEY = "eric-os-phone-unlocked";
 const BANNER_KEY = "eric-os-phone-banner";
 const isTouch = () => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
@@ -112,25 +126,70 @@ export function IOSShell() {
   /* ---------- geometry + flights ---------- */
 
   const layerOf = (key: string) => device.current?.querySelector<HTMLElement>(`.ios-layer[data-app="${CSS.escape(key)}"]`) ?? null;
-  const iconOf = (key: string) => device.current?.querySelector(`.ios-home [data-id="${CSS.escape(key)}"] .ios-ic, .ios-home .ios-widget[data-id="${CSS.escape(key)}"]`) ?? null;
+  // an open folder wins: an app launched from a folder flies back into it
+  const iconOf = (key: string) => {
+    const k = CSS.escape(key), d = device.current;
+    return d?.querySelector(`.ios-folder [data-id="${k}"] .ios-ic`) ?? d?.querySelector(`.ios-home [data-id="${k}"] .ios-ic, .ios-home .ios-widget[data-id="${k}"]`) ?? null;
+  };
   const rectIn = (el: Element) => {
     const d = device.current!.getBoundingClientRect(), r = el.getBoundingClientRect(), z = zoomRef.current;
     return { x: (r.left - d.left) / z, y: (r.top - d.top) / z, w: r.width / z, h: r.height / z };
   };
-  /** the app zooms out of its icon (in), or back into it (out) */
+  /**
+   * The app grows out of its icon (in) or shrinks back into it (out), the way iOS does it:
+   * one spring drives position, size and corner radius together; the corners end exactly on the icon's
+   * squircle; a copy of the icon rides inside the shrinking app and fades up over the last part, so the
+   * app has already become the icon when it lands. The real icon stays hidden until then: no swap, no pop.
+   */
   const flight = (el: HTMLElement, from: Element | null | undefined, dir: "in" | "out", done?: () => void) => {
     const W = el.offsetWidth, H = el.offsetHeight;
-    const live = { transform: el.style.transform || "none", borderRadius: el.style.borderRadius || "0px", opacity: 1 }; // mid-drag pose
-    const vis = !!from && from.isConnected && (from as HTMLElement).offsetParent !== null;
-    let t = "translate3d(0,30px,0) scale(.9)";
-    if (vis) {
-      const r = rectIn(from!);
-      t = `translate3d(${r.x + r.w / 2 - W / 2}px, ${r.y + r.h / 2 - H / 2}px, 0) scale(${r.w / W}, ${r.h / H})`;
-    }
-    const k = [{ transform: t, borderRadius: `${Math.max(W, H) * 0.12}px`, opacity: vis ? 1 : 0 }, { transform: "none", borderRadius: "0px", opacity: 1 }];
-    const a = el.animate(dir === "in" ? k : [live, k[0]], { duration: dir === "in" ? 440 : 400, easing: EASE, fill: dir === "out" ? "forwards" : "none" });
+    const live = { transform: el.style.transform || "none", borderRadius: el.style.borderRadius || "0px" }; // where a drag left it
     el.style.transform = ""; el.style.borderRadius = ""; el.style.transition = "";
-    a.onfinish = () => done?.();
+    const target = from && from.isConnected && (from as HTMLElement).offsetParent !== null ? (from as HTMLElement) : null;
+    const full = { transform: "none", borderRadius: framed ? "55px" : "0px" };
+    if (!target) {
+      const away = { transform: "translate3d(0,24px,0) scale(.9)", opacity: 0 };
+      const a = el.animate(dir === "in" ? [away, { ...full, opacity: 1 }] : [{ ...live, opacity: 1 }, away], { duration: 300, easing: EASE, fill: dir === "out" ? "forwards" : "none" });
+      a.onfinish = () => done?.();
+      return;
+    }
+    let r = rectIn(target);
+    const home = target.closest<HTMLElement>(".ios-home");
+    if (home && dir === "out") {
+      const m = getComputedStyle(home).transform; // matrix(s,0,0,s,0,0) while it settles back to 1
+      const sc = m && m !== "none" ? parseFloat(m.slice(7)) || 1 : 1;
+      const ox = W / 2, oy = H / 2;
+      r = { x: ox + (r.x - ox) / sc, y: oy + (r.y - oy) / sc, w: r.w / sc, h: r.h / sc };
+    }
+    const cs = getComputedStyle(target).borderTopLeftRadius;
+    const rad = cs.endsWith("%") ? (parseFloat(cs) / 100) * r.w : parseFloat(cs) || r.w * 0.225;
+    const small = {
+      transform: `translate3d(${r.x}px, ${r.y}px, 0) scale(${r.w / W}, ${r.h / H})`,
+      borderRadius: `${(rad * W) / r.w}px / ${(rad * H) / r.h}px`,
+    };
+    // the icon copy: drawn at icon size, stretched to the app's box, so the app's own scale squeezes it back to exactly the icon
+    const ghost = document.createElement("div");
+    ghost.className = "ios-ghost";
+    ghost.style.width = `${r.w}px`; ghost.style.height = `${r.h}px`;
+    ghost.style.transform = `scale(${W / r.w}, ${H / r.h})`;
+    const copy = target.cloneNode(true) as HTMLElement;
+    copy.style.cssText = "width:100%;height:100%;margin:0;transform:none;box-shadow:none;transition:none;opacity:1";
+    ghost.appendChild(copy);
+    el.appendChild(ghost);
+    el.style.transformOrigin = "0 0";
+    target.style.visibility = "hidden";
+    const opts = { duration: SPRING_MS, easing: SPRING, fill: "forwards" as FillMode };
+    const a = el.animate(dir === "in" ? [small, full] : [{ ...live, transformOrigin: "0 0" }, small], opts);
+    ghost.animate(dir === "in"
+      ? [{ opacity: 1 }, { opacity: 0, offset: 0.28 }, { opacity: 0 }]
+      : [{ opacity: 0 }, { opacity: 0, offset: 0.3 }, { opacity: 1, offset: 0.78 }, { opacity: 1 }], { duration: SPRING_MS, easing: "linear", fill: "forwards" });
+    a.onfinish = () => {
+      if (dir === "out") done?.(); // hides the app in this same frame…
+      target.style.visibility = ""; // …as the real icon comes back
+      ghost.remove();
+      el.style.transformOrigin = "";
+      if (dir === "in") { el.getAnimations().forEach((x) => x.cancel()); done?.(); }
+    };
   };
 
   const pushHistory = () => { history.pushState({ ios: depth.current + 1 }, ""); depth.current++; };
@@ -139,7 +198,8 @@ export function IOSShell() {
 
   const launch = (route: Route, from?: Element | null) => {
     const key = appKey(route);
-    setMenu(null); setFolder(null); setSheet(false); setBanner(false);
+    setMenu(null); setSheet(false); setBanner(false);
+    if (!from?.closest(".ios-folder")) setFolder(null); // launched from a folder: it stays open underneath, like iOS
     const opener = frontRef.current && frontRef.current !== key ? frontRef.current : undefined;
     const existing = appsRef.current.find((a) => a.key === key);
     if (!existing) setApps((xs) => [...xs, { key, route, stack: [{ key: sk(), ...screenFor(route) }], opener }]);
@@ -173,12 +233,13 @@ export function IOSShell() {
     if (el) flight(el, iconOf(k), "out", finish); else finish();
   };
 
-  /** Home: drop every history entry we added, and fly the app back into its icon */
+  /** Home: drop the history entries we added (keeping an open folder's), and fly the app back into its icon */
+  const folderRef = useRef(folder); folderRef.current = folder;
   const goHome = () => {
     const k = frontRef.current;
-    if (depth.current > 0) { skipPop.current++; history.go(-depth.current); depth.current = 0; }
-    setFolder(null);
-    if (k) toHome(k);
+    const keep = k && folderRef.current ? 1 : 0; // an app opened from a folder returns to that folder
+    if (depth.current > keep) { skipPop.current++; history.go(-(depth.current - keep)); depth.current = keep; }
+    if (k) toHome(k); else { if (folderRef.current && depth.current > 0) { skipPop.current++; history.back(); depth.current--; } setFolder(null); }
   };
 
   /** one level back: a screen, else the app (to the app that opened it, else Home) */
@@ -311,22 +372,26 @@ export function IOSShell() {
     const s = hb.current, k = frontRef.current; if (!s || !k) return;
     const dy = Math.min(0, (e.clientY - s.y) / zoom);
     const el = layerOf(k); if (!el) return;
-    const p = Math.min(1, -dy / 420);
+    const p = Math.min(1, -dy / 420), sc = 1 - p * 0.42;
+    const W = el.offsetWidth, H = el.offsetHeight;
     el.style.transition = "none";
-    el.style.transform = `translate3d(0, ${dy * 0.55}px, 0) scale(${1 - p * 0.42})`;
-    el.style.borderRadius = `${24 + p * 30}px`;
+    el.style.transformOrigin = "0 0"; // same origin the flight uses, so letting go continues from exactly here
+    el.style.transform = `translate3d(${(W * (1 - sc)) / 2}px, ${dy * 0.55 + (H * (1 - sc)) / 2}px, 0) scale(${sc})`;
+    el.style.borderRadius = `${(framed ? 55 : 30) + p * 10}px`;
+    const home = device.current?.querySelector<HTMLElement>(".ios-home");
+    if (home) { home.style.transition = "none"; home.style.transform = `scale(${0.94 + 0.03 * p})`; } // Home starts coming forward under your finger
   };
   const hbUp = (e: React.PointerEvent) => {
     const s = hb.current, k = frontRef.current; hb.current = null;
     if (!s || !k) return;
     const dy = (e.clientY - s.y) / zoom, v = dy / Math.max(1, Date.now() - s.t);
     const el = layerOf(k);
-    if (Math.abs(dy) < 6 || dy < -70 || v < -0.4) {
-      if (el) { el.style.transition = ""; el.style.transform = ""; el.style.borderRadius = ""; }
-      goHome();
-    } else if (el) {
-      el.style.transition = `transform .35s ${EASE}, border-radius .35s`; el.style.transform = ""; el.style.borderRadius = "";
-      window.setTimeout(() => { el.style.transition = ""; }, 360);
+    const home = device.current?.querySelector<HTMLElement>(".ios-home");
+    if (home) { home.style.transition = ""; home.style.transform = ""; } // hand Home back to its class transition
+    if (Math.abs(dy) < 6 || dy < -70 || v < -0.4) goHome(); // the flight picks up from the dragged pose
+    else if (el) {
+      el.style.transition = `transform .35s ${EASE}, border-radius .35s`; el.style.transform = "translate3d(0,0,0) scale(1)"; el.style.borderRadius = "";
+      window.setTimeout(() => { el.style.transition = ""; el.style.transform = ""; el.style.transformOrigin = ""; }, 360);
     }
   };
 
