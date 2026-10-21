@@ -20,18 +20,22 @@ h1{font-size:22px;margin:0 0 4px}p.lead{color:#9a9ba1;margin:0 0 28px}
 .lbl{font:500 11px system-ui;color:#fff;text-align:center;margin-top:5px}
 .cur{outline:2px dashed #555}
 </style></head><body><main>
-<h1>Soul Blade · icon options</h1>
+<h1>Soul Blade · icon options (round 2, from the game)</h1>
 <p class="lead">Each card: large, on the desktop at real size next to My Lego World and Snake, and as a phone app icon. Current icon first for reference.</p>
 <div class="grid" id="g"></div>
 </main>
 <script>
 const O=[["soul-blade.png","Current","for reference","g","#2a070d"],
-["a-swords.png","A · Crossed blades","most readable at small size; pure game symbol","g","linear-gradient(160deg,#6b1626,#24060c)"],
-["b-medallion.png","B · Medallion","round emblem, sword breaks the ring (fighting-game logo energy)","g","linear-gradient(160deg,#3a0a12,#120306)"],
-["c-clash.png","C · Clash","two fighters mid-duel: says “fighting game” instantly, busier small","g","linear-gradient(160deg,#2b2c33,#101114)"],
-["d-mask.png","D · Warrior helm","character-led, strong silhouette","g","linear-gradient(160deg,#3a0a12,#120306)"],
-["e-appring.png","E · Ring of fire (app tile)","full-bleed, made for the phone; round emblem like a console title","f",""],
-["f-slash.png","F · Special move (app tile)","full-bleed blade + crimson slash arc, most dynamic","f",""]];
+["01-sun-ronin.png","1 · Ronin at sunset","Kenji's silhouette on the title screen's red sun","g","#1a0508"],
+["02-kasa.png","2 · Kasa hat","Kenji's straw hat + katana + scarf: the character in one object","g","linear-gradient(160deg,#3a0a12,#120306)"],
+["03-kamon.png","3 · Kamon crest","a family crest for the game: crossed katana under a sun","g","#e9dcc0"],
+["04-oni.png","4 · Oni mask","Hayato's mask, the other fighter","g","#1a0508"],
+["05-kenji-bust.png","5 · Kenji portrait","the game's own portrait style in a sun disc","g","#1a0508"],
+["06-enso.png","6 · Ensō","ink brush circle, red sun, one blade","g","#e9dcc0"],
+["07-hanko.png","7 · 魂 seal","a vermilion hanko stamp","g","#e9dcc0"],
+["08-sun-katana.png","8 · Blade through the sun","vertical katana on the red sun","g","#1a0508"],
+["09-duel-tile.png","9 · Duel (full tile)","the arena in miniature: sun, torii, two fighters","f",""],
+["10-tama-tile.png","10 · 魂 on the sun (full tile)","the title logo, distilled","f",""]];
 document.getElementById("g").innerHTML=O.map(([f,t,s,k,bg])=>`<div class="card"><h2>${t}</h2><small>${s}</small>
 <div class="big"><img src="${f}"></div>
 <div class="desk"><div class="ic"><img src="${f}"><span>Soul Blade</span></div><div class="ic"><img src="lego-world.svg"><span>My Lego World</span></div><div class="ic"><img src="snake.png"><span>Snake</span></div></div>
