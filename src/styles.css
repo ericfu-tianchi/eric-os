@@ -1762,7 +1762,7 @@ button { font-family: inherit; color: inherit; }
 .media-ftitle { position: absolute; top: 0; left: 0; right: 0; padding: 18px 24px 30px; text-align: center; font: 600 var(--ui-body) var(--font-system); color: #f2f2f4;
   background: linear-gradient(rgba(0,0,0,.65), transparent); opacity: 0; transition: opacity .2s; pointer-events: none; }
 .media-stage.full:hover .media-ftitle { opacity: 1; }
-.media-video { width: 100%; height: 100%; cursor: pointer; }
+.media-video { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; object-fit: contain; cursor: pointer; } /* pinned to the stage: never sized by the grid row (tall clips overflowed in full screen) */
 .media-yt { width: 100%; height: 100%; border: 0; }
 .media-empty { color: #8a8b92; font-size: var(--ui-body); }
 
