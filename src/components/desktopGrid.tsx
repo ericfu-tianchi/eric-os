@@ -34,7 +34,7 @@ export const ICONS: IconDef[] = [
   folderIcon("ai", 8, 4),
   { key: "soul-blade", label: "Soul Blade", icon: "soul-blade", app: "soul-blade", title: "Soul Blade", maximized: true, cellRight: 11, row: 1 },
   { key: "lego-world", label: "My Lego World", icon: "lego-world", app: "lego-world", title: "My Lego World", maximized: true, cellRight: 11, row: 4 },
-  { key: "about", label: "About_Me.md", icon: "about-page", app: "about", title: "About_Me.md", cellRight: 2, row: 7 },
+  { key: "about", label: "About Me", icon: "about-page", app: "about", title: "About Me", cellRight: 2, row: 7 },
   { key: "resume", label: "resume.pdf", icon: "pdf", app: "resume", title: "resume.pdf", cellRight: 5, row: 7 },
   { key: "snake", label: "Snake", icon: "snake", app: "snake", title: "Snake", cellRight: 8, row: 7 },
   { key: "disk", label: "Tianchintosh HD", icon: "computer", app: "filesystem", title: "Tianchintosh HD", payload: "tianchintosh", cellRight: 2, row: 10 },

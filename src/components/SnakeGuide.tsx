@@ -169,7 +169,7 @@ export function SnakeGuide() {
     if (a === "dress") return setPanel("dress");
     if (a === "ask") return setPanel("chat");
     if (a === "resume") open("resume", { title: "resume.pdf" });
-    if (a === "about") open("about", { title: "About_Me.md" });
+    if (a === "about") open("about", { title: "About Me" });
     if (a === "school") open("filesystem", { title: "School Projects", payload: "school" });
     if (a === "ai") open("filesystem", { title: "AI Stuff", payload: "ai" });
     setPanel(null);

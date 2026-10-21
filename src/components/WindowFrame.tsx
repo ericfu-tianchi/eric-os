@@ -64,7 +64,7 @@ export function WindowFrame({
   // here too instead of requiring Eric to close every restored window once.
   const canonicalTitle: Partial<Record<WinInstance["app"], string>> = {
     projects: "Projects",
-    about: "About_Me.md",
+    about: "About Me",
     resume: "resume.pdf",
     snake: "Snake",
     readme: "Tianchintosh HD",
