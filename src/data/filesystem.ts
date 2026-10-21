@@ -113,7 +113,6 @@ export const FILE_NODES: FileNode[] = [
   { id: "lego-world-folder", parent: "ai", name: "My Lego World", kind: "folder", description: "2 items" },
   { id: "lego-world", parent: "lego-world-folder", name: "My Lego World", kind: "game", gameId: "lego-world", description: "Playable app" },
   { id: "lego-world-how", parent: "lego-world-folder", name: "How I Built It", kind: "project", projectSlug: "lego-world" },
-  { id: "how-i-ai", parent: "ai", name: "How I AI", kind: "project", projectSlug: "how-i-ai" },
 
   { id: "desktop-soul-blade", parent: "desktop", name: "Soul Blade", kind: "shortcut", targetId: "soul-blade", description: "Playable game" },
   { id: "desktop-lego-world", parent: "desktop", name: "My Lego World", kind: "shortcut", targetId: "lego-world", description: "Playable app" },
