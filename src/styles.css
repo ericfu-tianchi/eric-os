@@ -1660,7 +1660,7 @@ button { font-family: inherit; color: inherit; }
 .am-name .dot { color: var(--am-ac); }
 .am-lead { position: relative; z-index: 3; margin: 34px 0 0; max-width: 360px; font-size: 19px; line-height: 1.55; color: var(--am-body); text-wrap: balance; animation: am-fade 0.8s 0.45s both; }
 .am-lead b { color: var(--am-ink); font-weight: 600; }
-.am-cta { position: relative; z-index: 3; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 40px; animation: am-fade 0.8s 0.5s both; }
+.am-cta { position: relative; z-index: 3; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 56px; animation: am-fade 0.8s 0.5s both; }
 .am-cta a { height: 42px; padding: 0 16px; border-radius: 999px; display: inline-flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: 600; border: 1px solid rgba(255,255,255,.18); transition: border-color 0.2s; }
 .am-cta a:hover { border-color: var(--am-ink); }
 .am-cta a.primary { background: var(--am-ac); color: var(--am-ac-ink); border-color: var(--am-ac); }
