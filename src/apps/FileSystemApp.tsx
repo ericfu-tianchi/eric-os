@@ -33,11 +33,14 @@ function kindLabel(node: FileNode) {
   if (target.kind === "game") return "Playable app";
   if (target.kind === "placeholder") return "Coming soon";
   if (target.kind === "document") return "Document";
+  if (target.kind === "image") return "Image";
+  if (target.kind === "video") return "Video";
   return "Application";
 }
 
 function thumbOf(node: FileNode) {
   const target = resolvedNode(node);
+  if (target.thumb) return target.thumb;
   return target.projectSlug ? fileIconOf(target.projectSlug) : target.app === "about" ? fileIconOf("about") : undefined;
 }
 
@@ -48,6 +51,7 @@ function FinderNodeIcon({ node, size, thumbSize = size }: { node: FileNode; size
   if (node.icon) return <img className="finder-pixel-icon" src={node.icon} width={size} height={size} alt="" draggable={false} />;
   if (game) return <img className="finder-pixel-icon" src={game.icon} width={size} height={size} alt="" draggable={false} />;
   const thumb = thumbOf(node);
+  if (thumb && (target.kind === "image" || target.kind === "video")) return <span className={`finder-media-thumb ${target.kind}`} style={{ width: thumbSize, height: thumbSize }}><img src={thumb} alt="" draggable={false} loading="lazy" /></span>;
   if (thumb) return <img className="finder-thumb-icon" src={thumb} width={thumbSize} height={thumbSize} alt="" draggable={false} />;
   return <PixIcon name={nodeIcon(node)} size={size} />;
 }
@@ -114,6 +118,8 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
       const game = EXTERNAL_GAMES[node.gameId];
       return open(node.gameId, { title: game.name, maximized: true });
     }
+    if (node.kind === "image" && node.mediaId) return open("preview", { title: node.name, payload: node.mediaId });
+    if (node.kind === "video" && node.mediaId) return open("player", { title: node.name, payload: node.mediaId });
     if (node.html) return open("html-doc", { title: node.name, payload: node.id });
     if (node.app === "snake") return setSnakeMode(true);
     if (node.app) return open(node.app, { title: node.name });
