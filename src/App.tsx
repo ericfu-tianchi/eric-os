@@ -138,14 +138,14 @@ export default function App() {
     if (isMobile) return;
     if (new URLSearchParams(window.location.search).get("snake")) useOS.getState().setSnakeMode(true);
     if (Object.keys(useOS.getState().windows).length === 0 && !localStorage.getItem("eric-os-welcomed")) {
-      open("about", { title: "About_Me.md" });
+      open("about", { title: "About Me" });
       localStorage.setItem("eric-os-welcomed", "1");
     }
     // deep link: ?open=projects,life or ?open=project-detail:twist-solver
     const m = new URLSearchParams(window.location.search).get("open");
     if (m) {
       const TITLES: Partial<Record<AppId, string>> = {
-        projects: "Projects", about: "About_Me.md", resume: "resume.pdf",
+        projects: "Projects", about: "About Me", resume: "resume.pdf",
         readme: "Tianchintosh HD", filesystem: "Tianchintosh HD", prefs: "Settings", snake: "Snake",
         "soul-blade": "Soul Blade", "twist-solver": "Twist Solver",
         life: "LIFE.APP", playground: "PLAYGROUND", "about-os": "About Tianchi OS",

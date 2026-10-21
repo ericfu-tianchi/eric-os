@@ -25,7 +25,7 @@ Every new page starts by stating which format it uses, and why.
 
 Current inventory:
 - Case studies (HomesOffCampus, Neurobot, Connectr, …) → case blocks.
-- `About_Me.md` → a hand-built React view (`AboutApp.tsx`); the ".md" is only its file name in the OS.
+- `About Me` → a hand-built React view (`AboutApp.tsx`), a dark one-page profile with its own styles (`.aboutme`).
 - My Lego World "How I Built It" → case blocks (`lego-world` in `cases.ts`). It is the reference for non-UX pages: no research/design arc, a set gallery and numbered steps instead.
 
 ### Reuse the system, shape the story

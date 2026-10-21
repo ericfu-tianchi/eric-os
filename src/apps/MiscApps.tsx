@@ -36,7 +36,7 @@ type DiskItem = { name: string; kind: string; icon: PixIconName; app: AppId };
 
 const DISK_ITEMS: DiskItem[] = [
   { name: "Projects", kind: "Folder · portfolio work", icon: "folder", app: "projects" },
-  { name: "About_Me.md", kind: "Markdown document", icon: "doc", app: "about" },
+  { name: "About Me", kind: "Profile", icon: "doc", app: "about" },
   { name: "resume.pdf", kind: "PDF document", icon: "pdf", app: "resume" },
   { name: "Snake", kind: "Playable application", icon: "snake", app: "snake" },
   { name: "Settings", kind: "System preferences", icon: "gear", app: "prefs" },

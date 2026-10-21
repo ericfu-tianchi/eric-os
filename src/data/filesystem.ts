@@ -111,7 +111,7 @@ export const FILE_NODES: FileNode[] = [
 
   { id: "desktop-soul-blade", parent: "desktop", name: "Soul Blade", kind: "shortcut", targetId: "soul-blade", description: "Playable game" },
   { id: "desktop-lego-world", parent: "desktop", name: "My Lego World", kind: "shortcut", targetId: "lego-world", description: "Playable app" },
-  { id: "about", parent: "desktop", name: "About_Me.md", kind: "document", app: "about", description: "Markdown document" },
+  { id: "about", parent: "desktop", name: "About Me", kind: "document", app: "about", description: "Profile" },
   { id: "resume", parent: "desktop", name: "resume.pdf", kind: "document", app: "resume", description: "PDF document" },
   { id: "desktop-snake", parent: "desktop", name: "Snake", kind: "shortcut", targetId: "snake", description: "Application shortcut" },
   { id: "desktop-disk", parent: "desktop", name: "Tianchintosh HD", kind: "shortcut", targetId: "tianchintosh", description: "System volume" },

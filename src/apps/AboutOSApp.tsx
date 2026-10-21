@@ -55,7 +55,7 @@ export function AboutOSApp() {
           <div key={k}><dt>{k}</dt><dd>{v}</dd></div>
         ))}
       </dl>
-      <button type="button" className="btn" onClick={() => open("about", { title: "About_Me.md" })}>More Info…</button>
+      <button type="button" className="btn" onClick={() => open("about", { title: "About Me" })}>More Info…</button>
       <footer>
         <span>Made with Claude and ♥ by Tianchi</span>
         <span>© 2026 Tianchi Fu. All snakes reserved.</span>

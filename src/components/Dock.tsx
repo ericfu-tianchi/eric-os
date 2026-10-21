@@ -4,7 +4,7 @@ import { PixIcon, type PixIconName } from "./Pixel";
 
 const DOCK_ITEMS: { app: AppId; glyph: PixIconName; label: string; title: string }[] = [
   { app: "filesystem", glyph: "computer", label: "Tianchintosh HD", title: "Tianchintosh HD" },
-  { app: "about", glyph: "doc", label: "About_Me.md", title: "About_Me.md" },
+  { app: "about", glyph: "doc", label: "About Me", title: "About Me" },
   { app: "snake", glyph: "snake", label: "Snake", title: "Snake" },
   { app: "prefs", glyph: "gear", label: "Settings", title: "Settings" },
 ];
