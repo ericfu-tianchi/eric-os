@@ -34,6 +34,11 @@ export const MEDIA_FOLDERS: MediaFolder[] = [
     img("playground", "andy-warhol", "Andy Warhol"),
   ] },
   { id: "img-games", name: "Games", kind: "image", items: [
+    img("games", "smb-1985-title", "Super Mario Bros. (1985)", "© Nintendo"),
+    img("games", "smb-1985-flagpole", "Super Mario Bros. · World 1-1", "© Nintendo"),
+    img("games", "zelda-1986", "The Legend of Zelda (1986)", "© Nintendo"),
+    img("games", "zelda-classic-logo", "The Legend of Zelda", "© Nintendo"),
+    img("games", "skyward-sword-s3", "Skyward Sword", "© Nintendo"),
     img("games", "zelda-botw-9", "Breath of the Wild", "© Nintendo"),
     img("games", "zelda-totk-s1", "Tears of the Kingdom", "© Nintendo"),
     img("games", "witcher3-shot4", "The Witcher 3 · Skellige", "© CD PROJEKT RED"),

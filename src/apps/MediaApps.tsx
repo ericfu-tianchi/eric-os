@@ -43,7 +43,7 @@ export function PreviewApp({ mediaId }: { mediaId?: string }) {
   const frame = useRef<HTMLDivElement>(null);
   const onLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const im = e.currentTarget, f = frame.current;
-    const tall = f ? im.naturalHeight / im.naturalWidth > (f.clientHeight / f.clientWidth) * 1.35 : false;
+    const tall = im.naturalHeight / im.naturalWidth > 1.25 && (!f || im.naturalHeight / im.naturalWidth > (f.clientHeight / f.clientWidth) * 1.6); // portrait pages only
     setZoom(tall ? "width" : "fit");
     f?.scrollTo(0, 0);
   };
