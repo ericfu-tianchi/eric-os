@@ -11,6 +11,7 @@ import {
 import { PixIcon, type PixIconName } from "../components/Pixel";
 import { fileIconOf } from "../data/projectAssets";
 import { mediaItem } from "../data/media";
+import { FitName } from "../components/FitName";
 import { useWindowChrome, type WindowViewMode } from "../components/WindowChrome";
 
 function resolvedNode(node: FileNode) {
@@ -180,7 +181,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
                 onKeyDown={(e) => { if (e.key === "Enter") openNode(node); }}
               >
                 <span className="finder-icon-slot"><FinderNodeIcon node={node} size={66} thumbSize={104} /></span>
-                <span className="finder-item-name">{node.name}</span>
+                <FitName className="finder-item-name" text={node.name} lines={2} />
                 <span className="finder-item-meta">{node.description ?? kindLabel(node)}</span>
               </button>
             ))}
@@ -199,7 +200,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
                 onDoubleClick={() => openNode(node)}
                 onKeyDown={(e) => { if (e.key === "Enter") openNode(node); }}
               >
-                <span className="finder-list-name"><FinderNodeIcon node={node} size={18} /><span>{node.name}</span></span>
+                <span className="finder-list-name"><FinderNodeIcon node={node} size={18} /><span className="finder-list-text"><FitName text={node.name} lines={1} /></span></span>
                 <span>{kindLabel(node)}</span>
                 <span>{/\d+ items?/.test(node.description ?? "") ? node.description : "—"}</span>
               </button>
