@@ -10,38 +10,14 @@ import { PROJECTS } from "./data/projects";
 import { TOPBAR } from "./components/desktopGrid";
 import { BootSplash } from "./components/BootSplash";
 import { MobileShell } from "./components/MobileShell";
-import { AboutApp } from "./apps/AboutApp";
-import { ProjectsApp, ProjectDetailApp } from "./apps/ProjectsApp";
-import { SnakeApp } from "./apps/SnakeApp";
-import { ResumeApp, PrefsApp } from "./apps/MiscApps";
-import { LifeApp, PlaygroundApp } from "./apps/LifeApp";
-import { FileSystemApp } from "./apps/FileSystemApp";
-import { ExternalGameApp } from "./apps/ExternalGameApp";
-import { HtmlDocApp } from "./apps/HtmlDocApp";
-import { AboutOSApp } from "./apps/AboutOSApp";
-import { PreviewApp, PlayerApp } from "./apps/MediaApps";
 import { ScreenSaver } from "./components/ScreenSaver";
+import { APP_VIEWS } from "./appViews";
+import { IOSShell } from "./mobile/IOSShell";
+
+// ?ios = the iOS-style phone shell (study for the mobile version; on a desktop it renders inside a phone frame)
+const IOS = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("ios");
 
 /** App registry — add an app: one component + one entry here. */
-const APP_VIEWS: Record<AppId, (w: WinInstance) => React.ReactNode> = {
-  about: () => <AboutApp />,
-  projects: () => <ProjectsApp />,
-  resume: () => <ResumeApp />,
-  readme: () => <FileSystemApp />,
-  filesystem: (w) => <FileSystemApp initialId={w.payload} />,
-  prefs: () => <PrefsApp />,
-  snake: () => <SnakeApp />,
-  "soul-blade": () => <ExternalGameApp gameId="soul-blade" />,
-  "twist-solver": () => <ExternalGameApp gameId="twist-solver" />,
-  "lego-world": () => <ExternalGameApp gameId="lego-world" />,
-  "html-doc": (w) => <HtmlDocApp nodeId={w.payload} />,
-  life: () => <LifeApp />,
-  playground: () => <PlaygroundApp />,
-  "project-detail": (w) => <ProjectDetailApp slug={w.payload} />,
-  "about-os": () => <AboutOSApp />,
-  preview: (w) => <PreviewApp mediaId={w.payload} />,
-  player: (w) => <PlayerApp mediaId={w.payload} />,
-};
 
 const APP_BADGES: Partial<Record<AppId, string>> = {
   projects: "3 folders",
@@ -139,7 +115,7 @@ export default function App() {
   // every visit starts with About Me open (once per browser session, only on an empty desktop),
   // placed so the snake's head still peeks out beside it: visitors notice there's a snake underneath.
   useEffect(() => {
-    if (isMobile) return;
+    if (isMobile || IOS) return;
     if (new URLSearchParams(window.location.search).get("snake")) useOS.getState().setSnakeMode(true);
     if (Object.keys(useOS.getState().windows).length === 0 && !sessionStorage.getItem("eric-os-about-shown")) {
       const vw = window.innerWidth, vh = window.innerHeight;
@@ -176,6 +152,7 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMobile]);
 
+  if (IOS) return <IOSShell />;
   if (isMobile) return <MobileShell />;
 
   return (

@@ -55,7 +55,7 @@ const rand = ([a, b]: number[]) => (a + Math.random() * (b - a)) * 1000;
 
 /** The snake's head on its own, wearing a hat — used in the picker and the dress bubble.
     One viewBox for every hat (the NY brim reaches -40), so all heads render the same size. */
-function MiniHead({ hat, size = 40 }: { hat: SnakeHat; size?: number }) {
+export function MiniHead({ hat, size = 40 }: { hat: SnakeHat; size?: number }) {
   const c = 44, er = c * 0.125, pr = er * 0.42, fa = c / 2 - er * 1.5, pb = c * 0.21;
   return (
     <svg width={size} height={size} viewBox="-40 -37 76 74" overflow="visible" aria-hidden>
