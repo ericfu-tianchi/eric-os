@@ -25,7 +25,7 @@ const BRING = [
 
 /* ---- options still being picked (?aboutstudy); the first of each is the default ---- */
 const OPT = {
-  face: [["f1", "Face +10%"], ["f0", "Face as is"], ["f2", "Face +18%"], ["f3", "Face +26%"]],
+  face: [["b2", "Balance 50%"], ["b1", "Balance 30%"], ["b3", "Balance 70%"], ["f0", "As is"], ["f1", "Face +10%"], ["f2", "Face +18%"], ["f3", "Face +26%"]],
   shadow: [["r2", "Right · up"], ["l-up", "Left · up"], ["l-down8", "Left · down, chunky"], ["l-rough", "Left · down, rough"], ["l-fine", "Left · down, fine"], ["l-smooth", "Left · down, smooth"]],
   nus: [
     ["a", "Back in school for AI, and still building with it on the side."],
@@ -37,8 +37,8 @@ const OPT = {
   offLayout: [["cards", "Cards"], ["rows", "Rows"], ["sentence", "Sentence"], ["chips", "Chips"]],
 } as const;
 type Pick = { [K in keyof typeof OPT]: string };
-const DEFAULT: Pick = { face: "f1", shadow: "r2", nus: "a", offLabel: "Off the clock", offLayout: "cards" };
-const STORE = "about-study-picks";
+const DEFAULT: Pick = { face: "b2", shadow: "r2", nus: "a", offLabel: "Off the clock", offLayout: "cards" };
+const STORE = "about-study-picks-2";
 
 type Stop = { org: string; role: string; x: string; folder?: { id: string; title: string } };
 
