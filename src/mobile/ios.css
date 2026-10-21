@@ -73,7 +73,7 @@
 @keyframes ios-pulse { 50% { opacity: .3; } }
 
 /* ---------- Home ---------- */
-.ios-home { position: absolute; inset: 0; touch-action: pan-y; transition: transform .44s cubic-bezier(.2,.9,.25,1); animation: ios-home-in .5s cubic-bezier(.2,.9,.25,1) both; }
+.ios-home { position: absolute; inset: 0; touch-action: pan-y; transform-origin: 50% 50%; animation: ios-home-in .5s cubic-bezier(.2,.9,.25,1) both; }
 .ios-home.hidden { visibility: hidden; animation: none; }
 @keyframes ios-home-in { from { transform: scale(1.1); opacity: 0; } }
 .ios-home::after { content: ""; position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .44s cubic-bezier(.2,.9,.25,1); }
@@ -122,7 +122,7 @@
 
 /* app icons */
 .ios-ic { position: relative; flex: none; width: var(--ic); height: var(--ic); border-radius: 22.5%; overflow: hidden; display: grid; place-items: center;
-  box-shadow: inset 0 0 0 .5px rgba(255,255,255,.14), 0 2px 8px rgba(0,0,0,.22); }
+  box-shadow: inset 0 0 0 .5px rgba(255,255,255,.14); } /* no outer shadow: the landing app (clipped) must look exactly like the icon */
 .ios-ic img { width: calc(var(--s, .72) * 100%); height: calc(var(--s, .72) * 100%); object-fit: contain; }
 .ios-ic.cover img { width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 50%); }
 .ios-ic.pixel img { image-rendering: pixelated; }
@@ -132,9 +132,9 @@
 
 /* folder open */
 .ios-folder { position: absolute; inset: 0; z-index: 25; /* under running apps: an app opened from here lands back in it */ display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 22px 40px;
-  background: rgba(10,10,12,.42); backdrop-filter: blur(26px) saturate(1.4); -webkit-backdrop-filter: blur(26px) saturate(1.4); animation: ios-fade .28s both; }
+  background: rgba(14,15,18,.72); backdrop-filter: blur(26px) saturate(1.4); -webkit-backdrop-filter: blur(26px) saturate(1.4); animation: ios-fade .28s both; } /* dark enough on its own where the blur is unavailable */
 .ios-folder h3 { margin: 0 0 18px; font: 700 30px var(--font); letter-spacing: -.01em; text-align: center; }
-.ios-folder .box { width: 100%; max-width: 340px; padding: 24px 10px 20px; border-radius: 38px; background: rgba(255,255,255,.17); display: grid; grid-template-columns: repeat(3, 1fr); row-gap: 20px; justify-items: center;
+.ios-folder .box { width: 100%; max-width: 340px; padding: 24px 10px 20px; border-radius: 38px; background: rgba(78,80,88,.72); display: grid; grid-template-columns: repeat(3, 1fr); row-gap: 20px; justify-items: center;
   animation: ios-pop .38s cubic-bezier(.25,1.3,.45,1) both; }
 @keyframes ios-pop { from { transform: scale(.35); opacity: 0; } }
 @keyframes ios-fade { from { opacity: 0; } }
@@ -174,7 +174,6 @@
 
 /* ---------- running apps ---------- */
 .ios-ghost { position: absolute; left: 0; top: 0; z-index: 50; transform-origin: 0 0; pointer-events: none; opacity: 0; }
-.ios-ghost > * { display: block; }
 .ios-layer { position: absolute; inset: 0; z-index: 30; overflow: hidden; background: #000; will-change: transform; }
 .ios-layer[hidden] { display: none; }
 .ios-screen { position: absolute; inset: 0; display: flex; flex-direction: column; background: #fff; color: #000; }
@@ -369,3 +368,5 @@
 .ios .cs-item { gap: 18px; padding: 28px 0; }
 .ios .cs-item h4 { font-size: 20px; }
 .ios .cs-apps { padding: 24px 12px; }
+.ios-hi { transition: opacity .25s; }
+.ios:has(.ios-folder) .ios-home .ios-hi { opacity: 0; } /* a folder blurs Home on iOS; where blur is unavailable, at least the wallpaper art steps back */

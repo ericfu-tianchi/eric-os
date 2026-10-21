@@ -22,18 +22,21 @@ let seq = 0;
 const sk = () => `s${++seq}`;
 const EASE = "cubic-bezier(.2,.9,.25,1)";
 
-/** A damped spring sampled into a CSS linear() curve: the motion iOS uses for app launch / close (no linear tweening, settles softly). */
-function springEasing(damping = 0.86, response = 0.42, dur = 0.56) {
-  const w = (2 * Math.PI) / response, wd = w * Math.sqrt(1 - damping * damping);
+/** A critically damped spring sampled into a CSS linear() curve: the motion iOS uses for app launch / close.
+    No overshoot, so the app never undershoots the icon and snaps back on the last frame. */
+function springEasing(damping = 1, response = 0.34, dur = 0.5) {
+  const w = (2 * Math.PI) / response, wd = w * Math.sqrt(Math.max(0, 1 - damping * damping));
   const pts: string[] = [];
   for (let i = 0; i <= 48; i++) {
     const t = (i / 48) * dur;
-    const x = 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t));
-    pts.push((i === 48 ? 1 : x).toFixed(4));
+    const x = wd < 1e-6
+      ? 1 - Math.exp(-w * t) * (1 + w * t) // critically damped
+      : 1 - Math.exp(-damping * w * t) * (Math.cos(wd * t) + ((damping * w) / wd) * Math.sin(wd * t));
+    pts.push(Math.min(1, x / 0.996).toFixed(4)); // the last 0.4% would land below a pixel: arrive exactly, a few frames early, and rest there
   }
   return `linear(${pts.join(",")})`;
 }
-const SPRING_MS = 560;
+const SPRING_MS = 500;
 const SPRING = typeof CSS !== "undefined" && CSS.supports("transition-timing-function", "linear(0, 1)") ? springEasing() : "cubic-bezier(.2,.95,.25,1)";
 const LOCK_KEY = "eric-os-phone-unlocked";
 const BANNER_KEY = "eric-os-phone-banner";
@@ -173,7 +176,8 @@ export function IOSShell() {
     ghost.style.width = `${r.w}px`; ghost.style.height = `${r.h}px`;
     ghost.style.transform = `scale(${W / r.w}, ${H / r.h})`;
     const copy = target.cloneNode(true) as HTMLElement;
-    copy.style.cssText = "width:100%;height:100%;margin:0;transform:none;box-shadow:none;transition:none;opacity:1";
+    // keep the tile's own inline style (its background and glyph scale live there): the copy must be opaque, exactly the icon; square corners, the app's own clip rounds it (two anti-aliased edges let the page bleed through)
+    Object.assign(copy.style, { width: "100%", height: "100%", margin: "0", borderRadius: "0", boxShadow: "none", transform: "none", transition: "none", opacity: "1", visibility: "visible" });
     ghost.appendChild(copy);
     el.appendChild(ghost);
     el.style.transformOrigin = "0 0";
@@ -181,8 +185,10 @@ export function IOSShell() {
     const opts = { duration: SPRING_MS, easing: SPRING, fill: "forwards" as FillMode };
     const a = el.animate(dir === "in" ? [small, full] : [{ ...live, transformOrigin: "0 0" }, small], opts);
     ghost.animate(dir === "in"
-      ? [{ opacity: 1 }, { opacity: 0, offset: 0.28 }, { opacity: 0 }]
-      : [{ opacity: 0 }, { opacity: 0, offset: 0.3 }, { opacity: 1, offset: 0.78 }, { opacity: 1 }], { duration: SPRING_MS, easing: "linear", fill: "forwards" });
+      ? [{ opacity: 1 }, { opacity: 0, offset: 0.22 }, { opacity: 0 }]
+      : live.transform !== "none" // let go mid-drag: the app is already small, so it turns into the icon sooner
+        ? [{ opacity: 0 }, { opacity: 1, offset: 0.3 }, { opacity: 1 }]
+        : [{ opacity: 0 }, { opacity: 0, offset: 0.08 }, { opacity: 1, offset: 0.42 }, { opacity: 1 }], { duration: SPRING_MS, easing: "linear", fill: "forwards" });
     a.onfinish = () => {
       if (dir === "out") done?.(); // hides the app in this same frame…
       target.style.visibility = ""; // …as the real icon comes back
@@ -206,7 +212,7 @@ export function IOSShell() {
     else setApps((xs) => xs.map((a) => (a.key === key ? { ...a, opener } : a)));
     setFront(key);
     pushHistory();
-    requestAnimationFrame(() => requestAnimationFrame(() => { const el = layerOf(key); if (el) flight(el, from, "in"); }));
+    requestAnimationFrame(() => requestAnimationFrame(() => { const el = layerOf(key); if (el) { el.hidden = false; flight(el, from, "in"); } homeTo(true); }));
   };
   const open = (route: Route, from?: Element | null) => {
     // keyboard games: ask first on touch screens
@@ -222,15 +228,26 @@ export function IOSShell() {
     pushHistory();
   };
 
-  const [closing, setClosing] = useState(false);
+  /**
+   * Going Home touches only the DOM while anything moves: a React render in the first or the last frame
+   * of the flight is exactly the "stuck frame" you see on a phone. State catches up after the landing has painted.
+   */
+  /** Home's scale rides the same spring as the app, frame for frame, so the icon the app is landing on never moves under it */
+  const homeTo = (behind: boolean) => {
+    const home = device.current?.querySelector<HTMLElement>(".ios-home"); if (!home) return;
+    const from = getComputedStyle(home).transform;
+    home.style.transform = ""; home.style.transition = "";
+    home.classList.toggle("behind", behind);
+    home.animate([{ transform: from === "none" ? "scale(1)" : from }, { transform: behind ? "scale(.94)" : "scale(1)" }], { duration: SPRING_MS, easing: SPRING });
+  };
   const toHome = (k: string) => {
     const el = layerOf(k);
-    setClosing(true); // Home comes forward while the app is still shrinking, not after
     const finish = () => {
-      if (el) { el.hidden = true; el.getAnimations().forEach((a) => a.cancel()); } // hide first, then drop the animation: no last-frame flash
-      setFront(null); setClosing(false);
+      if (el) { el.hidden = true; el.getAnimations().forEach((a) => a.cancel()); }
+      window.setTimeout(() => { if (frontRef.current === k) setFront(null); }, 120);
     };
-    if (el) flight(el, iconOf(k), "out", finish); else finish();
+    if (el) flight(el, iconOf(k), "out", finish); else finish(); // flight measures the icon with Home where it is now…
+    homeTo(false); // …then Home and the app move together
   };
 
   /** Home: drop the history entries we added (keeping an open folder's), and fly the app back into its icon */
@@ -387,9 +404,9 @@ export function IOSShell() {
     const dy = (e.clientY - s.y) / zoom, v = dy / Math.max(1, Date.now() - s.t);
     const el = layerOf(k);
     const home = device.current?.querySelector<HTMLElement>(".ios-home");
-    if (home) { home.style.transition = ""; home.style.transform = ""; } // hand Home back to its class transition
     if (Math.abs(dy) < 6 || dy < -70 || v < -0.4) goHome(); // the flight picks up from the dragged pose
     else if (el) {
+      if (home) homeTo(true);
       el.style.transition = `transform .35s ${EASE}, border-radius .35s`; el.style.transform = "translate3d(0,0,0) scale(1)"; el.style.borderRadius = "";
       window.setTimeout(() => { el.style.transition = ""; el.style.transform = ""; el.style.transformOrigin = ""; }, 360);
     }
@@ -451,7 +468,7 @@ export function IOSShell() {
         <div className="ios-wall" aria-hidden />
 
         {/* Home */}
-        <div className={`ios-home ${front && !closing ? "behind" : ""} ${locked ? "hidden" : ""}`} aria-hidden={!!front || locked}
+        <div className={`ios-home ${front ? "behind" : ""} ${locked ? "hidden" : ""}`} aria-hidden={!!front || locked}
           onPointerDown={pageDown} onPointerMove={pageMove} onPointerUp={pageUp} onPointerCancel={pageUp}>
           <div className="pages" ref={pagesEl}>
             <section className="page" aria-label="Home page 1">
