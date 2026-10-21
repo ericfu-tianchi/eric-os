@@ -105,6 +105,7 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
   const over = useRef(false);
   const recordClaiming = useRef(false);
   const demo = useRef(false);
+  const bot = useRef(false); // ?snakebot: a path-finding autopilot (for recording the site in action)
   const phase = useRef<Phase>("play");
   const sp = useRef<GridSpec>(spec);
   const pupils = useRef<(SVGCircleElement | null)[]>([]);
@@ -246,6 +247,43 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
     }
   }
 
+  /** BFS to the nearest desktop icon (then the apple), never into the body; else the move with the most room. */
+  function autopilot() {
+    const s = sp.current, body = snake.current, head = body[body.length - 1];
+    const key = (x: number, y: number) => y * s.cols + x;
+    const blocked = new Set(body.slice(1).map((c) => key(c.x, c.y))); // the tail cell frees up as we move
+    const targets = new Set((icons.current.length ? icons.current.map((i) => key(i.cx, i.cy)) : apple.current ? [key(apple.current.x, apple.current.y)] : []));
+    const dirs = [{ x: 1, y: 0 }, { x: 0, y: 1 }, { x: -1, y: 0 }, { x: 0, y: -1 }];
+    const ok = (x: number, y: number) => x >= 0 && y >= 0 && x < s.cols && y < s.rows && !blocked.has(key(x, y));
+    const first = new Map<number, { x: number; y: number }>();
+    const q: [number, number][] = [];
+    for (const d of dirs) {
+      if (d.x === -dir.current.x && d.y === -dir.current.y) continue;
+      const nx = head.x + d.x, ny = head.y + d.y;
+      if (!ok(nx, ny) || first.has(key(nx, ny))) continue;
+      first.set(key(nx, ny), d); q.push([nx, ny]);
+    }
+    while (q.length) {
+      const [x, y] = q.shift()!;
+      const k = key(x, y);
+      if (targets.has(k)) return first.get(k)!;
+      for (const d of dirs) {
+        const nx = x + d.x, ny = y + d.y, nk = key(nx, ny);
+        if (!ok(nx, ny) || first.has(nk)) continue;
+        first.set(nk, first.get(k)!); q.push([nx, ny]);
+      }
+    }
+    // nothing reachable: pick the safe move with the most open neighbours
+    let best = dir.current, room = -1;
+    for (const d of dirs) {
+      const nx = head.x + d.x, ny = head.y + d.y;
+      if (!ok(nx, ny) || (d.x === -dir.current.x && d.y === -dir.current.y)) continue;
+      const r = dirs.filter((e) => ok(nx + e.x, ny + e.y)).length;
+      if (r > room) { room = r; best = d; }
+    }
+    return best;
+  }
+
   function tick() {
     if (over.current || phase.current !== "play") return;
     const s = sp.current;
@@ -253,6 +291,7 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
       const h = snake.current[snake.current.length - 1];
       nextDir.current = h.x < s.cols - 2 ? { x: 1, y: 0 } : { x: 0, y: -1 };
     }
+    if (bot.current) nextDir.current = autopilot();
     dir.current = nextDir.current;
     const head = snake.current[snake.current.length - 1];
     const nx = head.x + dir.current.x;
@@ -280,6 +319,7 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
   useEffect(() => {
     if (!frozen) void fetchSnakeRecord().then(setRecord);
     demo.current = !frozen && new URLSearchParams(window.location.search).has("snakedemo");
+    bot.current = !frozen && new URLSearchParams(window.location.search).has("snakebot");
     firstRun.current = !frozen &&
       (!localStorage.getItem("eric-os-snake-onboarded") || new URLSearchParams(window.location.search).has("tut")); // tutorial only the very first time (?tut=1 forces it for QA)
     alertLifeMs.current = ALERT_LEAD_MS + (firstRun.current ? TUTORIAL_MS : 0);
