@@ -215,10 +215,11 @@ const mmss = (ms: number) => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 };
 
-export function SnakeChat({ style, onAct, onClose }: {
+export function SnakeChat({ style, onAct, onClose, focus = true }: {
   style: React.CSSProperties;
   onAct: (a: NavAction) => void;
   onClose: () => void;
+  focus?: boolean; // phones: don't throw the keyboard up on open or after every reply
 }) {
   const s = useSyncExternalStore(subscribe, () => state);
   const [draft, setDraft] = useState("");
@@ -234,7 +235,7 @@ export function SnakeChat({ style, onAct, onClose }: {
     return () => window.clearInterval(t);
   }, [s.lock]);
   useEffect(() => { listRef.current?.scrollTo({ top: listRef.current.scrollHeight }); }, [s.msgs.length, s.busy, s.slow]);
-  useEffect(() => { if (!s.lock && !s.busy) inputRef.current?.focus(); }, [s.lock, s.busy]);
+  useEffect(() => { if (focus && !s.lock && !s.busy) inputRef.current?.focus(); }, [focus, s.lock, s.busy]);
 
   const lastQuestion = [...s.msgs].reverse().find((m) => m.role === "user")?.content;
   const left = s.lock ? s.lock.until - now : 0;
@@ -295,7 +296,7 @@ export function SnakeChat({ style, onAct, onClose }: {
       <form onSubmit={(e) => { e.preventDefault(); const q = draft; setDraft(""); void send(q); }}>
         <input
           ref={inputRef}
-          autoFocus
+          autoFocus={focus}
           value={draft}
           maxLength={300}
           disabled={!!s.lock}
