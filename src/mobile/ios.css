@@ -56,7 +56,7 @@
 /* ---------- Lock Screen ---------- */
 .ios-lock { position: absolute; inset: 0; z-index: 80; display: flex; flex-direction: column; align-items: center; padding-top: calc(var(--top) + 18px); cursor: pointer; touch-action: none;
   background: linear-gradient(rgba(0,0,0,.25), transparent 45%); }
-.ios-lock.anim { transition: transform .42s cubic-bezier(.2,.9,.25,1); }
+.ios-lock { will-change: transform; }
 .ios-lock .date { font: 600 19px var(--font); color: rgba(255,255,255,.88); }
 .ios-lock .clock { font: 700 92px/1 var(--font); letter-spacing: -.035em; margin-top: 2px; font-variant-numeric: tabular-nums; }
 .ios-lock .notes { width: calc(100% - 20px); margin-top: 26px; display: grid; gap: 8px; }
@@ -73,11 +73,13 @@
 @keyframes ios-pulse { 50% { opacity: .3; } }
 
 /* ---------- Home ---------- */
-.ios-home { position: absolute; inset: 0; touch-action: pan-y; transition: transform .44s cubic-bezier(.2,.9,.25,1), filter .44s; animation: ios-home-in .5s cubic-bezier(.2,.9,.25,1) both; }
+.ios-home { position: absolute; inset: 0; touch-action: pan-y; transition: transform .44s cubic-bezier(.2,.9,.25,1); animation: ios-home-in .5s cubic-bezier(.2,.9,.25,1) both; }
 .ios-home.hidden { visibility: hidden; animation: none; }
 @keyframes ios-home-in { from { transform: scale(1.1); opacity: 0; } }
-.ios-home.behind { transform: scale(.94); filter: brightness(.6); }
-.ios-home .pages { position: absolute; inset: 0; display: flex; will-change: transform; }
+.ios-home::after { content: ""; position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .44s cubic-bezier(.2,.9,.25,1); }
+.ios-home.behind { transform: scale(.94); }
+.ios-home.behind::after { opacity: .45; } /* dim with an overlay: animating filter on a full-screen layer drops frames on phones */
+.ios-home .pages { position: absolute; inset: 0; display: flex; will-change: transform; backface-visibility: hidden; }
 .ios-home .page { position: relative; flex: none; width: 100%; height: 100%; padding: calc(var(--top) + 18px) calc(var(--cell) * .55) 0; }
 .ios-widget { display: flex; width: 100%; height: calc(var(--cell) * 5.2); border-radius: 22px; overflow: hidden; background: #0d0e10; box-shadow: inset 0 0 0 .5px rgba(255,255,255,.1), 0 6px 20px rgba(0,0,0,.25); transition: transform .15s; }
 .ios-widget:active { transform: scale(.97); }
@@ -115,7 +117,7 @@
 .ios-mini.snake .board i::before { content: ""; position: absolute; inset: 1px; border-radius: 2px; background: var(--green); }
 .ios-mini.snake .board em { background: url("../assets/icons/b/apple.png") center / 80% no-repeat; }
 .ios-mini.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.ios-mini.photo .cap { padding-top: 30px; margin: 0 -12px -12px -14px; padding: 30px 12px 12px 14px; background: linear-gradient(transparent, rgba(0,0,0,.6)); }
+.ios-mini.photo .cap { margin: 0 -12px -12px -14px; padding: 44px 12px 12px 14px; background: linear-gradient(transparent, rgba(0,0,0,.45) 35%, rgba(0,0,0,.78)); text-shadow: 0 1px 2px rgba(0,0,0,.4); }
 @media (max-height: 790px) { .ios.phone .ios-widgets { display: none; } }
 
 /* app icons */
@@ -124,7 +126,7 @@
 .ios-ic img { width: calc(var(--s, .72) * 100%); height: calc(var(--s, .72) * 100%); object-fit: contain; }
 .ios-ic.cover img { width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 50%); }
 .ios-ic.pixel img { image-rendering: pixelated; }
-.ios-ic.folder { background: rgba(255,255,255,.2); backdrop-filter: blur(18px) saturate(1.5); -webkit-backdrop-filter: blur(18px) saturate(1.5);
+.ios-ic.folder { background: rgba(120,122,130,.42); /* no live blur: it re-blurs every frame while the pages slide */
   grid-template-columns: repeat(3, 1fr); grid-auto-rows: min-content; align-content: start; gap: 3px; padding: 13%; }
 .ios-ic.folder .ios-ic { width: 100%; height: auto; aspect-ratio: 1; border-radius: 22%; box-shadow: none; }
 

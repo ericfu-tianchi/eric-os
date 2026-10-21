@@ -120,6 +120,7 @@ export function IOSShell() {
   /** the app zooms out of its icon (in), or back into it (out) */
   const flight = (el: HTMLElement, from: Element | null | undefined, dir: "in" | "out", done?: () => void) => {
     const W = el.offsetWidth, H = el.offsetHeight;
+    const live = { transform: el.style.transform || "none", borderRadius: el.style.borderRadius || "0px", opacity: 1 }; // mid-drag pose
     const vis = !!from && from.isConnected && (from as HTMLElement).offsetParent !== null;
     let t = "translate3d(0,30px,0) scale(.9)";
     if (vis) {
@@ -127,7 +128,8 @@ export function IOSShell() {
       t = `translate3d(${r.x + r.w / 2 - W / 2}px, ${r.y + r.h / 2 - H / 2}px, 0) scale(${r.w / W}, ${r.h / H})`;
     }
     const k = [{ transform: t, borderRadius: `${Math.max(W, H) * 0.12}px`, opacity: vis ? 1 : 0 }, { transform: "none", borderRadius: "0px", opacity: 1 }];
-    const a = el.animate(dir === "in" ? k : [k[1], k[0]], { duration: dir === "in" ? 440 : 380, easing: EASE, fill: dir === "out" ? "forwards" : "none" });
+    const a = el.animate(dir === "in" ? k : [live, k[0]], { duration: dir === "in" ? 440 : 400, easing: EASE, fill: dir === "out" ? "forwards" : "none" });
+    el.style.transform = ""; el.style.borderRadius = ""; el.style.transition = "";
     a.onfinish = () => done?.();
   };
 
@@ -160,9 +162,14 @@ export function IOSShell() {
     pushHistory();
   };
 
+  const [closing, setClosing] = useState(false);
   const toHome = (k: string) => {
     const el = layerOf(k);
-    const finish = () => { setFront(null); el?.getAnimations().forEach((a) => a.cancel()); };
+    setClosing(true); // Home comes forward while the app is still shrinking, not after
+    const finish = () => {
+      if (el) { el.hidden = true; el.getAnimations().forEach((a) => a.cancel()); } // hide first, then drop the animation: no last-frame flash
+      setFront(null); setClosing(false);
+    };
     if (el) flight(el, iconOf(k), "out", finish); else finish();
   };
 
@@ -232,8 +239,6 @@ export function IOSShell() {
   /* ---------- lock screen ---------- */
   const unlock = () => { session.set(LOCK_KEY); setLocked(false); };
   const lockDrag = useRef<{ y: number; t: number } | null>(null);
-  const [lockY, setLockY] = useState(0);
-  const [lockAnim, setLockAnim] = useState(false);
 
   // the snake says hi once, a while after you land on Home
   useEffect(() => {
@@ -245,25 +250,27 @@ export function IOSShell() {
 
   /* ---------- Home: two pages that follow the finger ---------- */
   const pg = useRef<{ x: number; y: number; t: number; axis?: "x" | "y" } | null>(null);
-  const [dragX, setDragX] = useState(0);
-  const [paging, setPaging] = useState(false);
+  const pagesEl = useRef<HTMLDivElement>(null);
   const suppressTap = useRef(false);
-  const pageDown = (e: React.PointerEvent) => { pg.current = { x: e.clientX, y: e.clientY, t: Date.now() }; setPaging(false); suppressTap.current = false; };
+  const placePages = (p: number, dx = 0, animate = false) => {
+    const el = pagesEl.current; if (!el) return;
+    el.style.transition = animate ? `transform .46s ${EASE}` : "none";
+    el.style.transform = `translate3d(${-p * size.w + dx}px,0,0)`;
+  };
+  const firstPlace = useRef(true);
+  useLayoutEffect(() => { placePages(page, 0, !firstPlace.current); firstPlace.current = false; }, [page, size.w]); // eslint-disable-line react-hooks/exhaustive-deps
+  const pageDown = (e: React.PointerEvent) => { pg.current = { x: e.clientX, y: e.clientY, t: Date.now() }; suppressTap.current = false; };
   const pageMove = (e: React.PointerEvent) => {
     const s = pg.current; if (!s) return;
     const dx = (e.clientX - s.x) / zoom, dy = (e.clientY - s.y) / zoom;
-    if (!s.axis && Math.hypot(dx, dy) > 8) { s.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y"; suppressTap.current = true; window.clearTimeout(press.current); }
-    if (s.axis === "x") setDragX((page === 0 && dx > 0) || (page === 1 && dx < 0) ? dx * 0.3 : dx);
+    if (!s.axis && Math.hypot(dx, dy) > 10) { s.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y"; suppressTap.current = true; window.clearTimeout(press.current); }
+    if (s.axis === "x") placePages(page, (page === 0 && dx > 0) || (page === 1 && dx < 0) ? dx * 0.3 : dx);
   };
   const pageUp = (e: React.PointerEvent) => {
-    const s = pg.current; pg.current = null; if (!s) return;
+    const s = pg.current; pg.current = null; if (!s || s.axis !== "x") return;
     const dx = (e.clientX - s.x) / zoom, v = dx / Math.max(1, Date.now() - s.t);
-    setPaging(true);
-    if (s.axis === "x") {
-      if ((dx < -size.w / 4 || v < -0.3) && page === 0) setPage(1);
-      else if ((dx > size.w / 4 || v > 0.3) && page === 1) setPage(0);
-    }
-    setDragX(0);
+    const next = (dx < -size.w / 4 || v < -0.3) && page === 0 ? 1 : (dx > size.w / 4 || v > 0.3) && page === 1 ? 0 : page;
+    if (next === page) placePages(page, 0, true); else setPage(next);
   };
 
   /* ---------- icons: tap opens, long-press opens quick actions ---------- */
@@ -290,8 +297,8 @@ export function IOSShell() {
       open(item.route, e.currentTarget.querySelector(".ios-ic") ?? e.currentTarget);
     },
   });
-  const Icon = ({ item, dock }: { item: HomeItem; dock?: boolean }) => (
-    <button type="button" className={`ios-icon ${menu && menu.item === item ? "lifted" : ""}`} aria-label={item.label} {...iconProps(item)}>
+  const icon = (item: HomeItem, dock?: boolean) => (
+    <button type="button" key={item.id} className="ios-icon" aria-label={item.label} {...iconProps(item)}>
       <ItemTile item={item} />
       {!dock && <span className="lbl">{item.label}</span>}
     </button>
@@ -379,9 +386,9 @@ export function IOSShell() {
         <div className="ios-wall" aria-hidden />
 
         {/* Home */}
-        <div className={`ios-home ${front ? "behind" : ""} ${locked ? "hidden" : ""}`} aria-hidden={!!front || locked}
+        <div className={`ios-home ${front && !closing ? "behind" : ""} ${locked ? "hidden" : ""}`} aria-hidden={!!front || locked}
           onPointerDown={pageDown} onPointerMove={pageMove} onPointerUp={pageUp} onPointerCancel={pageUp}>
-          <div className="pages" style={{ transform: `translate3d(${-page * size.w + dragX}px,0,0)`, transition: paging ? `transform .44s ${EASE}` : "none" }}>
+          <div className="pages" ref={pagesEl}>
             <section className="page" aria-label="Home page 1">
               <button type="button" className="ios-widget" data-id="about"
                 onClick={(e) => { if (suppressTap.current) { suppressTap.current = false; return; } open({ app: "about" }, e.currentTarget); }}>
@@ -392,27 +399,27 @@ export function IOSShell() {
                 </span>
                 <img src={portrait} alt="" draggable={false} />
               </button>
-              <div className="ios-grid">{HOME.page1.map((it) => <Icon key={it.id} item={it} />)}</div>
+              <div className="ios-grid">{HOME.page1.map((it) => icon(it))}</div>
               <div className="ios-widgets">
-                <button type="button" className="ios-mini snake" data-id="snake" onClick={(e) => { if (suppressTap.current) { suppressTap.current = false; return; } open({ app: "snake" }, e.currentTarget); }}>
+                <button type="button" className="ios-mini snake" onClick={(e) => { if (suppressTap.current) { suppressTap.current = false; return; } open({ app: "snake" }, e.currentTarget); }}>
                   <span className="board" aria-hidden>{[[0, 3], [1, 3], [2, 3], [2, 2], [2, 1], [3, 1], [4, 1]].map(([x, y], i) => <i key={i} style={{ left: `${x * 20}%`, top: `${y * 20}%` }} />)}<em style={{ left: "80%", top: "60%" }} /></span>
                   <span className="cap"><b>Snake</b><small>{bestLine}</small></span>
                 </button>
-                <button type="button" className="ios-mini photo" data-id="photos" onClick={(e) => { if (suppressTap.current) { suppressTap.current = false; return; } open({ app: "photos", item: featured.id }, e.currentTarget); }}>
+                <button type="button" className="ios-mini photo" onClick={(e) => { if (suppressTap.current) { suppressTap.current = false; return; } open({ app: "photos", item: featured.id }, e.currentTarget); }}>
                   <img src={featured.thumb} alt="" draggable={false} />
                   <span className="cap"><small>Featured photo</small><b>{featured.name}</b></span>
                 </button>
               </div>
             </section>
             <section className="page" aria-label="Home page 2">
-              <div className="ios-grid">{HOME.page2.map((it) => <Icon key={it.id} item={it} />)}</div>
+              <div className="ios-grid">{HOME.page2.map((it) => icon(it))}</div>
               <HiSnake col={3} row={Math.max(7, rows - 12)} />
             </section>
           </div>
           <div className="ios-dots" role="tablist" aria-label="Home Screen pages">
-            {[0, 1].map((i) => <button type="button" key={i} role="tab" aria-selected={page === i} aria-label={`Page ${i + 1}`} className={page === i ? "on" : ""} onClick={() => { setPaging(true); setPage(i); }} />)}
+            {[0, 1].map((i) => <button type="button" key={i} role="tab" aria-selected={page === i} aria-label={`Page ${i + 1}`} className={page === i ? "on" : ""} onClick={() => setPage(i)} />)}
           </div>
-          <div className="ios-dock">{HOME.dock.map((it) => <Icon key={it.id} item={it} dock />)}</div>
+          <div className="ios-dock">{HOME.dock.map((it) => icon(it, true))}</div>
         </div>
 
         {/* running apps keep their state; only the front one shows */}
@@ -435,7 +442,7 @@ export function IOSShell() {
           <div className="ios-folder" onClick={back}>
             <h3>{folder.label}</h3>
             <div className="box" onClick={(e) => e.stopPropagation()}>
-              {folder.items.map((it) => <Icon key={it.id} item={it} />)}
+              {folder.items.map((it) => icon(it))}
             </div>
           </div>
         )}
@@ -480,15 +487,16 @@ export function IOSShell() {
 
         {/* Lock Screen: tap or swipe up */}
         {locked && (
-          <div className={`ios-lock ${lockAnim ? "anim" : ""}`} style={{ transform: `translate3d(0, ${lockY}px, 0)` }}
-            onPointerDown={(e) => { lockDrag.current = { y: e.clientY, t: Date.now() }; setLockAnim(false); }}
-            onPointerMove={(e) => { const s = lockDrag.current; if (s) setLockY(Math.min(0, (e.clientY - s.y) / zoom)); }}
+          <div className="ios-lock"
+            onPointerDown={(e) => { lockDrag.current = { y: e.clientY, t: Date.now() }; (e.currentTarget as HTMLElement).style.transition = "none"; }}
+            onPointerMove={(e) => { const s = lockDrag.current; if (s) (e.currentTarget as HTMLElement).style.transform = `translate3d(0, ${Math.min(0, (e.clientY - s.y) / zoom)}px, 0)`; }}
             onPointerUp={(e) => {
               const s = lockDrag.current; lockDrag.current = null; if (!s) return;
+              const el = e.currentTarget as HTMLElement;
               const dy = (e.clientY - s.y) / zoom, v = dy / Math.max(1, Date.now() - s.t);
-              setLockAnim(true);
-              if (Math.abs(dy) < 8 || dy < -size.h * 0.18 || v < -0.4) { setLockY(-size.h); window.setTimeout(unlock, 400); }
-              else setLockY(0);
+              el.style.transition = `transform .44s ${EASE}`;
+              if (Math.abs(dy) < 8 || dy < -size.h * 0.18 || v < -0.4) { el.style.transform = "translate3d(0,-100%,0)"; window.setTimeout(unlock, 420); }
+              else el.style.transform = "";
             }}>
             <div className="date">{now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
             <div className="clock">{hhmm(now)}</div>
