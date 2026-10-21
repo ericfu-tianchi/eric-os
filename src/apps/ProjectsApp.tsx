@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { GROUPS, PROJECTS, byGroup, metaOf, type Group, type Category } from "../data/projects";
 import { caseOf, type CaseBlock } from "../data/cases";
 import { useOS } from "../store";
 import { PixIcon } from "../components/Pixel";
 import { useWindowChrome } from "../components/WindowChrome";
 import { coverOf, heroOf, detailImg } from "../data/projectAssets";
+import { APPS, appIcon, type AppKey } from "../data/apps";
 
 const CAT_COLOR: Record<Category, string> = {
   AI: "var(--green)",
@@ -156,6 +157,27 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
         {b.caption && <figcaption>{b.caption}</figcaption>}
       </figure>
     );
+  if (b.t === "item") {
+    const src = b.src ? detailImg(b.src) : undefined;
+    const app = (k: AppKey, big: boolean) => (
+      <a key={k} className={big ? "cs-app" : "cs-chip"} href={APPS[k].href} target="_blank" rel="noopener noreferrer" data-name={big ? APPS[k].name : undefined}>
+        <img src={appIcon(k)} alt={big ? APPS[k].name : ""} draggable={false} />{!big && <>{APPS[k].name}<span aria-hidden>↗</span></>}
+      </a>
+    );
+    return (
+      <div className={`cs-item ${flip ? "flip" : ""}`}>
+        <div>
+          <span className="n">{String(n).padStart(2, "0")}</span>
+          <h4>{b.title}</h4>
+          {b.text.split("\n\n").map((t, i) => <p key={i}><Rich text={t} /></p>)}
+          {src && b.apps && <div className="cs-chips">{b.apps.map((k) => app(k, false))}</div>}
+        </div>
+        {src
+          ? <img src={src} alt="" loading="lazy" decoding="async" draggable={false} />
+          : <div className="cs-apps">{b.apps?.map((k, i) => <Fragment key={k}>{i > 0 && b.plus && <span className="plus" aria-hidden>+</span>}{app(k, true)}</Fragment>)}</div>}
+      </div>
+    );
+  }
   if (b.t === "img") {
     const src = detailImg(b.src);
     return src ? (
@@ -238,10 +260,11 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
         </nav>
       )}
       {cs.sections.map((s, si) => {
-        let features = 0, steps = 0;
-        const blocks = s.blocks.map((b, i) => (
-          <CaseBlockView key={i} b={b} flip={b.t === "feature" && features++ % 2 === 1} n={b.t === "step" ? ++steps : 0} />
-        ));
+        let features = 0, steps = 0, items = 0;
+        const blocks = s.blocks.map((b, i) => {
+          const n = b.t === "step" ? ++steps : b.t === "item" ? ++items : 0;
+          return <CaseBlockView key={i} b={b} flip={(b.t === "feature" && features++ % 2 === 1) || (b.t === "item" && n % 2 === 0)} n={n} />;
+        });
         // The meta rail sits beside the opening text only; the first band/figure goes full width.
         const split = si === 0 && meta.length > 0 ? s.blocks.findIndex((b) => !["h", "sub", "p"].includes(b.t)) : 0;
         const introEnd = split === -1 ? blocks.length : split;

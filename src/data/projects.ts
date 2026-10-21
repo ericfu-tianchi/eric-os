@@ -237,7 +237,7 @@ export const META: Record<string, ProjectMeta> = {
   refugeeone: { accent: "#f36c12", sub: "A three-sided hiring platform for a Chicago refugee resettlement non-profit", role: "Product Owner & Frontend Developer", timeline: "Jan – May 2023", tools: "Figma · Jira · React · Firebase" },
   "twist-solver": { accent: "#2f8f4e" },
   "lego-world": { accent: "#c91a09" },
-  "how-i-ai": { accent: "#079a55", sub: "My setup, and three things I believe about building with AI", role: "Daily practice", timeline: "2026", tools: "Claude Code · cmux · Typeless · Obsidian" },
+  "how-i-ai": { accent: "#079a55", sub: "My setup, and three things I believe about building with AI" },
   "soul-blade": { accent: "#c8324a" },
   homesoffcampus: { accent: "#4f7cac", sub: "A housing website catered to and trusted by students", role: "UX Designer & Researcher, Developer", timeline: "Sep–Dec 2021", tools: "Figma · Miro · React Native + Firebase" },
   handcoded: { accent: "#494949", sub: "My hand-coded portfolio from before Wix", role: "Frontend Developer", timeline: "Nov 2021–Aug 2022", tools: "HTML · CSS · JS" },

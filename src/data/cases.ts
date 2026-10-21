@@ -1,4 +1,5 @@
 import type { Project } from "./projects";
+import type { AppKey } from "./apps";
 import { metaOf } from "./projects";
 import { EXTRA } from "./casesContent";
 import { howIAI } from "./cases/howIAI";
@@ -31,7 +32,8 @@ export type CaseBlock =
   | { t: "link"; text: string; href: string } // accent pill button (external)
   | { t: "embed"; src: string; kind: "youtube" | "figma" | "web"; caption?: string; ratio?: number } // live iframe; ratio = w/h
   | { t: "row"; items: { src: string; w: number }[]; caption?: string } // 2–3 images side by side at their old-site widths
-  | { t: "img"; src: string; caption?: string; w?: number }; // src = "<slug>/NN.png"; w = display width in px at 1440 (old-site size)
+  | { t: "img"; src: string; caption?: string; w?: number } // src = "<slug>/NN.png"; w = display width in px at 1440 (old-site size)
+  | { t: "item"; title: string; text: string; src?: string; apps?: AppKey[]; plus?: boolean }; // numbered text + visual row, sides alternate; no src = the apps as big linked icons (plus: joined by "+"), else linked app chips under the text; "\n\n" splits paragraphs
 export interface CaseSection { id: string; label: string; blocks: CaseBlock[]; white?: boolean } // white: keep the band white (white-background slides)
 export interface CaseStudy {
   accent: string;

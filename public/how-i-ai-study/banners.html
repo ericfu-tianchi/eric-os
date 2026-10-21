@@ -1,0 +1,120 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>How I AI · banners</title>
+<style>
+@font-face{font-family:Mont;src:url(/src/assets/fonts/montserrat-800.woff2);font-weight:800}
+@font-face{font-family:Geist;src:url(/src/assets/fonts/geist-sans-variable.woff2);font-weight:100 900}
+@font-face{font-family:JB;src:url(/src/assets/fonts/jbmono-500.woff2)}
+*{box-sizing:border-box}
+body{margin:0;background:#111;color:#ddd;font-family:Geist,sans-serif}
+.b{width:1500px;height:589px;position:relative;overflow:hidden;margin:0 0 28px}
+.lab{font:600 14px Geist;padding:8px 0;color:#aaa}
+h1{margin:0;font-family:Mont;font-weight:800;letter-spacing:-.02em;line-height:.95}
+.ic{width:var(--s,96px);height:var(--s,96px);border-radius:22.5%;display:grid;place-items:center;position:relative;flex:none}
+.ic img{position:absolute;left:-12.15%;top:-12.15%;width:124.3%;height:124.3%;display:block;max-width:none}
+.ic.t{background:#fff;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+.ic.t img{position:static;width:62%;height:62%}
+.ic.dark{background:#1b1b1d}
+.ic.dark img{position:static;width:66%;height:66%}
+.ic.own img{position:static;width:100%;height:100%}
+.sh .ic{box-shadow:0 10px 30px rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.18)}
+.sh .ic.t{box-shadow:0 10px 30px rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.18),inset 0 0 0 1px rgba(0,0,0,.06)}
+.mono{font-family:JB;font-size:15px;letter-spacing:.04em}
+
+/* A dock */
+#A{background:#1c1d21;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:44px 44px}
+#A h1{position:absolute;left:96px;top:150px;font-size:148px;color:#fff}
+#A .mono{position:absolute;left:100px;top:322px;color:#8b8d93}
+#A .dock{position:absolute;left:96px;bottom:70px;display:flex;gap:16px;padding:14px 18px 20px;border-radius:26px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px)}
+#A .dock .ic{--s:88px}
+#A .dock .ic::after{content:"";position:absolute;bottom:-11px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#e9e9ea}
+
+/* B orbit */
+#B{background:#fff}
+#B .ring{position:absolute;left:50%;top:50%;border:1.5px dashed #d9dadd;border-radius:50%;transform:translate(-50%,-50%)}
+#B h1{position:absolute;left:0;right:0;top:232px;text-align:center;font-size:120px;color:#111}
+#B .ic{position:absolute;--s:80px;transform:translate(-50%,-50%) rotate(var(--r,0deg))}
+
+/* C stickers */
+#C{background:#079a55}
+#C h1{position:absolute;left:96px;top:170px;font-size:150px;color:#fff}
+#C .mono{position:absolute;left:100px;top:345px;color:rgba(255,255,255,.75)}
+#C .ic{position:absolute;--s:120px;transform:rotate(var(--r));outline:7px solid #fff;outline-offset:0;box-shadow:0 14px 30px rgba(0,0,0,.25)}
+
+/* D flow */
+#D{background:#f3f3f4}
+#D h1{position:absolute;left:96px;top:64px;font-size:96px;color:#111}
+#D .flow{position:absolute;left:96px;right:96px;top:250px;display:flex;align-items:flex-start;justify-content:space-between}
+#D .st{display:flex;flex-direction:column;align-items:center;gap:16px}
+#D .st .k{font:700 20px Geist;color:#111;letter-spacing:.02em}
+#D .st .v{font-family:JB;font-size:14px;color:#888;margin-top:-8px}
+#D .stack{display:flex;gap:10px}
+#D .stack .ic{--s:104px}
+#D .arr{flex:1;height:2px;margin:52px 26px 0;background:repeating-linear-gradient(90deg,#b8babf 0 8px,transparent 8px 14px);position:relative}
+#D .arr::after{content:"";position:absolute;right:-2px;top:-5px;border:6px solid transparent;border-left:9px solid #b8babf;border-right:0}
+
+/* E island */
+#E{background:radial-gradient(1200px 500px at 50% -10%,#2a2c33,#0d0d0f)}
+#E .isl{position:absolute;left:50%;top:44px;transform:translateX(-50%);width:760px;height:200px;border-radius:0 0 56px 56px;background:#000;box-shadow:0 30px 80px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;gap:28px}
+#E .isl h1{font-size:104px;color:#fff}
+#E .px{display:grid;grid-template-columns:repeat(5,10px);gap:3px}
+#E .px i{width:10px;height:10px;background:#06C268}
+#E .px i.o{background:transparent}
+#E .row{position:absolute;left:0;right:0;bottom:70px;display:flex;justify-content:center;gap:26px}
+#E .row .ic{--s:92px}
+#E .row .ic b{position:absolute;right:-5px;top:-5px;width:18px;height:18px;border-radius:50%;background:#06C268;border:3px solid #0d0d0f}
+#E .row .ic b.w{background:#f5a524}
+#E .wire{position:absolute;left:50%;top:244px;width:1px;height:160px;background:linear-gradient(#333,transparent)}
+
+/* F snake */
+#F{background:#1c1d21;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:44px 44px;background-position:-2px -2px}
+#F h1{position:absolute;left:86px;top:120px;font-size:132px;color:#fff}
+#F .mono{position:absolute;left:90px;top:272px;color:#8b8d93}
+#F .cell{position:absolute;width:40px;height:40px;background:#06C268;border-radius:3px}
+#F .ic{position:absolute;--s:84px}
+#F .eye{position:absolute;width:10px;height:10px;background:#fff;border-radius:1px}
+#F .eye::after{content:"";position:absolute;left:3px;top:3px;width:5px;height:5px;background:#111}
+</style></head><body>
+<div class="lab">A · Dock: the site's charcoal grid, a real Dock of the tools</div>
+<div class="b sh" id="A"><h1>How I AI</h1><div class="mono">VOICE IN · AGENTS OUT · I REVIEW</div><div class="dock" data-set="typeless,cmux,claudecode,codex,gemini,vibe,obsidian,github"></div></div>
+
+<div class="lab">B · Orbit: the tools circle the title</div>
+<div class="b sh" id="B"><div class="ring" style="width:900px;height:380px"></div><div class="ring" style="width:1240px;height:500px"></div><h1>How I AI</h1></div>
+
+<div class="lab">C · Stickers: tools as stickers on the accent green</div>
+<div class="b" id="C"><h1>How I AI</h1><div class="mono">MY SETUP, AND WHAT I BELIEVE</div></div>
+
+<div class="lab">D · Flow: speak → build → watch → remember</div>
+<div class="b sh" id="D"><h1>How I AI</h1>
+<div class="flow">
+ <div class="st"><div class="stack" data-set="typeless"></div><div class="k">Speak</div><div class="v">Typeless</div></div><div class="arr"></div>
+ <div class="st"><div class="stack" data-set="cmux,claudecode,codex,gemini"></div><div class="k">Build</div><div class="v">cmux · Claude Code · Codex · Gemini</div></div><div class="arr"></div>
+ <div class="st"><div class="stack" data-set="vibe"></div><div class="k">Watch</div><div class="v">Vibe Island</div></div><div class="arr"></div>
+ <div class="st"><div class="stack" data-set="obsidian,github"></div><div class="k">Remember</div><div class="v">Obsidian · GitHub</div></div>
+</div></div>
+
+<div class="lab">E · Island: the title lives in the notch, the agents report up</div>
+<div class="b sh" id="E"><div class="isl"><h1>How I AI</h1></div><div class="row" data-set="typeless,cmux,claudecode,codex,gemini,obsidian,github" data-badge="1"></div></div>
+
+<div class="lab">F · Snake: the desktop snake winds through the tools</div>
+<div class="b sh" id="F"><h1>How I AI</h1><div class="mono">MY SETUP, AND WHAT I BELIEVE</div></div>
+
+<script>
+const I={typeless:["typeless.png"],cmux:["cmux.png"],claudecode:["claudecode-color.svg","dark"],codex:["codex-color.svg","own"],gemini:["gemini-color.svg","t"],vibe:["vibe-island.png"],obsidian:["obsidian.png"],github:["github.svg","t"],claude:["claude.png"],chatgpt:["chatgpt.png"]};
+const ic=(k,st="")=>{const[f,c=""]=I[k];return`<div class="ic ${c}" style="${st}"><img src="icons/${f}" alt="${k}"></div>`};
+document.querySelectorAll("[data-set]").forEach(el=>{el.innerHTML=el.dataset.set.split(",").map((k,i)=>ic(k).replace("</div>",el.dataset.badge?`<b class="${i==2?"w":""}"></b></div>`:"</div>")).join("")});
+// B orbit
+const B=document.getElementById("B");const ob=["claudecode","cmux","codex","gemini","typeless","vibe","obsidian","github","claude","chatgpt"];
+ob.forEach((k,i)=>{const big=i%2,a=(i/ob.length)*Math.PI*2+0.3,rx=big?620:450,ry=big?232:180;B.insertAdjacentHTML("beforeend",ic(k,`left:${750+rx*Math.cos(a)}px;top:${294+ry*Math.sin(a)}px;--r:${(i%3-1)*6}deg`))});
+// C stickers
+const C=document.getElementById("C");[["claudecode",820,70,-8],["cmux",1010,40,6],["codex",1200,110,-4],["typeless",760,300,7],["gemini",950,250,-5],["vibe",1150,330,9],["obsidian",880,440,-3],["github",1310,430,5]].forEach(([k,x,y,r])=>C.insertAdjacentHTML("beforeend",ic(k,`left:${x}px;top:${y}px;--r:${r}deg`)));
+// E pixel ai mark
+
+// F snake: icons ride the body, like the desktop snake
+const F=document.getElementById("F");const G=44;
+const path=[];const pts=[[16,12],[16,9],[19,9],[19,4],[23,4],[23,10],[27,10],[27,5],[30,5],[30,2],[32,2]];
+for(let i=0;i<pts.length-1;i++){let[x,y]=pts[i],[X,Y]=pts[i+1];while(x!=X||y!=Y){path.push([x,y]);x+=Math.sign(X-x);y+=Math.sign(Y-y)}}path.push(pts.at(-1));
+path.forEach(([x,y])=>F.insertAdjacentHTML("beforeend",`<div class="cell" style="left:${x*G+2}px;top:${y*G+2}px"></div>`));
+const [hx,hy]=path.at(-1);F.insertAdjacentHTML("beforeend",`<div class="eye" style="left:${hx*G+26}px;top:${hy*G+10}px"></div><div class="eye" style="left:${hx*G+26}px;top:${hy*G+26}px"></div>`);
+const ks=["typeless","cmux","claudecode","codex","gemini","vibe","obsidian","github"];const step=Math.floor((path.length-3)/ks.length);
+ks.forEach((k,i)=>{const[x,y]=path[2+i*step];F.insertAdjacentHTML("beforeend",ic(k,`left:${x*G+22-34}px;top:${y*G+22-34}px;--s:68px`))});
+</script></body></html>

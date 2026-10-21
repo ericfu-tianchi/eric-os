@@ -1,0 +1,138 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>How I AI · study</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+@font-face{font-family:Mont;src:url(/src/assets/fonts/montserrat-800.woff2);font-weight:800}
+@font-face{font-family:Mont;src:url(/src/assets/fonts/montserrat-700.woff2);font-weight:700}
+@font-face{font-family:SSP;src:url(/src/assets/fonts/sourcesanspro-400.woff2);font-weight:400}
+@font-face{font-family:SSP;src:url(/src/assets/fonts/sourcesanspro-600.woff2);font-weight:600}
+@font-face{font-family:Geist;src:url(/src/assets/fonts/geist-sans-variable.woff2);font-weight:100 900}
+:root{--acc:#079a55;--ink:#1d1d1f;--mute:#5f6166;--bg2:#f5f5f6}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font:16px/1.65 SSP,sans-serif}
+.bar{position:sticky;top:0;z-index:9;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;padding:10px 16px;background:#111;color:#ddd;font:500 12.5px Geist}
+.bar b{color:#fff;font-weight:600;margin-right:2px}
+.bar button{font:inherit;color:#ccc;background:#2a2a2d;border:1px solid #3a3a3e;border-radius:6px;padding:3px 9px;cursor:pointer}
+.bar button.on{background:#fff;color:#111;border-color:#fff}
+.bar .g{display:flex;gap:4px;align-items:center}
+.hero{display:block;width:100%;height:auto}
+main{max-width:1000px;margin:0 auto;padding:0 32px 120px}
+section{padding:72px 0 8px}
+.tt{font:700 26px Mont;text-align:center;margin:0 0 8px}
+.lead{text-align:center;color:var(--mute);margin:0 auto 48px;max-width:60ch;text-wrap:balance}
+.lead.one{white-space:nowrap;max-width:none}
+@media (max-width:600px){.lead.one{white-space:normal}}
+.lab{font:800 13px Mont;letter-spacing:.12em;color:var(--acc);text-transform:uppercase}
+h3{font:700 22px/1.25 Mont;margin:6px 0 10px}
+p{margin:0 0 12px;color:#3a3b3f}
+mark{background:color-mix(in oklch,var(--acc) 24%,transparent);color:inherit;padding:0 2px}
+/* setup rows */
+.row{display:grid;grid-template-columns:1fr 1.15fr;gap:48px;align-items:center;padding:36px 0;border-top:1px solid #ececee}
+.row:nth-child(even) .vis{order:-1}
+.n{font:800 15px Mont;color:var(--acc)}
+.vis{display:flex;justify-content:center;align-items:center;min-height:200px}
+.shot{width:100%;border-radius:10px;box-shadow:0 18px 50px rgba(0,0,0,.14),0 0 0 1px rgba(0,0,0,.06);display:block}
+.icons{display:flex;align-items:center;gap:18px;padding:34px 40px;border-radius:16px;background:var(--bg2)}
+.icons .plus{font:300 40px Geist;color:#9a9ca1}
+.ic{width:104px;height:104px;border-radius:22.5%;position:relative;flex:none;box-shadow:0 10px 26px rgba(0,0,0,.16)}
+.ic img{position:absolute;left:-12.15%;top:-12.15%;width:124.3%;height:124.3%}
+.ic.t{background:#fff;display:grid;place-items:center}.ic.t img{position:static;width:62%;height:62%}
+.ic.dark{background:#1b1b1d;display:grid;place-items:center}.ic.dark img{position:static;width:66%;height:66%}
+.ic.own img{position:static;width:100%;height:100%}
+.cap{font:500 12.5px Geist;color:#8a8c91;text-align:center;margin-top:10px}
+/* beliefs */
+.bel{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:40px 0;border-top:1px solid #ececee}
+.bel:nth-child(odd) .art{order:-1}
+.art img{width:100%;border-radius:12px;display:block}
+.pick{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:12px}
+.pick button{font:500 11.5px Geist;color:#555;background:#fff;border:1px solid #ddd;border-radius:6px;padding:3px 8px;cursor:pointer}
+.pick button.on{background:#111;color:#fff;border-color:#111}
+.optbox{width:100%}.optbox>[hidden]{display:none!important}
+.tlcard{display:flex;align-items:center;gap:28px;padding:30px 34px;border-radius:16px;background:var(--bg2)}
+.tlcard .ic{width:96px;height:96px}
+.tlcard h4{margin:0 0 10px;font:700 26px/1.1 Mont}.tlcard h4 span{color:#9a9ca1}
+.tlcard .sp{display:flex;gap:18px;font:500 13px Geist;color:#6b6d72}.tlcard .sp b{display:block;font:700 26px Mont;color:var(--ink)}
+.tlcard .sp .hi b{color:var(--acc)}
+.cmx{display:grid;grid-template-columns:210px 1fr;height:250px;border-radius:10px;overflow:hidden;background:#141416;font:11px/1.5 "JB",ui-monospace,monospace;color:#c9cacd;box-shadow:0 18px 50px rgba(0,0,0,.18)}
+.cmx .sb{background:#1d1e21;padding:26px 8px 8px;display:flex;flex-direction:column;gap:3px;font-family:Geist;border-right:1px solid #2a2b2f}
+.cmx .w{padding:5px 8px;border-radius:6px}.cmx .w b{display:flex;align-items:center;gap:6px;font-weight:600;font-size:11.5px;color:#e8e8ea}
+.cmx .w small{display:block;color:#7d7f85;font-size:10px;padding-left:12px}
+.cmx .w.on{background:#2b6cf0}.cmx .w.on small{color:#dfe8ff}
+.cmx i{width:6px;height:6px;border-radius:50%;background:#06C268;flex:none}.cmx i.y{background:#f5a524}.cmx i.g{background:#6b6d72}
+.cmx .pn{padding:12px 14px;border-right:1px solid #232428;overflow:hidden}.cmx .pn .t{color:#7d7f85;margin-bottom:8px;font-family:Geist}
+.cmx .pn p{margin:0 0 4px;color:#c9cacd;font-size:11px}.cmx .pn .o{color:#d97757}.cmx .pn .k{color:#06C268}
+.note{max-width:1000px;margin:24px auto 0;padding:0 32px;font:13px/1.6 Geist;color:#888}
+@media (max-width:760px){.row,.bel{grid-template-columns:1fr;gap:20px}.row .vis,.bel .art{order:-1!important}main{padding:0 16px 80px}.icons{padding:22px;gap:10px}.ic{width:72px;height:72px}}
+</style></head><body>
+<div class="bar">
+ <div class="g"><b>Banner</b> B Orbit</div><div class="g"><b>Illustration</b> 1 Warm primitive</div><div class="g" style="color:#999">Pick images under each setup item</div>
+</div>
+<img class="hero" id="hero" alt="">
+<main>
+ <section>
+  <div class="tt">&lt;The Setup/&gt;</div>
+  <p class="lead one">Five pieces, open all day, for work and everything else.</p>
+  <div class="rows">
+   <div class="row"><div><div class="n">01</div><h3>Voice first: Typeless</h3><p>I dictate almost everything. If I don't have to type, I don't. It's about four times faster than my keyboard, and my thinking stops waiting for my fingers.</p></div>
+    <div class="vis"><div style="width:100%"><div class="optbox">
+ <div data-n="T1 Hero"><img class="shot" src="shots/typeless-1.webp" alt=""></div>
+ <div data-n="T2 45 vs 220 wpm"><img class="shot" src="shots/typeless-2.webp" alt=""></div>
+ <div data-n="T3 Works everywhere"><img class="shot" src="shots/typeless-3.webp" alt=""></div>
+ <div data-n="T4 Free yourself"><img class="shot" src="shots/typeless-4.webp" alt=""></div>
+ <div data-n="T5 Card (mine)"><div class="tlcard"><div class="ic" data-k="typeless"></div><div><h4>Speak, <span>don't type.</span></h4><div class="sp"><div><b>45</b>wpm typing</div><div class="hi"><b>220</b>wpm speaking</div></div></div></div></div>
+</div><div class="pick"></div></div></div></div>
+   <div class="row"><div><div class="n">02</div><h3>Many agents at once: cmux + Claude Code</h3><p>One window, a column of Claude Code sessions on the left, each on its own task. Voice in, several agents out.</p></div>
+    <div class="vis"><div style="width:100%"><div class="optbox">
+ <div data-n="C1 Icons"><div class="icons" style="justify-content:center"><div class="ic" data-k="cmux"></div><span class="plus">+</span><div class="ic" data-k="claudecode"></div></div></div>
+ <div data-n="C2 Whole app"><img class="shot" src="shots/cmux-1.webp" alt=""></div>
+ <div data-n="C3 Sidebar + pane"><img class="shot" src="shots/cmux-3.webp" alt=""></div>
+ <div data-n="C4 Sidebar close-up"><img class="shot" src="shots/cmux-2.webp" alt=""></div>
+ <div data-n="C5 My sidebar (redrawn)"><div class="cmx"><div class="sb">
+  <div class="w on"><b><i></i>Personal website</b><small>Writing How I AI…</small></div>
+  <div class="w"><b><i class="y"></i>AI Newspaper</b><small>Waiting for input</small></div>
+  <div class="w"><b><i></i>Lego Video</b><small>Rendering shot 4</small></div>
+  <div class="w"><b><i class="g"></i>Personal wiki</b><small>Done</small></div>
+  <div class="w"><b><i class="g"></i>Resume</b><small>Done</small></div>
+  <div class="w"><b><i class="y"></i>MSI5001</b><small>Waiting for input</small></div>
+ </div>
+ <div class="pn"><div class="t">claude · personal-website</div><p class="o">● Building How I AI</p><p>Read src/data/cases/howIAI.ts</p><p>Edit 3 files</p><p class="k">✓ Screenshot saved</p></div>
+ </div></div>
+</div><div class="pick"></div><div class="cap">C2–C4: cmux.com</div></div></div></div>
+   <div class="row"><div><div class="n">03</div><h3>Check in from the notch: Vibe Island</h3><p>With several agents running, I don't watch any of them. Vibe Island turns the MacBook notch into a Dynamic Island for agents: who's done, who's waiting for approval. I approve from there or jump straight to that terminal. ==I just come by to harvest.==</p></div>
+    <div class="vis"><div style="width:100%"><div class="optbox">
+ <div data-n="V1 All agents"><img class="shot" src="shots/vibe-monitor.webp" alt=""></div>
+ <div data-n="V2 Approve"><img class="shot" src="shots/vibe-approve.webp" alt=""></div>
+ <div data-n="V3 Claude asks"><img class="shot" src="shots/vibe-ask.webp" alt=""></div>
+ <div data-n="V4 Done, jump"><img class="shot" src="shots/vibe-done.webp" alt=""></div>
+ <div data-n="V5 Collapsed"><img class="shot" src="shots/vibe-pill.webp" alt=""></div>
+</div><div class="pick"></div><div class="cap">vibeisland.app</div></div></div></div>
+   <div class="row"><div><div class="n">04</div><h3>A second brain: Obsidian + Claude + GitHub</h3><p>Notes, plans and a 50,000-word personal wiki live in Obsidian, readable by Claude and backed up to GitHub.</p></div>
+    <div class="vis"><div class="icons"><div class="ic" data-k="obsidian"></div><span class="plus">+</span><div class="ic" data-k="claude"></div><span class="plus">+</span><div class="ic" data-k="github"></div></div></div></div>
+   <div class="row"><div><div class="n">05</div><h3>Not just work</h3><p>Fitness, a new subject, a trip, a tax form: if I'm learning something, an AI is teaching me. It's the OS for my life, not a tool for my job.</p></div>
+    <div class="vis"><div class="icons"><div class="ic" data-k="claudecode"></div><div class="ic" data-k="codex"></div><div class="ic" data-k="gemini"></div></div></div></div>
+  </div>
+ </section>
+ <section>
+  <div class="tt">&lt;What I Believe/&gt;</div>
+  <p class="lead">Three things I keep coming back to.</p>
+  <div class="bels">
+   <div class="bel"><div><div class="n">01</div><h3>Be a kid about it</h3><p>Kids don't know what's impossible, so they try everything. Models keep getting better, so I try to hand AI even the things I'm sure it can't do yet.</p><p>Every side project in this folder started as a test of what a model could do. ==None of them were supposed to become projects.==</p></div><div class="art"><img data-c="1" alt=""></div></div>
+   <div class="bel"><div><div class="n">02</div><h3>The bottleneck is my attention</h3><p>I usually have three or four agents running at once, each on a different feature, and come back later to review what they've made. The slow part is no longer building. It's me reading.</p><p>So I ask for work the way a decision-maker would: product calls, research and anything I need to review arrive as a visual page or an artifact, not a wall of text. ==When execution gets cheap, presentation has to get better.==</p></div><div class="art"><img data-c="2" alt=""></div></div>
+   <div class="bel"><div><div class="n">03</div><h3>AI sets the floor; care sets the ceiling</h3><p>AI can hand you a 50 or 60 out of 100 in minutes, and as models improve, that first pass will land closer to 60 or 70. The rest still comes from a person with taste, iterating again and again.</p><p>The ceiling is set by the quality of your iterations, your patience, and whether you ==care about the thing you're building==.</p></div><div class="art"><img data-c="3" alt=""></div></div>
+  </div>
+ </section>
+</main>
+<script>
+const I={typeless:["typeless.png"],cmux:["cmux.png"],claudecode:["claudecode-color.svg","dark"],codex:["codex-color.svg","own"],gemini:["gemini-color.svg","t"],vibe:["vibe-island.png"],obsidian:["obsidian.png"],github:["github.svg","t"],claude:["claude.png"],chatgpt:["chatgpt.png"]};
+document.querySelectorAll(".ic[data-k]").forEach(el=>{const[f,c]=I[el.dataset.k];if(c)el.classList.add(c);el.innerHTML=`<img src="icons/${f}" alt="${el.dataset.k}">`});
+document.querySelectorAll("p").forEach(p=>p.innerHTML=p.innerHTML.replace(/==(.+?)==/g,"<mark>$1</mark>"));
+const q=new URLSearchParams(location.search);let ban="B",sty="1";
+const BAN={A:"Dock",B:"Orbit",C:"Stickers",D:"Flow",E:"Island",F:"Snake"},STY={1:"Warm primitive",2:"Pen + green",3:"Pixel dark"};
+let btns=(id,m,cur,fn)=>{const el=document.getElementById(id);el.innerHTML="";Object.entries(m).forEach(([k,v])=>{const b=document.createElement("button");b.textContent=`${k} ${v}`;if(k==cur)b.className="on";b.onclick=()=>fn(k);el.appendChild(b)})};
+function render(){btns=()=>{};document.getElementById("hero").src=`ban-${ban}.png`;document.querySelectorAll(".art img").forEach(im=>im.src=`ill/s${sty}c${im.dataset.c}.webp`);
+ btns("bb",BAN,ban,k=>{ban=k;render()});btns("sb",STY,sty,k=>{sty=k;render()})}
+render();
+// image pickers
+document.querySelectorAll(".pick").forEach(pk=>{const box=pk.previousElementSibling;const opts=[...box.children];
+ opts.forEach((o,i)=>{o.hidden=i>0;const b=document.createElement("button");b.textContent=o.dataset.n;if(!i)b.className="on";b.onclick=()=>{opts.forEach((x,j)=>x.hidden=j!==i);pk.querySelectorAll("button").forEach((y,j)=>y.className=j===i?"on":"")};pk.appendChild(b)})});
+</script></body></html>
