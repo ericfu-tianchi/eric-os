@@ -18,27 +18,23 @@ export interface IconDef {
 }
 
 /** Desktop icons live ON the grid: one icon = one cell. */
-const folderIcon = (key: "school" | "huawei" | "opus" | "selected" | "website" | "ai", cellRight: number, row: number): IconDef => {
+const folderIcon = (key: "school" | "work" | "ai", cellRight: number, row: number): IconDef => {
   const node = filesystemNode(key)!;
   return { key, label: node.name, icon: "folder", app: "filesystem", title: node.name, payload: node.id, cellRight, row };
 };
 
-/** Desktop = the six project roots, two game shortcuts, plus the small system utilities. Each folder opens
-    the same canonical node that Tianchintosh HD exposes, never a duplicate view. */
+/** Desktop = three project folders, the three games side by side, then About Me, the resume and the disk.
+    Settings lives in the Dock (and Applications). Each folder opens the same node Tianchintosh HD exposes. */
 export const ICONS: IconDef[] = [
-  folderIcon("school", 2, 1),
-  folderIcon("huawei", 5, 1),
-  folderIcon("opus", 8, 1),
-  folderIcon("selected", 2, 4),
-  folderIcon("website", 5, 4),
-  folderIcon("ai", 8, 4),
-  { key: "soul-blade", label: "Soul Blade", icon: "soul-blade", app: "soul-blade", title: "Soul Blade", maximized: true, cellRight: 11, row: 1 },
-  { key: "lego-world", label: "My Lego World", icon: "lego-world", app: "lego-world", title: "My Lego World", maximized: true, cellRight: 11, row: 4 },
-  { key: "about", label: "About Me", icon: "about-page", app: "about", title: "About Me", cellRight: 2, row: 7 },
-  { key: "resume", label: "resume.pdf", icon: "pdf", app: "resume", title: "resume.pdf", cellRight: 5, row: 7 },
-  { key: "snake", label: "Snake", icon: "snake", app: "snake", title: "Snake", cellRight: 8, row: 7 },
+  folderIcon("school", 8, 1),
+  folderIcon("work", 5, 1),
+  folderIcon("ai", 2, 1),
+  { key: "soul-blade", label: "Soul Blade", icon: "soul-blade", app: "soul-blade", title: "Soul Blade", maximized: true, cellRight: 8, row: 4 },
+  { key: "lego-world", label: "My Lego World", icon: "lego-world", app: "lego-world", title: "My Lego World", maximized: true, cellRight: 5, row: 4 },
+  { key: "snake", label: "Snake", icon: "snake", app: "snake", title: "Snake", cellRight: 2, row: 4 },
+  { key: "about", label: "About Me", icon: "about-page", app: "about", title: "About Me", cellRight: 5, row: 7 },
+  { key: "resume", label: "resume.pdf", icon: "pdf", app: "resume", title: "resume.pdf", cellRight: 2, row: 7 },
   { key: "disk", label: "Tianchintosh HD", icon: "computer", app: "filesystem", title: "Tianchintosh HD", payload: "tianchintosh", cellRight: 2, row: 10 },
-  { key: "settings", label: "Settings", icon: "gear", app: "prefs", title: "Settings", cellRight: 5, row: 10 },
 ];
 
 export type GridSpec = ReturnType<typeof gridSpec>;
