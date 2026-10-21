@@ -1036,6 +1036,35 @@ button { font-family: inherit; color: inherit; }
 .cs-step .n { font-family: var(--font-display); font-weight: 800; font-size: 28px; line-height: 1.2; color: var(--cs); }
 .cs-step h4 { margin: 2px 0 8px; font-family: var(--font-display); font-weight: 700; font-size: 20px; line-height: 1.4; color: #181818; }
 .cs-step p { margin: 0; font-family: var(--font-sans); font-size: 16px; line-height: 1.7; color: #494949; }
+/* item: numbered text + a visual, sides alternate (How I AI). Visual = an image, or the apps as big linked icons */
+.cs-item { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 48px; align-items: center; padding: 40px 0; border-top: 1px solid var(--hairline); }
+.cs-item:last-child { border-bottom: 1px solid var(--hairline); }
+.cs-item.flip > :first-child { order: 2; }
+.cs-item .n { font-family: var(--font-display); font-weight: 800; font-size: 16px; color: var(--cs); }
+.cs-item h4 { margin: 6px 0 12px; font-family: var(--font-display); font-weight: 700; font-size: 22px; line-height: 1.3; color: #181818; }
+.cs-item p { margin: 0 0 12px; font-family: var(--font-sans); font-size: 16px; line-height: 1.7; color: #494949; }
+.cs-item > img { display: block; width: 100%; height: auto; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 12px 32px rgba(0,0,0,0.1); }
+.cs-section:nth-of-type(even) .cs-item > img { box-shadow: none; } /* illustrations sit flat on the mist band */
+.cs-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.cs-chip { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 6px; border: 1px solid var(--hairline); border-radius: 999px; background: #fff; color: #181818; text-decoration: none; font-family: var(--font-sans); font-weight: 600; font-size: 14px; transition: border-color 0.15s, transform 0.15s; }
+.cs-chip img { width: 22px; height: 22px; }
+.cs-chip span { color: #8a8a8a; font-weight: 400; }
+.cs-chip:hover { border-color: #b8b8b8; transform: translateY(-1px); }
+.cs-apps { display: flex; align-items: center; justify-content: center; gap: clamp(8px, 2.5cqi, 18px); padding: 36px 24px; border-radius: 16px; background: var(--cs-mist); }
+.cs-apps .plus { font: 300 36px var(--font-sans); color: #9a9a9a; }
+.cs-app { position: relative; display: block; flex: 0 1 96px; min-width: 0; border-radius: 22.5%; transition: transform 0.15s; }
+.cs-app img { display: block; width: 100%; height: auto; filter: drop-shadow(0 8px 18px rgba(0,0,0,0.16)); }
+.cs-app:hover { transform: translateY(-3px); }
+.cs-app::after { content: attr(data-name) " ↗"; position: absolute; left: 50%; top: calc(100% + 10px); transform: translateX(-50%); padding: 4px 8px; border-radius: 6px; background: #1c1d21; color: #fff; font: 500 12px var(--font-sans); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s; }
+.cs-app:hover::after, .cs-app:focus-visible::after { opacity: 1; }
+@container (max-width: 760px) {
+  .cs-item, .cs-item.flip { grid-template-columns: 1fr; gap: 20px; }
+  .cs-item > :first-child, .cs-item.flip > :first-child { order: 2; }
+  .cs-apps { gap: 10px; padding: 24px 16px; }
+}
+/* no lone word on a line of its own: headings balance, body text avoids orphans */
+.cs-title, .cs-sub, .cs-step h4, .cs-feature h4, .cs-item h4, .cs-callout p { text-wrap: balance; }
+.cs-p, .cs-step p, .cs-feature p, .cs-item p, .cs-list li { text-wrap: pretty; }
 .cs-pill { display: inline-block; margin: 16px 0 24px; padding: 10px 26px; border-radius: 999px; background: var(--cs); color: #fff; text-decoration: none; font-family: var(--font-sans); font-weight: 600; font-size: 17px; letter-spacing: 0.04em; transition: filter 0.15s; }
 .cs-pill:hover { filter: brightness(1.08); }
 .cs-end { text-align: center; padding-top: 0; }

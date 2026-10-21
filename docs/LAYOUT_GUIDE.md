@@ -132,6 +132,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `stat` | Big accent number + label | A number that proves the point |
 | `feature` | Screenshot + title + text, sides alternate | Showcasing screens, features or a gallery of results |
 | `step` | Auto-numbered 01, 02 … with title + text, hairline rules | How-to sequences and pipelines |
+| `item` | Auto-numbered 01, 02 … title + text beside a picture, sides alternate, hairline rules. `apps` adds linked app chips (icon + name ↗) under the text; with no `src` the apps become the picture as big linked icons (hover shows the name) | A list where every entry deserves a visual: tools, beliefs (How I AI) |
 | `row` | 2–3 images side by side, each at its old-site width, one caption | Product photo strips, before/after pairs, two-up wireframes |
 | `img` | Centered figure + caption; `w` = display width in px at 1440 | Evidence, diagrams, logos. Copy `w` from the old site; above 880 the figure breaks out of the column (max 1040) |
 | `link` | Accent pill button | One call to action (prototype, slides, live site) |
@@ -140,13 +141,14 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 ## 6. Writing a new page (checklist)
 
 1. State the format (§0). Default: case blocks.
-2. Pick the accent; add `accent`, `sub`, `role`, `timeline`, `tools`.
+2. Pick the accent; add `accent`, `sub`, and `role`, `timeline`, `tools` only when they say something (the rail disappears when all three are empty).
 3. Sections are the story arc, 3–7 of them: Overview → Research → Design → Evaluation → Retrospective (rename as needed).
 4. Open each topic with an `h` label; use `sub` for its steps.
 5. One `callout` for the core problem. One `quote` per definition. Highlights sparingly (≤ 1 per paragraph).
 6. Screens go in `feature` rows, not stacked `img`s.
-7. Images live in `src/assets/old-site/detail/<slug>/` as WebP at 2× their display width (content may still say `NN.png`; the loader prefers the `.webp`). Never upscale a small export: re-export from the source (old-site originals: `static.wixstatic.com/media/<id>` without the `/v1/fill/...` suffix).
-8. Check the page at the default window size and maximized (1440px): measure, rhythm, nothing stretched.
+7. No lone word on a line: headings use `text-wrap: balance`, body text `pretty`. Keep short titles on one line; if they must wrap, the second line holds two words or more (glue words with `\u00a0` when needed).
+8. Images live in `src/assets/old-site/detail/<slug>/` as WebP at 2× their display width (content may still say `NN.png`; the loader prefers the `.webp`). Never upscale a small export: re-export from the source (old-site originals: `static.wixstatic.com/media/<id>` without the `/v1/fill/...` suffix).
+9. Check the page at the default window size and maximized (1440px): measure, rhythm, nothing stretched.
 
 ## 7. File icons for reading pages
 
