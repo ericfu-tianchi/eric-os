@@ -66,7 +66,7 @@ interface OSState {
   booted: boolean;
   seq: number;
 
-  open: (app: AppId, opts?: Partial<Pick<WinInstance, "title" | "payload" | "w" | "h" | "maximized">>) => void;
+  open: (app: AppId, opts?: Partial<Pick<WinInstance, "title" | "payload" | "w" | "h" | "x" | "y" | "maximized">>) => void;
   close: (id: string) => void;
   focus: (id: string) => void;
   move: (id: string, x: number, y: number) => void;
@@ -89,7 +89,7 @@ interface OSState {
 
 const DEFAULT_SIZE: Record<AppId, { w: number; h: number }> = {
   projects: { w: 680, h: 540 },
-  about: { w: 960, h: 720 },
+  about: { w: 880, h: 720 },
   resume: { w: 720, h: 680 },
   readme: { w: 540, h: 470 },
   prefs: { w: 560, h: 640 },
@@ -145,8 +145,8 @@ export const useOS = create<OSState>()(
           payload: opts?.payload,
           w: Math.min(opts?.w ?? size.w, vw - 40),
           h: opts?.h ?? size.h,
-          x: Math.max(12, Math.min(90 + n * 34, vw - size.w - 60)),
-          y: 64 + ((n * 30) % 180),
+          x: opts?.x ?? Math.max(12, Math.min(90 + n * 34, vw - size.w - 60)),
+          y: opts?.y ?? 64 + ((n * 30) % 180),
           maximized: opts?.maximized ?? false,
         };
         set({
