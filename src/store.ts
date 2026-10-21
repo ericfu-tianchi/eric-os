@@ -35,6 +35,8 @@ export interface WinInstance {
 export type IconSet = "a" | "d";
 export type Theme = "dark" | "light";
 export const SNAKE_HAT_IDS = ["none", "glasses", "cap", "phones", "bow", "shades", "cat", "nycap"] as const;
+/** Bump when the default desktop arrangement changes: saved icon positions reset once. */
+const ICON_LAYOUT = 2;
 export const DOCK_SIZE = { stops: [32, 40, 48, 56, 64] as const, default: 48 };
 export type SaverId = "duel" | "corner" | "crazy" | "reel";
 export const SAVER_IDS: SaverId[] = ["duel", "corner", "crazy", "reel"];
@@ -208,6 +210,7 @@ export const useOS = create<OSState>()(
         windows: s.windows,
         order: s.order,
         iconPos: s.iconPos,
+        iconLayout: ICON_LAYOUT,
         iconSet: s.iconSet,
         theme: s.theme,
         snakeBest: s.snakeBest,
@@ -225,6 +228,7 @@ export const useOS = create<OSState>()(
         delete (p as { wallpaper?: unknown }).wallpaper; // retired setting: the snake wallpaper is the only one
         if (p.dockSize && !(DOCK_SIZE.stops as readonly number[]).includes(p.dockSize)) p.dockSize = DOCK_SIZE.default; // old free-slider values snap back
         if (p.saver && !SAVER_IDS.includes(p.saver)) p.saver = "duel";
+        if ((p as { iconLayout?: number }).iconLayout !== ICON_LAYOUT) p.iconPos = {}; // the desktop was re-arranged
         return { ...current, ...p, snakeHat };
       },
     }

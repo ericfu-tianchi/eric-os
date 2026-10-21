@@ -171,7 +171,7 @@ export function SnakeGuide() {
     if (a === "resume") open("resume", { title: "resume.pdf" });
     if (a === "about") open("about", { title: "About Me" });
     if (a === "school") open("filesystem", { title: "School Projects", payload: "school" });
-    if (a === "ai") open("filesystem", { title: "AI Stuff", payload: "ai" });
+    if (a === "ai") open("filesystem", { title: "AI Side Projects", payload: "ai" });
     setPanel(null);
   }
 

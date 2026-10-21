@@ -72,9 +72,9 @@ export const EXTERNAL_GAMES: Record<ExternalGameId, {
 export const FILE_NODES: FileNode[] = [
   { id: "tianchintosh", name: "Tianchintosh HD", kind: "folder", description: "Portfolio volume" },
 
-  { id: "applications", parent: "tianchintosh", name: "Applications", kind: "folder", description: "4 apps", icon: applicationsIcon, sidebarIcon: applicationsSideIcon },
-  { id: "desktop", parent: "tianchintosh", name: "Desktop", kind: "folder", description: "13 items", icon: desktopIcon, sidebarIcon: desktopSideIcon },
-  { id: "documents", parent: "tianchintosh", name: "Documents", kind: "folder", description: "0 items", icon: documentsIcon, sidebarIcon: documentsSideIcon },
+  { id: "applications", parent: "tianchintosh", name: "Applications", kind: "folder", description: "5 apps", icon: applicationsIcon, sidebarIcon: applicationsSideIcon },
+  { id: "desktop", parent: "tianchintosh", name: "Desktop", kind: "folder", description: "9 items", icon: desktopIcon, sidebarIcon: desktopSideIcon },
+  { id: "documents", parent: "tianchintosh", name: "Documents", kind: "folder", description: "1 item", icon: documentsIcon, sidebarIcon: documentsSideIcon },
   { id: "images", parent: "tianchintosh", name: "Images", kind: "folder", description: `${MEDIA_FOLDERS.filter((f) => f.kind === "image").length} folders`, icon: imagesIcon, sidebarIcon: imagesSideIcon },
   { id: "videos", parent: "tianchintosh", name: "Videos", kind: "folder", description: `${MEDIA_FOLDERS.filter((f) => f.kind === "video").reduce((n, f) => n + f.items.length, 0)} videos`, icon: videosIcon, sidebarIcon: videosSideIcon },
 
@@ -82,6 +82,7 @@ export const FILE_NODES: FileNode[] = [
   { id: "soul-blade-app", parent: "applications", name: "Soul Blade", kind: "shortcut", targetId: "soul-blade", description: "Playable game" },
   { id: "twist-solver-launcher", parent: "applications", name: "Twist Solver", kind: "shortcut", targetId: "twist-solver", description: "Playable app" },
   { id: "lego-world-launcher", parent: "applications", name: "My Lego World", kind: "shortcut", targetId: "lego-world", description: "Playable app" },
+  { id: "settings", parent: "applications", name: "Settings", kind: "app", app: "prefs", description: "System preferences" },
 
   { id: "school", parent: "desktop", name: "School Projects", kind: "folder", description: "6 items" },
   { id: "refugeeone", parent: "school", name: "RefugeeOne Job Finding Website", kind: "project", projectSlug: "refugeeone" },
@@ -91,18 +92,18 @@ export const FILE_NODES: FileNode[] = [
   { id: "subtension", parent: "school", name: "Subtension", kind: "project", projectSlug: "subtension" },
   { id: "rutabagga", parent: "school", name: "Rutabagga", kind: "project", projectSlug: "rutabagga" },
 
-  { id: "huawei", parent: "desktop", name: "Work at Huawei", kind: "folder", description: "3 items" },
+  { id: "work", parent: "desktop", name: "Work", kind: "folder", description: "2 folders" },
+  { id: "opus", parent: "work", name: "OpusClip", kind: "folder", description: "Empty folder" },
+  { id: "huawei", parent: "work", name: "Huawei", kind: "folder", description: "3 items" },
   { id: "huawei-overview", parent: "huawei", name: "Work Overview", kind: "placeholder", description: "Coming soon" },
   { id: "prompt-engineering", parent: "huawei", name: "Prompt Engineering Platform", kind: "placeholder", description: "Coming soon" },
   { id: "data-workflow", parent: "huawei", name: "Data Workflow", kind: "placeholder", description: "Coming soon" },
 
-  { id: "opus", parent: "desktop", name: "Work at Opus Clip", kind: "folder", description: "Empty folder" },
-  { id: "selected", parent: "desktop", name: "Selected Work", kind: "folder", description: "Empty folder" },
 
-  { id: "website", parent: "desktop", name: "My Website", kind: "folder", description: "1 item" },
+  { id: "website", parent: "documents", name: "My Website", kind: "folder", description: "1 item" },
   { id: "website-evolution", parent: "website", name: "My Website Evolution", kind: "project", projectSlug: "handcoded" },
 
-  { id: "ai", parent: "desktop", name: "AI Stuff", kind: "folder", description: "4 items" },
+  { id: "ai", parent: "desktop", name: "AI Side Projects", kind: "folder", description: "4 items" },
   { id: "soul-blade-game", parent: "ai", name: "Soul Blade Game", kind: "folder", description: "2 items" },
   { id: "soul-blade", parent: "soul-blade-game", name: "Soul Blade", kind: "game", gameId: "soul-blade", description: "Playable game" },
   { id: "soul-blade-how", parent: "soul-blade-game", name: "How I Built It", kind: "project", projectSlug: "soul-blade" },
@@ -120,7 +121,6 @@ export const FILE_NODES: FileNode[] = [
   { id: "resume", parent: "desktop", name: "resume.pdf", kind: "document", app: "resume", description: "PDF document" },
   { id: "desktop-snake", parent: "desktop", name: "Snake", kind: "shortcut", targetId: "snake", description: "Application shortcut" },
   { id: "desktop-disk", parent: "desktop", name: "Tianchintosh HD", kind: "shortcut", targetId: "tianchintosh", description: "System volume" },
-  { id: "settings", parent: "desktop", name: "Settings", kind: "app", app: "prefs", description: "System preferences" },
 
   // Images / Videos: generated from src/data/media.ts
   ...MEDIA_FOLDERS.flatMap((f): FileNode[] => {
@@ -145,5 +145,5 @@ export function filesystemTrail(id: string): FileNode[] {
   return trail;
 }
 
-export const DESKTOP_FOLDER_IDS = ["school", "huawei", "opus", "selected", "website", "ai"] as const;
+export const DESKTOP_FOLDER_IDS = ["school", "work", "ai"] as const;
 export const FINDER_ROOT_IDS = ["applications", "desktop", "documents", "images", "videos"] as const;

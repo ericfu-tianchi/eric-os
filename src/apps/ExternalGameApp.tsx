@@ -7,7 +7,7 @@ export function ExternalGameApp({ gameId }: { gameId: ExternalGameId }) {
   const game = EXTERNAL_GAMES[gameId];
   const chrome = useMemo(
     () => ({
-      trail: [{ label: "Tianchintosh HD" }, { label: "AI Stuff" }, { label: game.name }],
+      trail: [{ label: "Tianchintosh HD" }, { label: "AI Side Projects" }, { label: game.name }],
       meta: "LIVE",
     }),
     [game.name],
