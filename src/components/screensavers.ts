@@ -10,12 +10,12 @@ import appleIcon from "../assets/icons/b/apple.png";
 import { PROJECTS } from "../data/projects";
 import heroRefugee from "../assets/old-site/heroes/refugeeone.webp";
 import heroLego from "../assets/old-site/heroes/lego-world.webp";
-import heroNeurobot from "../assets/old-site/heroes/neurobot.png";
-import heroHomes from "../assets/old-site/heroes/homesoffcampus.png";
-import heroHuawei from "../assets/old-site/heroes/huawei.png";
-import heroSub from "../assets/old-site/heroes/subtension.png";
-import heroConnectr from "../assets/old-site/heroes/connectr.png";
-import heroRutabagga from "../assets/old-site/heroes/rutabagga.png";
+import heroNeurobot from "../assets/old-site/heroes/neurobot.webp";
+import heroHomes from "../assets/old-site/heroes/homesoffcampus.webp";
+import heroHuawei from "../assets/old-site/heroes/huawei.webp";
+import heroSub from "../assets/old-site/heroes/subtension.webp";
+import heroConnectr from "../assets/old-site/heroes/connectr.webp";
+import heroRutabagga from "../assets/old-site/heroes/rutabagga.webp";
 export type { SaverId };
 
 export type Saver = { step: (dt: number) => void; draw: (ctx: CanvasRenderingContext2D, now: number) => void };
