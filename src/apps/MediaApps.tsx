@@ -123,7 +123,7 @@ export function PlayerApp({ mediaId }: { mediaId?: string }) {
   if (item.youtube) {
     return (
       <div ref={stage} className={`media-stage player${full ? " full" : ""}`}>
-        <iframe className="media-yt" src={`https://www.youtube-nocookie.com/embed/${item.youtube}?autoplay=1&rel=0&modestbranding=1`} title={item.name}
+        <iframe className="media-yt" src={`https://www.youtube-nocookie.com/embed/${item.youtube}?autoplay=1&rel=0&modestbranding=1&playsinline=1`} title={item.name}
           allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
       </div>
     );

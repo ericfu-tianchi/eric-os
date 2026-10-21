@@ -10,6 +10,7 @@ import {
 } from "../data/filesystem";
 import { PixIcon, type PixIconName } from "../components/Pixel";
 import { fileIconOf } from "../data/projectAssets";
+import { mediaItem } from "../data/media";
 import { useWindowChrome, type WindowViewMode } from "../components/WindowChrome";
 
 function resolvedNode(node: FileNode) {
@@ -119,7 +120,10 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
       return open(node.gameId, { title: game.name, maximized: true });
     }
     if (node.kind === "image" && node.mediaId) return open("preview", { title: node.name, payload: node.mediaId });
-    if (node.kind === "video" && node.mediaId) return open("player", { title: node.name, payload: node.mediaId });
+    if (node.kind === "video" && node.mediaId) {
+      const tall = mediaItem(node.mediaId)?.item.portrait; // 9:16 clips open in a phone-shaped window
+      return open("player", { title: node.name, payload: node.mediaId, ...(tall ? { w: 400, h: Math.min(720, window.innerHeight - 180) } : {}) });
+    }
     if (node.html) return open("html-doc", { title: node.name, payload: node.id });
     if (node.app === "snake") return setSnakeMode(true);
     if (node.app) return open(node.app, { title: node.name });
