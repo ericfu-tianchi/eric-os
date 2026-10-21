@@ -146,11 +146,12 @@ export default function App() {
       const s = gridSpec(vw, vh - TOPBAR);
       const [hc, hr] = ERIC_POSE[ERIC_POSE.length - 1];
       const headX = hc * s.cellW, headY = (hr + s.rows - 16) * s.cellH; // same bottom anchoring as the wallpaper; window coords start under the menubar
-      const gap = 16, y = 64;
-      const w = Math.min(880, vw - 40);
-      const x = Math.max(12, Math.min(90, headX - gap - w));
+      // Eric's placement: just under the menubar, right edge ~2 cells short of the head (head + a bit of body show)
+      const gap = 2 * s.cellW + 16, y = 36;
+      const w = Math.min(880, vw - 40, Math.max(760, headX - gap - 12)); // give up a little width before covering the head
+      const x = Math.max(12, headX - gap - w);
       // too narrow to sit beside the head: stop the window above it instead
-      const h = x + w > headX - gap ? Math.max(360, Math.min(720, headY - gap - y)) : Math.min(720, vh - TOPBAR - y - 16);
+      const h = x + w > headX - gap ? Math.max(360, Math.min(720, headY - 16 - y)) : Math.min(720, vh - TOPBAR - y - 16);
       open("about", { title: "About Me", w, h, x, y });
       sessionStorage.setItem("eric-os-about-shown", "1");
     }
