@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { FitName } from "./FitName";
 import { useOS } from "../store";
 import { PixIcon } from "./Pixel";
 import {
@@ -71,7 +72,7 @@ function DesktopIcon({
   const ref = useRef<HTMLButtonElement>(null);
   const savedPos = iconPos[def.key];
   const pos = dragging && savedPos ? savedPos : iconVisiblePos(def, savedPos, spec);
-  const iconArt = <><PixIcon name={def.icon} size={iconGlyph(spec)} /><span className="label"><span className="label-text">{def.label}</span></span></>;
+  const iconArt = <><PixIcon name={def.icon} size={iconGlyph(spec)} /><span className="label"><FitName className="label-text" text={def.label} lines={2} /></span></>;
 
   // Existing absolute placements become right-anchored the first time they are seen.
   useEffect(() => {

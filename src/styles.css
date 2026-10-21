@@ -1376,7 +1376,7 @@ button { font-family: inherit; color: inherit; }
 .finder-icon-slot { height: 66px; padding: 0 8px; display: flex; align-items: center; justify-content: center; }
 .finder-icon-grid.has-thumbs .finder-icon-slot { height: 104px; }
 .finder-icon-grid.has-thumbs { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
-.finder-item-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-system); font-size: 12px; font-weight: 660; letter-spacing: -.01em; }
+.finder-item-name { max-width: 100%; overflow-wrap: anywhere; text-align: center; line-height: 1.25; font-family: var(--font-system); font-size: 12px; font-weight: 660; letter-spacing: -.01em; } /* up to 2 lines, then middle-cut (FitName) */
 .finder-item-meta { min-height: 14px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--faint); font-family: var(--font-system); font-size: var(--ui-fine); }
 .finder-icon-item.placeholder, .finder-list-row.placeholder { opacity: .58; cursor: default; }
 /* List view after macOS: one header row, compact zebra rows, Name / Kind / Size */
@@ -1393,7 +1393,7 @@ button { font-family: inherit; color: inherit; }
 .finder-list-row.selected { background: var(--select); color: #fff; }
 .finder-list-row.selected .finder-list-name { color: #fff; }
 .finder-list-name { display: flex; align-items: center; min-width: 0; gap: 8px; color: var(--ink); }
-.finder-list-name > span { overflow: hidden; text-overflow: ellipsis; }
+.finder-list-name > .finder-list-text { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; }
 .finder-empty { min-height: 260px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; color: var(--faint); text-align: center; }
 .finder-empty strong { color: var(--muted); font-family: var(--font-system); font-size: var(--ui-control); font-weight: 600; }
 .finder-empty span { font-family: var(--font-system); font-size: var(--ui-meta); }
