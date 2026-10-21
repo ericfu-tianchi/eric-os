@@ -320,6 +320,7 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
     if (!frozen) void fetchSnakeRecord().then(setRecord);
     demo.current = !frozen && new URLSearchParams(window.location.search).has("snakedemo");
     bot.current = !frozen && new URLSearchParams(window.location.search).has("snakebot");
+    if (bot.current) unlockAudio(); // no key press to create the audio context: do it now, not on the first bite (a ~200 ms stall)
     firstRun.current = !frozen &&
       (!localStorage.getItem("eric-os-snake-onboarded") || new URLSearchParams(window.location.search).has("tut")); // tutorial only the very first time (?tut=1 forces it for QA)
     alertLifeMs.current = ALERT_LEAD_MS + (firstRun.current ? TUTORIAL_MS : 0);
