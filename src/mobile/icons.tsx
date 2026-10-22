@@ -25,7 +25,7 @@ const TILES: Record<string, Tile> = {
   "case:how-i-ai": { img: robotIcon, bg: "linear-gradient(160deg,#16301f,#0b1a11)", scale: 0.74 },
   resume: { img: pdfIcon, bg: "linear-gradient(180deg,#ffffff,#e9ebef)", scale: 0.66 },
   snake: { img: snakeIcon, bg: "linear-gradient(180deg,#2a2c31,#141518)", scale: 0.78 },
-  "game:soul-blade": { img: soulBladeIcon, bg: "linear-gradient(160deg,#6b1626,#24060c)", fit: "pixel", scale: 0.8 },
+  "game:soul-blade": { img: soulBladeIcon, bg: "linear-gradient(160deg,#2a0b10,#0d0406)", scale: 0.84 },
   "game:lego-world": { img: legoIcon, bg: "linear-gradient(180deg,#ffd84a,#f3ae00)", scale: 0.7 },
   "game:twist-solver": { img: twistIcon, bg: "linear-gradient(160deg,#20335a,#0f1a33)", scale: 0.72 },
   videos: { img: videosIcon, bg: "linear-gradient(180deg,#3a3d45,#16171a)", scale: 0.72 },
