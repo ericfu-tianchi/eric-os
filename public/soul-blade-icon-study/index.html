@@ -20,16 +20,16 @@ h1{font-size:22px;margin:0 0 4px}p.lead{color:#9a9ba1;margin:0 0 28px}
 .lbl{font:500 11px system-ui;color:#fff;text-align:center;margin-top:5px}
 .cur{outline:2px dashed #555}
 </style></head><body><main>
-<h1>Soul Blade · icon options (round 3: ronin × gold slash)</h1>
+<h1>Soul Blade · icon options (round 4: a cleaner slash)</h1>
 <p class="lead">Each card: large, on the desktop at real size next to My Lego World and Snake, and as a phone app icon. Current icon first for reference.</p>
 <div class="grid" id="g"></div>
 </main>
 <script>
-const O=[["01-sun-ronin-c.png","1 · as picked, sun now centred","for reference","g","#1a0508"],
-["f1-behind-c.png","A · Slash behind","the ronin stands in front of the strike","g","#1a0508"],
-["f2-front-c.png","B · Slash in front","the strike cuts across everything, like the title screen","g","#1a0508"],
-["f3-strike-c.png","C · He makes the cut","his swing is the gold arc: the most action","g","#1a0508"],
-["f4-bust-c.png","D · Half-body in the sun","clean round outline, slash across the top","g","#1a0508"]];
+const O=[["f1-behind-c.png","A · previous (for reference)","the slash you liked, but too long and busy","g",""],
+["g1-thin-c.png","A1 · One thin flick","a single tapered stroke, barely past the sun, a few flecks","g",""],
+["g2-inside-c.png","A2 · Cut inside the sun","the strike stays within the disc: the neatest outline","g",""],
+["g3-double-c.png","A3 · Double cut","two thin parallel lines, graphic, no flecks","g",""],
+["g0-noslash-c.png","A0 · No slash","just the ronin on the sun","g",""]];
 document.getElementById("g").innerHTML=O.map(([f,t,s,k,bg])=>`<div class="card"><h2>${t}</h2><small>${s}</small>
 <div class="big"><img src="${f}"></div>
 <div class="desk"><div class="ic"><img src="${f}"><span>Soul Blade</span></div><div class="ic"><img src="lego-world.svg"><span>My Lego World</span></div><div class="ic"><img src="snake.png"><span>Snake</span></div></div>
