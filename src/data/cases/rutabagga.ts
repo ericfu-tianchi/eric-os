@@ -11,14 +11,14 @@ export const rutabagga: CaseStudy = {
       { t: "h", text: "Background" },
       { t: "p", text: "This is a logo design I did for a fictional client called Rutabagga that aims to promote vegan food and products." },
       { t: "h", text: "Client Brief" },
-      { t: "quote", text: "Rutabagga app aims to help those trying to reduce their environmental footprint by consuming more vegetarian and vegan products." },
+      { t: "p", text: "Rutabagga app aims to help those trying to reduce their environmental footprint by consuming more vegetarian and vegan products." },
       { t: "p", text: "Better heart health, weight loss, and “good karma” are among the numerous benefits of vegan and vegetarian diets." },
       { t: "p", text: "==Our tagline reads: “Local. Natural. Sustainable.”==" },
       { t: "p", text: "We promote seasonal eating — eating sustainably. We teach our users only to eat fruits and vegetables in season for their geographic area: apples in the fall, rutabaga in the winter, radishes in the spring, and peaches in the summer." },
       { t: "h", text: "Design Preview" },
       { t: "img", src: "rutabagga/02.png", caption: "Logomark, logotype, and the primary and secondary palettes", w: 1140 },
     ] },
-    { id: "design", label: "Design", white: true, blocks: [
+    { id: "design", label: "Design", blocks: [
       { t: "h", text: "Typography" },
       { t: "img", src: "rutabagga/03.png", caption: "Gravesend Sans for the logotype, Adobe Garamond Pro for body text", w: 1140 },
       { t: "h", text: "Scalability" },
