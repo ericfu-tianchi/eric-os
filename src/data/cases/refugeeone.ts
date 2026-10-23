@@ -48,7 +48,7 @@ const results: CaseBlock = {
 
 const researchIntro: CaseBlock[] = [
   { t: "p", text: "We built on an SI 501 team's study from the year before: interviews with two RefugeeOne staff members and two refugees, sorted onto an affinity wall. Then we walked through RefugeeOne's own tools with its employment team: a Google Form, two spreadsheets and a hand-kept map." },
-  { t: "img", src: "refugeeone/affinity.png", caption: "One cluster of the SI 501 affinity wall: interview notes in yellow, the themes they add up to in blue and pink, the insight in green", w: 735 },
+  { t: "img", src: "refugeeone/affinity.png", caption: "One cluster of the SI 501 affinity wall: interview notes in yellow, the themes they add up to in blue and pink, the insight in green", w: 707 },
 ];
 
 const findings: CaseBlock = {
@@ -114,35 +114,40 @@ const screensStaff: CaseBlock[] = [
 
 const demo: CaseBlock = { t: "embed", kind: "youtube", src: "https://www.youtube-nocookie.com/embed/YzZrsk8REAc?rel=0", caption: "The walkthrough video our team made for the expo" };
 
-const stack: CaseBlock = {
-  t: "p", text: "The stack was chosen so all six of us could ship in week one: **React** on Vite, **Tailwind** with daisyUI components, and **Firebase** for sign-in, the database and hosting. Addresses are geocoded once when a job or profile is saved, and distances are computed in the browser. Every pull request built its own preview link, and every merge went live: ==94 pull requests in nine weeks.==",
-};
-
-const myCode: CaseBlock[] = [
-  { t: "sub", text: "What I built" },
-  { t: "list", plain: true, items: [
-    "**Search and filters** for refugees: the search bar, the full-screen filter panel and the logic behind its eight filters, with a teammate's distance check plugged in.",
-    "**Account onboarding**: first-time password, forgot password and the “check your email” screens.",
-    "**Mobile layout**: a sticky search bar, a pinned Show Results button and a page that fits a phone's real screen height, which took me eight tries in one evening.",
-  ] },
-  { t: "sub", text: "Reading free text as time" },
-  { t: "p", text: "Employers type shifts in their own words, like “Mon–Fri 10 PM to 6 AM”. To let refugees filter by start and end time, I pulled the times out of the text, handled shifts that run past midnight, and kept any job I couldn't read in the results instead of hiding it. The real fix was upstream: a structured shift picker in the form. ==Building it myself is how I learned that.==" },
-];
-
 const agile: CaseBlock[] = [
-  { t: "p", text: "We ran Scrum on Jira: user stories grouped by role, acceptance criteria on every ticket, and five columns from To Do to Done. As Scrum Master I ran our standups, 15 minutes three times a week, and RefugeeOne joined every sprint review. Whatever the client asked for in a review became a ticket for the next sprint." },
+  { t: "p", text: "We ran the semester as Scrum on Jira: user stories for each role, acceptance criteria on every ticket, and a sprint review with RefugeeOne at the end of every sprint. ==As Scrum Master, I ran our standups three times a week and led every demo.==" },
   { t: "img", src: "refugeeone/jira.png", caption: "Our Jira board: stories for every role, tracked from To Do to Done", w: 880 },
 ];
 
 const milestones: CaseBlock = {
-  t: "timeline", items: [
-    { date: "Feb 2", title: "Kickoff with RefugeeOne", text: "Walked through the form, the spreadsheets and the map, and agreed on a responsive website instead of an app." },
-    { date: "Feb 9", title: "Three logins, one gatekeeper", text: "Every role signs in, staff send the invitations, and contact details stay with staff." },
-    { date: "Feb 20", title: "First commit", text: "Sign-in, roles and an automatic deploy pipeline, ready before the first feature." },
-    { date: "March", title: "Midterm demo", text: "The first working flows for all three roles, demoed to the class." },
-    { date: "Mar 28–30", title: "Client reviews", text: "Pay instead of Salary, real shift times, more icons, distance from home and a saved-jobs page." },
-    { date: "Apr 19", title: "Polish day", text: "More than 20 pull requests merged in one day, from wording to mobile scrolling." },
-    { date: "Late April", title: "Launch and handoff", text: "A live site, a handoff guide and a job description so RefugeeOne could hire someone to run it." },
+  t: "timeline", compact: true, items: [
+    { date: "Feb 2", title: "Kickoff" },
+    { date: "Feb 20", title: "First commit" },
+    { date: "March", title: "Midterm demo" },
+    { date: "Apr 19", title: "20+ PRs in a day" },
+    { date: "Late April", title: "Launch and handoff" },
+  ],
+};
+
+const stack: CaseBlock[] = [
+  { t: "stack", items: [
+    { logo: "react", name: "React", role: "Frontend" },
+    { logo: "vite", name: "Vite", role: "Build" },
+    { logo: "tailwindcss", name: "Tailwind CSS", role: "Styling" },
+    { logo: "daisyui", name: "daisyUI", role: "Components" },
+    { logo: "firebase", name: "Firebase", role: "Auth, data, hosting" },
+    { logo: "githubactions", name: "GitHub Actions", role: "Deploy on merge" },
+    { logo: "jira", name: "Jira", role: "Sprints" },
+    { logo: "figma", name: "Figma", role: "Design" },
+  ] },
+  { t: "p", text: "Every pull request got its own preview link, and every merge went live: ==94 pull requests in nine weeks.==" },
+];
+
+const myCode: CaseBlock = {
+  t: "list", plain: true, items: [
+    "**Job search and filters** for refugees, from the panel to the logic behind it.",
+    "**Account onboarding**: set-password and reset-password flows for every new user.",
+    "**The mobile layout** of the refugee side, built for the phones refugees actually use.",
   ],
 };
 
@@ -153,7 +158,7 @@ const handoff: CaseBlock = {
 const hats: CaseBlock = {
   t: "cards", numbers: false, items: [
     { title: "Product designer", text: "Research synthesis, workflows for three roles, wireframes through high fidelity, and the style guide." },
-    { title: "Frontend developer", text: "Search and filters, the shift-time logic, the onboarding screens and the mobile layout." },
+    { title: "Frontend developer", text: "Search and filters, the onboarding screens and the mobile layout." },
     { title: "Scrum master", text: "Standups three times a week, the Jira board, and sprint planning with the team." },
     { title: "Demo lead", text: "Every demo, to the team, the class and RefugeeOne, and turning what the client said into tickets." },
   ],
@@ -165,7 +170,7 @@ const lessons: CaseBlock[] = [
   { t: "sub", text: "Walk through the data model with the client" },
   { t: "p", text: "RefugeeOne discovered what it needed as it saw each screen, and every change rippled through the UI, the database and the logic. Next time I'd walk through the data model and each role's workflow with the client before the first sprint, not just the mockups." },
   { t: "sub", text: "A design isn't done until it's built" },
-  { t: "p", text: "Writing the filters showed me where my own form design was weak. A free-text shift field looked friendly in Figma and became a parser in code. Designing and building the same feature made me a better designer of both." },
+  { t: "p", text: "Building the filters myself showed me where my own form design was weak. Designing and building the same feature made me better at both." },
 ];
 
 const closing: CaseBlock[] = [
@@ -218,12 +223,14 @@ const a: CaseStudy = {
       demo,
     ] },
     { id: "build", label: "How We Built It", blocks: [
-      { t: "h", text: "The stack" },
-      stack,
-      ...myCode,
       { t: "h", text: "Agile, with the client in the room" },
       ...agile,
       milestones,
+      { t: "h", text: "The stack" },
+      ...stack,
+      { t: "h", text: "What I built" },
+      myCode,
+      { t: "h", text: "Handoff" },
       handoff,
     ] },
     { id: "reflection", label: "Reflection", blocks: [

@@ -76,6 +76,8 @@ export function ProjectsApp() {
   );
 }
 
+const LOGOS = import.meta.glob("../assets/logos/*.svg", { eager: true, import: "default" }) as Record<string, string>;
+
 /** Inline marks inside case text: **bold**, ==highlight== and [link](url). */
 function Rich({ text }: { text: string }) {
   return (
@@ -314,7 +316,9 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
   if (b.t === "part")
     return <div className="cs-part"><span className="n">{String(n).padStart(2, "0")}</span><div><h3>{b.title}</h3>{b.text && <p><Rich text={b.text} /></p>}</div></div>;
   if (b.t === "timeline")
-    return <ol className="cs-timeline">{b.items.map((x) => <li key={x.date + x.title}><time>{x.date}</time><div><h4>{x.title}</h4><p><Rich text={x.text} /></p></div></li>)}</ol>;
+    return <ol className={`cs-timeline ${b.compact ? "compact" : ""}`}>{b.items.map((x) => <li key={x.date + x.title}><time>{x.date}</time><div><h4>{x.title}</h4>{x.text && <p><Rich text={x.text} /></p>}</div></li>)}</ol>;
+  if (b.t === "stack")
+    return <ul className="cs-stack">{b.items.map((x) => <li key={x.name}><img src={LOGOS[`../assets/logos/${x.logo}.svg`]} alt="" draggable={false} /><b>{x.name}</b><span>{x.role}</span></li>)}</ul>;
   if (b.t === "versus")
     return (
       <div className="cs-versus">

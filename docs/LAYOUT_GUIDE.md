@@ -98,6 +98,7 @@ use **bold** or a ==highlight==. Never more than these sizes.
 | Before a sub-heading | 48px; then 18px |
 | Paragraph → paragraph | 18px |
 | Figure (above / below) | 40px |
+| Figure → its caption | 12px, measured from the visible edge of the image (8px in a `gallery`) |
 | Callout band (above / below) | 56px |
 | Feature row (above / below) | 72px |
 
@@ -175,8 +176,9 @@ Vary the form between neighbouring topics: two card rows back to back read as a 
 5. One `callout` for the core problem. One `quote` per definition. Highlights sparingly (≤ 1 per paragraph).
 6. Screens go in `feature` rows, not stacked `img`s.
 7. No lone word on a line: headings use `text-wrap: balance`, body text `pretty`. Keep short titles on one line; if they must wrap, the second line holds two words or more (glue words with `\u00a0` when needed).
-8. Images live in `src/assets/old-site/detail/<slug>/` as WebP at 2× their display width (content may still say `NN.png`; the loader prefers the `.webp`). Never upscale a small export: re-export from the source (old-site originals: `static.wixstatic.com/media/<id>` without the `/v1/fill/...` suffix).
-9. Check the page at the default window size and maximized (1440px): measure, rhythm, nothing stretched.
+8. Exported mockups and composites carry no transparent padding beyond their visible shadow (crop to alpha > 3%). Padding inside the file pushes the caption away from the picture.
+9. Images live in `src/assets/old-site/detail/<slug>/` as WebP at 2× their display width (content may still say `NN.png`; the loader prefers the `.webp`). Never upscale a small export: re-export from the source (old-site originals: `static.wixstatic.com/media/<id>` without the `/v1/fill/...` suffix).
+10. Check the page at the default window size and maximized (1440px): measure, rhythm, nothing stretched.
 
 ## 7. File icons for reading pages
 
