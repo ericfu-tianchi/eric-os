@@ -119,7 +119,7 @@ const PANEL_ICON: Record<"mbti" | "group" | "puzzle" | "compass", React.ReactNod
 
 function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number }) {
   if (b.t === "p") return <p className="cs-p"><Rich text={b.text} /></p>;
-  if (b.t === "h") return <h3 className="cs-label">{b.text}</h3>;
+  if (b.t === "h") return <h3 className="cs-label">{b.icon === "hat" && <svg className="ic" viewBox="0 0 32 24" aria-hidden><path d="M10 17.5 11 4.2c0-.7.5-1.2 1.2-1.2h7.6c.7 0 1.2.5 1.2 1.2l1 13.3" /><path d="M10.4 13h11.2" strokeWidth="3.2" /><ellipse cx="16" cy="18.5" rx="13.5" ry="2.6" /></svg>}{b.text}</h3>;
   if (b.t === "sub") return <h4 className="cs-sub">{b.text}</h4>;
   if (b.t === "callout")
     return <div className="cs-callout">{b.label && <p className="cs-callout-label">{b.label}</p>}<p><Rich text={b.text} /></p></div>;
@@ -396,7 +396,7 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
     };
     window.setTimeout(settle, 250);
   };
-  const meta = [["My Role", cs.role], ["Timeline", cs.timeline], ["Tools", cs.tools]].filter(([, v]) => v);
+  const meta = [["My Role", cs.role], ["Timeline", cs.timeline], ["Tools", cs.tools], ["Team", cs.team]].filter(([, v]) => v);
 
   return (
     <div className="cs" ref={rootRef} style={{ "--cs": cs.accent, "--cs-band": bandColor(cs.accent) } as React.CSSProperties}>

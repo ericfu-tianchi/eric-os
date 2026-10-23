@@ -171,7 +171,7 @@ Vary the form between neighbouring topics: two card rows back to back read as a 
 ## 6. Writing a new page (checklist)
 
 1. State the format (§0). Default: case blocks.
-2. Pick the accent; add `accent`, `sub`, and `role`, `timeline`, `tools` only when they say something (the rail disappears when all three are empty).
+2. Pick the accent; add `accent`, `sub`, and `role`, `timeline`, `tools` only when they say something (and `team` for teammates; the rail disappears when all are empty).
 3. Sections are the story arc, 3–7 of them: Overview → Research → Design → Evaluation → Retrospective (rename as needed).
 4. Open each topic with an `h` label; use `sub` for its steps.
 5. One `callout` for the core problem. One `quote` per definition. Highlights sparingly (≤ 1 per paragraph).
