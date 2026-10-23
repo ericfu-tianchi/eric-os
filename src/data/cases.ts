@@ -27,7 +27,7 @@ export type CaseBlock =
   | { t: "list"; items: string[]; plain?: boolean } // bullets; tinted panel unless plain
   | { t: "status"; items: { s: "done" | "partly" | "todo"; text: string }[] } // priority-ordered plan with a status per row + summary bar
   | { t: "stat"; value: string; label: string } // big-number highlight
-  | { t: "feature"; src: string; title: string; text: string } // screen + caption, sides alternate
+  | { t: "feature"; src: string; title: string; text: string; bare?: boolean } // screen + caption, sides alternate; bare = the image brings its own frame (device mockups), so no shadow
   | { t: "step"; title: string; text: string } // numbered step (01, 02 …) for how-to sequences
   | { t: "link"; text: string; href: string } // accent pill button (external)
   | { t: "embed"; src: string; kind: "youtube" | "figma" | "web"; caption?: string; ratio?: number } // live iframe; ratio = w/h
@@ -44,10 +44,15 @@ export type CaseBlock =
   | { t: "metrics"; primary: { title: string; note?: string }[]; secondary: string[] } // key metrics as numbered cards, the rest as a quiet row
   | { t: "chat"; q: string; qFace: string; a: { h: string; text: string }[]; aFace: string } // old-site speech bubbles: a question, then an answer bubble with headed paragraphs
   | { t: "panels"; items: { icon: "mbti" | "group" | "puzzle" | "compass"; color: string; title: string; text: string; subs?: { h: string; text: string }[] }[] } // old-site feature panels: round icon + tinted panel per feature, highlights in its color
-  | { t: "item"; title: string; text: string; src?: string; apps?: AppKey[]; plus?: boolean }; // numbered text + visual row, sides alternate; no src = the apps as big linked icons (plus: joined by "+"), else linked app chips under the text; "\n\n" splits paragraphs
+  | { t: "item"; title: string; text: string; src?: string; bare?: boolean; apps?: AppKey[]; plus?: boolean } // numbered text + visual row, sides alternate; no src = the apps as big linked icons (plus: joined by "+"), else linked app chips under the text; "\n\n" splits paragraphs
+  | { t: "stats"; items: { value: string; label: string }[]; note?: string } // 2–4 big numbers in one row, a hairline above (impact)
+  | { t: "timeline"; items: { date: string; title: string; text: string }[] } // dated milestones on a vertical line
+  | { t: "versus"; before: { label: string; title: string; items: string[] }; after: { label: string; title: string; items: string[] } } // what was asked for vs what was built
+  | { t: "flow"; items: { who: string; title: string; text: string }[] }; // one thing moving through people, left to right (who = the actor tag)
 export interface CaseSection { id: string; label: string; blocks: CaseBlock[]; white?: boolean; dark?: boolean } // dark: a near-black band (game screenshots) // white: keep the band white (white-background slides)
 export interface CaseStudy {
   accent: string;
+  hero?: string; // a hero other than heroes/<slug> (e.g. "refugeeone-2")
   sub?: string;
   role?: string;
   timeline?: string;

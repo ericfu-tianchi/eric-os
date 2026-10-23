@@ -155,7 +155,7 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
     const src = detailImg(b.src);
     return (
       <div className={`cs-feature ${flip ? "flip" : ""}`}>
-        {src && <img src={src} alt={b.title} loading="lazy" decoding="async" draggable={false} />}
+        {src && <img className={b.bare ? "bare" : undefined} src={src} alt={b.title} loading="lazy" decoding="async" draggable={false} />}
         <div><h4>{b.title}</h4><p><Rich text={b.text} /></p></div>
       </div>
     );
@@ -299,11 +299,34 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
           {src && b.apps && <div className="cs-chips">{b.apps.map((k) => app(k, false))}</div>}
         </div>
         {src
-          ? <img src={src} alt="" loading="lazy" decoding="async" draggable={false} />
+          ? <img className={b.bare ? "bare" : undefined} src={src} alt="" loading="lazy" decoding="async" draggable={false} />
           : <div className="cs-apps">{b.apps?.map((k, i) => <Fragment key={k}>{i > 0 && b.plus && <span className="plus" aria-hidden>+</span>}{app(k, true)}</Fragment>)}</div>}
       </div>
     );
   }
+  if (b.t === "stats")
+    return (
+      <div className="cs-stats">
+        <dl>{b.items.map((x) => <div key={x.label}><dt>{x.value}</dt><dd><Rich text={x.label} /></dd></div>)}</dl>
+        {b.note && <p className="note"><Rich text={b.note} /></p>}
+      </div>
+    );
+  if (b.t === "timeline")
+    return <ol className="cs-timeline">{b.items.map((x) => <li key={x.date + x.title}><time>{x.date}</time><div><h4>{x.title}</h4><p><Rich text={x.text} /></p></div></li>)}</ol>;
+  if (b.t === "versus")
+    return (
+      <div className="cs-versus">
+        {[b.before, b.after].map((x, i) => (
+          <section key={x.label} className={i ? "after" : "before"}>
+            <span className="tag">{x.label}</span>
+            <h4>{x.title}</h4>
+            <ul>{x.items.map((it) => <li key={it}><Rich text={it} /></li>)}</ul>
+          </section>
+        ))}
+      </div>
+    );
+  if (b.t === "flow")
+    return <ol className="cs-flow">{b.items.map((x, i) => <li key={x.title}><span className="who">{String(i + 1).padStart(2, "0")} · {x.who}</span><h4>{x.title}</h4><p><Rich text={x.text} /></p></li>)}</ol>;
   if (b.t === "img") {
     const src = detailImg(b.src);
     return src ? (
@@ -343,7 +366,7 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
 
   if (!p) return <div className="win-pad">This project doesn't exist.</div>;
   const cs = caseOf(p);
-  const hero = heroOf(p.slug);
+  const hero = heroOf(cs.hero ?? p.slug);
   // Jumping past lazy images used to stop short: they load mid-scroll and push the target down.
   // Load everything above the target first, then keep correcting until the section sits at the top.
   const jump = (id: string) => {
