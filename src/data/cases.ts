@@ -33,11 +33,19 @@ export type CaseBlock =
   | { t: "embed"; src: string; kind: "youtube" | "figma" | "web"; caption?: string; ratio?: number } // live iframe; ratio = w/h
   | { t: "row"; items: { src: string; w: number }[]; caption?: string } // 2–3 images side by side at their old-site widths
   | { t: "img"; src: string; caption?: string; w?: number } // src = "<slug>/NN.png"; w = display width in px at 1440 (old-site size)
+  | { t: "links"; items: { text: string; href: string; primary?: boolean }[] } // small pill buttons in a row, right under the text they belong to
+  | { t: "gallery"; items: { src: string; caption?: string }[]; cols?: 2 | 3 } // screenshots in an even grid
+  | { t: "evolve"; items: { src: string; label: string; note?: string }[] } // numbered iteration strip, the last item is the shipped one
+  | { t: "compare"; before: { src: string; label: string }; after: { src: string; label: string } } // wireframe vs shipped, side by side
+  | { t: "beats"; chapters: { title: string; steps: string[] }[] } // a sequence grouped into chapters (tutorial beats)
+  | { t: "script"; title?: string; lines: { who?: string; say?: string; act?: string }[] } // a screenplay excerpt: spoken lines + stage directions
+  | { t: "cards"; items: { title: string; text: string }[] } // 2–3 equal numbered cards (takeaways)
+  | { t: "sprints"; weeks: string[]; phases: { name: string; from: number; to: number }[]; rows: { track: string; bars: { text: string; from: number; to: number; line?: 0 | 1; mine?: boolean }[] }[]; note?: string } // a sprint plan as a gantt: week columns, phases on top
   | { t: "metrics"; primary: { title: string; note?: string }[]; secondary: string[] } // key metrics as numbered cards, the rest as a quiet row
   | { t: "chat"; q: string; qFace: string; a: { h: string; text: string }[]; aFace: string } // old-site speech bubbles: a question, then an answer bubble with headed paragraphs
   | { t: "panels"; items: { icon: "mbti" | "group" | "puzzle" | "compass"; color: string; title: string; text: string; subs?: { h: string; text: string }[] }[] } // old-site feature panels: round icon + tinted panel per feature, highlights in its color
   | { t: "item"; title: string; text: string; src?: string; apps?: AppKey[]; plus?: boolean }; // numbered text + visual row, sides alternate; no src = the apps as big linked icons (plus: joined by "+"), else linked app chips under the text; "\n\n" splits paragraphs
-export interface CaseSection { id: string; label: string; blocks: CaseBlock[]; white?: boolean } // white: keep the band white (white-background slides)
+export interface CaseSection { id: string; label: string; blocks: CaseBlock[]; white?: boolean; dark?: boolean } // dark: a near-black band (game screenshots) // white: keep the band white (white-background slides)
 export interface CaseStudy {
   accent: string;
   sub?: string;
