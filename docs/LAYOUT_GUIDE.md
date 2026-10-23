@@ -126,7 +126,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `sub` | ■ Sub-heading (pixel square + ink text) | Steps inside a topic: Problem, Goal |
 | `p` | Body paragraph | Default text. Keep to 2–4 lines in the column. |
 | `callout` | Full accent band, white 19px text | The one problem statement per page (max 1–2 per page) |
-| `quote` | Pull quote: centered, 20px weight 600, two 48px hairlines above and below | A definition: problem statement, design principle |
+| `quote` | Pull quote: centered, 20px weight 600, two 48px hairlines above and below. `label` adds a small accent kicker; `derived` swaps the top hairline for a connector line, for a statement that follows from the blocks right above it | A definition: problem statement, design principle |
 | `list` | Bullets in a tinted panel; `plain: true` for ordinary bullets | Panel only when the findings deserve emphasis; most lists are plain |
 | `status` | Priority-ordered rows (01, 02 …) with a Done / Partly / Not yet pill (green / amber / gray) and a summary bar with counts on top | A feature plan or roadmap where each item has a state. Never as plain "**Done** · …" bullets |
 | `stat` | Big accent number + label | A number that proves the point |
@@ -142,7 +142,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `evolve` | Numbered iteration strip; the last item is the shipped one, shown large | Layout iterations that end in a shipped screen |
 | `compare` | Two images side by side, tagged Before / After | Wireframe vs shipped |
 | `beats` / `script` | Chapters of numbered beats; a screenplay excerpt | Tutorial flows and story scripts (Subtension) |
-| `cards` | 2–4 equal numbered cards | Findings, takeaways, the roles someone played |
+| `cards` | 2–4 equal cards, numbered unless `numbers: false` | Findings, takeaways, the roles someone played |
 | `sprints` | A gantt of weeks, phases and tracks | A sprint plan |
 | `metrics` / `chat` / `panels` | Numbered metric cards; old-site speech bubbles; old-site feature panels | Connectr's research and metrics |
 | `stats` | 2–4 big accent numbers in one row, a hairline above each, optional note | The results band in an Overview |
@@ -151,6 +151,19 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `flow` | 3–4 cards left to right, each tagged with who acts | One thing moving through several people (a job: employer → staff → refugee) |
 
 `feature` and `item` take `bare: true` when the image brings its own frame and shadow (device mockups).
+
+### Choosing a form for a set of points
+
+There is no single right block for "several points". Pick by what the points are:
+
+- **2–4 parallel points of equal weight, each with a short title and 2–4 lines** → `cards`. Research findings, takeaways, the hats someone wore. Number them only when there is an order or the text refers back to them ("finding 02"); roles and hats use `numbers: false`.
+- **A conclusion drawn from those points** → a `quote` with `label` and `derived: true` right after the cards ("So the problem became …"), never a bare quote that seems to come from nowhere.
+- **Five or more points, or one line each** → a plain `list`. Cards with one line of text look empty.
+- **A sequence** → `step` (how-to) or `timeline` (dated milestones). **Several people acting on one thing** → `flow`.
+- **Points that each deserve a picture** → `feature` or `item`.
+- **Before vs after, asked vs built** → `versus`.
+
+Vary the form between neighbouring topics: two card rows back to back read as a slide deck, not a story.
 
 ## 6. Writing a new page (checklist)
 

@@ -29,7 +29,7 @@ const built: CaseBlock = {
 
 const problem: CaseBlock = {
   t: "callout", label: "The problem",
-  text: "Every job had to pass through a person. Listings came in through a Google Form and piled up in a spreadsheet that nobody could filter, so staff spent hour-long one-on-ones walking each client through openings one by one, plotting addresses on a map by hand.",
+  text: "Refugees had no way to look for work on their own. Employers sent openings through a Google Form into a spreadsheet nobody could search or filter, often without pay, shift times or English requirements. So every job reached a refugee through a counselor, in hour-long one-on-ones spent reading through listings and checking each address on a map.",
 };
 
 const results: CaseBlock = {
@@ -40,7 +40,7 @@ const results: CaseBlock = {
     { value: "75+", label: "employers posting directly" },
     { value: "80%", label: "more efficient job matching for staff" },
   ],
-  note: "Reported by RefugeeOne a year after launch. The project also won **Second Prize at the 2023 Student Project Expo**.",
+  note: "Reported by RefugeeOne a year after launch. The project also won [second prize for Diversity, Equity & Inclusion at the 2023 UMSI Student Project Exposition](https://www.si.umich.edu/about-umsi/news/2023-umsi-student-project-exposition-award-recipients-announced).",
 };
 
 const researchIntro: CaseBlock[] = [
@@ -57,7 +57,8 @@ const findings: CaseBlock = {
 };
 
 const problemStatement: CaseBlock = {
-  t: "quote", text: "Refugees need to find jobs near them in an ==interactive, accessible way==, with the details that decide whether a job can work for them.",
+  t: "quote", derived: true, label: "So the problem became",
+  text: "How might refugees find jobs near them on their own, with the details that decide whether a job can work for them?",
 };
 
 const brief: CaseBlock = {
@@ -163,7 +164,7 @@ const handoff: CaseBlock = {
 };
 
 const hats: CaseBlock = {
-  t: "cards", items: [
+  t: "cards", numbers: false, items: [
     { title: "Product designer", text: "Research synthesis, workflows for three roles, wireframes through high fidelity, and the style guide." },
     { title: "Frontend developer", text: "Search and filters, the shift-time logic, the onboarding screens and the mobile layout." },
     { title: "Scrum master", text: "Standups three times a week, the Jira board, and sprint planning with the team." },

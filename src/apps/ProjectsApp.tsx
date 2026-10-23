@@ -121,7 +121,7 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
   if (b.t === "sub") return <h4 className="cs-sub">{b.text}</h4>;
   if (b.t === "callout")
     return <div className="cs-callout">{b.label && <p className="cs-callout-label">{b.label}</p>}<p><Rich text={b.text} /></p></div>;
-  if (b.t === "quote") return <blockquote className="cs-quote"><Rich text={b.text} /></blockquote>;
+  if (b.t === "quote") return <blockquote className={`cs-quote ${b.derived ? "derived" : ""}`}>{b.label && <span className="from">{b.label}</span>}<Rich text={b.text} /></blockquote>;
   if (b.t === "list")
     return <ul className={`cs-list ${b.plain ? "plain" : ""}`}>{b.items.map((item, i) => <li key={i}><Rich text={item} /></li>)}</ul>;
   if (b.t === "status") {
@@ -229,7 +229,7 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
       </div>
     );
   if (b.t === "cards")
-    return <div className="cs-cards">{b.items.map((c, i) => <article key={c.title}><span className="n">{String(i + 1).padStart(2, "0")}</span><h4>{c.title}</h4><p><Rich text={c.text} /></p></article>)}</div>;
+    return <div className="cs-cards">{b.items.map((c, i) => <article key={c.title}>{b.numbers !== false && <span className="n">{String(i + 1).padStart(2, "0")}</span>}<h4>{c.title}</h4><p><Rich text={c.text} /></p></article>)}</div>;
   if (b.t === "sprints") {
     const tpl = { gridTemplateColumns: `120px repeat(${b.weeks.length}, minmax(0, 1fr))` };
     const at = (from: number, to: number, row = 1) => ({ gridColumn: `${from + 2} / ${to + 3}`, gridRow: row });

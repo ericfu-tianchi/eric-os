@@ -23,7 +23,7 @@ export type CaseBlock =
   | { t: "h"; text: string } // label, e.g. "QUICK BACKGROUND"
   | { t: "sub"; text: string } // sub-heading, ink with a pixel-square marker
   | { t: "callout"; label?: string; text: string } // full-width accent band
-  | { t: "quote"; text: string } // pull quote: centered, between two short hairlines
+  | { t: "quote"; text: string; label?: string; derived?: boolean } // pull quote: centered, between two short hairlines; label = a small kicker above; derived = it follows from the blocks above (a connector line replaces the top hairline)
   | { t: "list"; items: string[]; plain?: boolean } // bullets; tinted panel unless plain
   | { t: "status"; items: { s: "done" | "partly" | "todo"; text: string }[] } // priority-ordered plan with a status per row + summary bar
   | { t: "stat"; value: string; label: string } // big-number highlight
@@ -39,7 +39,7 @@ export type CaseBlock =
   | { t: "compare"; before: { src: string; label: string }; after: { src: string; label: string } } // wireframe vs shipped, side by side
   | { t: "beats"; chapters: { title: string; steps: string[] }[] } // a sequence grouped into chapters (tutorial beats)
   | { t: "script"; title?: string; lines: { who?: string; say?: string; act?: string }[] } // a screenplay excerpt: spoken lines + stage directions
-  | { t: "cards"; items: { title: string; text: string }[] } // 2–3 equal numbered cards (takeaways)
+  | { t: "cards"; items: { title: string; text: string }[]; numbers?: boolean } // 2–4 equal cards (findings, takeaways, roles); numbered unless numbers: false
   | { t: "sprints"; weeks: string[]; phases: { name: string; from: number; to: number }[]; rows: { track: string; bars: { text: string; from: number; to: number; line?: 0 | 1; mine?: boolean }[] }[]; note?: string } // a sprint plan as a gantt: week columns, phases on top
   | { t: "metrics"; primary: { title: string; note?: string }[]; secondary: string[] } // key metrics as numbered cards, the rest as a quiet row
   | { t: "chat"; q: string; qFace: string; a: { h: string; text: string }[]; aFace: string } // old-site speech bubbles: a question, then an answer bubble with headed paragraphs
