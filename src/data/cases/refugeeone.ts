@@ -5,7 +5,7 @@ import type { CaseBlock, CaseStudy } from "../cases";
  * midterm/final decks, poster, handoff), the SI 501 affinity wall, the repo (RefugeeOne699/refugee-one)
  * and the outcome numbers on Eric's resume. Screens are the shipped app, run locally with sample data.
  *
- * Banner options while reviewing: ?rh=1|2|3.
+ * Banner options while reviewing: ?rh=1|2|3 (light), 4 (dark).
  */
 
 const meta = {
@@ -22,6 +22,11 @@ const intro: CaseBlock[] = [
   { t: "p", text: "[RefugeeOne](https://www.refugeeone.org/) is a nonprofit resettlement agency in Chicago. It helps people who have fled war, terror and persecution build new lives of safety, dignity and self-reliance, and a steady job is where that starts." },
   { t: "p", text: "Families arrive with about three and a half months of government support, so the first job has to come fast, and it has to fit: ==pay that covers rent, a shift the bus can reach, a workplace where limited English is fine.==" },
 ];
+
+const links: CaseBlock = { t: "links", items: [
+  { text: "Watch the demo", href: "https://www.youtube.com/watch?v=YzZrsk8REAc", primary: true },
+  { text: "Source code on GitHub", href: "https://github.com/RefugeeOne699/refugee-one" },
+] };
 
 const built: CaseBlock = {
   t: "p", text: "Over one semester, six of us from the University of Michigan School of Information built RefugeeOne a job platform with a workspace for each side: employers post jobs, RefugeeOne's staff review them, and refugees search on their own phones.",
@@ -185,10 +190,6 @@ const closing: CaseBlock[] = [
   { t: "h", text: "The whole loop" },
   { t: "p", text: "This was the first time I went all the way around the loop, from interviews to designs, code, sprints, a live launch and a handoff, with a hand in every part of it. ==It's still the project I'm proudest of from my time at Michigan.==" },
   { t: "p", text: "Built with Neha Kumari, Mike (Jiayao) Wu, Ken DeBacker, Yipeng Lin and Annie (Mingyu) Li." },
-  { t: "links", items: [
-    { text: "Source code on GitHub", href: "https://github.com/RefugeeOne699/refugee-one", primary: true },
-    { text: "RefugeeOne", href: "https://www.refugeeone.org/" },
-  ] },
 ];
 
 // ---------- research → rethink the brief → design → product → build → reflection ----------
@@ -202,6 +203,7 @@ const a: CaseStudy = {
       problem,
       { t: "h", text: "What we built" },
       built,
+      links,
       { t: "h", text: "Results" },
       results,
     ] },
@@ -257,4 +259,4 @@ const a: CaseStudy = {
 };
 
 const rh = typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("rh");
-export const refugeeone: CaseStudy = rh === "2" || rh === "3" ? { ...a, hero: `refugeeone-${rh}` } : a;
+export const refugeeone: CaseStudy = rh === "2" || rh === "3" || rh === "4" ? { ...a, hero: `refugeeone-${rh}` } : a;

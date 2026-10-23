@@ -137,7 +137,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `img` | Centered figure + caption; `w` = display width in px at 1440 | Evidence, diagrams, logos. Copy `w` from the old site; above 880 the figure breaks out of the column (max 1040) |
 | `link` | Accent pill button | One call to action (prototype, slides, live site) |
 | `embed` | Live iframe, 16:9 (YouTube) or 16:10 (Figma), up to 1040px wide + caption | Videos and clickable prototypes. Use `youtube-nocookie.com/embed/<id>` and Figma's `figma.com/embed?embed_host=share&url=…` |
-| `links` | Small pill links in a row (one may be `primary`, ink) | Source links right under the text they belong to: Steam, GitHub, the client's site |
+| `links` | Small pill links in a row (one may be `primary`, ink) | Source links right under the text they belong to: Steam, GitHub, a demo. Put them in the Overview, where every reader sees them; many readers stop after it, so never park the only links at the end of the page |
 | `gallery` | Screenshots in an even 2- or 3-column grid with captions | A set of equal screens (game screenshots) |
 | `evolve` | Numbered iteration strip; the last item is the shipped one, shown large | Layout iterations that end in a shipped screen |
 | `compare` | Two images side by side, tagged Before / After | Wireframe vs shipped |
