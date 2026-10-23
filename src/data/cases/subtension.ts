@@ -31,7 +31,7 @@ export const subtension: CaseStudy = {
     ] },
     { id: "process", label: "How We Worked", blocks: [
       { t: "h", text: "Project Timeline" },
-      { t: "p", text: "Forty people across four squads (Ship, Messaging, Narrative and Expansion) worked in one-week sprints: an onboarding week, three production sprints and a QA sprint. Every squad had design, programming, art and audio; this is the design side." },
+      { t: "p", text: "Forty people across four squads (Ship, Messaging, Narrative and Expansion) worked in sprints of two to three weeks: an onboarding week, three production sprints and a three-week QA sprint, each sprint ending with a week to iterate and fix bugs. Every squad had design, programming, art and audio; this is the design side." },
       { t: "sprints",
         weeks: ["9/11", "9/18", "9/25", "10/2", "10/9", "10/16", "10/23", "10/30", "11/6", "11/13", "11/20", "11/27"],
         phases: [{ name: "Kickoff", from: 0, to: 0 }, { name: "Sprint 1", from: 1, to: 3 }, { name: "Sprint 2", from: 4, to: 6 }, { name: "Sprint 3", from: 7, to: 8 }, { name: "QA sprint", from: 9, to: 11 }],
@@ -73,7 +73,7 @@ export const subtension: CaseStudy = {
       ] },
 
       { t: "h", text: "Tutorial Flow" },
-      { t: "p", text: "Subtension has a lot of mechanics, and a new player meets all of them at once. The tutorial had to teach pausing, crew, weapons, damage, repair, shields and hazards ==without dragging on==, and still feel like the opening of a story rather than a manual. I turned it into a scripted first battle with the Old Captain as your guide: every mechanic is introduced the moment you need it, and you learn it by doing it." },
+      { t: "p", text: "Subtension has a lot of mechanics, and a new player meets all of them at once. The tutorial had to teach pausing, crew, weapons, damage, repair, shields and hazards ==without dragging on==, and still feel like the opening of a story rather than a manual. I turned it into a scripted first battle with the Old Captain as your guide: ==every mechanic is introduced the moment you need it, and you learn it by doing it.==" },
       { t: "beats", chapters: [
         { title: "Get your bearings", steps: ["Enter your first combat", "The game pauses: learn the captain's focus", "Meet the UI: hull, systems, crew"] },
         { title: "First shot", steps: ["Send crew to the weapons room", "Charge and fire the weapon", "Hit the enemy ship"] },
@@ -106,7 +106,7 @@ export const subtension: CaseStudy = {
     { id: "takeaways", label: "Takeaways", blocks: [
       { t: "cards", items: [
         { title: "No one ships a game alone", text: "Art, design, programming, direction and sound all had to meet in the middle. Even a small game is ==a whole team's work==, and it taught me how much a team can do that no one person can." },
-        { title: "My first real sprints", text: "Each squad met every week to review, decide and plan the next sprint, across design, art, code and audio. It was my first taste of agile development, and ==one of the happiest stretches of my time at Michigan==." },
+        { title: "My first real sprints", text: "Each squad met every week across design, art, code and audio, and every few weeks we closed a sprint, reviewed it together and planned the next. It was my first taste of agile development, and ==one of the happiest stretches of my time at Michigan==." },
         { title: "The work you don't see", text: "Every visual, mechanic and number in a game this size was argued over and revisited. Great work rests on ==a lot of invisible thinking==, which is why I sweat the details: what you ship should be finished, not just done." },
       ] },
     ] },
