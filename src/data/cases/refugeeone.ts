@@ -12,6 +12,7 @@ const meta = {
   role: "Product Designer\nFrontend Developer\nScrum Master",
   timeline: "Jan – May 2023",
   tools: "Figma · Jira\nReact · Tailwind · Firebase",
+  team: "Neha Kumari\nMike (Jiayao) Wu\nKen DeBacker\nYipeng Lin\nAnnie (Mingyu) Li",
 };
 
 // ---------- shared pieces ----------
@@ -99,7 +100,7 @@ const workflows: CaseBlock[] = [
 
 const screensRefugee: CaseBlock[] = [
   { t: "feature", bare: true, src: "refugeeone/client-cards.png", title: "The facts first", text: "Each card shows the role, employer, address, starting pay and medical, with a star to save it for later. Tap a card for every detail, each with its own icon." },
-  { t: "feature", bare: true, src: "refugeeone/client-filter.png", title: "Filters built around a day", text: "Refugees filter by what decides a job for them: ==pay, shift times, English level, language, distance and benefits==." },
+  { t: "feature", bare: true, src: "refugeeone/client-filter.png", title: "Filters built around a day", text: "Refugees filter by what decides a job for them: pay, shift times, English level, language, distance and benefits." },
   { t: "feature", bare: true, src: "refugeeone/client-distance.png", title: "How far is it?", text: "Every job shows how many miles it is from home, and opens in Google Maps in one tap to check the commute." },
 ];
 
@@ -169,14 +170,8 @@ const lessons: CaseBlock[] = [
   { t: "p", text: "The biggest call we made was not building the app we were asked for. Looking at the whole workflow, not just the refugee's screen, is what let refugees search on their own and gave staff back the hours they had spent walking clients through listings one by one." },
   { t: "sub", text: "Walk through the data model with the client" },
   { t: "p", text: "RefugeeOne discovered what it needed as it saw each screen, and every change rippled through the UI, the database and the logic. Next time I'd walk through the data model and each role's workflow with the client before the first sprint, not just the mockups." },
-  { t: "sub", text: "A design isn't done until it's built" },
-  { t: "p", text: "Building the filters myself showed me where my own form design was weak. Designing and building the same feature made me better at both." },
-];
-
-const closing: CaseBlock[] = [
-  { t: "h", text: "The whole loop" },
-  { t: "p", text: "This was the first time I went all the way around the loop, from interviews to designs, code, sprints, a live launch and a handoff, with a hand in every part of it. ==It's still the project I'm proudest of from my time at Michigan.==" },
-  { t: "p", text: "Built with Neha Kumari, Mike (Jiayao) Wu, Ken DeBacker, Yipeng Lin and Annie (Mingyu) Li." },
+  { t: "sub", text: "Solving it end to end" },
+  { t: "p", text: "This was my first time going all the way around the loop, from interviews to designs, code, sprints, a live launch and a handoff. I loved solving a real problem for real users, not stopping at a design file. ==It's still the project I'm proudest of from my time at Michigan.==" },
 ];
 
 // ---------- research → app to website → design → product → build → reflection ----------
@@ -234,12 +229,11 @@ const a: CaseStudy = {
       handoff,
     ] },
     { id: "reflection", label: "Reflection", blocks: [
-      { t: "h", text: "Many hats" },
-      { t: "p", text: "On a team of six, I covered four roles at once:" },
+      { t: "h", text: "Many hats", icon: "hat" },
+      { t: "p", text: "On a team of six, I covered four roles at once, and found I enjoy moving between them." },
       hats,
       { t: "h", text: "What I took away" },
       ...lessons,
-      ...closing,
     ] },
   ],
 };

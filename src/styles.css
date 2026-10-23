@@ -959,6 +959,7 @@ button { font-family: inherit; color: inherit; }
 }
 
 .cs-label { margin: 64px 0 20px; font-family: var(--font-display); font-weight: 700; font-size: 18px; line-height: 1.4; text-transform: uppercase; color: var(--cs); }
+.cs-label .ic { display: inline-block; width: 30px; height: 23px; margin-right: 10px; vertical-align: -5px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .cs-sub { display: flex; align-items: center; gap: 12px; margin: 48px 0 18px; font-family: var(--font-display); font-weight: 700; font-size: 22px; line-height: 1.4; color: #181818; }
 .cs-sub::before { content: ""; flex: none; width: 9px; height: 9px; background: var(--cs); transform: translateY(1px); }
 .cs-p { margin: 0 0 18px; font-family: var(--font-sans); font-size: 16px; line-height: 1.7; color: #181818; }
