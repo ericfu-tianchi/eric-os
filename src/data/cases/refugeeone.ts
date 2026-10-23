@@ -47,7 +47,7 @@ const results: CaseBlock = {
 };
 
 const researchIntro: CaseBlock[] = [
-  { t: "p", text: "We didn't start from zero. A year earlier, an SI 501 team had interviewed two RefugeeOne staff members and two refugees for the same client and sorted every quote onto an affinity wall. We read all of it, then held our own kickoff with RefugeeOne's employment team and walked through what they used every day: a Google Form, two spreadsheets and a map they kept up by hand." },
+  { t: "p", text: "We built on an SI 501 team's study from the year before: interviews with two RefugeeOne staff members and two refugees, sorted onto an affinity wall. Then we walked through RefugeeOne's own tools with its employment team: a Google Form, two spreadsheets and a hand-kept map." },
   { t: "img", src: "refugeeone/affinity.png", caption: "One cluster of the SI 501 affinity wall: interview notes in yellow, the themes they add up to in blue and pink, the insight in green", w: 735 },
 ];
 
@@ -67,11 +67,11 @@ const problemStatement: CaseBlock = {
 const brief: CaseBlock = {
   t: "versus",
   before: {
-    label: "The brief", title: "A multilingual smartphone app for refugees",
+    label: "What they asked for", title: "A multilingual smartphone app for refugees",
     items: ["One user: the refugee", "Installs, app stores and updates", "Translation built into the product", "Employers still email staff, and the spreadsheet stays"],
   },
   after: {
-    label: "What we built", title: "One responsive website with a workspace for each role",
+    label: "What we proposed", title: "One responsive website with a workspace for each role",
     items: ["Refugees search on their phones, nothing to install", "Employers post jobs from a laptop", "Staff review every job and account in one dashboard", "Icons on every field, plus the browser's own translation"],
   },
 };
@@ -176,7 +176,7 @@ const hats: CaseBlock = {
 };
 
 const lessons: CaseBlock[] = [
-  { t: "sub", text: "Solve the problem, not the brief" },
+  { t: "sub", text: "Solve the problem, not the request" },
   { t: "p", text: "The biggest call we made was not building the app we were asked for. Looking at the whole workflow, not just the refugee's screen, is what let refugees search on their own and gave staff back the hours they had spent walking clients through listings one by one." },
   { t: "sub", text: "Walk through the data model with the client" },
   { t: "p", text: "RefugeeOne discovered what it needed as it saw each screen, and every change rippled through the UI, the database and the logic. Next time I'd walk through the data model and each role's workflow with the client before the first sprint, not just the mockups." },
@@ -190,7 +190,7 @@ const closing: CaseBlock[] = [
   { t: "p", text: "Built with Neha Kumari, Mike (Jiayao) Wu, Ken DeBacker, Yipeng Lin and Annie (Mingyu) Li." },
 ];
 
-// ---------- research → rethink the brief → design → product → build → reflection ----------
+// ---------- research → app to website → design → product → build → reflection ----------
 
 const a: CaseStudy = {
   ...meta,
@@ -213,8 +213,8 @@ const a: CaseStudy = {
       findings,
       problemStatement,
     ] },
-    { id: "rethink", label: "The Brief", blocks: [
-      { t: "p", text: "RefugeeOne asked for a multilingual smartphone app for refugees. Mapping everyone who touches a job listing changed the shape of the product." },
+    { id: "rethink", label: "From App to Website", blocks: [
+      { t: "p", text: "RefugeeOne asked us for a smartphone app for refugees. But a job listing passes through three groups: employers post it, staff review it, refugees search it. An app for refugees alone would fix only the last step, so ==we proposed one website with a workspace for each group== instead." },
       brief,
       ...briefWhy,
       { t: "h", text: "One job, three sides" },
