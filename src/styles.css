@@ -1217,7 +1217,8 @@ button { font-family: inherit; color: inherit; }
 .cs-item p { margin: 0 0 12px; font-family: var(--font-sans); font-size: 16px; line-height: 1.7; color: #494949; }
 .cs-item > img { display: block; width: 100%; height: auto; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 12px 32px rgba(0,0,0,0.1); }
 .cs-section:nth-of-type(even) .cs-item > img { box-shadow: none; } /* illustrations sit flat on the mist band */
-.cs-feature img.bare, .cs-item > img.bare { border-radius: 0; box-shadow: none; } /* device mockups bring their own frame and shadow */
+.cs-feature img.bare, .cs-item > img.bare { border-radius: 0; box-shadow: none; }
+.cs-feature img.bare { max-height: 680px; } /* device mockups bring their own frame and shadow */
 .cs-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
 .cs-chip { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 6px; border: 1px solid var(--hairline); border-radius: 999px; background: #fff; color: #181818; text-decoration: none; font-family: var(--font-sans); font-weight: 600; font-size: 14px; transition: border-color 0.15s, transform 0.15s; }
 .cs-chip img { width: 22px; height: 22px; }
