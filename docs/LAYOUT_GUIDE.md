@@ -145,6 +145,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `cards` | 2–4 equal cards, numbered unless `numbers: false` | Findings, takeaways, the roles someone played |
 | `sprints` | A gantt of weeks, phases and tracks | A sprint plan |
 | `metrics` / `chat` / `panels` | Numbered metric cards; old-site speech bubbles; old-site feature panels | Connectr's research and metrics |
+| `part` | A numbered divider (01, 02 …) with a hairline, a 28px title and an optional one-line lead; feature rows restart on the left after it | Splitting one section into parallel parts, e.g. the three sides of a product. Give every part the same block form |
 | `stats` | 2–4 big accent numbers in one row, a hairline above each, optional note | The results band in an Overview |
 | `timeline` | Dated milestones on a vertical line | How a project unfolded week to week |
 | `versus` | Two cards: the quiet "before" and the accented "after", each a title + bullets | What the client asked for vs what was built |

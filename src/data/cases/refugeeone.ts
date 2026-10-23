@@ -98,24 +98,18 @@ const workflows: CaseBlock[] = [
 ];
 
 const screensRefugee: CaseBlock[] = [
-  { t: "feature", bare: true, src: "refugeeone/client-cards.png", title: "The facts first", text: "Every card leads with what refugees check first: the role, the employer, the address, starting pay and whether medical is included. One tap opens the rest, each field with its own icon." },
-  { t: "feature", bare: true, src: "refugeeone/client-filter.png", title: "Filters built around a day", text: "Pay floor, English level, 22 languages, a shift window and distance from home. A refugee can ask for ==full-time, $17 an hour or more, between 6 a.m. and 6 p.m., within five miles, with medical==." },
-  { t: "feature", bare: true, src: "refugeeone/client-distance.png", title: "How far is it?", text: "Distance from home is worked out from the client's address, so every job says how many miles away it is, and the location opens in Google Maps with one tap. A star saves the job for the next meeting with staff." },
+  { t: "feature", bare: true, src: "refugeeone/client-cards.png", title: "The facts first", text: "Each card shows the role, employer, address, starting pay and medical, with a star to save it for later. Tap a card for every detail, each with its own icon." },
+  { t: "feature", bare: true, src: "refugeeone/client-filter.png", title: "Filters built around a day", text: "Refugees filter by what decides a job for them: ==pay, shift times, English level, language, distance and benefits==." },
+  { t: "feature", bare: true, src: "refugeeone/client-distance.png", title: "How far is it?", text: "Every job shows how many miles it is from home, and opens in Google Maps in one tap to check the commute." },
 ];
 
 const screensEmployer: CaseBlock[] = [
-  { t: "sub", text: "Post once, track it" },
-  { t: "p", text: "Employers post from a laptop, save a long form as a draft, and follow each job through Pending, Approved and Action Required. When staff send a job back, their note shows up right on it." },
-  { t: "img", src: "refugeeone/employer.png", caption: "An employer's dashboard: a job sent back with feedback from RefugeeOne, on a laptop and a phone", w: 1040 },
+  { t: "feature", bare: true, src: "refugeeone/employer.png", title: "Post once, track it", text: "Employers post from a laptop, save long forms as drafts, and follow each job through Pending, Approved and Action Required. When staff send a job back, their note appears right on it." },
 ];
 
 const screensStaff: CaseBlock[] = [
-  { t: "sub", text: "One queue for every job" },
-  { t: "p", text: "Staff see every new posting in one place and approve, edit or reject it. A rejection can carry a reason, which the employer sees as feedback." },
-  { t: "img", src: "refugeeone/admin-queue.png", caption: "Rejecting a posting with a reason the employer will see", w: 1040 },
-  { t: "sub", text: "RefugeeOne holds the keys" },
-  { t: "p", text: "Staff create refugee accounts themselves and approve each employer who signs up. Nobody hands out passwords: new users get an email and set their own." },
-  { t: "img", src: "refugeeone/admin-accounts.png", caption: "Manage Accounts: employers waiting for approval sort to the top", w: 1040 },
+  { t: "feature", bare: true, src: "refugeeone/admin-queue.png", title: "One queue for every job", text: "Every new posting lands in one queue. Staff approve, edit or reject it, and a rejection can carry a note the employer sees." },
+  { t: "feature", bare: true, src: "refugeeone/admin-accounts.png", title: "RefugeeOne holds the keys", text: "Staff create refugee accounts and approve every employer who signs up. New users get an email and set their own password." },
 ];
 
 const demo: CaseBlock = { t: "embed", kind: "youtube", src: "https://www.youtube-nocookie.com/embed/YzZrsk8REAc?rel=0", caption: "The walkthrough video our team made for the expo" };
@@ -215,11 +209,11 @@ const a: CaseStudy = {
       ...workflows,
     ] },
     { id: "product", label: "The Product", blocks: [
-      { t: "h", text: "For refugees" },
+      { t: "part", title: "For refugees", text: "Find work on their own phones." },
       ...screensRefugee,
-      { t: "h", text: "For employers" },
+      { t: "part", title: "For employers", text: "Post jobs with every detail that matters." },
       ...screensEmployer,
-      { t: "h", text: "For RefugeeOne" },
+      { t: "part", title: "For RefugeeOne", text: "Review every job and every account." },
       ...screensStaff,
       demo,
     ] },

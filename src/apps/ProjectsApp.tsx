@@ -311,6 +311,8 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
         {b.note && <p className="note"><Rich text={b.note} /></p>}
       </div>
     );
+  if (b.t === "part")
+    return <div className="cs-part"><span className="n">{String(n).padStart(2, "0")}</span><div><h3>{b.title}</h3>{b.text && <p><Rich text={b.text} /></p>}</div></div>;
   if (b.t === "timeline")
     return <ol className="cs-timeline">{b.items.map((x) => <li key={x.date + x.title}><time>{x.date}</time><div><h4>{x.title}</h4><p><Rich text={x.text} /></p></div></li>)}</ol>;
   if (b.t === "versus")
@@ -409,9 +411,10 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
         </nav>
       )}
       {cs.sections.map((s, si) => {
-        let features = 0, steps = 0, items = 0;
+        let features = 0, steps = 0, items = 0, parts = 0;
         const blocks = s.blocks.map((b, i) => {
-          const n = b.t === "step" ? ++steps : b.t === "item" ? ++items : 0;
+          const n = b.t === "step" ? ++steps : b.t === "item" ? ++items : b.t === "part" ? ++parts : 0;
+          if (b.t === "part") features = 0; // each part starts with its picture on the left
           return <CaseBlockView key={i} b={b} flip={(b.t === "feature" && features++ % 2 === 1) || (b.t === "item" && n % 2 === 0)} n={n} />;
         });
         // The meta rail sits beside the opening text only; the first band/figure goes full width.
