@@ -20,7 +20,7 @@ import { refugeeone } from "./cases/refugeeone";
     Block vocabulary and spacing rules: docs/LAYOUT_GUIDE.md. */
 export type CaseBlock =
   | { t: "p"; text: string }
-  | { t: "h"; text: string; icon?: "hat" } // label, e.g. "QUICK BACKGROUND"; icon = a small line glyph before it
+  | { t: "h"; text: string } // label, e.g. "QUICK BACKGROUND"
   | { t: "sub"; text: string } // sub-heading, ink with a pixel-square marker
   | { t: "callout"; label?: string; text: string } // full-width accent band
   | { t: "quote"; text: string; label?: string; derived?: boolean } // pull quote: centered, between two short hairlines; label = a small kicker above; derived = it follows from the blocks above (a connector line replaces the top hairline)
