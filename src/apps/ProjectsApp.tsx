@@ -181,6 +181,76 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
         {b.caption && <figcaption>{b.caption}</figcaption>}
       </figure>
     );
+  if (b.t === "links")
+    return <div className="cs-links">{b.items.map((l) => <a key={l.href} className={l.primary ? "primary" : ""} href={l.href} target="_blank" rel="noopener noreferrer">{l.text}<span aria-hidden>↗</span></a>)}</div>;
+  if (b.t === "gallery")
+    return (
+      <div className={`cs-gallery c${b.cols ?? 2}`}>
+        {b.items.map((x) => <figure key={x.src}><img src={detailImg(x.src)} alt={x.caption ?? ""} loading="lazy" decoding="async" draggable={false} />{x.caption && <figcaption>{x.caption}</figcaption>}</figure>)}
+      </div>
+    );
+  if (b.t === "evolve") {
+    const last = b.items[b.items.length - 1];
+    return (
+      <div className="cs-evolve">
+        <ol>{b.items.slice(0, -1).map((x, i) => (
+          <li key={x.src}><img src={detailImg(x.src)} alt="" loading="lazy" decoding="async" draggable={false} /><span className="n">{String(i + 1).padStart(2, "0")}</span><b>{x.label}</b>{x.note && <small>{x.note}</small>}</li>
+        ))}</ol>
+        <figure className="final"><img src={detailImg(last.src)} alt={last.label} loading="lazy" decoding="async" draggable={false} /><figcaption><span className="tag">Shipped</span><b>{last.label}</b>{last.note && <small>{last.note}</small>}</figcaption></figure>
+      </div>
+    );
+  }
+  if (b.t === "compare")
+    return (
+      <div className="cs-compare">
+        {[b.before, b.after].map((x, i) => <figure key={x.src}><img src={detailImg(x.src)} alt={x.label} loading="lazy" decoding="async" draggable={false} /><figcaption><span className={i ? "tag on" : "tag"}>{i ? "After" : "Before"}</span>{x.label}</figcaption></figure>)}
+      </div>
+    );
+  if (b.t === "beats") {
+    let n = 0;
+    return (
+      <div className="cs-beats">
+        {b.chapters.map((c, ci) => (
+          <section key={c.title}>
+            <h5><span>Act {ci + 1}</span>{c.title}</h5>
+            <ol>{c.steps.map((st) => <li key={st}><span className="n">{++n}</span>{st}</li>)}</ol>
+          </section>
+        ))}
+      </div>
+    );
+  }
+  if (b.t === "script")
+    return (
+      <div className="cs-script">
+        {b.title && <p className="slug">{b.title}</p>}
+        {b.lines.map((l, i) => l.act
+          ? <p key={i} className="act">({l.act})</p>
+          : <p key={i} className="line">{l.who && <b>{l.who}</b>}<span>“{l.say}”</span></p>)}
+      </div>
+    );
+  if (b.t === "cards")
+    return <div className="cs-cards">{b.items.map((c, i) => <article key={c.title}><span className="n">{String(i + 1).padStart(2, "0")}</span><h4>{c.title}</h4><p><Rich text={c.text} /></p></article>)}</div>;
+  if (b.t === "sprints") {
+    const tpl = { gridTemplateColumns: `120px repeat(${b.weeks.length}, minmax(0, 1fr))` };
+    const at = (from: number, to: number, row = 1) => ({ gridColumn: `${from + 2} / ${to + 3}`, gridRow: row });
+    return (
+      <div className="cs-sprints">
+        <div className="scroll">
+          <div className="head" style={tpl}>
+            {b.phases.map((ph) => <span key={ph.name} className="phase" style={at(ph.from, ph.to, 1)}>{ph.name}</span>)}
+            {b.weeks.map((w, i) => <span key={w} className="week" style={at(i, i, 2)}>{w}</span>)}
+          </div>
+          {b.rows.map((r) => (
+            <div key={r.track} className="trow" style={tpl}>
+              <span className="track">{r.track}</span>
+              {r.bars.map((x) => <span key={x.text + x.from} className={`bar ${x.mine ? "mine" : ""}`} style={at(x.from, x.to, (x.line ?? 0) + 1)}>{x.text}</span>)}
+            </div>
+          ))}
+        </div>
+        {b.note && <p className="note">{b.note}</p>}
+      </div>
+    );
+  }
   if (b.t === "metrics")
     return (
       <div className="cs-metrics">
@@ -322,10 +392,10 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
           return <CaseBlockView key={i} b={b} flip={(b.t === "feature" && features++ % 2 === 1) || (b.t === "item" && n % 2 === 0)} n={n} />;
         });
         // The meta rail sits beside the opening text only; the first band/figure goes full width.
-        const split = si === 0 && meta.length > 0 ? s.blocks.findIndex((b) => !["h", "sub", "p"].includes(b.t)) : 0;
+        const split = si === 0 && meta.length > 0 ? s.blocks.findIndex((b) => !["h", "sub", "p", "links"].includes(b.t)) : 0;
         const introEnd = split === -1 ? blocks.length : split;
         return (
-          <section key={s.id} id={`sec-${p.slug}-${s.id}`} className={`cs-section ${s.white ? "white" : ""}`} data-i={si}>
+          <section key={s.id} id={`sec-${p.slug}-${s.id}`} className={`cs-section ${s.white ? "white" : ""} ${s.dark ? "dark" : ""}`} data-i={si}>
             <h2 className="cs-title">&lt;{s.label}/&gt;</h2>
             {introEnd > 0 && (
               <div className="cs-intro">
