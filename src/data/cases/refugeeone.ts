@@ -103,8 +103,8 @@ const clientChanges: CaseBlock = {
 const workflows: CaseBlock[] = [
   { t: "p", text: "Before drawing screens, we mapped every task for each role: sign up, post, review, approve, search, save. Each flow became a set of user stories on the board, and each set became a wireframe." },
   { t: "img", src: "refugeeone/flows.png", caption: "Low-fi wireframes grouped by role: sign-in, refugee, RefugeeOne staff and employer", w: 1040 },
-  { t: "p", text: "We started in grayscale, then built a small style guide on RefugeeOne's own orange and took every screen to high fidelity. Each version went in front of the client before it went into code." },
-  { t: "row", items: [{ src: "refugeeone/lofi-list.png", w: 200 }, { src: "refugeeone/lofi-detail.png", w: 200 }, { src: "refugeeone/ship-list.png", w: 200 }, { src: "refugeeone/ship-detail.png", w: 200 }], caption: "The job list and job page: low-fi wireframes, then the shipped screens" },
+  { t: "p", text: "We settled structure in grayscale first, then built a style guide on RefugeeOne's brand orange and took every screen to high fidelity." },
+  { t: "img", src: "refugeeone/lofi-hifi.png", caption: "From wireframe to shipped: the job list and the job page", w: 1000 },
 ];
 
 const screensRefugee: CaseBlock[] = [
@@ -223,8 +223,8 @@ const a: CaseStudy = {
     { id: "design", label: "Design", blocks: [
       { t: "h", text: "Workflows first" },
       ...workflows,
-      { t: "h", text: "What the client changed" },
-      { t: "p", text: "RefugeeOne reviewed the designs and the build at the end of every sprint. Their notes were small and specific, and they shaped the product:" },
+      { t: "h", text: "Refined in sprint reviews" },
+      { t: "p", text: "Every sprint ended with a review of the designs and the build. Small, specific refinements came out of each one:" },
       clientChanges,
     ] },
     { id: "product", label: "The Product", blocks: [
