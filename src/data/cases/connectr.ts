@@ -32,7 +32,7 @@ export const connectr: CaseStudy = {
       { t: "img", src: "connectr/07.png", caption: "Digital natives · College students", w: 600 },
       { t: "h", text: "Persona" },
       { t: "img", src: "connectr/08.png", caption: "Persona 1 — Chris, The Trader", w: 889 },
-      { t: "img", src: "connectr/09.png", caption: "Persona 2", w: 889 },
+      { t: "img", src: "connectr/09.png", caption: "Persona 2 — Melissa, The City Newbie", w: 889 },
     ] },
     { id: "design", label: "Design", blocks: [
       { t: "h", text: "Solution" },
@@ -70,18 +70,12 @@ export const connectr: CaseStudy = {
       { t: "h", text: "Desired User Outcome" },
       { t: "p", text: "The user will engage with the product several times a week in an effort to make new friends and connections. For example, a woman in her mid-20s has moved to a new city and is eager to build her roots but has limited social opportunities to meet people organically. She downloads the app and is grouped with others who share similar personalities and interests, whom she meets up with over the weekend. She continues using the app until she has met several people with whom she connects. Ultimately, existing users will act as an organic referral channel and drive new members to the app through word of mouth." },
       { t: "h", text: "Metrics of Success" },
-      { t: "list", plain: true, items: [
-        "**Number of registered users** (daily, weekly, monthly)",
-        "**Number of active users** (daily, weekly, monthly)",
-        "**Number of successful group matches**",
-        "**Group matching satisfaction rate**",
-        "Average time spent in app",
-        "User retention",
-        "Churn rate",
-        "App store ratings",
-        "User feedback",
-        "Cost per install",
-      ] },
+      { t: "metrics", primary: [
+        { title: "Registered users", note: "Daily, weekly, monthly" },
+        { title: "Active users", note: "Daily, weekly, monthly" },
+        { title: "Successful group matches" },
+        { title: "Group matching satisfaction" },
+      ], secondary: ["Time spent in app", "Retention", "Churn rate", "App Store ratings", "User feedback", "Cost per install"] },
     ] },
     { id: "retrospective", label: "Retrospective", blocks: [
       { t: "h", text: "Some Challenges" },
