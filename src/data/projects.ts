@@ -84,12 +84,13 @@ export const PROJECTS: Project[] = [
   },
   {
     slug: "refugeeone",
-    name: "RefugeeOne Job Finding App",
-    desc: "A job-finding app designed and built for a refugee resettlement agency",
+    name: "RefugeeOne Job Finding Website",
+    desc: "A job platform for refugees, employers and RefugeeOne, designed and built for a Chicago resettlement agency",
     year: "2023",
     cat: "DESIGN",
     group: "selected",
-    statusLabel: "CLIENT",
+    status: "award",
+    statusLabel: "AWARD",
   },
   // ---------- TECH STUFF ----------
   {

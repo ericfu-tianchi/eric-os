@@ -951,7 +951,7 @@ button { font-family: inherit; color: inherit; }
 .cs-intro { max-width: var(--cs-col); margin: 0 auto 8px; display: grid; grid-template-columns: minmax(0, 1fr) 200px; gap: 64px; }
 .cs-intro .cs-col { margin: 0; }
 .cs-meta h3 { margin: 0 0 10px; font-family: var(--font-display); font-weight: 700; font-size: 18px; color: var(--cs); }
-.cs-meta p { margin: 0 0 32px; font-family: var(--font-sans); font-size: 15px; line-height: 1.7; color: #181818; }
+.cs-meta p { margin: 0 0 32px; font-family: var(--font-sans); font-size: 15px; line-height: 1.7; color: #181818; white-space: pre-line; }
 @container (max-width: 760px) {
   .cs-intro { grid-template-columns: 1fr; gap: 8px; }
   .cs-meta { order: -1; display: flex; flex-wrap: wrap; gap: 0 40px; border-bottom: 1px solid var(--hairline); margin-bottom: 40px; }
@@ -976,6 +976,9 @@ button { font-family: inherit; color: inherit; }
 .cs-quote::before, .cs-quote::after { content: ""; display: block; width: 48px; height: 1px; margin: 0 auto; background: #494949; }
 .cs-quote::before { margin-bottom: 22px; }
 .cs-quote::after { margin-top: 22px; }
+.cs-quote .from { display: block; margin-bottom: 14px; font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--cs-band, var(--cs)); }
+.cs-quote.derived { margin-top: 28px; }
+.cs-quote.derived::before { width: 1px; height: 44px; margin-bottom: 16px; background: linear-gradient(#d6d6dc, var(--cs)); } /* a connector down from the cards above */
 
 .cs-list { list-style: disc; margin: 32px 0; padding: 28px 32px 28px 52px; background: var(--cs-tint); font-family: var(--font-sans); font-size: 16px; line-height: 1.7; color: #333; }
 .cs-list li + li { margin-top: 14px; }
@@ -1016,7 +1019,8 @@ button { font-family: inherit; color: inherit; }
 .cs-embed > div { position: relative; width: 100%; max-width: 1040px; margin: 0 auto; background: #f1f1f3; border-radius: 6px; overflow: hidden; }
 .cs-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .cs-embed figcaption { margin-top: 12px; text-align: center; font-family: var(--font-sans); font-size: 14px; line-height: 1.5; color: #777; }
-.cs-p a, .cs-list a, .cs-feature a, .cs-step a, .cs-quote a { color: var(--cs); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.cs-p a, .cs-list a, .cs-feature a, .cs-step a, .cs-quote a, .cs-stats a { color: inherit; font-weight: 600; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--cs) 55%, transparent); text-underline-offset: 4px; text-decoration-thickness: 1.5px; transition: color .15s, text-decoration-color .15s; }
+.cs-p a:hover, .cs-list a:hover, .cs-feature a:hover, .cs-step a:hover, .cs-quote a:hover, .cs-stats a:hover { color: var(--cs-band, var(--cs)); text-decoration-color: currentColor; }
 .cs-callout a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .cs-fig.wide { margin-inline: calc(-1 * min(80px, var(--cs-gutter))); }
 
@@ -1121,9 +1125,10 @@ button { font-family: inherit; color: inherit; }
 .cs-script .line { margin: 0 0 12px; }
 .cs-script .line b { display: block; color: var(--cs); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; font-size: 12.5px; }
 .cs-script .act { margin: 0 0 12px; color: #ff7a6b; font-style: italic; }
-.cs-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 26px 0 8px; }
+.cs-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 26px 0 8px; }
 .cs-cards article { padding: 22px 22px 24px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px var(--hairline); }
 .cs-cards .n { font: 800 22px var(--font-display); color: var(--cs-band, var(--cs)); }
+.cs-cards article > h4:first-child { margin-top: 0; }
 .cs-cards h4 { margin: 8px 0 10px; font: 700 18px/1.3 var(--font-display); color: #181818; text-wrap: balance; }
 .cs-cards p { margin: 0; font: 15px/1.7 var(--font-sans); color: #444; text-wrap: pretty; }
 .cs-sprints { margin: 26px calc(-1 * min(80px, var(--cs-gutter))) 36px; }
@@ -1153,6 +1158,55 @@ button { font-family: inherit; color: inherit; }
 .cs-metrics .also i { font-style: normal; padding: 4px 11px; border-radius: 999px; background: color-mix(in srgb, var(--cs) 9%, white); }
 @container (max-width: 560px) { .cs-metrics ol { grid-template-columns: 1fr; } }
 
+/* stats: 2–4 big numbers in one row (impact) */
+.cs-stats { margin: 40px 0 48px; }
+.cs-stats dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 28px; margin: 0; }
+.cs-stats dl > div { padding-top: 18px; border-top: 1px solid #d9d9de; }
+.cs-stats dt { font-family: var(--font-display); font-weight: 800; font-size: 36px; line-height: 1.2; color: var(--cs-band, var(--cs)); font-variant-numeric: tabular-nums; }
+.cs-stats dd { margin: 6px 0 0; font-family: var(--font-sans); font-size: 15px; line-height: 1.5; color: #494949; text-wrap: pretty; }
+.cs-stats .note { margin: 18px 0 0; font: 14px/1.5 var(--font-sans); color: #777; }
+
+/* timeline: dated milestones on a vertical line */
+.cs-timeline { list-style: none; margin: 32px 0 40px; padding: 0; }
+.cs-timeline li { position: relative; display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 28px; padding: 0 0 30px; }
+.cs-timeline li::before { content: ""; position: absolute; left: 131px; top: 10px; bottom: -10px; width: 1px; background: #dcdce1; }
+.cs-timeline li:last-child::before { display: none; }
+.cs-timeline li::after { content: ""; position: absolute; left: 127px; top: 7px; width: 9px; height: 9px; background: var(--cs); }
+.cs-timeline time { padding-top: 1px; text-align: right; font-family: var(--font-display); font-weight: 700; font-size: 14px; line-height: 1.4; color: var(--cs-band, var(--cs)); white-space: nowrap; }
+.cs-timeline li > div { padding-left: 16px; }
+.cs-timeline h4 { margin: 0 0 6px; font: 700 18px/1.4 var(--font-display); color: #181818; text-wrap: balance; }
+.cs-timeline p { margin: 0; font: 16px/1.7 var(--font-sans); color: #494949; text-wrap: pretty; }
+
+/* versus: what was asked for (quiet) vs what was built (accent) */
+.cs-versus { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin: 36px 0 44px; }
+.cs-versus section { padding: 26px 28px 24px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px var(--hairline); }
+.cs-versus .after { box-shadow: inset 0 0 0 2px var(--cs-band, var(--cs)); }
+.cs-versus .tag { display: inline-block; padding: 3px 9px; border-radius: 4px; background: #ececef; color: #555; font: 700 11px var(--font-display); letter-spacing: .08em; text-transform: uppercase; }
+.cs-versus .after .tag { background: var(--cs-band, var(--cs)); color: #fff; }
+.cs-versus h4 { margin: 14px 0 12px; font: 700 20px/1.35 var(--font-display); color: #181818; text-wrap: balance; }
+.cs-versus .before h4 { color: #6b6b72; }
+.cs-versus ul { list-style: disc; margin: 0; padding: 0 0 0 20px; font: 15.5px/1.65 var(--font-sans); color: #444; }
+.cs-versus .before ul { color: #6b6b72; }
+.cs-versus li + li { margin-top: 8px; }
+
+/* flow: one thing moving through people, left to right */
+.cs-flow { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); grid-auto-flow: column; gap: 14px; margin: 32px 0 40px; padding: 0; }
+.cs-flow li { position: relative; padding: 22px 20px 22px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px var(--hairline); }
+.cs-flow li:not(:last-child)::after { content: "→"; position: absolute; right: -12px; top: 22px; z-index: 1; color: #b5b5b5; font: 600 14px var(--font-sans); }
+.cs-flow .who { font: 700 11px var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--cs-band, var(--cs)); }
+.cs-flow h4 { margin: 10px 0 8px; font: 700 17px/1.35 var(--font-display); color: #181818; text-wrap: balance; }
+.cs-flow p { margin: 0; font: 14.5px/1.6 var(--font-sans); color: #555; text-wrap: pretty; }
+@container (max-width: 760px) {
+  .cs-versus { grid-template-columns: 1fr; }
+  .cs-flow { grid-auto-flow: row; grid-template-columns: 1fr; }
+  .cs-flow li:not(:last-child)::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: -15px; }
+  .cs-timeline li { grid-template-columns: 1fr; gap: 4px; padding-left: 24px; }
+  .cs-timeline li::before { left: 4px; }
+  .cs-timeline li::after { left: 0; }
+  .cs-timeline time { text-align: left; }
+  .cs-timeline li > div { padding-left: 0; }
+}
+
 /* item: numbered text + a visual, sides alternate (How I AI). Visual = an image, or the apps as big linked icons */
 .cs-item { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 48px; align-items: center; padding: 40px 0; border-top: 1px solid var(--hairline); }
 .cs-item:last-child { border-bottom: 1px solid var(--hairline); }
@@ -1163,6 +1217,7 @@ button { font-family: inherit; color: inherit; }
 .cs-item p { margin: 0 0 12px; font-family: var(--font-sans); font-size: 16px; line-height: 1.7; color: #494949; }
 .cs-item > img { display: block; width: 100%; height: auto; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 12px 32px rgba(0,0,0,0.1); }
 .cs-section:nth-of-type(even) .cs-item > img { box-shadow: none; } /* illustrations sit flat on the mist band */
+.cs-feature img.bare, .cs-item > img.bare { border-radius: 0; box-shadow: none; } /* device mockups bring their own frame and shadow */
 .cs-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
 .cs-chip { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 6px; border: 1px solid var(--hairline); border-radius: 999px; background: #fff; color: #181818; text-decoration: none; font-family: var(--font-sans); font-weight: 600; font-size: 14px; transition: border-color 0.15s, transform 0.15s; }
 .cs-chip img { width: 22px; height: 22px; }
