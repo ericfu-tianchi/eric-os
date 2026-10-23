@@ -6,14 +6,14 @@ export const subtension: CaseStudy = {
   // but deepens it to clear 3:1 for the 18px bold labels.
   accent: "#0fa83f",
   sub: "A 2D real-time-strategy submarine game, inspired by FTL (WolverineSoft, team of 40).",
-  role: "UX Designer · UI, tutorial and narrative flow",
-  timeline: "Sep – Dec 2022 · on Steam since Mar 2023",
+  role: "Game Designer",
+  timeline: "Sep – Dec 2022",
   tools: "Figma",
   sections: [
     { id: "overview", label: "Overview", blocks: [
       { t: "h", text: "Background" },
       { t: "p", text: "In Sep 2022 I joined WolverineSoft Studio, the University of Michigan's student game studio, to help make Subtension: a real-time-strategy submarine game inspired by FTL: Faster Than Light." },
-      { t: "p", text: "For four months I worked in a ==team of 40== as a UX designer, responsible for the ==UI layout, the tutorial and narrative flow, and the shop==. The game shipped on Steam in March 2023." },
+      { t: "p", text: "For four months I worked in a ==team of 40== as a game designer. Among other things, I worked on the ==UI layout, the tutorial flow, and the shop and inventory==. The game shipped on Steam in March 2023." },
       { t: "links", items: [
         { text: "Subtension on Steam", href: "https://store.steampowered.com/app/2251660/Subtension/", primary: true },
         { text: "Studio page on itch.io", href: "https://wolverinesoft-studio.itch.io/subtension" },
@@ -54,7 +54,8 @@ export const subtension: CaseStudy = {
         ],
         note: "Design tasks per squad, by week. Highlighted: the tracks I designed for." },
     ] },
-    { id: "contributions", label: "My Contributions", blocks: [
+    { id: "contributions", label: "Selected Work", blocks: [
+      { t: "p", text: "Three of the pieces I worked on, each shaped with the team through many rounds of playtests and reviews." },
       { t: "h", text: "UI Layout" },
       { t: "p", text: "A real-time strategy game puts a lot on one screen: two ships, every room and crew member, weapons charging, hull and shields. Before drawing anything, I studied how ==FTL and other strategy and story games== solve this, then tried layout after layout: where the enemy sits, where the controls live, what pausing looks like, and how story moments take over the screen without hiding the fight." },
       { t: "gallery", cols: 3, items: [
@@ -87,7 +88,7 @@ export const subtension: CaseStudy = {
       ] },
       { t: "compare", before: { src: "subtension/wf-tut-crew.png", label: "Tutorial wireframe: callouts point at each panel" }, after: { src: "subtension/game-tutorial.png", label: "Shipped: the Old Captain guides, the panel he talks about lights up" } },
 
-      { t: "h", text: "Shop & Inventory" },
+      { t: "h", text: "Shop and Inventory" },
       { t: "p", text: "A shop sounds standard, but players use it between every encounter, so small things add up. I worked out what is selected when the shop opens, how items look when hovered or chosen, how buying feels, and how the shop, the inventory and the submarine connect, so that upgrading your sub takes a few clicks and always tells you what just changed." },
       { t: "evolve", items: [
         { src: "subtension/buff1.png", label: "Pick an upgrade", note: "The first item is pre-selected; hover and selected states differ" },

@@ -1083,7 +1083,7 @@ button { font-family: inherit; color: inherit; }
 .cs-section.dark .cs-p { color: #c9d2cc; }
 .cs-section.dark .cs-embed > div, .cs-section.dark .cs-gallery img { box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 18px 50px rgba(0,0,0,.5); }
 .cs-section.dark .cs-gallery figcaption { color: #8fa197; }
-.cs-links { display: flex; flex-wrap: wrap; gap: 10px; margin: 6px 0 20px; }
+.cs-links { display: flex; flex-wrap: wrap; gap: 10px; margin: 30px 0 20px; }
 .cs-links a { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--hairline); background: #fff; color: #181818; text-decoration: none; font-family: var(--font-sans); font-weight: 600; font-size: 15px; transition: border-color .15s, transform .15s; }
 .cs-links a span { color: #8a8a8a; font-weight: 400; }
 .cs-links a.primary { background: #171a21; border-color: #171a21; color: #fff; }
