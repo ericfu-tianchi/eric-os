@@ -27,12 +27,12 @@ const links: CaseBlock = { t: "links", items: [
 ] };
 
 const built: CaseBlock = {
-  t: "p", text: "Over one semester, six of us from the University of Michigan School of Information built RefugeeOne a job platform with a workspace for each side: employers post jobs, RefugeeOne's staff review them, and refugees search on their own phones.",
+  t: "p", text: "Over one semester, six of us from the University of Michigan School of Information built RefugeeOne ==a job platform with a workspace for each side==: employers post jobs, RefugeeOne's staff review them, and refugees search on their own phones.",
 };
 
 const problem: CaseBlock = {
   t: "callout", label: "The problem",
-  text: "Refugees had no way to look for work on their own. Employers sent openings through a Google Form into a spreadsheet nobody could search or filter, often without pay, shift times or English requirements. So every job reached a refugee through a counselor, in hour-long one-on-ones spent reading through listings and checking each address on a map.",
+  text: "Refugees couldn't search for jobs on their own. Employers sent openings through a Google Form into a spreadsheet nobody could filter, often without pay or shift times, so RefugeeOne staff had to walk each refugee through them in hour-long one-on-ones.",
 };
 
 const results: CaseBlock = {
@@ -43,7 +43,7 @@ const results: CaseBlock = {
     { value: "75+", label: "employers posting directly" },
     { value: "80%", label: "more efficient job matching for staff" },
   ],
-  note: "Reported by RefugeeOne a year after launch. The project also won [second prize for Diversity, Equity & Inclusion at the 2023 UMSI Student Project Exposition](https://www.si.umich.edu/about-umsi/news/2023-umsi-student-project-exposition-award-recipients-announced).",
+  note: "Reported by RefugeeOne a year after launch. The project also won [second prize at the 2023 UMSI Student Project Exposition](https://www.si.umich.edu/about-umsi/news/2023-umsi-student-project-exposition-award-recipients-announced).",
 };
 
 const researchIntro: CaseBlock[] = [
@@ -54,7 +54,7 @@ const researchIntro: CaseBlock[] = [
 const findings: CaseBlock = {
   t: "cards", items: [
     { title: "The details that decide a job are the ones missing", text: "Pay, shift times, English level and the commute decide whether a job can work. Job boards rarely show them. One refugee quit a job that took ==two buses and a train==; another got home at 2 a.m. after the buses had stopped." },
-    { title: "Staff time is the bottleneck", text: "Each counselor carries about 30 clients, up to 50 in busy months. A one-on-one takes about an hour, and much of it goes to ==walking through listings one by one== and checking addresses on a map." },
+    { title: "Staff time is the bottleneck", text: "Each RefugeeOne job counselor carries about 30 clients, up to 50 in busy months. A one-on-one takes about an hour, and much of it goes to ==walking through listings one by one== and checking addresses on a map." },
     { title: "Refugees want to search on their own", text: "About 60% of clients can use an app without help, and staff wanted exactly that: ==show clients the tool, let them research, then come back together== to talk about what looked good." },
   ],
 };
@@ -202,6 +202,7 @@ const a: CaseStudy = {
       { t: "h", text: "What we built" },
       built,
       links,
+      { t: "img", src: "refugeeone/teaser.png", w: 1040 },
       { t: "h", text: "Results" },
       results,
     ] },
