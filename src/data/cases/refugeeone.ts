@@ -19,6 +19,7 @@ const meta = {
 const intro: CaseBlock[] = [
   { t: "p", text: "[RefugeeOne](https://www.refugeeone.org/) is a nonprofit resettlement agency in Chicago. It helps people who have fled war, terror and persecution build new lives of safety, dignity and self-reliance, and a steady job is where that starts." },
   { t: "p", text: "Families arrive with about three and a half months of government support, so the first job has to come fast, and it has to fit: ==pay that covers rent, a shift the bus can reach, a workplace where limited English is fine.==" },
+  { t: "p", text: "In winter 2023, six of us from the University of Michigan (Neha Kumari, Mike Wu, Ken DeBacker, Yipeng Lin, Annie Li and I) partnered with RefugeeOne to improve how refugees find work." },
 ];
 
 const links: CaseBlock = { t: "links", items: [
@@ -27,7 +28,7 @@ const links: CaseBlock = { t: "links", items: [
 ] };
 
 const built: CaseBlock = {
-  t: "p", text: "Over one semester, six of us from the University of Michigan School of Information built RefugeeOne ==a job platform with a workspace for each side==: employers post jobs, RefugeeOne's staff review them, and refugees search on their own phones. The team: Neha Kumari, Mike (Jiayao) Wu, Ken DeBacker, Yipeng Lin, Annie (Mingyu) Li and me.",
+  t: "p", text: "We built ==a job platform with a workspace for each side==: employers post jobs, RefugeeOne's staff review them, and refugees search on their own phones.",
 };
 
 const problem: CaseBlock = {
