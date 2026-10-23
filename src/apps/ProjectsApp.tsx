@@ -91,15 +91,15 @@ function Rich({ text }: { text: string }) {
   );
 }
 
-/** Accent bands carry white text: a light accent (Connectr's mint) is deepened until white reads on it (WCAG ≥ 3:1 for large text). */
+/** Accent bands carry white text: a light accent (Connectr's mint) is deepened until white reads on it (just enough for large white text; deeper looked heavy). */
 function bandColor(hex: string) {
   const ch = (i: number) => parseInt(hex.slice(1 + i * 2, 3 + i * 2), 16) / 255;
   const lin = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
   let [r, g, b] = [ch(0), ch(1), ch(2)];
   for (let k = 0; k < 20; k++) {
     const L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
-    if (1.05 / (L + 0.05) >= 3.6) break;
-    r *= 0.93; g *= 0.93; b *= 0.93;
+    if (1.05 / (L + 0.05) >= 2.6) break;
+    r *= 0.96; g *= 0.96; b *= 0.96;
   }
   return `rgb(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)})`;
 }
