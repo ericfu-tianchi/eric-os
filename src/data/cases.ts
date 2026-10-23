@@ -48,6 +48,7 @@ export type CaseBlock =
   | { t: "stats"; items: { value: string; label: string }[]; note?: string } // 2–4 big numbers in one row, a hairline above (impact)
   | { t: "timeline"; items: { date: string; title: string; text: string }[] } // dated milestones on a vertical line
   | { t: "versus"; before: { label: string; title: string; items: string[] }; after: { label: string; title: string; items: string[] } } // what was asked for vs what was built
+  | { t: "part"; title: string; text?: string } // a numbered divider that opens one part of a section (01 For refugees …)
   | { t: "flow"; items: { who: string; title: string; text: string }[] }; // one thing moving through people, left to right (who = the actor tag)
 export interface CaseSection { id: string; label: string; blocks: CaseBlock[]; white?: boolean; dark?: boolean } // dark: a near-black band (game screenshots) // white: keep the band white (white-background slides)
 export interface CaseStudy {
