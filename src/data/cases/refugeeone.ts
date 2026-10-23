@@ -77,7 +77,7 @@ const brief: CaseBlock = {
 };
 
 const briefWhy: CaseBlock[] = [
-  { t: "p", text: "**Why a website?** Refugees use phones; employers and staff use computers. One responsive website works on both, with nothing to install and almost nothing to host. RefugeeOne agreed at the kickoff." },
+  { t: "p", text: "**Why a website?** Refugees use phones; employers and staff use computers. One responsive website works on both, with nothing to install and almost nothing to host." },
   { t: "p", text: "**Why not translate it?** Icons on every field carry the meaning, and the browser's built-in translator covers the rest." },
 ];
 
@@ -86,7 +86,7 @@ const journey: CaseBlock = {
     { who: "Employer", title: "Posts a job", text: "Pay range, shift, English level and address are required, so the details refugees need are never left out." },
     { who: "RefugeeOne", title: "Reviews it", text: "Staff approve it, fix it, or send it back with a note. When an employer edits a job, it goes back in the queue." },
     { who: "Refugee", title: "Finds it", text: "Filters by pay, shift and language, sees how far it is from home, and saves it for the next meeting." },
-    { who: "RefugeeOne", title: "Helps apply", text: "Application steps stay with staff, who keep the relationship with each employer's HR team." },
+    { who: "RefugeeOne", title: "Helps apply", text: "Staff meet with the refugee, talk through the jobs they saved, and help them apply." },
   ],
 };
 
