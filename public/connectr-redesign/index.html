@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Connectr, redrawn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#18C9B5; --pink:#FF3B6B; --amber:#FFA53A; --red:#F0524A;
+  --ink:#16161A; --ink2:#55555F; --ink3:#8E8E98; --line:#ECE7E1;
+  --paper:#FBF8F4; --card:#FFFFFF;
+  --disp:"Bricolage Grotesque",ui-sans-serif,system-ui; --text:"Inter",ui-sans-serif,system-ui;
+}
+*{box-sizing:border-box;margin:0}
+body{background:#EFEAE3;font-family:var(--text);color:var(--ink);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1360px;margin:0 auto;padding:56px 32px 72px}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:40px}
+.brand{display:flex;align-items:center;gap:14px}
+.mark{width:44px;height:44px;border-radius:13px;background:#fff;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.mark i{border-radius:50%}
+.brand h1{font:800 34px/1 var(--disp);letter-spacing:-.02em}
+.brand p{font:500 14px var(--text);color:var(--ink2);margin-top:4px}
+.idea{max-width:520px;font:400 15px/1.55 var(--text);color:var(--ink2)}
+.idea b{color:var(--ink);font-weight:600}
+.row{display:flex;gap:40px;justify-content:center;flex-wrap:wrap}
+.col{display:flex;flex-direction:column;align-items:center;gap:18px}
+.cap{max-width:300px;text-align:center;font:400 13.5px/1.5 var(--text);color:var(--ink2)}
+.cap b{display:block;font:700 15px var(--disp);color:var(--ink);margin-bottom:2px}
+
+/* phone */
+.phone{width:390px;height:844px;border-radius:52px;background:var(--paper);position:relative;overflow:hidden;
+  box-shadow:0 0 0 10px #111,0 0 0 11px #2b2b2b,0 40px 80px -20px rgba(40,20,0,.35)}
+.sb{height:50px;display:flex;align-items:center;justify-content:space-between;padding:6px 30px 0 34px;font:600 15px var(--text)}
+.sb .r{display:flex;gap:6px;align-items:center}.sb svg{fill:var(--ink)}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:122px;height:35px;border-radius:20px;background:#000}
+.home-ind{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:var(--ink)}
+.seat{--c:var(--teal)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--c)}
+
+/* --- 1 · this week --- */
+.s1{padding:0 22px}
+.hd{display:flex;align-items:center;justify-content:space-between;margin:6px 0 18px}
+.hd h2{font:800 30px/1.05 var(--disp);letter-spacing:-.025em}
+.tokens{display:flex;gap:6px;align-items:center;font:600 12px var(--text);color:var(--ink2)}
+.tokens i{width:8px;height:8px;border-radius:50%;background:var(--ink)}.tokens i.off{background:#D9D3CB}
+.table{position:relative;background:var(--card);border-radius:30px;padding:18px;box-shadow:0 1px 0 var(--line),0 18px 40px -24px rgba(60,30,0,.25)}
+.tlabel{display:flex;justify-content:space-between;align-items:center;margin:2px 4px 14px;font:600 12px var(--text);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.tlabel span:last-child{color:var(--ink);letter-spacing:0;text-transform:none;font-size:13px}
+.seats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.st{position:relative;aspect-ratio:1/1.02;border-radius:22px;background:color-mix(in srgb,var(--c) 14%,#fff);padding:14px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.st .type{font:800 29px/1 var(--disp);letter-spacing:-.02em;color:color-mix(in srgb,var(--c) 70%,#000)}
+.st .who{font:600 13px var(--text);color:var(--ink)}
+.st .who small{display:block;font-weight:500;color:var(--ink2);margin-top:2px}
+.st .av{position:absolute;right:13px;top:15px;width:32px;height:32px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 3px var(--c)}
+.st .type{margin-top:2px}
+.st.open{background:transparent;border:2px dashed #DCD5CC;align-items:center;justify-content:center;text-align:center}
+.st.open .plus{width:48px;height:48px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font:500 28px/1 var(--text);margin-bottom:10px}
+.st.open b{font:700 15px var(--disp)}.st.open small{font:500 12px var(--text);color:var(--ink2);margin-top:3px}
+.because{margin:16px 2px 0;font:500 13px/1.5 var(--text);color:var(--ink2)}
+.because b{color:var(--ink);font-weight:600}
+.cta{margin-top:16px;height:56px;border-radius:18px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;font:700 16px var(--disp);letter-spacing:.01em}
+.cta .mini{display:grid;grid-template-columns:1fr 1fr;gap:2.5px;width:18px}.cta .mini i{width:7.75px;height:7.75px;border-radius:50%}
+.sub2{margin-top:10px;text-align:center;font:500 12.5px var(--text);color:var(--ink3)}
+.tab{position:absolute;left:0;right:0;bottom:0;height:84px;padding:10px 34px 0;display:flex;justify-content:space-between;align-items:flex-start;background:rgba(251,248,244,.92);backdrop-filter:blur(12px);border-top:1px solid var(--line)}
+.tab svg{width:26px;height:26px;fill:none;stroke:var(--ink3);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tab .on{width:46px;height:46px;margin-top:-8px;border-radius:16px;background:var(--ink);display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:11px}
+.tab .on i{border-radius:50%}
+
+/* --- 2 · group chat --- */
+.ch-hd{display:flex;align-items:center;gap:12px;padding:6px 18px 12px;border-bottom:1px solid var(--line)}
+.back{width:34px;height:34px;display:grid;place-items:center}.back svg{width:20px;stroke:var(--ink);stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.stack{display:flex}.stack img{width:30px;height:30px;border-radius:50%;object-fit:cover;border:2.5px solid var(--paper);margin-left:-9px}.stack img:first-child{margin-left:0}
+.stack .me{width:30px;height:30px;border-radius:50%;margin-left:-9px;border:2.5px solid var(--paper);background:var(--red);display:grid;place-items:center;font:700 11px var(--text);color:#fff}
+.gname{flex:1}.gname b{display:block;font:700 16px var(--disp)}.gname small{font:500 12px var(--text);color:var(--ink3)}
+.bond{display:flex;align-items:center;gap:10px;margin:12px 18px 6px;padding:10px 12px;border-radius:14px;background:#fff;font:600 12px var(--text);color:var(--ink2)}
+.bond .bar{flex:1;height:6px;border-radius:3px;background:#F0EBE4;overflow:hidden;display:flex;gap:2px}
+.bond .bar i{height:100%;flex:1;background:var(--c)}.bond .bar i.e{background:transparent}
+.msgs{padding:8px 16px 0;display:flex;flex-direction:column;gap:6px}
+.m{display:flex;gap:8px;align-items:flex-end;max-width:86%}
+.m img{width:26px;height:26px;border-radius:50%;object-fit:cover;flex:none}
+.m .b{padding:9px 13px;border-radius:18px 18px 18px 6px;background:#fff;font:400 14.5px/1.38 var(--text);box-shadow:inset 3px 0 0 var(--c)}
+.m .n{display:block;font:600 11px var(--text);color:color-mix(in srgb,var(--c) 75%,#000);margin-bottom:1px}
+.m.me{align-self:flex-end}.m.me .b{background:var(--ink);color:#fff;border-radius:18px 18px 6px 18px;box-shadow:none}
+.prompt{margin:10px 6px;padding:14px;border-radius:18px;background:linear-gradient(135deg,color-mix(in srgb,var(--amber) 22%,#fff),color-mix(in srgb,var(--pink) 14%,#fff));}
+.prompt small{display:flex;align-items:center;gap:6px;font:700 11px var(--text);letter-spacing:.06em;text-transform:uppercase;color:#B25A1E}
+.prompt p{margin-top:6px;font:700 17px/1.3 var(--disp);color:var(--ink)}
+.prompt .pills{display:flex;gap:6px;margin-top:10px}.prompt .pills span{padding:6px 10px;border-radius:999px;background:#fff;font:600 12px var(--text)}
+.comp{position:absolute;left:0;right:0;bottom:0;padding:10px 14px 34px;background:var(--paper);border-top:1px solid var(--line)}
+.sugg{display:flex;gap:6px;margin-bottom:10px;overflow:hidden}.sugg span{flex:none;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid var(--line);font:600 12px var(--text)}
+.field{display:flex;gap:8px;align-items:center}.field div{flex:1;height:42px;border-radius:21px;background:#fff;border:1px solid var(--line);padding:0 16px;display:flex;align-items:center;font:400 14px var(--text);color:var(--ink3)}
+.field b{width:42px;height:42px;border-radius:50%;background:var(--ink);display:grid;place-items:center}.field b svg{width:18px;stroke:#fff;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* --- 3 · profile --- */
+.pf{padding:0 18px}
+.pf-top{display:flex;justify-content:space-between;align-items:center;margin:4px 0 14px}
+.pcard{border-radius:30px;background:var(--card);overflow:hidden;box-shadow:0 18px 40px -24px rgba(60,30,0,.25)}
+.pc-hero{display:flex;gap:14px;padding:16px;align-items:center}
+.pc-hero img{width:78px;height:78px;border-radius:24px;object-fit:cover;object-position:50% 20%}
+.pc-hero b{display:block;font:800 22px/1.1 var(--disp);letter-spacing:-.01em}
+.pc-hero small{display:block;font:500 13px var(--text);color:var(--ink2);margin-top:3px}
+.match{margin-left:auto;text-align:right}.match b{font:800 28px/1 var(--disp);color:var(--teal)}.match small{font:600 11px var(--text);color:var(--ink3);text-transform:uppercase;letter-spacing:.06em}
+.mbti{margin:0 12px;padding:16px 16px 14px;border-radius:22px;background:color-mix(in srgb,var(--teal) 12%,#fff)}
+.mbti-h{display:flex;align-items:baseline;gap:10px}.mbti-h b{font:800 36px/1 var(--disp);letter-spacing:.02em;color:#0E8F81}.mbti-h span{font:700 15px var(--disp)}
+.mbti-w{margin-top:4px;font:500 12.5px var(--text);color:var(--ink2)}
+.axes{margin-top:12px;display:grid;gap:8px}
+.ax{display:grid;grid-template-columns:20px 1fr 20px;gap:8px;align-items:center;font:700 12px var(--text);color:var(--ink3)}
+.ax .t{height:8px;border-radius:4px;background:#fff;position:relative}.ax .t i{position:absolute;top:0;bottom:0;border-radius:4px;background:#0E8F81}
+.ax .on{color:#0E8F81}
+.why{padding:14px 16px 4px}
+.why h4{font:700 12px var(--text);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.why ul{list-style:none;padding:0;margin-top:8px;display:grid;gap:7px}
+.why li{display:flex;gap:9px;align-items:center;font:500 14px var(--text)}
+.why li i{width:22px;height:22px;border-radius:8px;flex:none;display:grid;place-items:center;font:700 11px var(--text);color:#fff}
+.quote{margin:8px 16px 0;padding:12px 0 2px;border-top:1px solid var(--line);font:500 14px/1.45 var(--text);color:var(--ink2)}
+.quote::before{content:"“";font:800 26px/0 var(--disp);color:var(--pink);vertical-align:-8px;margin-right:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px 16px}
+.chips span{padding:6px 11px;border-radius:999px;font:600 12.5px var(--text);background:#F5F1EC}
+.chips span.s{background:color-mix(in srgb,var(--amber) 25%,#fff)}
+.acts{position:absolute;left:18px;right:18px;bottom:34px;display:flex;gap:10px}
+.acts div{height:54px;border-radius:18px;display:flex;align-items:center;justify-content:center;gap:8px;font:700 15.5px var(--disp)}
+.acts .pass{width:54px;background:#fff;border:1px solid var(--line)}.acts .pass svg{width:20px;stroke:var(--ink2);stroke-width:2.2}
+.acts .hi{flex:1;background:#fff;border:1.5px solid var(--ink)}
+.acts .grp{flex:1.4;background:var(--ink);color:#fff}
+.notes{max-width:1080px;margin:56px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.notes h3{font:800 18px var(--disp);margin-bottom:6px}.notes p{font:400 14px/1.6 var(--text);color:var(--ink2)}
+@media(max-width:900px){.top{flex-direction:column;align-items:flex-start}.notes{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+
+<div class="top">
+  <div class="brand">
+    <div class="mark"><i style="background:var(--teal)"></i><i style="background:var(--pink)"></i><i style="background:var(--amber)"></i><i style="background:var(--red)"></i></div>
+    <div><h1>Connectr</h1><p>Design preview, redrawn</p></div>
+  </div>
+  <p class="idea">The logo already says the product: <b>four dots, one group</b>. So the whole UI is built on it. Every group is a <b>table for four</b>, every member owns one of the four colors, and the first thing you see about someone is <b>who they are</b> (type, values, interests), not a selfie.</p>
+</div>
+
+<div class="row">
+<!-- 1 -->
+<div class="col">
+<div class="phone">
+  <div class="island"></div>
+  <div class="sb"><span>9:41</span><span class="r"><svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg><svg width="25" height="12" viewBox="0 0 25 12"><rect x=".5" y=".5" width="21" height="11" rx="3.5" fill="none" stroke="#16161A" opacity=".4"/><rect x="2" y="2" width="16" height="8" rx="2"/><rect x="23" y="4" width="1.5" height="4" rx=".75" opacity=".4"/></svg></span></div>
+  <div class="s1">
+    <div class="hd"><h2>This week's<br>table</h2><span class="tokens"><i></i><i class="off"></i>1 of 2 left</span></div>
+    <div class="table">
+      <div class="tlabel"><span>Thursday · Ann Arbor</span><span>3 of 4 seats</span></div>
+      <div class="seats">
+        <div class="st seat" style="--c:var(--teal)"><img class="av" src="a0.jpg"><span class="type">ENFP</span><span class="who">Theo, 24<small>Film · Climbing</small></span></div>
+        <div class="st seat" style="--c:var(--pink)"><img class="av" src="a1.jpg"><span class="type">INFJ</span><span class="who">Jaime, 23<small>Painting · Hulu nights</small></span></div>
+        <div class="st seat" style="--c:var(--amber)"><img class="av" src="a2.jpg"><span class="type">ESTP</span><span class="who">Jordan, 25<small>Concerts · Beach</small></span></div>
+        <div class="st open"><span class="plus">+</span><b>Your seat</b><small>Matched on 3 things</small></div>
+      </div>
+      <p class="because">Grouped because you all said <b>live music</b>, <b>trying new food</b> and <b>being new in town</b>.</p>
+    </div>
+    <div class="cta"><span class="mini"><i style="background:var(--teal)"></i><i style="background:var(--pink)"></i><i style="background:var(--amber)"></i><i style="background:#fff"></i></span>Take the fourth seat</div>
+    <p class="sub2">Not feeling it? Skip and we'll find another table.</p>
+  </div>
+  <div class="tab">
+    <svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>
+    <div class="on"><i style="background:var(--teal)"></i><i style="background:var(--pink)"></i><i style="background:var(--amber)"></i><i style="background:var(--red)"></i></div>
+    <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 1 3.5 10.9V17h-7v-3.1A6 6 0 0 1 12 3zM9.5 20h5"/></svg>
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c1.4-3.5 4.2-5 7.5-5s6.1 1.5 7.5 5"/></svg>
+  </div>
+  <div class="home-ind"></div>
+</div>
+<p class="cap"><b>1 · The table, not the swipe</b>Your weekly group is a table of four colored seats. Three people are already in, shown by type and interests. You take the last seat.</p>
+</div>
+
+<!-- 2 -->
+<div class="col">
+<div class="phone">
+  <div class="island"></div>
+  <div class="sb"><span>9:41</span><span class="r"><svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg><svg width="25" height="12" viewBox="0 0 25 12"><rect x=".5" y=".5" width="21" height="11" rx="3.5" fill="none" stroke="#16161A" opacity=".4"/><rect x="2" y="2" width="16" height="8" rx="2"/><rect x="23" y="4" width="1.5" height="4" rx=".75" opacity=".4"/></svg></span></div>
+  <div class="ch-hd">
+    <span class="back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></span>
+    <span class="stack"><img src="a0.jpg"><img src="a1.jpg"><img src="a2.jpg"><span class="me">You</span></span>
+    <span class="gname"><b>Thursday Table</b><small>Theo, Jaime, Jordan and you</small></span>
+  </div>
+  <div class="bond seat"><span>Getting to know each other</span><span class="bar"><i style="--c:var(--teal)"></i><i style="--c:var(--pink)"></i><i style="--c:var(--amber)"></i><i class="e"></i></span><span>3/4</span></div>
+  <div class="msgs">
+    <div class="m seat" style="--c:var(--teal)"><img src="a0.jpg"><span class="b"><span class="n">Theo · ENFP</span>Hello everyone! How's everyone's day going?</span></div>
+    <div class="m seat" style="--c:var(--teal)"><img src="a0.jpg"><span class="b">Anyone going to Governor's Ball this year?</span></div>
+    <div class="m me"><span class="b">Hi Theo, nice to meet you! Ya girl is going 😜</span></div>
+    <div class="m seat" style="--c:var(--pink)"><img src="a1.jpg"><span class="b"><span class="n">Jaime · INFJ</span>Hi, I'm Jaime! What's Governor's Ball? 👀</span></div>
+    <div class="prompt"><small>✦ Table prompt</small><p>A plan you'd never do alone, but would with three new friends?</p><div class="pills"><span>🎶 A festival</span><span>🍜 Night market</span><span>🧗 Climbing</span></div></div>
+    <div class="m seat" style="--c:var(--amber)"><img src="a2.jpg"><span class="b"><span class="n">Jordan · ESTP</span>Festival. Obviously. I'm in 🙋</span></div>
+  </div>
+  <div class="comp">
+    <div class="sugg"><span>📍 Plan a meetup</span><span>🗳️ Start a poll</span><span>🎲 New prompt</span></div>
+    <div class="field"><div>Message the table</div><b><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></b></div>
+  </div>
+  <div class="home-ind"></div>
+</div>
+<p class="cap"><b>2 · A table that talks</b>Each voice keeps its seat color. A table prompt breaks the ice, and the conversation is always one tap from a real plan.</p>
+</div>
+
+<!-- 3 -->
+<div class="col">
+<div class="phone">
+  <div class="island"></div>
+  <div class="sb"><span>9:41</span><span class="r"><svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg><svg width="25" height="12" viewBox="0 0 25 12"><rect x=".5" y=".5" width="21" height="11" rx="3.5" fill="none" stroke="#16161A" opacity=".4"/><rect x="2" y="2" width="16" height="8" rx="2"/><rect x="23" y="4" width="1.5" height="4" rx=".75" opacity=".4"/></svg></span></div>
+  <div class="pf">
+    <div class="pf-top"><span class="back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></span><span style="font:600 13px var(--text);color:var(--ink3)">Discover · 3 of 8 today</span><span class="back"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1" fill="#16161A"/><circle cx="12" cy="12" r="1" fill="#16161A"/><circle cx="19" cy="12" r="1" fill="#16161A"/></svg></span></div>
+    <div class="pcard">
+      <div class="pc-hero"><img src="aly.jpg"><div><b>Aly, 29</b><small>Designer · Ann Arbor</small></div><div class="match"><b>78%</b><small>Match</small></div></div>
+      <div class="mbti">
+        <div class="mbti-h"><b>ESTJ</b><span>The Executive</span></div>
+        <p class="mbti-w">Honest, dedicated, organized. The one who books the table.</p>
+        <div class="axes">
+          <div class="ax"><span class="on">E</span><span class="t"><i style="left:0;width:72%"></i></span><span>I</span></div>
+          <div class="ax"><span class="on">S</span><span class="t"><i style="left:0;width:58%"></i></span><span>N</span></div>
+          <div class="ax"><span class="on">T</span><span class="t"><i style="left:0;width:64%"></i></span><span>F</span></div>
+          <div class="ax"><span class="on">J</span><span class="t"><i style="left:0;width:81%"></i></span><span>P</span></div>
+        </div>
+      </div>
+      <div class="why"><h4>Why you'd click</h4><ul>
+        <li><i style="background:var(--teal)">1</i>You're both passion-driven</li>
+        <li><i style="background:var(--pink)">2</i>Both welcome big life changes</li>
+        <li><i style="background:var(--amber)">3</i>You both love painting and design</li>
+      </ul></div>
+      <p class="quote">I'm a U-M student into sports and music. Anyone wanna hang out?</p>
+      <div class="chips"><span class="s">Painting</span><span class="s">Design</span><span class="s">Concerts</span><span>Guitar</span><span>Beach days</span><span>Hulu</span></div>
+    </div>
+  </div>
+  <div class="acts"><div class="pass"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></div><div class="hi">Say hi</div><div class="grp">Invite to my table</div></div>
+  <div class="home-ind"></div>
+</div>
+<p class="cap"><b>3 · Personality first</b>The photo is small; the type is big. Four sliders say more than a selfie, and the three reasons explain the match in plain words.</p>
+</div>
+</div>
+
+<div class="notes">
+  <div><h3>Why a table</h3><p>The research said 1-on-1 chats are awkward and swiping feels like dating. A table of four is the product's whole thesis, so the main screen is literally that: four seats, one empty.</p></div>
+  <div><h3>Color = person</h3><p>The four logo dots become four seat colors. In the group, a color tells you who's talking faster than a name, and the brand shows up in every screen without a single logo.</p></div>
+  <div><h3>Warm, not dating</h3><p>Paper-white background, ink-black actions and soft tints instead of saturated gradients and full-bleed selfies: it should feel like a café table, not a nightclub.</p></div>
+</div>
+</div></body></html>
