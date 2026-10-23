@@ -228,7 +228,7 @@ const a: CaseStudy = {
       handoff,
     ] },
     { id: "reflection", label: "Reflection", blocks: [
-      { t: "h", text: "Many hats", icon: "hat" },
+      { t: "h", text: "🎩 Many hats" },
       { t: "p", text: "On a team of six, I covered four roles at once, and found I enjoy moving between them." },
       hats,
       { t: "h", text: "What I took away" },
