@@ -12,7 +12,6 @@ const meta = {
   role: "Product Designer\nFrontend Developer\nScrum Master",
   timeline: "Jan – May 2023",
   tools: "Figma · Jira\nReact · Tailwind · Firebase",
-  team: "Neha Kumari\nMike (Jiayao) Wu\nKen DeBacker\nYipeng Lin\nAnnie (Mingyu) Li",
 };
 
 // ---------- shared pieces ----------
@@ -28,7 +27,7 @@ const links: CaseBlock = { t: "links", items: [
 ] };
 
 const built: CaseBlock = {
-  t: "p", text: "Over one semester, six of us from the University of Michigan School of Information built RefugeeOne ==a job platform with a workspace for each side==: employers post jobs, RefugeeOne's staff review them, and refugees search on their own phones.",
+  t: "p", text: "Over one semester, six of us from the University of Michigan School of Information built RefugeeOne ==a job platform with a workspace for each side==: employers post jobs, RefugeeOne's staff review them, and refugees search on their own phones. The team: Neha Kumari, Mike (Jiayao) Wu, Ken DeBacker, Yipeng Lin, Annie (Mingyu) Li and me.",
 };
 
 const problem: CaseBlock = {
