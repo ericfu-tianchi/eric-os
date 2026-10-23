@@ -4,8 +4,6 @@ import type { CaseBlock, CaseStudy } from "../cases";
  * RefugeeOne job platform (SI 699, winter 2023). Sources: the team's Drive (proposal, client notes,
  * midterm/final decks, poster, handoff), the SI 501 affinity wall, the repo (RefugeeOne699/refugee-one)
  * and the outcome numbers on Eric's resume. Screens are the shipped app, run locally with sample data.
- *
- * Banner options while reviewing: ?rh=1|2|3 (light), 4 (dark).
  */
 
 const meta = {
@@ -258,5 +256,4 @@ const a: CaseStudy = {
   ],
 };
 
-const rh = typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("rh");
-export const refugeeone: CaseStudy = rh === "2" || rh === "3" || rh === "4" ? { ...a, hero: `refugeeone-${rh}` } : a;
+export const refugeeone: CaseStudy = a;
