@@ -5,7 +5,7 @@ import type { CaseBlock, CaseStudy } from "../cases";
  * midterm/final decks, poster, handoff), the SI 501 affinity wall, the repo (RefugeeOne699/refugee-one)
  * and the outcome numbers on Eric's resume. Screens are the shipped app, run locally with sample data.
  *
- * Three narrative structures share the same facts and screens; pick one with ?rv=a|b|c while reviewing.
+ * Banner options while reviewing: ?rh=1|2|3.
  */
 
 const meta = {
@@ -18,11 +18,14 @@ const meta = {
 
 // ---------- shared pieces ----------
 
-const hook: CaseBlock[] = [
-  { t: "p", text: "[RefugeeOne](https://www.refugeeone.org/) resettles refugees in Chicago. A family arrives with about three and a half months of government support, so the first job has to come fast, and it has to actually work: ==pay that covers rent, a shift the bus can reach, a workplace where limited English is fine.==" },
+const intro: CaseBlock[] = [
+  { t: "p", text: "[RefugeeOne](https://www.refugeeone.org/) is a nonprofit resettlement agency in Chicago. It helps people who have fled war, terror and persecution build new lives of safety, dignity and self-reliance, and a steady job is where that starts." },
+  { t: "p", text: "Families arrive with about three and a half months of government support, so the first job has to come fast, and it has to fit: ==pay that covers rent, a shift the bus can reach, a workplace where limited English is fine.==" },
 ];
 
-const team = "In winter 2023, six of us from the University of Michigan School of Information built RefugeeOne a job platform. Employers post jobs, RefugeeOne's staff review them, and refugees find them on their own phones. I designed the product, wrote a good part of the frontend, ran our Scrum, and led every demo.";
+const built: CaseBlock = {
+  t: "p", text: "Over one semester, six of us from the University of Michigan School of Information built RefugeeOne a job platform with a workspace for each side: employers post jobs, RefugeeOne's staff review them, and refugees search on their own phones.",
+};
 
 const problem: CaseBlock = {
   t: "callout", label: "The problem",
@@ -187,16 +190,17 @@ const closing: CaseBlock[] = [
   ] },
 ];
 
-// ---------- A · The classic arc: research → rethink → design → build → impact ----------
+// ---------- research → rethink the brief → design → product → build → reflection ----------
 
 const a: CaseStudy = {
   ...meta,
   sections: [
     { id: "overview", label: "Overview", blocks: [
       { t: "h", text: "Background" },
-      ...hook,
-      { t: "p", text: team },
+      ...intro,
       problem,
+      { t: "h", text: "What we built" },
+      built,
       { t: "h", text: "Results" },
       results,
     ] },
@@ -251,112 +255,5 @@ const a: CaseStudy = {
   ],
 };
 
-// ---------- B · One job, three sides: the system first, then why and how ----------
-
-const b: CaseStudy = {
-  ...meta,
-  hero: "refugeeone-2",
-  sections: [
-    { id: "overview", label: "Overview", blocks: [
-      { t: "h", text: "Background" },
-      ...hook,
-      { t: "p", text: team },
-      { t: "h", text: "Results" },
-      results,
-      problem,
-    ] },
-    { id: "system", label: "One Job, Three Sides", blocks: [
-      { t: "p", text: "The product is easiest to understand by following a single job from the employer who posts it to the refugee who finds it. Screens are from the shipped app, shown with sample data." },
-      journey,
-      { t: "h", text: "1 · The employer posts it" },
-      ...screensEmployer.filter((x) => x.t !== "sub"),
-      { t: "h", text: "2 · RefugeeOne reviews it" },
-      ...screensStaff,
-      { t: "h", text: "3 · A refugee finds it" },
-      ...screensRefugee,
-      demo,
-    ] },
-    { id: "why", label: "Why It Works This Way", blocks: [
-      { t: "h", text: "What research told us" },
-      ...researchIntro,
-      findings,
-      problemStatement,
-      { t: "h", text: "Not the app we were asked for" },
-      brief,
-      ...briefWhy,
-      { t: "h", text: "Shaped with the client" },
-      ...workflows,
-      { t: "p", text: "RefugeeOne reviewed the designs and the build at the end of every sprint. Their notes were small and specific, and they shaped the product:" },
-      clientChanges,
-    ] },
-    { id: "shipping", label: "How We Shipped", blocks: [
-      { t: "h", text: "Agile, with the client in the room" },
-      ...agile,
-      milestones,
-      { t: "h", text: "The stack" },
-      stack,
-      ...myCode,
-      { t: "h", text: "Handoff" },
-      handoff,
-    ] },
-    { id: "reflection", label: "Reflection", blocks: [
-      { t: "h", text: "Many hats" },
-      hats,
-      { t: "h", text: "What I took away" },
-      ...lessons,
-      ...closing,
-    ] },
-  ],
-};
-
-// ---------- C · Five decisions: the PM's view of the same project ----------
-
-const c: CaseStudy = {
-  ...meta,
-  sections: [
-    { id: "overview", label: "Overview", blocks: [
-      { t: "h", text: "Background" },
-      ...hook,
-      { t: "p", text: team },
-      problem,
-      { t: "h", text: "Results" },
-      results,
-    ] },
-    { id: "research", label: "The Problem", blocks: [
-      ...researchIntro,
-      findings,
-      problemStatement,
-    ] },
-    { id: "decisions", label: "Five Decisions", blocks: [
-      { t: "p", text: "Five calls shaped the product. Each one came from the research, and each was tested with RefugeeOne before it went into code." },
-      { t: "item", title: "A website, not an app", src: "refugeeone/system.png", bare: true, text: "RefugeeOne asked for a smartphone app for refugees. But three kinds of people touch a job listing, and two of them work at computers. One responsive website gave each role its own workspace from a single codebase, with nothing to install and almost nothing to host.\n\nThe client agreed at the kickoff: a responsive website is fine." },
-      { t: "item", title: "Make the deciding details required", src: "refugeeone/zoom-form.png", bare: true, text: "Job boards leave out exactly what refugees need. Our form doesn't let an employer post without a pay range, a shift, an English level and a real address.\n\nThat is what lets every job be filtered by pay, shift, English level and distance." },
-      { t: "item", title: "Keep RefugeeOne in the loop", src: "refugeeone/zoom-reject.png", bare: true, text: "Staff create refugee accounts, approve each employer and review every job. An employer's edit sends a job back for review, and a rejection carries a note.\n\nApplication steps stay with staff too, because their relationships with employers' HR teams help refugees get hired." },
-      { t: "item", title: "Filters built around a refugee's day", src: "refugeeone/client-filter.png", bare: true, text: "Pay floor, English level, 22 languages, a shift window and miles from home. These were the questions staff asked in every one-on-one, turned into controls a refugee can set on their own.\n\nI designed and built this part, from the panel to the logic behind it." },
-      { t: "item", title: "Icons and plain words over translation", src: "refugeeone/client-cards.png", bare: true, text: "Instead of translating the product ourselves, we put an icon on every field, kept every label short and plain, and showed staff how the browser translates the whole site into Kinyarwanda, Arabic or Ukrainian." },
-      demo,
-    ] },
-    { id: "shipping", label: "Shipping It", blocks: [
-      { t: "h", text: "Agile, with the client in the room" },
-      ...agile,
-      milestones,
-      { t: "h", text: "What changed in review" },
-      clientChanges,
-      { t: "h", text: "The stack" },
-      stack,
-      ...myCode,
-      handoff,
-    ] },
-    { id: "reflection", label: "Reflection", blocks: [
-      { t: "h", text: "Many hats" },
-      hats,
-      { t: "h", text: "What I took away" },
-      ...lessons,
-      ...closing,
-    ] },
-  ],
-};
-
-const VARIANTS = { a, b, c };
-const pick = typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("rv");
-export const refugeeone: CaseStudy = VARIANTS[pick as keyof typeof VARIANTS] ?? a;
+const rh = typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("rh");
+export const refugeeone: CaseStudy = rh === "2" || rh === "3" ? { ...a, hero: `refugeeone-${rh}` } : a;
