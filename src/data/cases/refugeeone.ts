@@ -77,8 +77,8 @@ const brief: CaseBlock = {
 };
 
 const briefWhy: CaseBlock[] = [
-  { t: "p", text: "Refugees mostly have phones; employers and staff work at computers. One responsive website served all three from a single codebase, needed nothing installed, stayed close to free to host, and let RefugeeOne decide who gets in. When we put it to the client at the kickoff, the answer was simple: ==a responsive website is fine.==" },
-  { t: "p", text: "Translation followed the same logic. Rather than translate the product ourselves, we put an icon on every field and showed staff how the browser's built-in translation turns the whole site into Kinyarwanda, Arabic or Ukrainian. RefugeeOne's staff speak more than 30 languages between them and could walk clients through it." },
+  { t: "p", text: "**Why a website?** Refugees use phones; employers and staff use computers. One responsive website works on both, with nothing to install and almost nothing to host. RefugeeOne agreed at the kickoff." },
+  { t: "p", text: "**Why not translate it?** Icons on every field carry the meaning, and the browser's built-in translator covers the rest." },
 ];
 
 const journey: CaseBlock = {
