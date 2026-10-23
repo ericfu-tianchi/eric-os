@@ -1514,7 +1514,9 @@ button { font-family: inherit; color: inherit; }
 .finder-side-list { display: grid; gap: 1px; }
 .finder-pixel-icon { display: block; flex: none; object-fit: contain; image-rendering: pixelated; user-select: none; }
 .finder-thumb-icon { display: block; flex: none; object-fit: contain; user-select: none; }
-.finder-content { min-width: 0; flex: 1; padding: 25px 28px 30px; overflow: auto; }
+.finder-content { position: relative; min-width: 0; flex: 1; padding: 25px 28px 30px; overflow: auto; user-select: none; -webkit-user-select: none; }
+.finder-icon-item.dragging { cursor: grabbing; }
+.desktop-context hr { border: 0; border-top: 1px solid var(--menu-line); margin: 5px 6px; }
 .finder-icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(116px, 1fr)); gap: 20px 12px; align-content: start; }
 .finder-icon-item {
   min-height: 136px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 7px;
