@@ -970,7 +970,7 @@ button { font-family: inherit; color: inherit; }
 .cs mark { background: var(--cs-mark); color: inherit; padding: 1px 0; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 .cs b { font-weight: 700; }
 
-.cs-callout { margin: 56px calc(-1 * min(64px, var(--cs-gutter))); padding: 40px clamp(24px, 6cqi, 64px); background: var(--cs); color: #fff; }
+.cs-callout { margin: 56px calc(-1 * min(64px, var(--cs-gutter))); padding: 40px clamp(24px, 6cqi, 64px); background: var(--cs-band, var(--cs)); color: #fff; }
 .cs-callout-label { margin: 0 0 20px; font-family: var(--font-display); font-weight: 700; font-size: 18px; text-transform: uppercase; }
 .cs-callout p:last-child { margin: 0; font-family: var(--font-sans); font-size: 19px; line-height: 1.7; }
 .cs-callout mark { background: rgba(0, 0, 0, 0.22); color: #fff; }
@@ -1044,14 +1044,17 @@ button { font-family: inherit; color: inherit; }
    pink Montserrat heads, rounded grey speech bubbles with tails, emoji faces; tinted panels with a round icon per feature. */
 .cs-chat { margin: 56px 0; display: grid; gap: 34px; }
 .cs-chat .q, .cs-chat .a { display: flex; align-items: flex-start; gap: 22px; }
-.cs-chat .face { flex: none; font-size: 54px; line-height: 1; margin-top: -6px; }
+.cs-chat .face { flex: none; font-size: 54px; line-height: 1; margin-top: 8px; } /* the face sits level with the tail */
 .cs-chat .bubble { position: relative; margin: 0; border: 2.5px solid #c9c9c9; border-radius: 22px; background: #fff; }
 .cs-chat .q .bubble { padding: 18px 26px; max-width: 560px; font-family: var(--font-sans); font-weight: 600; font-size: 16px; line-height: 1.75; color: #181818; }
-.cs-chat .q .bubble::before, .cs-chat .a .bubble::after { content: ""; position: absolute; top: 22px; width: 18px; height: 18px; background: #fff; border: 2.5px solid #c9c9c9; border-width: 0 0 2.5px 2.5px; }
-.cs-chat .q .bubble::before { left: -11px; transform: rotate(45deg) skew(12deg, 12deg); }
+/* tails: a small triangle drawn twice (grey outline, white fill 3px inside), so the border runs straight into it */
+.cs-chat .bubble::before, .cs-chat .bubble::after { content: ""; position: absolute; top: 24px; width: 0; height: 0; border-style: solid; }
+.cs-chat .q .bubble::before { left: -16px; border-width: 11px 16px 11px 0; border-color: transparent #c9c9c9 transparent transparent; }
+.cs-chat .q .bubble::after { left: -12.3px; top: 26.6px; border-width: 8.4px 12.3px 8.4px 0; border-color: transparent #fff transparent transparent; }
 .cs-chat .a { justify-content: flex-end; }
 .cs-chat .a .bubble { flex: 1; max-width: 620px; padding: 30px 40px 34px; margin-left: 76px; }
-.cs-chat .a .bubble::after { right: -11px; transform: rotate(-135deg) skew(12deg, 12deg); }
+.cs-chat .a .bubble::before { right: -16px; border-width: 11px 0 11px 16px; border-color: transparent transparent transparent #c9c9c9; }
+.cs-chat .a .bubble::after { right: -12.3px; top: 26.6px; border-width: 8.4px 0 8.4px 12.3px; border-color: transparent transparent transparent #fff; }
 .cs-chat .a h4 { margin: 0 0 14px; font-family: var(--font-display); font-weight: 700; font-size: 26px; line-height: 1.3; color: #f63168; text-wrap: balance; }
 .cs-chat .a div + div h4 { margin-top: 32px; }
 .cs-chat .a p { margin: 0; font-family: var(--font-sans); font-weight: 600; font-size: 16px; line-height: 2; color: #181818; text-wrap: pretty; }
@@ -1072,6 +1075,17 @@ button { font-family: inherit; color: inherit; }
   .cs-panels .ic { margin: 0 0 -28px 20px; width: 56px; height: 56px; position: relative; z-index: 1; }
   .cs-panels .body { padding: 40px 22px 26px; }
 }
+
+/* metrics: four key numbers as cards, the rest in one quiet line */
+.cs-metrics ol { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.cs-metrics li { display: grid; grid-template-columns: 30px 1fr; column-gap: 12px; align-items: baseline; align-content: center; min-height: 86px; padding: 18px 20px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px var(--hairline); }
+.cs-metrics .n { grid-row: span 2; font-variant-numeric: tabular-nums; font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--cs-band, var(--cs)); }
+.cs-metrics b { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: #181818; }
+.cs-metrics small { font-family: var(--font-sans); font-size: 14px; color: #777; }
+.cs-metrics .also { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 18px 0 0; font-family: var(--font-sans); font-size: 14.5px; color: #494949; }
+.cs-metrics .also span { margin-right: 4px; font-family: var(--font-display); font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #8a8a8a; }
+.cs-metrics .also i { font-style: normal; padding: 4px 11px; border-radius: 999px; background: color-mix(in srgb, var(--cs) 9%, white); }
+@container (max-width: 560px) { .cs-metrics ol { grid-template-columns: 1fr; } }
 
 /* item: numbered text + a visual, sides alternate (How I AI). Visual = an image, or the apps as big linked icons */
 .cs-item { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 48px; align-items: center; padding: 40px 0; border-top: 1px solid var(--hairline); }
@@ -1101,7 +1115,8 @@ button { font-family: inherit; color: inherit; }
   .cs-apps { gap: 10px; padding: 24px 16px; }
 }
 /* no lone word on a line of its own: headings balance, body text avoids orphans */
-.cs-title, .cs-sub, .cs-step h4, .cs-feature h4, .cs-item h4, .cs-callout p { text-wrap: balance; }
+.cs-title, .cs-sub, .cs-step h4, .cs-feature h4, .cs-item h4 { text-wrap: balance; }
+.cs-callout p { text-wrap: pretty; } /* balance shortened every line of a long band; pretty only avoids a lone last word */
 .cs-p, .cs-step p, .cs-feature p, .cs-item p, .cs-list li { text-wrap: pretty; }
 .cs-pill { display: inline-block; margin: 16px 0 24px; padding: 10px 26px; border-radius: 999px; background: var(--cs); color: #fff; text-decoration: none; font-family: var(--font-sans); font-weight: 600; font-size: 17px; letter-spacing: 0.04em; transition: filter 0.15s; }
 .cs-pill:hover { filter: brightness(1.08); }

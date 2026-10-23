@@ -91,11 +91,27 @@ function Rich({ text }: { text: string }) {
   );
 }
 
+/** Accent bands carry white text: a light accent (Connectr's mint) is deepened until white reads on it (WCAG ≥ 3:1 for large text). */
+function bandColor(hex: string) {
+  const ch = (i: number) => parseInt(hex.slice(1 + i * 2, 3 + i * 2), 16) / 255;
+  const lin = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  let [r, g, b] = [ch(0), ch(1), ch(2)];
+  for (let k = 0; k < 20; k++) {
+    const L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+    if (1.05 / (L + 0.05) >= 3.6) break;
+    r *= 0.93; g *= 0.93; b *= 0.93;
+  }
+  return `rgb(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)})`;
+}
+
 /** Round white glyphs for the old-site feature panels (Connectr), drawn to match the originals. */
 const PANEL_ICON: Record<"mbti" | "group" | "puzzle" | "compass", React.ReactNode> = {
-  mbti: <svg viewBox="0 0 40 40"><path d="M14 33v-5.5c-3.6-2.2-5.6-5.6-5.6-9.8C8.4 10.9 13.6 6 20.3 6c6.5 0 11.3 4.5 11.3 10.7 0 1.4.9 2.4 1.9 3.9.4.6.1 1.3-.6 1.4l-1.4.3v3.6c0 1.6-1.3 2.9-2.9 2.9h-2.4V33z" fill="#fff" /><text x="20" y="19" textAnchor="middle" fontSize="5.6" fontWeight="700" fill="var(--pc)" fontFamily="Montserrat, sans-serif">MBTI</text><ellipse cx="20" cy="17" rx="8.2" ry="5.2" fill="none" stroke="var(--pc)" strokeWidth="1.3" /></svg>,
-  group: <svg viewBox="0 0 40 40"><path d="M11 9h18a3 3 0 0 1 3 3v15a3 3 0 0 1-3 3H15l-5 3.5V12a3 3 0 0 1 1-3z" fill="#fff" />{[[16.5, 16.5], [23.5, 16.5], [16.5, 23], [23.5, 23]].map(([x, y]) => <circle key={`${x}${y}`} cx={x} cy={y} r="2.7" fill="var(--pc)" />)}</svg>,
-  puzzle: <svg viewBox="0 0 40 40" fill="#fff"><path d="M9 9h9.5v3.2a2.6 2.6 0 1 0 3 0V9H31v9.5h-3.2a2.6 2.6 0 1 0 0 3H31V31h-9.5v-3.2a2.6 2.6 0 1 0-3 0V31H9v-9.5h3.2a2.6 2.6 0 1 0 0-3H9z" /><path d="M20 9v22M9 20h22" stroke="var(--pc)" strokeWidth="1.4" /></svg>,
+  // a head in profile with "MBTI" on the brain
+  mbti: <svg viewBox="0 0 40 40"><path d="M14.5 33v-5.2c-3.4-2.1-5.4-5.5-5.4-9.6C9.1 11.3 14.2 6.5 20.6 6.5c6.3 0 11 4.4 11 10.4 0 1.3.8 2.3 1.8 3.8.4.6.1 1.3-.6 1.4l-1.3.3v3.5c0 1.6-1.3 2.9-2.9 2.9h-2.4V33z" fill="#fff" /><text x="19.8" y="19.3" textAnchor="middle" fontSize="6" fontWeight="800" fill="var(--pc)" fontFamily="Montserrat, sans-serif">MBTI</text></svg>,
+  // a chat bubble (even corners, tail at the lower left) holding four people
+  group: <svg viewBox="0 0 40 40"><path d="M13 9.5h14a3.5 3.5 0 0 1 3.5 3.5v11a3.5 3.5 0 0 1-3.5 3.5H15.5L10 31.5V13a3.5 3.5 0 0 1 3-3.5z" fill="#fff" />{[[16.6, 15.3], [23.4, 15.3], [16.6, 21.9], [23.4, 21.9]].map(([x, y]) => <circle key={`${x}${y}`} cx={x} cy={y} r="2.5" fill="var(--pc)" />)}</svg>,
+  // one classic jigsaw piece: knobs out on the top and right, sockets on the left and bottom
+  puzzle: <svg viewBox="0 0 40 40"><path d="M10 13h6.2a3.6 3.6 0 1 1 6.4 0H29v6.4a3.6 3.6 0 1 1 0 6.4V31h-6.4a3.6 3.6 0 1 0-6.4 0H10v-5.2a3.6 3.6 0 1 0 0-6.4z" fill="#fff" /></svg>,
   compass: <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="12.5" fill="#fff" /><path d="m25.5 14.5-3.6 7.4-7.4 3.6 3.6-7.4z" fill="var(--pc)" /><circle cx="20" cy="20" r="1.6" fill="#fff" /></svg>,
 };
 
@@ -164,6 +180,13 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
         </div>
         {b.caption && <figcaption>{b.caption}</figcaption>}
       </figure>
+    );
+  if (b.t === "metrics")
+    return (
+      <div className="cs-metrics">
+        <ol>{b.primary.map((m, i) => <li key={m.title}><span className="n">{String(i + 1).padStart(2, "0")}</span><b>{m.title}</b>{m.note && <small>{m.note}</small>}</li>)}</ol>
+        <p className="also"><span>Also tracked</span>{b.secondary.map((x) => <i key={x}>{x}</i>)}</p>
+      </div>
     );
   if (b.t === "chat")
     return (
@@ -277,7 +300,7 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
   const meta = [["My Role", cs.role], ["Timeline", cs.timeline], ["Tools", cs.tools]].filter(([, v]) => v);
 
   return (
-    <div className="cs" ref={rootRef} style={{ "--cs": cs.accent } as React.CSSProperties}>
+    <div className="cs" ref={rootRef} style={{ "--cs": cs.accent, "--cs-band": bandColor(cs.accent) } as React.CSSProperties}>
       {hero ? (
         <img className="cs-hero" src={hero} alt={p.name} draggable={false} />
       ) : (
