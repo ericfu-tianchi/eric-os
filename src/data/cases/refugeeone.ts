@@ -90,16 +90,6 @@ const journey: CaseBlock = {
   ],
 };
 
-const clientChanges: CaseBlock = {
-  t: "list", plain: true, items: [
-    "Say **Pay**, not Salary or Wage, and fold tips or piece rates into the range as an estimate.",
-    "Say **Shift**, not Job Timing, and let refugees filter by real start and end times: ==6 a.m. and 8 a.m. are different jobs== when you ride the bus.",
-    "Make employers answer the medical-benefits question instead of skipping it.",
-    "Keep phone numbers and emails with staff. Clients see the job, not the contact.",
-    "Add more icons, everywhere: “What if they don't understand English at all?”",
-  ],
-};
-
 const workflows: CaseBlock[] = [
   { t: "p", text: "Before drawing screens, we mapped every task for each role: sign up, post, review, approve, search, save. Each flow became a set of user stories on the board, and each set became a wireframe." },
   { t: "img", src: "refugeeone/flows.png", caption: "Low-fi wireframes grouped by role: sign-in, refugee, RefugeeOne staff and employer", w: 1040 },
@@ -223,12 +213,8 @@ const a: CaseStudy = {
     { id: "design", label: "Design", blocks: [
       { t: "h", text: "Workflows first" },
       ...workflows,
-      { t: "h", text: "Refined in sprint reviews" },
-      { t: "p", text: "Every sprint ended with a review of the designs and the build. Small, specific refinements came out of each one:" },
-      clientChanges,
     ] },
     { id: "product", label: "The Product", blocks: [
-      { t: "p", text: "Screens are from the shipped app, shown with sample data." },
       { t: "h", text: "For refugees" },
       ...screensRefugee,
       { t: "h", text: "For employers" },
