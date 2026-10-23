@@ -435,24 +435,20 @@ button { font-family: inherit; color: inherit; }
   position: fixed;
   z-index: 1000;
   pointer-events: none;
-  opacity: 0.82;
+  opacity: 0.7;
 }
-.dicon.dragging .glyph-wrap { filter: brightness(0.62) saturate(0.74) drop-shadow(0 3px 7px rgba(0, 0, 0, 0.38)); opacity: 0.82; }
+.dicon.dragging .glyph-wrap { filter: var(--stage-icon-shadow); } /* macOS drags a see-through copy: no darkening */
 .dicon.dragging.dock-drop-invalid { opacity: 0.58; }
-.dicon.dragging.dock-drop-invalid .glyph-wrap { filter: brightness(0.56) saturate(0.62) drop-shadow(0 5px 12px rgba(0, 0, 0, 0.42)); }
 .dicon .glyph-wrap { filter: var(--stage-icon-shadow); }
 
-/* Desktop selection: a quiet graphite-glass lasso, not a loud system-blue box. */
+/* Desktop selection: a quiet translucent lasso, not a loud system-blue box. */
 .selection-marquee {
   position: absolute; z-index: 5; pointer-events: none;
   min-width: 1px; min-height: 1px;
   border: 1px solid var(--marquee-line);
   border-radius: 5px;
   background: var(--marquee-fill);
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18), 0 4px 14px rgba(0, 0, 0, 0.12);
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
-}
+} /* like macOS: a flat translucent box with a hairline, no blur, no shadow */
 
 
 /* window layer: containing block below the menubar, NO z-index (no stacking context) so each
@@ -1962,3 +1958,4 @@ button { font-family: inherit; color: inherit; }
 .finder-media-thumb { position: relative; display: flex; align-items: center; justify-content: center; flex: none; }
 .finder-media-thumb img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 3px; box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.18); background: #fff; }
 .finder-media-thumb.video::after { content: ""; position: absolute; width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,.55) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M9 6.5v11l9-5.5z' fill='white'/></svg>") center / 16px no-repeat; }
+.finder-content .selection-marquee { border-color: rgba(0, 0, 0, 0.28); background: rgba(0, 0, 0, 0.07); border-radius: 3px; } /* windows are white in both themes */

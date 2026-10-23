@@ -279,7 +279,7 @@ export function FileSystemApp({ initialId = "tianchintosh" }: { initialId?: stri
     onDoubleClick: () => openNode(node),
     onKeyDown: (e: React.KeyboardEvent) => { if (e.key === "Enter") openSelection(selected.includes(node.id) ? selected : [node.id]); },
     onContextMenu: (e: React.MouseEvent) => onItemContext(e, node.id),
-    style: drag?.ids.includes(node.id) ? { transform: `translate(${drag.dx}px, ${drag.dy}px)`, zIndex: 2, opacity: 0.85, pointerEvents: "none" as const } : undefined,
+    style: drag?.ids.includes(node.id) ? { transform: `translate(${drag.dx}px, ${drag.dy}px)`, zIndex: 2, opacity: 0.7, pointerEvents: "none" as const } : undefined,
   });
 
   return (
