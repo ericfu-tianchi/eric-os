@@ -59,7 +59,6 @@ export interface CaseStudy {
   role?: string;
   timeline?: string;
   tools?: string;
-  team?: string; // teammates, shown last in the meta rail
   sections: CaseSection[];
 }
 

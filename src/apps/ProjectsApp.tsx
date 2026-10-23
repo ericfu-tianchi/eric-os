@@ -396,7 +396,7 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
     };
     window.setTimeout(settle, 250);
   };
-  const meta = [["My Role", cs.role], ["Timeline", cs.timeline], ["Tools", cs.tools], ["Team", cs.team]].filter(([, v]) => v);
+  const meta = [["My Role", cs.role], ["Timeline", cs.timeline], ["Tools", cs.tools]].filter(([, v]) => v);
 
   return (
     <div className="cs" ref={rootRef} style={{ "--cs": cs.accent, "--cs-band": bandColor(cs.accent) } as React.CSSProperties}>
