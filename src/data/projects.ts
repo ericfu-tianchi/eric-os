@@ -241,7 +241,7 @@ export const META: Record<string, ProjectMeta> = {
   "soul-blade": { accent: "#c8324a" },
   homesoffcampus: { accent: "#4f7cac", sub: "A housing website catered to and trusted by students", role: "UX Designer & Researcher, Developer", timeline: "Sep–Dec 2021", tools: "Figma · Miro · React Native + Firebase" },
   handcoded: { accent: "#494949", sub: "My hand-coded portfolio from before Wix", role: "Frontend Developer", timeline: "Nov 2021–Aug 2022", tools: "HTML · CSS · JS" },
-  subtension: { accent: "#0fa83f", sub: "An FTL-inspired 2D submarine RTS", role: "UX Designer", timeline: "Sep–Dec 2022", tools: "Figma" },
+  subtension: { accent: "#0fa83f", sub: "An FTL-inspired 2D submarine RTS", role: "Game Designer", timeline: "Sep–Dec 2022", tools: "Figma" },
   connectr: { accent: "#04dac6", sub: "An MBTI-driven group friend-making app", role: "UX Design Lead + Business", timeline: "3-week jam", tools: "Figma" },
   rutabagga: { accent: "#764c99", sub: "Brand design for a seasonal vegetarian food app", role: "UI Designer", timeline: "Mar–Apr 2022", tools: "Illustrator" },
   ece: { accent: "#0c2649", sub: "UX consulting on UMich's master's applications", role: "UX Consultant", timeline: "Sep–Dec 2021", tools: "Miro" },
