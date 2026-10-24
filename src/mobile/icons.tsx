@@ -21,12 +21,12 @@ type Tile = { img?: string; bg: string; fit?: "glyph" | "cover" | "pixel"; scale
 
 const TILES: Record<string, Tile> = {
   about: { img: portrait, bg: "#101113", fit: "cover", pos: "32% 12%" },
-  resume: { img: pdfIcon, bg: "linear-gradient(180deg,#ffffff,#e9ebef)", scale: 0.66 },
-  snake: { img: snakeIcon, bg: "linear-gradient(180deg,#2a2c31,#141518)", scale: 0.78 },
+  resume: { img: pdfIcon, bg: "linear-gradient(180deg,#e6efff,#b9cff8)", scale: 0.66 },
+  snake: { img: snakeIcon, bg: "linear-gradient(180deg,#d9f8e6,#9fe8bd)", scale: 0.78 },
   "game:soul-blade": { img: soulBladeIcon, bg: "linear-gradient(160deg,#2a0b10,#0d0406)", scale: 0.84 },
   "game:lego-world": { img: legoIcon, bg: "linear-gradient(180deg,#ffd84a,#f3ae00)", scale: 0.7 },
   "game:twist-solver": { img: twistIcon, bg: "linear-gradient(160deg,#20335a,#0f1a33)", scale: 0.72 },
-  videos: { img: videosIcon, bg: "linear-gradient(180deg,#3a3d45,#16171a)", scale: 0.72 },
+  videos: { img: videosIcon, bg: "linear-gradient(180deg,#ffb3a3,#ff7a62)", scale: 0.72 },
   photos: { img: photosIcon, bg: "linear-gradient(180deg,#ffffff,#eef0f3)", scale: 0.7 },
   files: { img: computerIcon, bg: "linear-gradient(180deg,#e8f1ff,#bcd3fb)", scale: 0.7 },
   messages: { img: chatIcon, bg: "linear-gradient(180deg,#5ef08a,#0bbf5b)", scale: 0.72 },
