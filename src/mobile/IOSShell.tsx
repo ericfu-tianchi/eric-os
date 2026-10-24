@@ -152,8 +152,6 @@ export function IOSShell() {
   const freeRows = Math.round((freeBottom - padTop) / cell);
   const widgetRows = freeRows >= 13 ? 5 : freeRows >= 11 ? 4 : 3; // the About widget shrinks on short screens
   const art = useMemo(currentWallpaper, []);
-  /** About widget layout while reviewing: ?aw=1…3 */
-  const aboutWidget = useMemo(() => { const n = Number(new URLSearchParams(window.location.search).get("aw")); return n >= 1 && n <= 3 ? n : 1; }, []);
 
 
   const frontApp = apps.find((a) => a.key === front) ?? null;
@@ -806,7 +804,7 @@ export function IOSShell() {
           onPointerDown={pageDown} onPointerMove={pageMove} onPointerUp={pageUp} onPointerCancel={pageUp}>
           <div className="pages" ref={pagesEl}>
             <section className="page" aria-label="Home page 1">
-              <button type="button" className={`ios-widget aw${aboutWidget}`} data-id="about"
+              <button type="button" className="ios-widget" data-id="about"
                 onClick={(e) => { if (suppressTap.current) { suppressTap.current = false; return; } open({ app: "about" }, e.currentTarget); }}>
                 <span className="txt">
                   <small><i />Now · AI PM · Singapore</small>
