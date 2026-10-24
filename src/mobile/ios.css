@@ -48,11 +48,19 @@
 .ios-homebar i { width: 134px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.92); box-shadow: 0 0 0 .5px rgba(0,0,0,.28), 0 0 5px rgba(0,0,0,.35); transition: background .2s, opacity .2s, box-shadow .2s; }
 .ios-homebar.dark i { background: rgba(0,0,0,.86); box-shadow: 0 0 0 .5px rgba(255,255,255,.5), 0 0 5px rgba(255,255,255,.6); }
 .ios-homebar.idle { pointer-events: none; }
+.ios-homebar.locked { pointer-events: none; } /* the whole lock screen takes the swipe; the bar shows where it starts */
+.ios-homebar.locked i { opacity: 1; animation: ios-bar-nudge 2.4s cubic-bezier(.3,.7,.3,1) 1s infinite; }
+@keyframes ios-bar-nudge { 0%, 55%, 100% { transform: none; } 70% { transform: translateY(-7px); } 85% { transform: translateY(0); } }
 .ios-homebar.idle i { opacity: .5; }
 
 /* ---------- Lock Screen ---------- */
 .ios-lock { position: absolute; inset: 0; z-index: 80; display: flex; flex-direction: column; align-items: center; padding-top: calc(var(--top) + 18px); cursor: pointer; touch-action: none;
-  background: linear-gradient(rgba(0,0,0,.25), transparent 45%); }
+  /* opaque, its own copy of the wallpaper grid: it slides off like a sheet and Home shows only where it has left */
+  background-color: #1c1d21;
+  background-image: linear-gradient(rgba(0,0,0,.25), transparent 45%), linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+  background-size: 100% 100%, var(--cell) var(--cell), var(--cell) var(--cell);
+  background-position: 0 0, var(--gx, 0) var(--gy, 0), var(--gx, 0) var(--gy, 0);
+  box-shadow: 0 18px 40px rgba(0,0,0,.45); }
 .ios-lock { will-change: transform; }
 .ios-lock .date { font: 600 19px var(--font); color: rgba(255,255,255,.88); }
 .ios-lock .clock { font: 700 92px/1 var(--font); letter-spacing: -.035em; margin-top: 2px; font-variant-numeric: tabular-nums; }
@@ -70,12 +78,14 @@
 @keyframes ios-pulse { 50% { opacity: .3; } }
 
 /* ---------- Home ---------- */
-.ios-home { position: absolute; inset: 0; touch-action: pan-y; transform-origin: 50% 50%; animation: ios-home-in .5s cubic-bezier(.2,.9,.25,1) both; }
-.ios-home.hidden { visibility: hidden; animation: none; }
+.ios-home { position: absolute; inset: 0; touch-action: pan-y; transform-origin: 50% 50%; }
+.ios-home.intro { animation: ios-home-in .5s cubic-bezier(.2,.9,.25,1) both; }
+.ios-home.under-lock { opacity: 0; transform: scale(1.08); pointer-events: none; will-change: transform, opacity; } /* the lock's swipe drives it from here */
 @keyframes ios-home-in { from { transform: scale(1.1); opacity: 0; } }
-.ios-home::after { content: ""; position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .44s cubic-bezier(.2,.9,.25,1); }
 .ios-home.behind { transform: scale(.94); }
-.ios-home.behind::after { opacity: .45; } /* dim with an overlay: animating filter on a full-screen layer drops frames on phones */
+/* the dim behind an app: a full-screen layer under Home's content, never scaled (no dark box), opacity only */
+.ios-dim { position: absolute; inset: 0; z-index: 2; background: #000; opacity: 0; pointer-events: none; will-change: opacity; }
+.ios-dim.on { opacity: .45; } .ios-dim.deep { opacity: .62; }
 .ios-home .pages { position: absolute; inset: 0; display: flex; will-change: transform; backface-visibility: hidden; }
 .ios-home .page { position: relative; z-index: 1; flex: none; width: 100%; height: 100%; padding: var(--pad-top) var(--gx) 0; }
 .ios-widget { display: flex; width: 100%; height: calc(var(--cell) * var(--wrows, 5)); border-radius: 22px; overflow: hidden; background: #0d0e10; box-shadow: inset 0 0 0 .5px rgba(255,255,255,.1), 0 6px 20px rgba(0,0,0,.25); transition: transform .15s; }
@@ -378,7 +388,7 @@
 .ios-switcher { position: absolute; inset: 0; z-index: 60; touch-action: none; }
 .ios-sw-label { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 8px; color: #fff; font: 600 14px var(--font); pointer-events: none; will-change: transform; white-space: nowrap; }
 .ios-sw-label .ios-ic { border-radius: 7px; flex: none; }
-.ios.switching .ios-home::after { opacity: .62; }
+
 
 /* ---------- wallpaper snake (src/mobile/wallpapers.ts): cells on the Home grid ---------- */
 .ios-art { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 0; pointer-events: none; }
@@ -465,3 +475,21 @@
 .ios-snake-homebtn svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 .ios-snake-homebtn:active { opacity: .5; }
 .ios-snake.full .hud { justify-content: flex-end; padding-right: 18px; top: calc(var(--top) + 17px); }
+
+/* ---------- About widget: three layouts (?aw=1…3) ---------- */
+.ios-widget b { line-height: 1.1; }
+/* 1 · the photo sits lower in its column, with headroom above the head */
+.ios-widget.aw1 img { object-position: 30% 0; padding-top: 14px; background: radial-gradient(circle at 60% 70%, rgba(6,194,104,.16), transparent 62%); }
+/* 2 · the photo fills the right half and fades into the text; the head clears the top edge */
+.ios-widget.aw2 { position: relative; }
+.ios-widget.aw2 img { position: absolute; right: 0; top: 0; height: 100%; width: 62%; object-position: 40% 0; padding-top: 18px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 32%); mask-image: linear-gradient(90deg, transparent, #000 32%); }
+.ios-widget.aw2 .txt { position: relative; z-index: 1; }
+.ios-widget.aw2 b { font-size: 28px; line-height: 1.12; }
+/* 3 · a round portrait top-right, the name runs full width under it */
+.ios-widget.aw3 { position: relative; }
+.ios-widget.aw3 img { position: absolute; right: 14px; top: 14px; width: calc(var(--cell) * 2.6); height: calc(var(--cell) * 2.6); border-radius: 50%; object-position: 28% 10%; box-shadow: 0 0 0 2px rgba(6,194,104,.55); }
+.ios-widget.aw3 .txt { padding-right: 16px; }
+.ios-widget.aw3 b { margin-top: auto; font-size: 30px; line-height: 1.1; }
+.ios-widget.aw3 .txt > span { margin-top: 8px; }
+.ios-widget.aw2 .txt > span { max-width: 52%; text-shadow: 0 1px 6px rgba(0,0,0,.7); }

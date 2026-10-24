@@ -57,19 +57,23 @@ export const HOME_FOLDERS: HomeItem[] = DESKTOP_FOLDER_IDS.map((id) => {
 
 const app = (id: string, label: string, route: Route): HomeItem => ({ kind: "app", id, label, route });
 
-/** Page 1 sits under the About widget; page 2 holds the folders. The Dock stays put. */
+const folder = (id: string) => HOME_FOLDERS.find((f) => f.id === id)!;
+
+/** Page 1: the About widget (it is the About app), the apps, and the AI side projects and Work as folders.
+    Page 2: School, plus Documents' one page (My Website). The Dock stays put. */
 export const HOME = {
   page1: [
-    app("about", "About Me", { app: "about" }),
     app("case:how-i-ai", "How I AI", { app: "case", slug: "how-i-ai", title: "How I AI" }),
     app("resume", "Resume", { app: "resume" }),
     app("snake", "Snake", { app: "snake" }),
-    game("soul-blade"),
-    game("lego-world", "Lego World"),
-    game("twist-solver"),
     app("videos", "Videos", { app: "videos" }),
+    folder("ai"),
+    folder("work"),
   ],
-  page2: HOME_FOLDERS,
+  page2: [
+    folder("school"),
+    app("case:handcoded", "My Website", { app: "case", slug: "handcoded", title: "My Website Evolution" }),
+  ],
   dock: [
     app("messages", "Messages", { app: "messages" }),
     app("photos", "Photos", { app: "photos" }),
