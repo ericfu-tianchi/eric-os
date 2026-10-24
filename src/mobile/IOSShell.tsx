@@ -924,13 +924,14 @@ export function IOSShell() {
             onPointerDown={(e) => { lockDown(e); }}
             onPointerMove={lockMove}
             onPointerUp={lockUp} onPointerCancel={lockUp}>
+            {/* the same wallpaper as Home's first page, in the same cells: swiping up reveals Home with the snake exactly where it was */}
+            <WallArt art={art} cols={[0, 11]} c={cell} x0={gx} bottom={freeBottom} />
             <div className="date">{now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
             <div className="clock">{hhmm(now)}</div>
             <div className="notes">
               <div className="ios-note"><img className="av" src={portrait} alt="" /><div><span className="h"><b>Tianchi Fu</b><small>now</small></span><p>Hi, I'm Tianchi, an AI PM at OpusClip in Singapore. My work, side projects and a snake are inside.</p></div></div>
               <div className="ios-note"><span className="av snake"><MiniHead hat={hat} size={28} /></span><div><span className="h"><b>Tianchi's snake</b><small>now</small></span><p>Swipe up from the bottom to come in.</p></div></div>
             </div>
-            <WallArt art={art} cols={[12, 23]} c={cell} x0={gx} bottom={freeBottom} />
             <div className="hint">Swipe up to open</div>
           </div>
         )}
