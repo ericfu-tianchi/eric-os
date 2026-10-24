@@ -17,13 +17,18 @@
       // (same rule as useIsMobile in src/App.tsx: the desktop needs a 27 × 13 grid of ~44px cells under the menubar).
       (function () {
         var q = location.search, p = location.pathname;
+        // Tianchi's own visits: open the site once with ?me (or always, in incognito) and they're filed under /me/…
+        var me = false;
+        try { if (/[?&]me=0\b/.test(q)) localStorage.removeItem("eric-os-me"); else if (/[?&]me\b/.test(q)) localStorage.setItem("eric-os-me", "1"); me = !!localStorage.getItem("eric-os-me"); } catch (e) {}
+        if (/[?&]me\b/.test(q) && !/[?&]me=0\b/.test(q)) me = true;
+        if (p.indexOf("/me/") === 0) p = p.slice(3);
         if (p !== "/" && p !== "/phone") return;
         var phone = /[?&]ios\b/.test(q) ? true : /forceDesktop|[?&]desktop\b/.test(q) ? false : (function () {
           var h = innerHeight - 34, rows = Math.max(8, Math.round(h / 44)), cols = Math.max(8, Math.round(innerWidth / (h / rows)));
           return cols < 27 || rows < 13;
         })();
-        var want = phone ? "/phone" : "/";
-        if (p !== want) history.replaceState(null, "", want + q + location.hash);
+        var want = (me ? "/me" : "") + (phone ? "/phone" : "/");
+        if (location.pathname !== want) history.replaceState(null, "", want + q + location.hash);
       })();
     </script>
   </head>
