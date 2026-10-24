@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useOS } from "../store";
 import { SnakeChat, EMAIL } from "../components/SnakeChat";
 import { HatPicker, MiniHead } from "../components/SnakeGuide";
-import { cachedSnakeRecord, fetchSnakeRecord } from "../data/snakeRecord";
 import { EXTERNAL_GAMES, type ExternalGameId, type FileNode } from "../data/filesystem";
 import { mediaItem, type MediaItem } from "../data/media";
 import { coverOf } from "../data/projectAssets";
@@ -270,6 +269,7 @@ function VideoPlayer({ v }: { v: MediaItem }) {
 /* ================= Messages ================= */
 
 export function MessagesScreen() {
+  const hat = useOS((s) => s.snakeHat);
   const nav = useNav();
   const act = (a: string) => {
     const map: Record<string, Route> = {
@@ -281,7 +281,7 @@ export function MessagesScreen() {
   return (
     <div className="ios-msgs">
       <div className="contact">
-        <span className="av"><MiniHead hat={useOS.getState().snakeHat} size={64} /></span>
+        <span className="av"><MiniHead hat={hat} size={64} /></span>
         <b>Tianchi's snake</b>
         <small>Lives on Tianchi's desktop and knows his work inside out.</small>
       </div>
@@ -298,6 +298,7 @@ const InGlyph = () => <svg viewBox="0 0 16 16" fill="#fff"><path d="M3.6 6.2h1.9
 const GhGlyph = () => <svg viewBox="0 0 16 16" fill="#fff"><path d="M8 1.3a6.7 6.7 0 0 0-2.1 13c.3.1.5-.1.5-.3v-1.2c-1.9.4-2.3-.8-2.3-.8-.3-.8-.7-1-.7-1-.6-.4 0-.4 0-.4.7 0 1 .7 1 .7.6 1 1.6.7 2 .5.1-.4.2-.7.4-.9-1.5-.2-3-.7-3-3.3 0-.7.3-1.3.7-1.8-.1-.2-.3-.9.1-1.8 0 0 .6-.2 1.8.7a6.3 6.3 0 0 1 3.3 0c1.3-.9 1.8-.7 1.8-.7.4.9.2 1.6.1 1.8.4.5.7 1.1.7 1.8 0 2.6-1.6 3.1-3 3.3.2.2.4.6.4 1.2v1.8c0 .2.2.4.5.3A6.7 6.7 0 0 0 8 1.3z" /></svg>;
 
 export function SettingsScreen({ page }: { page?: "snake" | "os" }) {
+  const hat = useOS((s) => s.snakeHat);
   const nav = useNav();
   const tap = useTap();
   const pushSnake = () => nav.push({ title: "Snake Wardrobe", tone: "light", node: <div className="ios-list-page pad-top"><p className="ios-foot">Pick what the snake wears. It shows up on the desktop and in Messages.</p><div className="ios-group pad"><HatPicker /></div></div> });
@@ -313,7 +314,7 @@ export function SettingsScreen({ page }: { page?: "snake" | "os" }) {
         </button>
       </div>
       <div className="ios-group">
-        <button type="button" className="ios-row" {...row(pushSnake)}><span className="ri mini"><MiniHead hat={useOS.getState().snakeHat} size={30} /></span><span className="tx"><b>Snake Wardrobe</b></span><Chevron /></button>
+        <button type="button" className="ios-row" {...row(pushSnake)}><span className="ri mini"><MiniHead hat={hat} size={30} /></span><span className="tx"><b>Snake Wardrobe</b></span><Chevron /></button>
         <button type="button" className="ios-row" {...row(pushOS)}><AppTile id="settings" size={29} /><span className="tx"><b>About Tianchi OS</b></span><Chevron /></button>
       </div>
       <p className="ios-sec">Say hi</p>
@@ -331,11 +332,10 @@ export function SettingsScreen({ page }: { page?: "snake" | "os" }) {
 }
 
 function AboutOS() {
-  const [record, setRecord] = useState(cachedSnakeRecord);
-  useEffect(() => { void fetchSnakeRecord().then(setRecord); }, []);
+  const best = (() => { try { return Number(localStorage.getItem("eric-os-mobile-snake-best")) || 0; } catch { return 0; } })(); // the phone keeps its own Snake score, apart from the desktop
   const specs: [string, string][] = [
     ["Name", "Tianchi OS"], ["Owner", "Tianchi (Eric) Fu"], ["Chip", "Tianchi T1 Pro"], ["Memory", "18 GB"],
-    ["Snake record", record.score > 0 ? `${record.score} by ${record.alias}` : "Up for grabs"], ["Version", "1.0 (2026)"],
+    ["Your Snake best", best > 0 ? `${best} ${best === 1 ? "apple" : "apples"}` : "Not played yet"], ["Version", "1.0 (2026)"],
   ];
   return (
     <div className="ios-list-page pad-top">

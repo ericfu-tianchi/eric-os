@@ -8,7 +8,8 @@ import { ALBUMS, HOME, HOME_FOLDERS, appKey, type HomeItem, type Route } from ".
 import { AppTile, ItemTile } from "./icons";
 import { AppState, NavBar, NavContext, type Nav, type Screen } from "./nav";
 import { screenFor } from "./routes";
-import { currentWallpaper, headDir, page1Part, type Cell, type Wallpaper } from "./wallpapers";
+import { currentWallpaper, headDir, type Cell, type Wallpaper } from "./wallpapers";
+import { SnakeHead, angleOf } from "./SnakeHead";
 import { SnakeGame } from "./SnakeGame";
 import "./ios.css";
 
@@ -59,11 +60,10 @@ function WallArt({ art, cols, c, x0, bottom }: { art: Wallpaper; cols: [number, 
   const at = ([x, y]: Cell) => ({ left: x0 + (x - cols[0]) * c, top: bottom - (y + 1) * c, width: c, height: c });
   const inView = (p: Cell) => p[0] >= cols[0] && p[0] <= cols[1];
   const head = art.cells[art.cells.length - 1], [dx, dy] = headDir(art.cells);
-  const turn = dx === 1 ? 90 : dx === -1 ? -90 : dy === -1 ? 180 : 0;
   return (
     <div className="ios-art" aria-hidden>
       {art.cells.slice(0, -1).filter(inView).map((p, i) => <i key={i} style={at(p)} />)}
-      {inView(head) && <b className="eyes" style={{ ...at(head), transform: `rotate(${turn}deg)` }}><span /><span /></b>}
+      {inView(head) && <><i style={at(head)} /><SnakeHead size={c} ang={angleOf(dx, -dy)} style={{ left: at(head).left - c, top: at(head).top - c }} /></>}
       {art.apples.filter(inView).map((p, i) => <em key={i} className="apple" style={at(p)} />)}
     </div>
   );
@@ -737,7 +737,7 @@ export function IOSShell() {
   const exitSnakeRef = useRef(exitSnake); exitSnakeRef.current = exitSnake;
   const startPose = useMemo(() => {
     const rowOf = (y: number) => Math.round((freeBottom - (y + 1) * cell - gy) / cell); // canvas row → grid row from the top line
-    const part = page1Part(art.cells);
+    const part = art.cells; // the whole snake: the page-2 body follows the head onto the board
     const apple = art.apples.find(([x]) => x <= 11);
     return { cells: part.map(([x, y]) => [x, rowOf(y)] as Cell), dir: headDir(art.cells), apple: apple ? [apple[0], rowOf(apple[1])] as Cell : undefined };
   }, [art, freeBottom, cell, gy]);
@@ -753,6 +753,8 @@ export function IOSShell() {
     if (old && old.shown === v.shown && old.front === v.front && old.alive === v.alive) return old; // same object: no re-render of the app
     stateCache.current.set(a.key, v); return v;
   };
+
+  const hat = useOS((s) => s.snakeHat);
 
   /* ---------- render ---------- */
   const now = useClock();
@@ -897,7 +899,7 @@ export function IOSShell() {
             <div className="clock">{hhmm(now)}</div>
             <div className="notes">
               <div className="ios-note"><img className="av" src={portrait} alt="" /><div><span className="h"><b>Tianchi Fu</b><small>now</small></span><p>Hi, I'm Tianchi, an AI PM at OpusClip in Singapore. My work, side projects and a snake are inside.</p></div></div>
-              <div className="ios-note"><span className="av snake"><MiniHead hat={useOS.getState().snakeHat} size={28} /></span><div><span className="h"><b>Tianchi's snake</b><small>now</small></span><p>Tap anywhere to come in.</p></div></div>
+              <div className="ios-note"><span className="av snake"><MiniHead hat={hat} size={28} /></span><div><span className="h"><b>Tianchi's snake</b><small>now</small></span><p>Tap anywhere to come in.</p></div></div>
             </div>
             <WallArt art={art} cols={[12, 23]} c={cell} x0={gx} bottom={freeBottom} />
             <div className="hint">Swipe up or tap to open</div>
