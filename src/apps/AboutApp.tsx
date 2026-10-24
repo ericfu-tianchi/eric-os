@@ -69,8 +69,20 @@ export function AboutApp() {
     return () => io.disconnect();
   }, []);
 
+  // touch screens have no hover: the row crossing the middle of the screen lights up instead, as you scroll
+  const rootRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || !window.matchMedia("(hover: none)").matches) return;
+    const scroller = el.closest<HTMLElement>(".win-body, .ios-body");
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.target.classList.toggle("on", e.isIntersecting)),
+      { root: scroller, rootMargin: "-50% 0px -49% 0px" });
+    el.querySelectorAll(".am-bring article, .am-path .yr, .am-off .off-item.link").forEach((n) => io.observe(n));
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div className="aboutme">
+    <div className="aboutme" ref={rootRef}>
       <section className="am-hero">
         <div className="am-grid" /><div className="am-glow" />
         <div className="am-in">
