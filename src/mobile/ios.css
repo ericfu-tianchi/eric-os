@@ -402,7 +402,7 @@
 .ios-about .am-path .head { flex-direction: column; gap: 6px; }
 .ios-about .am-sec, .ios-about .am-foot { padding-inline: 22px; }
 
-/* the opening: the same pieces (meta, name, lead, actions, photo) in four arrangements */
+/* the opening, cover style: the photo leads and the name sits on its lower edge */
 .ios-about .am-hero { height: auto; padding: 18px 22px 30px; }
 .ios-about .am-in { height: auto; display: flex; flex-direction: column; }
 .ios-about .am-name { margin-top: 26px; font-size: 58px; }
@@ -412,32 +412,12 @@
 .ios-about .am-photo { position: relative; right: auto; bottom: auto; width: 100%; opacity: 1; }
 .ios-about .am-glow { right: -30%; bottom: auto; top: 10%; width: 120%; height: 420px; }
 
-/* 1 · Cover: the photo leads, the name sits on its lower edge */
-.ios-about.h1 .am-photo { order: -1; width: calc(100% + 44px); margin: 6px -22px 0; }
-.ios-about.h1 .am-meta { order: -2; }
-.ios-about.h1 .am-name { margin-top: -70px; z-index: 3; text-shadow: 0 4px 30px rgba(0,0,0,.6); }
-.ios-about.h1 .am-photo::after { content: ""; position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; height: 45%; background: linear-gradient(transparent, var(--am-bg)); }
-
-/* 2 · Name first: name, then the photo as a wide stage, then the words */
-.ios-about.h2 .am-photo { order: 2; width: 112%; margin: 6px -6% -10px; }
-.ios-about.h2 .am-name { order: 1; }
-.ios-about.h2 .am-lead { order: 3; }
-.ios-about.h2 .am-cta { order: 4; }
-
-/* 3 · Side by side: the photo stands at the right of the name, text runs full width below */
-.ios-about.h3 .am-in { display: grid; grid-template-columns: 1fr 44%; column-gap: 0; }
-.ios-about.h3 .am-meta { grid-column: 1 / -1; }
-.ios-about.h3 .am-name { grid-column: 1; grid-row: 2; align-self: end; font-size: 50px; }
-.ios-about.h3 .am-photo { grid-column: 2; grid-row: 2; width: 165%; margin-left: -45%; margin-top: 18px; align-self: start; }
-.ios-about.h3 .am-name .eric { color: color-mix(in srgb, var(--am-ink) 45%, transparent); }
-.ios-about.h3 .am-lead, .ios-about.h3 .am-cta { grid-column: 1 / -1; }
-
-/* 4 · Centred: a portrait medallion, everything on one axis */
-.ios-about.h4 .am-in { align-items: center; text-align: center; }
-.ios-about.h4 .am-meta { align-self: stretch; }
-.ios-about.h4 .am-photo { order: 1; width: 230px; height: 230px; margin-top: 22px; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--am-ac) 26%, #15161a), #15161a 70%); box-shadow: 0 0 0 1px rgba(255,255,255,.08); }
-.ios-about.h4 .am-photo img { width: 190%; max-width: none; margin: 14px 0 0 -38%; }
-.ios-about.h4 .am-shadow { display: none; }
-.ios-about.h4 .am-name { order: 2; font-size: 52px; }
-.ios-about.h4 .am-lead { order: 3; text-wrap: balance; }
-.ios-about.h4 .am-cta { order: 4; align-self: stretch; }
+.ios-about .am-photo { order: -1; width: calc(100% + 44px); margin: 6px -22px 0; }
+.ios-about .am-meta { order: -2; }
+.ios-about .am-name { margin-top: -70px; z-index: 3; text-shadow: 0 4px 30px rgba(0,0,0,.6); }
+/* no hard edge: the photo (and its glow) dissolves into the page from the middle down, and softly at the sides */
+.ios-about .am-photo { -webkit-mask-image: linear-gradient(#000 38%, rgba(0,0,0,.55) 62%, transparent 90%), linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(#000 38%, rgba(0,0,0,.55) 62%, transparent 90%), linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  -webkit-mask-composite: source-in; mask-composite: intersect; }
+.ios-about .am-glow { top: 4%; opacity: .8; }
+.ios-about .am-name { margin-top: -96px; }
