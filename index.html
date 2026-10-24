@@ -12,6 +12,20 @@
     <link rel="icon" href="/favicon.png" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>Tianchi OS</title>
+    <script>
+      // Analytics: put the phone experience at /phone before Cloudflare's beacon records the first page view
+      // (same rule as useIsMobile in src/App.tsx: the desktop needs a 27 × 13 grid of ~44px cells under the menubar).
+      (function () {
+        var q = location.search, p = location.pathname;
+        if (p !== "/" && p !== "/phone") return;
+        var phone = /[?&]ios\b/.test(q) ? true : /forceDesktop|[?&]desktop\b/.test(q) ? false : (function () {
+          var h = innerHeight - 34, rows = Math.max(8, Math.round(h / 44)), cols = Math.max(8, Math.round(innerWidth / (h / rows)));
+          return cols < 27 || rows < 13;
+        })();
+        var want = phone ? "/phone" : "/";
+        if (p !== want) history.replaceState(null, "", want + q + location.hash);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
