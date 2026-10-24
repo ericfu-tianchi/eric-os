@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wallpaper Studio</title>
+<style>
+  :root { --bg: #111214; --panel: #1b1c20; --line: #2a2b31; --ink: #ececef; --muted: #8b8d93; --green: #06c268; --c: 26px; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Geist", system-ui, sans-serif; user-select: none; }
+  header { display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  header h1 { margin: 0 8px 0 0; font-size: 15px; font-weight: 650; }
+  .grp { display: flex; gap: 4px; padding: 3px; border-radius: 9px; background: var(--panel); }
+  button { font: inherit; color: var(--ink); background: none; border: 0; height: 30px; padding: 0 12px; border-radius: 7px; cursor: pointer; }
+  button:hover { background: #26272c; }
+  button.on { background: #fff; color: #111; font-weight: 600; }
+  button.primary { background: var(--green); color: #04130b; font-weight: 650; }
+  .hint { color: var(--muted); margin-left: auto; }
+  main { display: flex; gap: 28px; padding: 24px 20px; align-items: flex-start; flex-wrap: wrap; }
+  .phones { display: flex; gap: 0; }
+  .phone { position: relative; width: calc(var(--c) * 12); height: var(--h); overflow: hidden; background-color: #1c1d21; border-radius: 0;
+    background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+    background-size: var(--c) var(--c); background-position: calc(var(--c) / 2) var(--gy); }
+  .phone:first-child { border-radius: 30px 0 0 30px; } .phone:last-child { border-radius: 0 30px 30px 0; border-left: 1px dashed rgba(255,255,255,.18); }
+  .ui { position: absolute; border-radius: 10px; background: rgba(255,255,255,.07); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); pointer-events: none; display: grid; place-items: center; color: rgba(255,255,255,.28); font-size: 11px; }
+  .ui.ic { border-radius: 22%; }
+  .cell { position: absolute; width: var(--c); height: var(--c); }
+  .cell.body::before, .cell.head::before { content: ""; position: absolute; inset: 1.5px; border-radius: 3px; background: var(--green); }
+  .cell.head::after { content: "••"; position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 13px; letter-spacing: 1px; }
+  .cell.apple { background: radial-gradient(circle at 50% 55%, #e5352b 0 36%, transparent 37%); }
+  .cell.apple::after { content: ""; position: absolute; left: 50%; top: 14%; width: 2px; height: 22%; background: #5b3a1a; }
+  .hit { position: absolute; inset: 0; cursor: crosshair; }
+  .guide { position: absolute; left: 0; right: 0; border-top: 1px dashed rgba(255,190,80,.6); pointer-events: none; }
+  .guide span { position: absolute; right: 6px; top: 2px; font-size: 10.5px; color: rgba(255,190,80,.85); }
+  aside { width: 320px; display: flex; flex-direction: column; gap: 14px; }
+  .card { background: var(--panel); border-radius: 12px; padding: 14px 16px; }
+  .card h3 { margin: 0 0 8px; font-size: 13px; }
+  .card p { margin: 0 0 6px; color: var(--muted); }
+  .ok { color: var(--green); } .warn { color: #ffb44a; }
+  textarea { width: 100%; height: 120px; background: #111214; color: var(--ink); border: 1px solid var(--line); border-radius: 8px; font: 11px/1.4 ui-monospace, Menlo, monospace; padding: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Wallpaper Studio</h1>
+  <div class="grp" id="tools">
+    <button data-t="body" class="on">Body (B)</button>
+    <button data-t="head">Head (H)</button>
+    <button data-t="apple">Apple (A)</button>
+    <button data-t="erase">Erase (E)</button>
+  </div>
+  <div class="grp">
+    <button id="undo">Undo</button>
+    <button id="clear">Clear</button>
+  </div>
+  <div class="grp" id="presets"><span style="padding:0 6px;color:var(--muted);align-self:center">Start from</span></div>
+  <button class="primary" id="preview">Preview on the phone →</button>
+  <span class="hint">Drag to paint · right-click erases · the head must be on page 1</span>
+</header>
+<main>
+  <div class="phones"><div class="phone" id="p0"></div><div class="phone" id="p1"></div></div>
+  <aside>
+    <div class="card"><h3>Check</h3><div id="check"></div></div>
+    <div class="card">
+      <h3>How it works</h3>
+      <p>Two Home pages side by side, on the phone's real grid (12 columns, 390 × 844). Grey boxes are the widget, icons and Dock; keep the busy parts out from under them.</p>
+      <p>The orange dashed line: on a shorter phone (about 700 px tall, Safari with its bars) the icons reach down to there.</p>
+      <p>Tapping Snake starts the game from the head and the body cells on page 1, so the head goes on page 1 and the body should be one connected line near it.</p>
+    </div>
+    <div class="card"><h3>Export</h3><p>Send this to Claude to make it the wallpaper.</p><textarea id="out" readonly></textarea><button id="copy" style="margin-top:8px">Copy</button></div>
+  </aside>
+</main>
+<script>
+// ---- the phone's grid (same formulas as src/mobile/IOSShell.tsx) for a 390 × 844 screen, no browser bars ----
+const W = 390, Hs = 844, CELL = W / 12;
+const layout = (h) => {
+  const dockBottom = h - 34, gy = ((dockBottom % CELL) + CELL) % CELL, dockTop = dockBottom - CELL * 3;
+  const padTop = gy + Math.ceil((10 - gy) / CELL) * CELL, freeBottom = dockTop - CELL;
+  return { gy, dockTop, padTop, freeBottom, freeRows: Math.round((freeBottom - padTop) / CELL) };
+};
+const L = layout(Hs), S = layout(700);
+const SCALE = 0.8, C = CELL * SCALE;
+document.documentElement.style.setProperty('--c', C + 'px');
+document.documentElement.style.setProperty('--h', Hs * SCALE + 'px');
+document.documentElement.style.setProperty('--gy', L.gy * SCALE + 'px');
+const rowsP1Taken = 12, rowsP2Taken = 3; // widget(5) + gap + 2 icon rows with labels / folders with labels
+const ROWS = L.freeRows;
+
+// state: cells keyed "col,row" (col 0–23, row 0 = lowest free row)
+let body = new Set(), apples = new Set(), head = null, tool = 'body';
+const hist = [];
+const snap = () => { hist.push(JSON.stringify({ b: [...body], a: [...apples], h: head })); if (hist.length > 100) hist.shift(); };
+const restore = (s) => { const o = JSON.parse(s); body = new Set(o.b); apples = new Set(o.a); head = o.h; render(); };
+
+const px = (col, row) => ({ x: (CELL / 2 + (col % 12) * CELL) * SCALE, y: (L.freeBottom - (row + 1) * CELL) * SCALE });
+function drawUI(el, page) {
+  const box = (x, y, w, h, cls = '', label = '') => { const d = document.createElement('div'); d.className = 'ui ' + cls; Object.assign(d.style, { left: x * SCALE + 'px', top: y * SCALE + 'px', width: w * SCALE + 'px', height: h * SCALE + 'px' }); d.textContent = label; el.appendChild(d); };
+  const gx = CELL / 2, top = L.padTop;
+  if (page === 0) {
+    box(gx, top, CELL * 11, CELL * 5, '', 'About widget');
+    for (let r = 0; r < 2; r++) for (let k = 0; k < 4; k++) box(gx + k * 3 * CELL, top + CELL * 6 + r * 3 * CELL, CELL * 2, CELL * 2, 'ic');
+  } else for (let k = 0; k < 3; k++) box(gx + k * 3 * CELL, top, CELL * 2, CELL * 2, 'ic');
+  box(8, L.dockTop, W - 16, CELL * 3, '', 'Dock');
+  // where the icons end on a ~700px phone, in this screen's bottom-anchored rows
+  const shortTaken = page === 0 ? rowsP1Taken : rowsP2Taken;
+  const rowsFreeShort = S.freeRows - shortTaken; // free rows above the dots on the short phone
+  const g = document.createElement('div'); g.className = 'guide'; g.style.top = (L.freeBottom - rowsFreeShort * CELL) * SCALE + 'px';
+  g.innerHTML = '<span>~700px phone: icons above this line</span>'; el.appendChild(g);
+}
+const pages = [document.getElementById('p0'), document.getElementById('p1')];
+const layers = pages.map((el, i) => { drawUI(el, i); const art = document.createElement('div'); el.appendChild(art); const hit = document.createElement('div'); hit.className = 'hit'; hit.dataset.page = i; el.appendChild(hit); return art; });
+
+function render() {
+  layers.forEach((l) => (l.innerHTML = ''));
+  const put = (key, cls) => { const [c, r] = key.split(',').map(Number); const d = document.createElement('div'); d.className = 'cell ' + cls; const p = px(c, r); d.style.left = p.x + 'px'; d.style.top = p.y + 'px'; layers[c < 12 ? 0 : 1].appendChild(d); };
+  body.forEach((k) => k !== head && put(k, 'body')); apples.forEach((k) => put(k, 'apple')); if (head) put(head, 'head');
+  check(); exportOut();
+}
+const cellAt = (e) => {
+  const hit = e.target.closest('.hit'); if (!hit) return null;
+  const r = hit.getBoundingClientRect(), page = +hit.dataset.page;
+  const col = Math.floor(((e.clientX - r.left) / SCALE - CELL / 2) / CELL), rowTop = (e.clientY - r.top) / SCALE;
+  const row = Math.floor((L.freeBottom - rowTop) / CELL);
+  if (col < 0 || col > 11 || row < 0 || row >= ROWS) return null;
+  return (col + page * 12) + ',' + row;
+};
+let painting = null;
+function apply(k, mode) {
+  if (!k) return;
+  if (mode === 'erase') { body.delete(k); apples.delete(k); if (head === k) head = null; }
+  else if (mode === 'body') { body.add(k); apples.delete(k); }
+  else if (mode === 'apple') { apples.add(k); body.delete(k); if (head === k) head = null; }
+  else if (mode === 'head') { if (+k.split(',')[0] > 11) return; head = k; body.add(k); apples.delete(k); }
+  render();
+}
+document.querySelectorAll('.hit').forEach((h) => {
+  h.addEventListener('contextmenu', (e) => e.preventDefault());
+  h.addEventListener('pointerdown', (e) => { snap(); painting = e.button === 2 ? 'erase' : tool; h.setPointerCapture(e.pointerId); apply(cellAt(e), painting); });
+  h.addEventListener('pointermove', (e) => { if (painting && painting !== 'head') apply(cellAt(e), painting); });
+  h.addEventListener('pointerup', () => (painting = null));
+});
+const setTool = (t) => { tool = t; document.querySelectorAll('#tools button').forEach((b) => b.classList.toggle('on', b.dataset.t === t)); };
+document.querySelectorAll('#tools button').forEach((b) => b.onclick = () => setTool(b.dataset.t));
+addEventListener('keydown', (e) => { const m = { b: 'body', h: 'head', a: 'apple', e: 'erase' }[e.key.toLowerCase()]; if (m) setTool(m); if ((e.metaKey || e.ctrlKey) && e.key === 'z') { e.preventDefault(); const s = hist.pop(); if (s) restore(s); } });
+document.getElementById('undo').onclick = () => { const s = hist.pop(); if (s) restore(s); };
+document.getElementById('clear').onclick = () => { snap(); body = new Set(); apples = new Set(); head = null; render(); };
+
+// ---- order the body tail → head by walking from the head ----
+const nb = (k) => { const [c, r] = k.split(',').map(Number); return [[c + 1, r], [c - 1, r], [c, r + 1], [c, r - 1]].map(([a, b]) => a + ',' + b).filter((x) => body.has(x)); };
+function ordered() {
+  if (!head) return { cells: [], branch: false, loose: 0 };
+  const seen = new Set([head]), path = [head]; let cur = head, branch = false;
+  while (true) { const next = nb(cur).filter((x) => !seen.has(x)); if (!next.length) break; if (next.length > 1) branch = true; cur = next[0]; seen.add(cur); path.push(cur); }
+  const loose = [...body].filter((k) => !seen.has(k));
+  const cells = [...loose, ...path.reverse()].map((k) => k.split(',').map(Number)); // tail side first, head last
+  return { cells, branch, loose: loose.length };
+}
+function check() {
+  const o = ordered(), el = document.getElementById('check'), lines = [];
+  if (!head) lines.push('<span class="warn">Place the head on page 1 (H).</span>');
+  else {
+    const p1 = o.cells.filter(([c]) => c <= 11).length;
+    lines.push(`<span class="ok">Head on page 1.</span> ${p1} cells on page 1 start the game.`);
+    if (o.branch) lines.push('<span class="warn">The line splits somewhere: the game follows one branch from the head.</span>');
+    if (o.loose) lines.push(`<span class="warn">${o.loose} cells aren't connected to the head's line (fine as decoration, but they won't move in the game).</span>`);
+  }
+  lines.push(`${body.size} body cells · ${apples.size} apples`);
+  el.innerHTML = lines.map((l) => `<p>${l}</p>`).join('');
+}
+const data = () => ({ cells: ordered().cells, apples: [...apples].map((k) => k.split(',').map(Number)) });
+function exportOut() { document.getElementById('out').value = JSON.stringify(data()); try { localStorage.setItem('eric-os-wall-draft', JSON.stringify({ b: [...body], a: [...apples], h: head })); } catch {} }
+document.getElementById('copy').onclick = () => navigator.clipboard.writeText(document.getElementById('out').value);
+document.getElementById('preview').onclick = () => { try { localStorage.setItem('eric-os-wall-custom', JSON.stringify(data())); } catch {} window.open('/?ios&wall=custom', '_blank'); };
+
+// presets from the site (src/mobile/wallpapers.ts), loaded through Vite in dev
+import('/src/mobile/wallpapers.ts').then(({ WALLPAPERS }) => {
+  const g = document.getElementById('presets');
+  WALLPAPERS.forEach((w) => { const b = document.createElement('button'); b.textContent = w.name; b.onclick = () => { snap(); body = new Set(w.cells.map((c) => c.join(','))); apples = new Set(w.apples.map((c) => c.join(','))); const h = w.cells[w.cells.length - 1]; head = h.join(','); render(); }; g.appendChild(b); });
+}).catch(() => document.getElementById('presets').remove());
+
+// pick up where you left off
+try { const d = JSON.parse(localStorage.getItem('eric-os-wall-draft')); if (d) { body = new Set(d.b); apples = new Set(d.a); head = d.h; } } catch {}
+render();
+</script>
+</body>
+</html>

@@ -67,7 +67,12 @@ export const WALLPAPERS: Wallpaper[] = [
 ];
 
 const query = typeof window === "undefined" ? new URLSearchParams() : new URLSearchParams(window.location.search);
+/** ?wall=custom: the design last previewed from /wall-studio.html (kept in this browser) */
+const custom = (): Wallpaper | null => {
+  try { const d = JSON.parse(localStorage.getItem("eric-os-wall-custom") || "null"); return d?.cells?.length ? { id: 0, name: "Custom", cells: d.cells, apples: d.apples ?? [] } : null; } catch { return null; }
+};
 export const wallpaperFor = (id: number): Wallpaper => {
+  if (query.get("wall") === "custom") { const c = custom(); if (c) return c; } // the studio draws its own apples
   const w = WALLPAPERS.find((x) => x.id === id) ?? WALLPAPERS[0];
   return query.get("apple") === "0" ? w : { ...w, apples: [...w.apples, APPLE1] };
 };
