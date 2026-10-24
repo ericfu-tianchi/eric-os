@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useAppState } from "./nav";
 import appleIcon from "../assets/icons/b/apple.png";
 
 /**
@@ -17,7 +18,10 @@ export function SnakeGame() {
   const [phase, setPhase] = useState<"ready" | "playing" | "over">("ready");
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(readBest);
-  const g = useRef({ cols: 13, rows: 20, cell: 30, ox: 0, oy: 0, snake: [] as P[], dir: { x: 1, y: 0 }, next: { x: 1, y: 0 }, food: { x: 0, y: 0 }, step: 150, acc: 0, last: 0, grow: 0 });
+  const g = useRef({ cols: 13, rows: 20, cell: 30, ox: 0, oy: 0, snake: [] as P[], dir: { x: 1, y: 0 }, next: { x: 1, y: 0 }, food: { x: 0, y: 0 }, step: 150, acc: 0, last: 0, grow: 0, dirty: true });
+  const { shown } = useAppState();
+  const shownRef = useRef(shown); shownRef.current = shown;
+  const loop = useRef<{ start: () => void; stop: () => void } | null>(null);
   const apple = useRef<HTMLImageElement | null>(null);
   const phaseRef = useRef(phase);
   phaseRef.current = phase;
@@ -34,6 +38,7 @@ export function SnakeGame() {
     const dpr = Math.min(3, window.devicePixelRatio || 1);
     c.width = w * dpr; c.height = h * dpr; c.style.width = `${w}px`; c.style.height = `${h}px`;
     c.getContext("2d")!.setTransform(dpr, 0, 0, dpr, 0, 0);
+    s.dirty = true;
   };
 
   const placeFood = () => {
@@ -47,7 +52,7 @@ export function SnakeGame() {
     const s = g.current;
     const y = Math.floor(s.rows / 2);
     s.snake = [{ x: 4, y }, { x: 3, y }, { x: 2, y }];
-    s.dir = { x: 1, y: 0 }; s.next = { x: 1, y: 0 }; s.step = 150; s.acc = 0; s.grow = 0; s.last = performance.now();
+    s.dir = { x: 1, y: 0 }; s.next = { x: 1, y: 0 }; s.step = 150; s.acc = 0; s.grow = 0; s.last = performance.now(); s.dirty = true;
     placeFood();
   };
   const start = () => { reset(); setScore(0); setPhase("playing"); };
@@ -64,13 +69,16 @@ export function SnakeGame() {
     apple.current = new Image(); apple.current.src = appleIcon;
     layout(); reset();
     const ro = new ResizeObserver(layout); if (wrap.current) ro.observe(wrap.current);
+    // the loop runs only while the game is on screen; in the background it stops completely (and resumes where it was)
     let raf = 0;
     const frame = (t: number) => {
       raf = requestAnimationFrame(frame);
       const s = g.current, c = cv.current, el = wrap.current;
       if (!c || !el) return;
-      const visible = el.offsetParent !== null && document.visibilityState === "visible";
-      if (phaseRef.current === "playing" && visible) {
+      const playing = phaseRef.current === "playing";
+      if (!playing && !s.dirty) { s.last = t; return; } // nothing moves between runs: don't repaint
+      s.dirty = false;
+      if (playing) {
         s.acc += Math.min(100, t - s.last);
         while (s.acc >= s.step) {
           s.acc -= s.step;
@@ -118,15 +126,23 @@ export function SnakeGame() {
         ctx.fillStyle = "#222"; ctx.beginPath(); ctx.arc(cx + fx * 1.35 + sx * k, cy + fy * 1.35 + sy * k, C * 0.055, 0, Math.PI * 2); ctx.fill();
       });
     };
-    raf = requestAnimationFrame(frame);
+    loop.current = {
+      start: () => { if (!raf) { g.current.last = performance.now(); g.current.dirty = true; raf = requestAnimationFrame(frame); } },
+      stop: () => { cancelAnimationFrame(raf); raf = 0; },
+    };
+    if (shownRef.current) loop.current.start();
     const key = (e: KeyboardEvent) => {
+      if (!shownRef.current) return;
       const m: Record<string, P> = { ArrowUp: { x: 0, y: -1 }, ArrowDown: { x: 0, y: 1 }, ArrowLeft: { x: -1, y: 0 }, ArrowRight: { x: 1, y: 0 } };
       if (m[e.key]) { e.preventDefault(); if (phaseRef.current === "playing") steer(m[e.key]); else start(); }
     };
     window.addEventListener("keydown", key);
-    return () => { cancelAnimationFrame(raf); ro.disconnect(); window.removeEventListener("keydown", key); };
+    return () => { cancelAnimationFrame(raf); raf = 0; ro.disconnect(); window.removeEventListener("keydown", key); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => { if (shown) loop.current?.start(); else loop.current?.stop(); }, [shown]);
+  useEffect(() => { g.current.dirty = true; }, [phase]);
 
   // swipe anywhere: steer as soon as the finger has clearly picked a direction (no need to lift it)
   const sw = useRef<{ x: number; y: number; fired: boolean } | null>(null);

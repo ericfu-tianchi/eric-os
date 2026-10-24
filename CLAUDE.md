@@ -57,6 +57,7 @@ v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(Light �
   - 只共享内容层,不共享外壳:`model.ts` 从 `filesystem.ts / projects.ts / media.ts` 派生主屏文件夹、Files、Photos、Videos —— **新增项目/文件夹/图片/视频只改数据文件,手机端自动出现**;只有系统 app 和主屏顺序(`HOME`)手写。新顶级桌面目录加进 `DESKTOP_FOLDER_IDS` 即自动成为主屏文件夹(长名在 `SHORT` 里给短名)。
   - 路由:`Route` → `routes.tsx` 的 `screenFor`;app 内部 `useNav().push` 压栈。返回:导航栏 Back/Home、底部横条(点按或上拉)、左边缘右滑、浏览器返回键(history 同步)全部可用。桌面组件里调用的 `useOS().open()` 会被转成手机路由。
   - 网格 `--cell` = 屏宽 / 13,壁纸、Snake 棋盘、图标尺寸共用。手机版 Snake 是独立实现(`SnakeGame.tsx`,不吃文件)。
+  - **后台与多任务**:最多保留 6 个运行中的 app(`MAX_APPS`,最旧的自动关闭),外链游戏只保留最近 2 个 iframe(`LIVE_GAMES`)。后台 app 通过 `useAppState()` 停掉一切循环与媒体(Snake 停 rAF、视频暂停、YouTube 卸载)——新增任何会持续跑的东西都必须接这个开关。Home Bar 上滑停顿 = App 切换器(卡片就是 app 图层本身缩放,只动 transform/opacity);上甩 = 回 Home。
 
 ## V0.5 文件系统与内容入口
 
