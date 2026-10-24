@@ -70,6 +70,12 @@ export default function App() {
   const theme = useOS((s) => s.theme);
   const snakeMode = useOS((s) => s.snakeMode);
   const isMobile = useIsMobile();
+  // analytics: the phone shell lives at /phone, the desktop at /, so Cloudflare Web Analytics counts them apart
+  useEffect(() => {
+    const want = IOS || isMobile ? "/phone" : "/";
+    if (window.location.pathname !== want && (window.location.pathname === "/" || window.location.pathname === "/phone"))
+      history.replaceState(history.state, "", want + window.location.search + window.location.hash);
+  }, [isMobile]);
   const canvasStudy = new URLSearchParams(window.location.search).has("canvasStudy");
   const [canvasVariant, setCanvasVariant] = useState<(typeof CANVAS_VARIANTS)[number]["id"]>(() => {
     const requested = new URLSearchParams(window.location.search).get("canvas");

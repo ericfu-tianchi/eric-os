@@ -229,6 +229,7 @@ async function record(req: Request, env: Env) {
 async function media(req: Request, env: Env) {
   const res = await env.ASSETS.fetch(new Request(req.url, { method: "GET" }));
   if (!res.ok) return res;
+  if ((res.headers.get("Content-Type") ?? "").startsWith("text/html")) return new Response("Not found", { status: 404 }); // the SPA fallback, not a media file
   const headers = new Headers(res.headers);
   headers.set("Accept-Ranges", "bytes");
   headers.set("Cache-Control", "public, max-age=604800");
