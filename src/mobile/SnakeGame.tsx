@@ -23,7 +23,9 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
   const [phase, setPhase] = useState<"ready" | "playing" | "over">("ready");
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(readBest);
-  const g = useRef({ cols: 13, rows: 20, cell: 30, ox: 0, oy: 0, snake: [] as P[], dir: { x: 1, y: 0 }, next: { x: 1, y: 0 }, food: { x: 0, y: 0 }, step: 150, acc: 0, last: 0, grow: 0, dirty: true, lineCol: 0, lineRow: 0, base: 3, target: 175, blinkUntil: 0 });
+  const g = useRef({ cols: 13, rows: 20, cell: 30, ox: 0, oy: 0, snake: [] as P[], dir: { x: 1, y: 0 }, next: { x: 1, y: 0 }, food: { x: 0, y: 0 }, step: 150, acc: 0, last: 0, grow: 0, dirty: true, lineCol: 0, lineRow: 0, base: 3, target: 175, appleAt: -1e9 });
+  /** the desktop's apple entrance: it drops in from above (820 ms, a little squash), then pulses twice (2 × 360 ms, from 900 ms) */
+  const APPLE_IN = 1620;
   // started from the wallpaper: carry on from the snake's exact pose (taken once, at launch)
   const wallPose = useRef(startPose ?? null);
   const wallApple = useRef(startApple ?? null);
@@ -89,7 +91,12 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
     const f = w && wa ? { x: wa[0] - s.lineCol, y: wa[1] - s.lineRow } : null;
     if (f && f.x >= 0 && f.y >= 0 && f.x < s.cols && f.y < s.rows) s.food = f; else placeFood();
   };
-  const start = () => { reset(); if (full) g.current.step = 330; setScore(0); setPhase("playing"); wallPose.current = null; setFromWall(false); };
+  /** the snake starts where the wallpaper draws it, every run (not only the first) */
+  const homePose = useRef(startPose ?? null);
+  const start = () => {
+    if (full && homePose.current) { wallPose.current = homePose.current; wallApple.current = null; reset(); setScore(0); setFromWall(true); setPhase("ready"); intro0(0); return; }
+    reset(); if (full) g.current.step = 330; setScore(0); setPhase("playing"); wallPose.current = null; setFromWall(false);
+  };
   /** from the wallpaper the snake is already on the board: the first swipe just sets it moving */
   const go = (d: P) => { const s = g.current; if (full) s.step = Math.max(s.step, 330); if (!(d.x === -s.dir.x && d.y === -s.dir.y)) s.next = d; s.last = performance.now(); setPhase("playing"); wallPose.current = null; setFromWall(false); };
 
@@ -112,7 +119,7 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
       const s = g.current, c = cv.current, el = wrap.current;
       if (!c || !el) return;
       const playing = phaseRef.current === "playing";
-      const blinking = s.blinkUntil > t;
+      const blinking = t - s.appleAt < APPLE_IN;
       if (!playing && !s.dirty && !blinking) { s.last = t; return; } // nothing moves between runs: don't repaint
       s.dirty = false;
       if (playing) {
@@ -160,7 +167,25 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
       }
       ctx.fillStyle = full ? "rgba(255,255,255,.2)" : "rgba(255,255,255,.16)";
       ctx.fillRect(L0, T0, R0 - L0 + 1, 1); ctx.fillRect(L0, B0, R0 - L0 + 1, 1); ctx.fillRect(L0, T0, 1, B0 - T0 + 1); ctx.fillRect(R0, T0, 1, B0 - T0 + 1);
-      if (apple.current?.complete && s.food.x >= 0 && !(blinking && Math.floor(t / 140) % 2)) ctx.drawImage(apple.current, s.ox + s.food.x * C + C * 0.05, s.oy + s.food.y * C + C * 0.05, C * 0.9, C * 0.9);
+      if (apple.current?.complete && s.food.x >= 0) {
+        const e = t - s.appleAt, ax = s.ox + s.food.x * C + C / 2, ay = s.oy + s.food.y * C + C / 2, sz = C * 0.9;
+        let dy = 0, sx = 1, sy = 1, glow = 0;
+        if (e < 820) { // apple-drop: ease to the cell, squash on landing
+          const k = e / 820, ease = (x: number) => x * x * (3 - 2 * x);
+          if (k < 0.68) dy = -(ay + C) * (1 - ease(k / 0.68));
+          else if (k < 0.82) { const q = (k - 0.68) / 0.14; sx = 1 + 0.2 * q; sy = 1 - 0.2 * q; }
+          else { const q = (k - 0.82) / 0.18; sx = 1.2 - 0.2 * q; sy = 0.8 + 0.2 * q; }
+        } else if (e >= 900 && e < APPLE_IN) { // apple-pulse ×2: grow, brighten and glow
+          const q = ((e - 900) % 360) / 360, w = Math.sin(q * Math.PI);
+          sx = sy = 1 + 0.34 * w; glow = w;
+        }
+        ctx.save();
+        ctx.translate(ax, ay + dy); ctx.scale(sx, sy);
+        if (glow) { ctx.shadowColor = `rgba(209,84,58,${0.9 * glow})`; ctx.shadowBlur = 12 * glow; }
+        ctx.drawImage(apple.current, -sz / 2, -sz / 2, sz, sz);
+        if (glow) { ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = 0.45 * glow; ctx.shadowBlur = 0; ctx.drawImage(apple.current, -sz / 2, -sz / 2, sz, sz); }
+        ctx.restore();
+      }
       ctx.fillStyle = GREEN;
       s.snake.forEach((p) => {
         const r = C * 0.1, x = s.ox + p.x * C + 1.5, y = s.oy + p.y * C + 1.5, w = C - 3;
@@ -188,13 +213,19 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
 
   useEffect(() => { if (shown) loop.current?.start(); else loop.current?.stop(); }, [shown]);
   useEffect(() => { g.current.dirty = true; }, [phase]);
-  // on Home: the icons clear away, an apple blinks in somewhere, and the snake sets off by itself, slowly at first
+  // on Home: the icons clear away, an apple drops in like on the desktop, and the snake sets off by itself, slowly at first
+  const introT = useRef<number[]>([]);
+  const intro0 = (delay: number) => {
+    introT.current.forEach((x) => window.clearTimeout(x));
+    g.current.food = { x: -1, y: -1 }; g.current.dirty = true;
+    introT.current = [
+      window.setTimeout(() => { placeFood(); g.current.appleAt = performance.now(); }, delay),
+      window.setTimeout(() => { if (phaseRef.current !== "ready") return; const s = g.current; s.step = 330; s.last = performance.now(); setPhase("playing"); wallPose.current = null; setFromWall(false); }, delay + APPLE_IN),
+    ];
+  };
   useEffect(() => {
-    if (!full || intro == null) return;
-    const s = g.current; s.food = { x: -1, y: -1 };
-    const a = window.setTimeout(() => { placeFood(); g.current.blinkUntil = performance.now() + 760; }, intro);
-    const b = window.setTimeout(() => { if (phaseRef.current !== "ready") return; const s = g.current; s.step = 330; s.last = performance.now(); setPhase("playing"); wallPose.current = null; setFromWall(false); }, intro + 760);
-    return () => { window.clearTimeout(a); window.clearTimeout(b); };
+    if (full && intro != null) intro0(intro);
+    return () => introT.current.forEach((x) => window.clearTimeout(x));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
