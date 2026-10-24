@@ -152,6 +152,8 @@ export function IOSShell() {
   const freeRows = Math.round((freeBottom - padTop) / cell);
   const widgetRows = freeRows >= 13 ? 5 : freeRows >= 11 ? 4 : 3; // the About widget shrinks on short screens
   const art = useMemo(currentWallpaper, []);
+  /** page-1 top row tile backgrounds while reviewing: ?ib=1…3 */
+  const iconBg = useMemo(() => { const n = Number(new URLSearchParams(window.location.search).get("ib")); return n >= 1 && n <= 3 ? n : 1; }, []);
 
 
   const frontApp = apps.find((a) => a.key === front) ?? null;
@@ -380,7 +382,13 @@ export function IOSShell() {
     if (home) { home.style.transition = t ? `transform ${t}, opacity ${t}` : "none"; home.style.opacity = String(p); home.style.transform = `scale(${1.08 - 0.08 * p})`; }
     const bar = device.current?.querySelector<HTMLElement>(".ios-homebar"); if (bar) { bar.style.transition = t ? `transform ${t}` : "none"; bar.style.transform = `translate3d(0, ${Math.max(dy * 0.18, -26)}px, 0)`; }
   };
-  const lockDown = (e: React.PointerEvent) => { const n = Date.now(); lockDrag.current = { y: e.clientY, t: n, ly: e.clientY, lt: n, v: 0 }; (e.currentTarget as Element).setPointerCapture(e.pointerId); };
+  const lockDown = (e: React.PointerEvent) => {
+    const d = device.current!.getBoundingClientRect(), y = (e.clientY - d.top) / zoom;
+    if (y < size.h - Math.max(140, size.h * 0.18)) { // not from the bottom: the home bar breathes harder to show where to start
+      const bar = device.current?.querySelector<HTMLElement>(".ios-homebar i"); bar?.animate([{ transform: "scaleX(1)" }, { transform: "scaleX(1.25)", opacity: 1 }, { transform: "scaleX(1)" }], { duration: 520, easing: "ease-in-out" });
+      return;
+    }
+    const n = Date.now(); lockDrag.current = { y: e.clientY, t: n, ly: e.clientY, lt: n, v: 0 }; (e.currentTarget as Element).setPointerCapture(e.pointerId); };
   const lockMove = (e: React.PointerEvent) => {
     const s = lockDrag.current; if (!s) return;
     const n = Date.now(); s.v = ((e.clientY - s.ly) / zoom) / Math.max(1, n - s.lt); s.ly = e.clientY; s.lt = n;
@@ -484,7 +492,22 @@ export function IOSShell() {
       return;
     }
     const now = Date.now(); s.vy = ((e.clientY - s.ly) / zoom) / Math.max(1, now - s.lt); s.ly = e.clientY; s.lt = now;
-    if (!k) return; // on Home the gesture only decides on release
+    if (!k) { // on Home: Home recedes and dims, and the recent apps rise in as cards, all with the finger
+      if (!appsRef.current.length) return;
+      const dy = Math.min(0, (e.clientY - s.y) / zoom), p = Math.min(1, -dy / 260);
+      const home = device.current?.querySelector<HTMLElement>(".ios-home"), dim = device.current?.querySelector<HTMLElement>(".ios-dim");
+      if (home) { home.style.transition = "none"; home.style.transform = `scale(${1 - 0.06 * p})`; }
+      if (dim) { dim.style.transition = "none"; dim.style.opacity = String(0.62 * p); }
+      const g = swGeo();
+      recent().forEach((a, i) => {
+        const el = layerOf(a.key); if (!el || i > 2) return;
+        el.hidden = false; el.dataset.peek = "1";
+        el.style.transition = "none"; el.style.transformOrigin = "0 0";
+        el.style.transform = `translate3d(${g.x0 - i * g.step}px, ${g.y + (size.h - g.y) * (1 - p) * 0.9}px, 0) scale(${SW})`;
+        el.style.borderRadius = `${26 / SW}px`; el.style.opacity = String(Math.min(1, p * 1.6));
+      });
+      return;
+    }
     const rawX = (e.clientX - s.x) / zoom, rawY = (e.clientY - s.y) / zoom;
     if (!s.axis && Math.hypot(rawX, rawY) > 10) s.axis = Math.abs(rawX) > Math.abs(rawY) * 1.4 ? "x" : "y";
     const el = layerOf(k); if (!el) return;
@@ -531,7 +554,20 @@ export function IOSShell() {
     const dy = (e.clientY - s.y) / zoom, v = dy / Math.max(1, Date.now() - s.t);
     const paused = Date.now() - s.lt > 90 || s.vy > -0.35; // the finger slowed down or stopped before letting go
     if (switcherRef.current) { if (Math.abs(dy) < 6) switcherHome(); return; }
-    if (!k) { if (dy < -40) enterSwitcher(); return; }
+    if (!k) {
+      if (dy < -40 || (dy < -16 && s.vy < -0.3)) { enterSwitcher(); return; } // the peeking cards glide on into place
+      // not far enough: Home comes back, the cards sink away
+      const home = device.current?.querySelector<HTMLElement>(".ios-home"), dim = device.current?.querySelector<HTMLElement>(".ios-dim");
+      const T = `.32s ${EASE}`;
+      if (home) { home.style.transition = `transform ${T}`; home.style.transform = ""; }
+      if (dim) { dim.style.transition = `opacity ${T}`; dim.style.opacity = ""; }
+      appsRef.current.forEach((a) => { const el = layerOf(a.key); if (!el?.dataset.peek) return; el.style.transition = `transform ${T}, opacity ${T}`; el.style.transform = `translate3d(${el.style.transform.match(/translate3d\(([-\d.]+)px/)?.[1] ?? 0}px, ${size.h}px, 0) scale(${SW})`; el.style.opacity = "0"; });
+      window.setTimeout(() => {
+        if (home) home.style.transition = ""; if (dim) dim.style.transition = "";
+        appsRef.current.forEach((a) => { const el = layerOf(a.key); if (!el?.dataset.peek) return; delete el.dataset.peek; el.style.cssText = ""; el.hidden = a.key !== frontRef.current; });
+      }, 330);
+      return;
+    }
     const el = layerOf(k);
     const home = device.current?.querySelector<HTMLElement>(".ios-home");
     if (s.axis === "x") { // finish or undo the slide to the previous app
@@ -633,6 +669,8 @@ export function IOSShell() {
     swPan.current = 0;
     setSwitcher(true);
     homeTo(true);
+    const dim = device.current?.querySelector<HTMLElement>(".ios-dim");
+    if (dim) { const o = getComputedStyle(dim).opacity; dim.animate([{ opacity: o }, { opacity: 0.62 }], { duration: SPRING_MS, easing: SPRING }); }
   };
   // first frame of the switcher: cards glide from wherever they are (a dragged app, or below the screen) into place
   useLayoutEffect(() => {
@@ -795,7 +833,7 @@ export function IOSShell() {
 
   return (
     <div className={`ios-stage ${framed ? "framed" : "phone"}`}>
-      <div className={`ios ${framed ? "framed" : "phone"} ${switcher ? "switching" : ""}`} ref={device} style={{ zoom, "--cell": `${cell}px`, "--gx": `${gx}px`, "--gy": `${gy}px`, "--pad-top": `${padTop}px`, "--dock-top": `${dockTop}px`, "--wrows": widgetRows } as React.CSSProperties}>
+      <div className={`ios ${framed ? "framed" : "phone"} ${switcher ? "switching" : ""} ib${iconBg}`} ref={device} style={{ zoom, "--cell": `${cell}px`, "--gx": `${gx}px`, "--gy": `${gy}px`, "--pad-top": `${padTop}px`, "--dock-top": `${dockTop}px`, "--wrows": widgetRows } as React.CSSProperties}>
         <span className="ios-probe t" /><span className="ios-probe b" />
         <div className="ios-wall" aria-hidden />
 
