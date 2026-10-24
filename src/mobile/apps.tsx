@@ -183,7 +183,7 @@ function PhotoViewer({ items, start }: { items: MediaItem[]; start: number }) {
 export function VideosScreen({ start }: { start?: string }) {
   const nav = useNav();
   const tap = useTap();
-  const play = (v: MediaItem) => nav.push({ title: v.name, tone: "black", bare: true, node: <VideoPlayer v={v} /> });
+  const play = (v: MediaItem) => nav.push({ title: v.name, tone: "black", bare: true, node: <VideoPlayer key={v.id} v={v} /> });
   useEffect(() => {
     const v = VIDEOS.find((x) => x.id === start);
     if (v) play(v);
@@ -204,23 +204,57 @@ export function VideosScreen({ start }: { start?: string }) {
   );
 }
 
+/**
+ * Full-screen player, Shorts / TikTok style without the feed: the video fills the screen,
+ * a tap pauses (a big play glyph shows), the title sits bottom-left, and a thin progress bar
+ * above the home bar can be dragged to scrub. A back button floats top-left.
+ */
 function VideoPlayer({ v }: { v: MediaItem }) {
   const nav = useNav();
   const { front } = useAppState();
   const video = useRef<HTMLVideoElement>(null);
-  useEffect(() => { if (!front) video.current?.pause(); }, [front]); // leaving the app pauses it, like iOS; the position stays
+  const bar = useRef<HTMLSpanElement>(null);
+  const [paused, setPaused] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const [t, setT] = useState({ cur: 0, dur: 0 });
+  const scrub = useRef<{ was: boolean } | null>(null);
+
+  // start playing; if the browser blocks sound without a fresh tap, play muted and offer "Tap for sound"
+  useEffect(() => {
+    const el = video.current; if (!el) return;
+    el.play().catch(() => { el.muted = true; setMuted(true); el.play().catch(() => setPaused(true)); });
+  }, []);
+  useEffect(() => { if (!front) { video.current?.pause(); setPaused(true); } }, [front]); // leaving the app pauses it; the position stays
+
+  const toggle = () => {
+    const el = video.current; if (!el) return;
+    if (muted) { el.muted = false; setMuted(false); if (!el.paused) return; }
+    if (el.paused) { el.play(); setPaused(false); } else { el.pause(); setPaused(true); }
+  };
+  const seekTo = (clientX: number) => {
+    const el = video.current, b = bar.current; if (!el || !b || !el.duration) return;
+    const r = b.getBoundingClientRect(), f = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+    el.currentTime = f * el.duration; setT({ cur: el.currentTime, dur: el.duration });
+  };
+  const fmt = (x: number) => `${Math.floor(x / 60)}:${String(Math.floor(x % 60)).padStart(2, "0")}`;
+  const pct = t.dur ? (t.cur / t.dur) * 100 : 0;
+
   return (
-    <div className="ios-player">
-      <div className="vtop">
-        <button type="button" className="ios-back" onClick={() => nav.pop()}><svg viewBox="0 0 12 20" aria-hidden><path d="M10 2 2 10l8 8" /></svg><span>Videos</span></button>
-        <span />
+    <div className={`ios-reel ${paused ? "paused" : ""} ${scrub.current ? "scrubbing" : ""}`}>
+      <video ref={video} src={v.src} poster={v.thumb} playsInline loop preload="auto" className={v.portrait ? "tall" : "wide"}
+        onClick={toggle} onTimeUpdate={(e) => !scrub.current && setT({ cur: e.currentTarget.currentTime, dur: e.currentTarget.duration || 0 })}
+        onLoadedMetadata={(e) => setT({ cur: 0, dur: e.currentTarget.duration })} />
+      <button type="button" className="reel-back" onClick={() => nav.pop()} aria-label="Back to Videos"><svg viewBox="0 0 12 20" aria-hidden><path d="M10 2 2 10l8 8" /></svg></button>
+      {muted && <button type="button" className="reel-sound" onClick={toggle}>Tap for sound</button>}
+      <span className="reel-play" aria-hidden><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" /></svg></span>
+      <div className="reel-info"><b>{v.name}</b><small>{fmt(t.cur)} / {fmt(t.dur)}</small></div>
+      <div className="reel-bar" role="slider" aria-label="Seek" aria-valuemin={0} aria-valuemax={Math.round(t.dur)} aria-valuenow={Math.round(t.cur)}
+        onPointerDown={(e) => { (e.currentTarget as Element).setPointerCapture(e.pointerId); const el = video.current; scrub.current = { was: !!el && !el.paused }; el?.pause(); seekTo(e.clientX); setT((x) => ({ ...x })); }}
+        onPointerMove={(e) => { if (scrub.current) seekTo(e.clientX); }}
+        onPointerUp={() => { const s = scrub.current; scrub.current = null; if (s?.was) video.current?.play(); setT((x) => ({ ...x })); }}
+        onPointerCancel={() => { scrub.current = null; }}>
+        <span className="track" ref={bar}><i style={{ width: `${pct}%` }} /><em style={{ left: `${pct}%` }} /></span>
       </div>
-      <div className={`stage ${v.portrait ? "tall" : ""}`}>
-        {v.youtube
-          ? !front ? <img className="poster" src={v.thumb} alt="" /> : <iframe src={`https://www.youtube-nocookie.com/embed/${v.youtube}?autoplay=1&playsinline=1&rel=0&modestbranding=1`} title={v.name} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
-          : <video ref={video} src={v.src} poster={v.thumb} controls autoPlay playsInline />}
-      </div>
-      <div className="vbot"><b>{v.name}</b></div>
     </div>
   );
 }
