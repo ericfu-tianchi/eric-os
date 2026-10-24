@@ -8,6 +8,7 @@ import { ALBUMS, HOME, HOME_FOLDERS, appKey, type HomeItem, type Route } from ".
 import { AppTile, ItemTile } from "./icons";
 import { AppState, NavBar, NavContext, type Nav, type Screen } from "./nav";
 import { screenFor } from "./routes";
+import { WALLPAPERS, headDir, setPendingStart, wallpaperFor, type Cell, type Wallpaper } from "./wallpapers";
 import "./ios.css";
 
 /**
@@ -52,18 +53,18 @@ const session = { get: (k: string) => { try { return sessionStorage.getItem(k); 
 
 /* ---------------- wallpaper ---------------- */
 
-/** "hi", written by the snake on the wallpaper grid: h, then a cursive join into i; an apple dots the i. */
-const HI: [number, number][] = [
-  [0, 6], [0, 5], [0, 4], [0, 3], [0, 2], [0, 1], [0, 0], [1, 0], [1, 1], [1, 2], [1, 3], [2, 3], [3, 3], [3, 4], [3, 5], [3, 6], [4, 6], [5, 6], [5, 5], [5, 4], [5, 3], [5, 2],
-];
-function HiSnake({ col, row }: { col: number; row: number }) {
-  const [hx, hy] = HI[HI.length - 1];
-  const at = (x: number, y: number) => ({ left: `calc(var(--cell) * ${x})`, top: `calc(var(--cell) * ${y})` });
+/** The wallpaper snake: cells on the Home grid. `x0`/`y0` = the pixel position of canvas col 0 / the bottom line of the free area. */
+function WallArt({ art, cols, c, x0, bottom, onPlay }: { art: Wallpaper; cols: [number, number]; c: number; x0: number; bottom: number; onPlay?: () => void }) {
+  const at = ([x, y]: Cell) => ({ left: x0 + (x - cols[0]) * c, top: bottom - (y + 1) * c, width: c, height: c });
+  const inView = (p: Cell) => p[0] >= cols[0] && p[0] <= cols[1];
+  const head = art.cells[art.cells.length - 1], [dx, dy] = headDir(art.cells);
+  const turn = dx === 1 ? 90 : dx === -1 ? -90 : dy === -1 ? 180 : 0;
   return (
-    <div className="ios-hi" style={at(col, row)} aria-hidden>
-      {HI.map(([x, y], i) => <i key={i} style={at(x, y)} />)}
-      <b className="eyes" style={at(hx, hy)}><span /><span /></b>
-      <em className="apple" style={at(hx, hy - 2)} />
+    <div className={`ios-art ${onPlay ? "playable" : ""}`} aria-hidden onClick={onPlay}>
+      {art.cells.slice(0, -1).filter(inView).map((p, i) => <i key={i} style={at(p)} />)}
+      {inView(head) && <b className="eyes" style={{ ...at(head), transform: `rotate(${turn}deg)` }}><span /><span /></b>}
+      {art.apples.filter(inView).map((p, i) => <em key={i} className="apple" style={at(p)} />)}
+      {art.hint && inView(head) && <small style={{ left: x0 + (head[0] - cols[0] - 4) * c, top: bottom - (head[1] + 2) * c - 6 }}>{art.hint}</small>}
     </div>
   );
 }
@@ -119,18 +120,37 @@ export function IOSShell() {
     r.style.overscrollBehavior = b.style.overscrollBehavior = "none";
   }, []);
 
-  // device size → grid cell (13 across, same as the Snake board) and the desktop-preview zoom
+  // device size + safe areas → the grid, and the desktop-preview zoom
+  const [insets, setInsets] = useState({ top: 0, bot: 0 });
   useLayoutEffect(() => {
     const f = () => {
       const el = device.current; if (!el) return;
       setSize({ w: el.offsetWidth, h: el.offsetHeight });
+      const pt = el.querySelector<HTMLElement>(".ios-probe.t"), pb = el.querySelector<HTMLElement>(".ios-probe.b");
+      setInsets({ top: pt?.offsetHeight ?? 0, bot: pb?.offsetHeight ?? 0 });
       setZoom(framed ? Math.min(1, (window.innerHeight - 92) / 852) : 1);
     };
     f();
     window.addEventListener("resize", f);
     return () => window.removeEventListener("resize", f);
   }, [framed]);
-  const cell = size.w / 13;
+  /**
+   * One grid for the whole phone: 12 columns, offset by half a cell so icons, widgets and the Dock sit exactly on its lines.
+   * Columns: ½ margin · 4 icons of 2 cells with 1-cell gaps · ½ margin. Rows are anchored so the Dock's bottom edge lands
+   * on a line just above the home bar; content starts on the first line below the status bar.
+   */
+  const cell = size.w / 12;
+  const gx = cell / 2;
+  const dockBottom = size.h - insets.bot - 34;
+  const gy = ((dockBottom % cell) + cell) % cell;
+  const dockTop = dockBottom - cell * 3;
+  const padTop = gy + Math.ceil((insets.top + 10 - gy) / cell) * cell;
+  const freeBottom = dockTop - cell; // the row above the Dock holds the page dots
+  const freeRows = Math.round((freeBottom - padTop) / cell);
+  const widgetRows = freeRows >= 13 ? 5 : freeRows >= 11 ? 4 : 3; // the About widget shrinks on short screens
+  const wallId = useMemo(() => { const n = Number(new URLSearchParams(window.location.search).get("wall")); return WALLPAPERS.some((w) => w.id === n) ? n : 1; }, []);
+  const art = wallpaperFor(wallId);
+  const showMini = !art.page1 && freeRows >= widgetRows + 1 + 6 + 1 + 5; // the Snake + photo widgets, when they fit and the art leaves room
 
   const frontApp = apps.find((a) => a.key === front) ?? null;
   const top = frontApp?.stack[frontApp.stack.length - 1];
@@ -211,7 +231,7 @@ export function IOSShell() {
 
   /* ---------- open / push / back / home ---------- */
 
-  const launch = (route: Route, from?: Element | null) => {
+  const launch = (route: Route, from?: Element | null, fade = false) => {
     const key = appKey(route);
     setMenu(null); setSheet(false); setBanner(false);
     if (!from?.closest(".ios-folder")) setFolder(null); // launched from a folder: it stays open underneath, like iOS
@@ -224,7 +244,17 @@ export function IOSShell() {
     });
     setFront(key);
     pushHistory();
-    requestAnimationFrame(() => requestAnimationFrame(() => { const el = layerOf(key); if (el) { el.hidden = false; flight(el, from, "in"); } homeTo(true); }));
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const el = layerOf(key); if (!el) return;
+      el.hidden = false;
+      if (fade) { // from the wallpaper: the board fades in around a snake that never moves, so Home must not move either
+        const home = device.current?.querySelector<HTMLElement>(".ios-home");
+        if (home) { home.style.transform = "none"; window.setTimeout(() => { home.style.transform = ""; }, 360); }
+        el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 320, easing: "ease-out" });
+        return;
+      }
+      flight(el, from, "in"); homeTo(true);
+    }));
   };
   const open = (route: Route, from?: Element | null) => {
     // keyboard games: ask first on touch screens
@@ -398,25 +428,45 @@ export function IOSShell() {
 
   /* ---------- home indicator: tap = Home; drag up = the app shrinks under your finger;
      drag up and pause = the app switcher (from Home too, once an app has run) ---------- */
-  const hb = useRef<{ y: number; t: number; ly: number; lt: number; vy: number } | null>(null);
+  const hb = useRef<{ x: number; y: number; t: number; ly: number; lt: number; vy: number; axis?: "x" | "y" } | null>(null);
   const hbDown = (e: React.PointerEvent) => {
-    if (switcherRef.current) { hb.current = { y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 }; return; }
+    if (switcherRef.current) { hb.current = { x: e.clientX, y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 }; return; }
     if (!frontRef.current && !appsRef.current.length) return;
-    hb.current = { y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 };
+    hb.current = { x: e.clientX, y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 };
     (e.currentTarget as Element).setPointerCapture(e.pointerId);
   };
   const hbMove = (e: React.PointerEvent) => {
     const s = hb.current, k = frontRef.current; if (!s || switcherRef.current) return;
     const now = Date.now(); s.vy = ((e.clientY - s.ly) / zoom) / Math.max(1, now - s.lt); s.ly = e.clientY; s.lt = now;
     if (!k) return; // on Home the gesture only decides on release
-    const dy = Math.min(0, (e.clientY - s.y) / zoom);
+    const rawX = (e.clientX - s.x) / zoom, rawY = (e.clientY - s.y) / zoom;
+    if (!s.axis && Math.hypot(rawX, rawY) > 10) s.axis = Math.abs(rawX) > Math.abs(rawY) * 1.4 ? "x" : "y";
     const el = layerOf(k); if (!el) return;
-    const p = Math.min(1, -dy / 420), sc = 1 - p * 0.42;
     const W = el.offsetWidth, H = el.offsetHeight;
+    if (s.axis === "x") { // slide along the bar: the previous app comes in from the left, like iOS
+      const prev = recent()[1]; const pel = prev && layerOf(prev.key); if (!pel) return;
+      const dx = Math.max(0, rawX);
+      el.style.transition = pel.style.transition = "none";
+      el.style.transform = `translate3d(${dx}px,0,0)`; pel.hidden = false; pel.dataset.slide = "1"; pel.style.transform = `translate3d(${dx - W - 10}px,0,0)`;
+      return;
+    }
+    const dy = Math.min(0, rawY);
+    const p = Math.min(1, -dy / 420), sc = 1 - p * 0.42;
+    const tx = (W * (1 - sc)) / 2, ty = dy * 0.55 + (H * (1 - sc)) / 2;
     el.style.transition = "none";
     el.style.transformOrigin = "0 0"; // same origin the flight uses, so letting go continues from exactly here
-    el.style.transform = `translate3d(${(W * (1 - sc)) / 2}px, ${dy * 0.55 + (H * (1 - sc)) / 2}px, 0) scale(${sc})`;
+    el.style.transform = `translate3d(${tx}px, ${ty}px, 0) scale(${sc})`;
     el.style.borderRadius = `${(framed ? 55 : 30) + p * 10}px`;
+    // past a short way up, the apps you used before peek in from the left at the same size, as on iOS
+    const fade = Math.max(0, Math.min(1, (p - 0.06) / 0.18));
+    recent().slice(1, 3).forEach((a, i) => {
+      const n = layerOf(a.key); if (!n) return;
+      if (fade <= 0) { if (n.dataset.peek) { n.hidden = true; delete n.dataset.peek; n.style.cssText = ""; } return; }
+      n.hidden = false; n.dataset.peek = "1";
+      n.style.transition = "none"; n.style.transformOrigin = "0 0";
+      n.style.transform = `translate3d(${tx - (i + 1) * (W * sc + 22)}px, ${ty}px, 0) scale(${sc})`;
+      n.style.borderRadius = `${40 / Math.max(sc, 0.5)}px`; n.style.opacity = String(fade);
+    });
     const home = device.current?.querySelector<HTMLElement>(".ios-home");
     if (home) { home.style.transition = "none"; home.style.transform = `scale(${0.94 + 0.03 * p})`; } // Home starts coming forward under your finger
   };
@@ -429,10 +479,27 @@ export function IOSShell() {
     if (!k) { if (dy < -40) enterSwitcher(); return; }
     const el = layerOf(k);
     const home = device.current?.querySelector<HTMLElement>(".ios-home");
-    if (Math.abs(dy) < 6) goHome();
-    else if (dy < -60 && paused && appsRef.current.length) enterSwitcher(); // the dragged app becomes a card
-    else if (dy < -70 || v < -0.4) goHome(); // a flick: the flight picks up from the dragged pose
+    if (s.axis === "x") { // finish or undo the slide to the previous app
+      const prev = recent()[1], pel = prev && layerOf(prev.key), W = size.w, dx = Math.max(0, (e.clientX - s.x) / zoom);
+      if (!el || !pel || !prev) return;
+      const done = dx > W * 0.3 || dx / Math.max(1, Date.now() - s.t) > 0.5;
+      const t = `transform .32s ${EASE}`;
+      el.style.transition = pel.style.transition = t;
+      el.style.transform = done ? `translate3d(${W + 10}px,0,0)` : ""; pel.style.transform = done ? "" : `translate3d(${-W - 10}px,0,0)`;
+      window.setTimeout(() => {
+        [el, pel].forEach((x) => { x.style.transition = ""; x.style.transform = ""; delete x.dataset.slide; });
+        if (done) { setApps((xs) => [...xs.filter((a) => a.key !== prev.key), ...xs.filter((a) => a.key === prev.key)]); setFront(prev.key); }
+        else pel.hidden = true;
+      }, 330);
+      return;
+    }
+    const peeks = appsRef.current.map((a) => layerOf(a.key)).filter((n): n is HTMLElement => !!n && !!n.dataset.peek);
+    const dropPeeks = () => peeks.forEach((n) => { n.style.transition = "opacity .2s"; n.style.opacity = "0"; window.setTimeout(() => { if (!switcherRef.current) { n.hidden = n.dataset.app !== frontRef.current; n.style.cssText = ""; } delete n.dataset.peek; }, 220); });
+    if (Math.abs(dy) < 6) { dropPeeks(); goHome(); }
+    else if (dy < -60 && paused && appsRef.current.length) enterSwitcher(); // the dragged app becomes a card; peeking apps glide on into place
+    else if (dy < -70 || v < -0.4) { dropPeeks(); goHome(); } // a flick: the flight picks up from the dragged pose
     else if (el) {
+      dropPeeks();
       if (home) homeTo(true);
       el.style.transition = `transform .35s ${EASE}, border-radius .35s`; el.style.transform = "translate3d(0,0,0) scale(1)"; el.style.borderRadius = "";
       window.setTimeout(() => { el.style.transition = ""; el.style.transform = ""; el.style.transformOrigin = ""; }, 360);
@@ -443,6 +510,7 @@ export function IOSShell() {
   const edge = useRef<{ x: number; t: number; top: HTMLElement; under: HTMLElement | null } | null>(null);
   const edgeDown = (e: React.PointerEvent) => {
     if (!frontApp || frontApp.stack.length < 2) return;
+    if ((e.target as Element).closest("video, iframe, input, canvas")) return; // a video's scrubber or a game owns its own drags
     const x = (e.clientX - device.current!.getBoundingClientRect().left) / zoom;
     if (x > 24) return;
     const layer = layerOf(frontApp.key); if (!layer) return;
@@ -488,9 +556,9 @@ export function IOSShell() {
   };
   const recent = () => [...appsRef.current].reverse(); // most recent first
   /** place every card (and its label) for a pan position; `t` = transition, `lift` = one card dragged up */
-  const placeCards = (pan: number, t = "", lift?: { key: string; dy: number }) => {
+  const placeCards = (pan: number, t = "", lift?: { key: string; dy: number }, list = recent()) => {
     const g = swGeo();
-    recent().forEach((a, i) => {
+    list.forEach((a, i) => {
       const el = layerOf(a.key); if (!el) return;
       const x = g.x0 + (pan - i) * g.step, dy = lift?.key === a.key ? lift.dy : 0;
       el.hidden = false;
@@ -517,6 +585,7 @@ export function IOSShell() {
     const g = swGeo();
     recent().forEach((a, i) => {
       const el = layerOf(a.key); if (!el || a.key === frontRef.current) return;
+      if (el.dataset.peek) { delete el.dataset.peek; return; } // already peeking in from the drag: glide on from there
       el.hidden = false; el.style.transition = "none"; el.style.transformOrigin = "0 0";
       el.style.transform = `translate3d(${g.x0 - i * g.step}px, ${size.h}px, 0) scale(${SW})`; el.style.borderRadius = `${26 / SW}px`;
     });
@@ -565,7 +634,7 @@ export function IOSShell() {
       setApps(left);
       if (!left.length) { swPan.current = 0; switcherHome(); return; }
       swPan.current = Math.min(swPan.current, left.length - 1);
-      requestAnimationFrame(() => placeCards(swPan.current, SW_T));
+      requestAnimationFrame(() => placeCards(swPan.current, SW_T, undefined, [...left].reverse())); // the cards close the gap (state hasn't caught up yet)
     }, 280);
   };
   const swDrag = useRef<{ x: number; y: number; t: number; pan: number; key: string | null; axis?: "x" | "y"; vx: number; vy: number; lx: number; ly: number; lt: number } | null>(null);
@@ -604,6 +673,15 @@ export function IOSShell() {
     }
   };
 
+  /* ---------- the wallpaper comes alive: tap the paused game on page 2 and Snake carries on from that exact pose ---------- */
+  const playFromWall = () => {
+    if (suppressTap.current) { suppressTap.current = false; return; }
+    if (appsRef.current.some((a) => a.key === "snake")) { open({ app: "snake" }); return; }
+    const rowOf = (y: number) => Math.round((freeBottom - (y + 1) * cell - gy) / cell); // canvas row → grid row from the top line
+    setPendingStart({ cells: art.cells.map(([x, y]) => [x - 12, rowOf(y)] as Cell), dir: headDir(art.cells) });
+    launch({ app: "snake" }, null, true);
+  };
+
   /* ---------- widgets ---------- */
   const featured = useMemo(() => { const all = ALBUMS.flatMap((a) => a.items); return all[Math.floor(Math.random() * all.length)]; }, []);
   const bestLine = useMemo(() => {
@@ -623,12 +701,12 @@ export function IOSShell() {
 
   /* ---------- render ---------- */
   const now = useClock();
-  const rows = Math.floor(size.h / cell);
   const ink = locked || !top || top.tone !== "light" ? "light" : "dark";
 
   return (
     <div className={`ios-stage ${framed ? "framed" : "phone"}`}>
-      <div className={`ios ${framed ? "framed" : "phone"} ${switcher ? "switching" : ""}`} ref={device} style={{ zoom, "--cell": `${cell}px` } as React.CSSProperties}>
+      <div className={`ios ${framed ? "framed" : "phone"} ${switcher ? "switching" : ""}`} ref={device} style={{ zoom, "--cell": `${cell}px`, "--gx": `${gx}px`, "--gy": `${gy}px`, "--pad-top": `${padTop}px`, "--dock-top": `${dockTop}px`, "--wrows": widgetRows } as React.CSSProperties}>
+        <span className="ios-probe t" /><span className="ios-probe b" />
         <div className="ios-wall" aria-hidden />
 
         {/* Home */}
@@ -646,7 +724,7 @@ export function IOSShell() {
                 <img src={portrait} alt="" draggable={false} />
               </button>
               <div className="ios-grid">{HOME.page1.map((it) => icon(it))}</div>
-              <div className="ios-widgets">
+              {showMini && <div className="ios-widgets">
                 <button type="button" className="ios-mini snake" onClick={(e) => { if (suppressTap.current) { suppressTap.current = false; return; } open({ app: "snake" }, e.currentTarget); }}>
                   <span className="board" aria-hidden>{[[0, 3], [1, 3], [2, 3], [2, 2], [2, 1], [3, 1], [4, 1]].map(([x, y], i) => <i key={i} style={{ left: `${x * 20}%`, top: `${y * 20}%` }} />)}<em style={{ left: "80%", top: "60%" }} /></span>
                   <span className="cap"><b>Snake</b><small>{bestLine}</small></span>
@@ -655,12 +733,12 @@ export function IOSShell() {
                   <img src={featured.thumb} alt="" draggable={false} />
                   <span className="cap"><small>Featured photo</small><b>{featured.name}</b></span>
                 </button>
-              </div>
+              </div>}
             </section>
             <section className="page" aria-label="Home page 2">
               <div className="ios-grid">{HOME.page2.map((it) => icon(it))}</div>
-              <HiSnake col={3} row={Math.max(7, rows - 12)} />
             </section>
+            <WallArt art={art} cols={[0, 23]} c={cell} x0={gx} bottom={freeBottom} onPlay={art.playable ? playFromWall : undefined} />
           </div>
           <div className="ios-dots" role="tablist" aria-label="Home Screen pages">
             {[0, 1].map((i) => <button type="button" key={i} role="tab" aria-selected={page === i} aria-label={`Page ${i + 1}`} className={page === i ? "on" : ""} onClick={() => setPage(i)} />)}
@@ -766,7 +844,7 @@ export function IOSShell() {
               <div className="ios-note"><img className="av" src={portrait} alt="" /><div><span className="h"><b>Tianchi Fu</b><small>now</small></span><p>Hi, I'm Tianchi, an AI PM at OpusClip in Singapore. My work, side projects and a snake are inside.</p></div></div>
               <div className="ios-note"><span className="av snake"><MiniHead hat={useOS.getState().snakeHat} size={28} /></span><div><span className="h"><b>Tianchi's snake</b><small>now</small></span><p>Tap anywhere to come in.</p></div></div>
             </div>
-            <HiSnake col={3} row={Math.max(9, rows - 10)} />
+            <WallArt art={art} cols={[12, 23]} c={cell} x0={gx} bottom={freeBottom} />
             <div className="hint">Swipe up or tap to open</div>
           </div>
         )}

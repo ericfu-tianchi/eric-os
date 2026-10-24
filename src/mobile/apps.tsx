@@ -316,7 +316,7 @@ export function ResumeScreen() {
           <a key={i} href={l.href} target="_blank" rel="noopener" aria-label={l.href} style={{ left: `${l.left}%`, top: `${l.top}%`, width: `${l.width}%`, height: `${l.height}%` }} />
         ))}
       </div>
-      <a className="ios-pill" href="/resume.pdf" download="Tianchi-Fu-Resume-2026.pdf">Download PDF</a>
+      <p className="meta">Tianchi-Fu-Resume-2026.pdf · 1 page · Links work</p>
     </div>
   );
 }

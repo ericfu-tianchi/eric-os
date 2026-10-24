@@ -62,6 +62,7 @@ rail; no poster → the solid accent hero; no process → no process section.
 - **Sections:** each `CaseSection` is a full-width band. Bands alternate white / mist
   `#f6f6f7` (a section full of white-background slides can set `white: true`). Every band opens with a centered code-style title: `<Overview/>`.
 - **Reading column:** 880px max, centered. Side gutter `clamp(24px, 7cqi, 80px)`.
+- **One column (narrow windows, phones):** text comes before its picture in `feature` and `item` rows.
 - **Meta rail (first section only):** My Role / Timeline / Tools in a 200px right rail,
   64px gap, beside the opening text blocks. It stops at the first callout or figure;
   everything after uses the full column. Below 760px the rail becomes a row above the text.
