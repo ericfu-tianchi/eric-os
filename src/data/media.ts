@@ -54,9 +54,9 @@ export const MEDIA_FOLDERS: MediaFolder[] = [
   ] },
   // no notes on purpose: they speak for themselves
   { id: "vid-wall", name: "Videos", kind: "video", flat: true, items: [
-    { id: "vid-goggins", name: "The main purpose is YOU · David Goggins", src: "", youtube: "NvIu-IWfubA", thumb: "/media/videos/yt-NvIu-IWfubA.webp", portrait: true },
-    { id: "vid-naval", name: "The only true test of intelligence · Naval", src: "", youtube: "V1S05-X-Q4Y", thumb: "/media/videos/yt-V1S05-X-Q4Y.webp", portrait: true },
-    { id: "vid-jobs", name: "Steve Jobs on the Liberal Arts", src: "", youtube: "KgHkAwaW_lk", thumb: "/media/videos/yt-KgHkAwaW_lk.webp" },
+    { id: "vid-goggins", name: "The main purpose is YOU · David Goggins", src: "/media/videos/goggins-main-purpose.mp4", thumb: "/media/videos/goggins-main-purpose.webp", portrait: true },
+    { id: "vid-naval", name: "The only true test of intelligence · Naval", src: "/media/videos/naval-true-test.mp4", thumb: "/media/videos/naval-true-test.webp", portrait: true },
+    { id: "vid-jobs", name: "Steve Jobs on the Liberal Arts", src: "/media/videos/jobs-liberal-arts.mp4", thumb: "/media/videos/jobs-liberal-arts.webp" },
     { id: "vid-heart", name: "Follow Your Heart: Stop Living Someone Else's Life", src: "/media/videos/follow-your-heart.mp4", thumb: "/media/videos/follow-your-heart.webp", portrait: true },
     { id: "vid-youtuber", name: "I Never Gave Up on Becoming a YouTuber", src: "/media/videos/never-gave-up.mp4", thumb: "/media/videos/never-gave-up.webp", portrait: true },
   ] },
