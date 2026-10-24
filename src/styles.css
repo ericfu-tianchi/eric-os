@@ -1033,7 +1033,7 @@ button { font-family: inherit; color: inherit; }
 .cs-feature p { margin: 0; font-family: var(--font-sans); font-size: 18px; line-height: 1.7; color: #494949; }
 .cs-feature.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr); }
 .cs-feature.flip > img { order: 2; }
-@container (max-width: 760px) { .cs-feature, .cs-feature.flip { grid-template-columns: 1fr; gap: 20px; margin-inline: 0; } .cs-feature.flip > img { order: 0; } }
+@container (max-width: 760px) { .cs-feature, .cs-feature.flip { grid-template-columns: 1fr; gap: 20px; margin-inline: 0; } .cs-feature > img, .cs-feature.flip > img { order: 2; } } /* one column: read first, then look */
 
 .cs-step { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 8px; padding: 28px 0; border-top: 1px solid var(--hairline); }
 .cs-step:last-of-type { border-bottom: 1px solid var(--hairline); margin-bottom: 24px; }
@@ -1260,7 +1260,7 @@ button { font-family: inherit; color: inherit; }
 .cs-app:hover::after, .cs-app:focus-visible::after { opacity: 1; }
 @container (max-width: 760px) {
   .cs-item, .cs-item.flip { grid-template-columns: 1fr; gap: 20px; }
-  .cs-item > :first-child, .cs-item.flip > :first-child { order: 2; }
+  .cs-item > :first-child, .cs-item.flip > :first-child { order: 0; } /* one column: text first, then the picture */
   .cs-apps { gap: 10px; padding: 24px 16px; }
 }
 /* no lone word on a line of its own: headings balance, body text avoids orphans */

@@ -27,14 +27,9 @@
 /* ---------- wallpaper: the desktop's charcoal grid, one --cell per square ---------- */
 .ios-wall { position: absolute; inset: 0; background-color: #1c1d21;
   background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
-  background-size: var(--cell) var(--cell); }
-.ios-hi { position: absolute; width: 0; height: 0; pointer-events: none; }
-.ios-hi i, .ios-hi .eyes, .ios-hi .apple { position: absolute; width: var(--cell); height: var(--cell); }
-.ios-hi i::before, .ios-hi .eyes::before { content: ""; position: absolute; inset: 1.5px; border-radius: calc(var(--cell) * .1); background: var(--green); }
-.ios-hi .eyes span { position: absolute; z-index: 1; width: 23%; height: 23%; top: 18%; margin-left: -11.5%; border-radius: 50%; background: #fafafa; }
-.ios-hi .eyes span:first-child { left: 30%; } .ios-hi .eyes span:last-child { left: 70%; }
-.ios-hi .eyes span::after { content: ""; position: absolute; left: 28%; top: 6%; width: 46%; height: 46%; border-radius: 50%; background: #222; }
-.ios-hi .apple { background: url("../assets/icons/b/apple.png") center / 76% no-repeat; animation: ios-bob 2.4s ease-in-out infinite; }
+  background-size: var(--cell) var(--cell); background-position: var(--gx, 0) var(--gy, 0); }
+.ios-probe { position: absolute; left: 0; width: 0; pointer-events: none; visibility: hidden; }
+.ios-probe.t { top: 0; height: var(--top); } .ios-probe.b { bottom: 0; height: var(--bot); }
 @keyframes ios-bob { 50% { transform: translateY(-3px); } }
 
 /* ---------- status bar (desktop preview only: on a phone the browser draws the real one) ---------- */
@@ -82,8 +77,8 @@
 .ios-home.behind { transform: scale(.94); }
 .ios-home.behind::after { opacity: .45; } /* dim with an overlay: animating filter on a full-screen layer drops frames on phones */
 .ios-home .pages { position: absolute; inset: 0; display: flex; will-change: transform; backface-visibility: hidden; }
-.ios-home .page { position: relative; flex: none; width: 100%; height: 100%; padding: calc(var(--top) + 18px) calc(var(--cell) * .55) 0; }
-.ios-widget { display: flex; width: 100%; height: calc(var(--cell) * 5.2); border-radius: 22px; overflow: hidden; background: #0d0e10; box-shadow: inset 0 0 0 .5px rgba(255,255,255,.1), 0 6px 20px rgba(0,0,0,.25); transition: transform .15s; }
+.ios-home .page { position: relative; z-index: 1; flex: none; width: 100%; height: 100%; padding: var(--pad-top) var(--gx) 0; }
+.ios-widget { display: flex; width: 100%; height: calc(var(--cell) * var(--wrows, 5)); border-radius: 22px; overflow: hidden; background: #0d0e10; box-shadow: inset 0 0 0 .5px rgba(255,255,255,.1), 0 6px 20px rgba(0,0,0,.25); transition: transform .15s; }
 .ios-widget:active { transform: scale(.97); }
 .ios-widget .txt { flex: 1; min-width: 0; padding: 16px 0 15px 16px; display: flex; flex-direction: column; text-align: left; }
 .ios-widget small { display: flex; align-items: center; gap: 6px; font: 600 10.5px var(--font); letter-spacing: .07em; text-transform: uppercase; color: #9a9ba1; }
@@ -92,21 +87,23 @@
 .ios-widget b em { font-style: normal; color: #5f6066; }
 .ios-widget .txt > span { margin-top: auto; font-size: 12.5px; line-height: 1.35; color: #b6b7be; text-wrap: balance; }
 .ios-widget img { width: 46%; object-fit: cover; object-position: 30% 8%; }
-.ios-grid { display: grid; grid-template-columns: repeat(4, 1fr); row-gap: calc(var(--cell) * .62); margin-top: calc(var(--cell) * .85); justify-items: center; }
-.ios-icon { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; -webkit-touch-callout: none; }
+/* icons: 2 cells wide on 3-cell columns, labels in the cell row under each icon */
+.ios-grid { display: grid; grid-template-columns: repeat(4, var(--ic)); column-gap: var(--cell); row-gap: var(--cell); margin-top: var(--cell); }
+.ios-page2 .ios-grid, .ios-home .page:nth-child(2) .ios-grid { margin-top: 0; }
+.ios-icon { position: relative; display: block; width: var(--ic); height: var(--ic); -webkit-touch-callout: none; }
 .ios-icon .ios-ic { transition: transform .18s cubic-bezier(.3,1.4,.5,1), filter .15s; }
 .ios-icon:active .ios-ic { transform: scale(.9); filter: brightness(.82); }
 .ios-icon.lifted .ios-ic { transform: scale(1.08); }
-.ios-icon .lbl { max-width: calc(var(--ic) + 18px); font: 500 11.5px/1.2 var(--font); color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -.01em; }
-.ios-dots { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(var(--bot) + var(--ic) + 68px); display: flex; gap: 2px; padding: 5px 8px; border-radius: 99px; background: rgba(255,255,255,.08); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.ios-icon .lbl { position: absolute; left: 50%; top: calc(var(--ic) + 5px); transform: translateX(-50%); max-width: calc(var(--cell) * 3 - 4px); font: 500 11.5px/1.2 var(--font); color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -.01em; }
+.ios-dots { position: absolute; left: 50%; transform: translate(-50%, -50%); top: calc(var(--dock-top) - var(--cell) / 2); display: flex; gap: 2px; padding: 5px 8px; border-radius: 99px; background: rgba(255,255,255,.08); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .ios-dots button { width: 16px; height: 16px; display: grid; place-items: center; }
 .ios-dots button::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.35); transition: background .25s; }
 .ios-dots button.on::before { background: #fff; }
-.ios-dock { position: absolute; left: 10px; right: 10px; bottom: calc(var(--bot) + 36px); height: calc(var(--ic) + 26px); border-radius: 32px; display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; justify-items: center; padding: 0 calc(var(--cell) * .55 - 10px);
+.ios-dock { position: absolute; left: 8px; right: 8px; top: var(--dock-top); height: calc(var(--cell) * 3); border-radius: 30px; display: grid; grid-template-columns: repeat(4, var(--ic)); column-gap: var(--cell); align-content: center; padding: 0 calc(var(--gx) - 8px);
   background: rgba(70,72,80,.38); backdrop-filter: blur(26px) saturate(1.6); -webkit-backdrop-filter: blur(26px) saturate(1.6); box-shadow: inset 0 0 0 .5px rgba(255,255,255,.12); }
 
 /* small widgets: Snake + a featured photo (tall screens only) */
-.ios-widgets { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--cell) * .7); margin-top: calc(var(--cell) * .75); }
+.ios-widgets { display: grid; grid-template-columns: repeat(2, calc(var(--cell) * 5)); gap: var(--cell); margin-top: var(--cell); }
 .ios-mini { position: relative; aspect-ratio: 1; border-radius: 22px; overflow: hidden; text-align: left; box-shadow: inset 0 0 0 .5px rgba(255,255,255,.1), 0 6px 20px rgba(0,0,0,.25); transition: transform .15s; }
 .ios-mini:active { transform: scale(.96); }
 .ios-mini .cap { position: absolute; left: 14px; right: 12px; bottom: 12px; display: flex; flex-direction: column; }
@@ -120,7 +117,7 @@
 .ios-mini.snake .board em { background: url("../assets/icons/b/apple.png") center / 80% no-repeat; }
 .ios-mini.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .ios-mini.photo .cap { margin: 0 -12px -12px -14px; padding: 44px 12px 12px 14px; background: linear-gradient(transparent, rgba(0,0,0,.45) 35%, rgba(0,0,0,.78)); text-shadow: 0 1px 2px rgba(0,0,0,.4); }
-@media (max-height: 790px) { .ios.phone .ios-widgets { display: none; } }
+
 
 /* app icons */
 .ios-ic { position: relative; flex: none; width: var(--ic); height: var(--ic); border-radius: 22.5%; overflow: hidden; display: grid; place-items: center;
@@ -203,8 +200,8 @@
 .ios-nav.large:not(.scrolled) .ios-nav-title { opacity: 0; }
 .ios-nav-action { justify-self: end; display: flex; padding-right: 8px; }
 .ios-back { grid-column: 1; justify-self: start; display: flex; align-items: center; gap: 4px; height: 44px; padding: 0 8px; margin-left: -2px; max-width: 100%; font: 400 17px var(--font); border-radius: 10px; }
-.tone-light .ios-back { color: #0a8f4e; }
-.tone-dark .ios-back, .tone-black .ios-back { color: #4cd286; }
+.tone-light .ios-back { color: #111113; }
+.tone-dark .ios-back, .tone-black .ios-back { color: #fff; }
 .ios-back span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 28vw; }
 .ios-back svg { flex: none; width: 12px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.7; stroke-linecap: round; stroke-linejoin: round; }
 .ios-back.home svg { width: 21px; height: 21px; stroke-width: 1.9; }
@@ -281,10 +278,15 @@
 .ios-videos .th i { position: absolute; right: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: rgba(0,0,0,.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .ios-videos .th svg { width: 14px; fill: #fff; margin-left: 2px; }
 .ios-videos b { font: 500 14px/1.3 var(--font); color: #000; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.ios-player { position: absolute; inset: 0; background: #000; }
-.ios-player .stage { position: absolute; left: 0; right: 0; top: calc(var(--top) + 46px); bottom: calc(var(--bot) + 78px); display: grid; place-items: center; }
-.ios-player iframe, .ios-player video { width: 100%; aspect-ratio: 16 / 9; border: 0; background: #000; }
-.ios-player .stage.tall iframe, .ios-player .stage.tall video { width: auto; height: 100%; max-width: 100%; aspect-ratio: 9 / 16; }
+/* video player, like the iOS Photos viewer: a bar on top, the video centred in the space left, the title under it.
+   Nothing overlaps the video, so its own controls (scrubbing included) always get the touch. */
+.ios-player { position: absolute; inset: 0; display: flex; flex-direction: column; background: #000; }
+.ios-player .vtop { position: relative; flex: none; background: none; }
+.ios-player .stage { position: relative; flex: 1; min-height: 0; display: grid; place-items: center; padding: 0 0 8px; }
+.ios-player iframe, .ios-player video { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; background: #000; }
+.ios-player .stage.tall iframe, .ios-player .stage.tall video { width: auto; height: 100%; max-width: 100%; aspect-ratio: 9 / 16; border-radius: 14px; overflow: hidden; }
+.ios-player .vbot { position: relative; flex: none; padding: 10px 24px calc(var(--bot) + 40px); background: none; pointer-events: none; }
+.ios-player .vbot b { font: 600 16px/1.35 var(--font); text-wrap: balance; }
 
 /* Messages = Ask about Tianchi, as iMessage */
 .ios-msgs { min-height: 100%; display: flex; flex-direction: column; background: #fff; }
@@ -316,6 +318,10 @@
 .ios-resume .page { position: relative; width: 100%; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,.14); }
 .ios-resume .page img { width: 100%; height: 100%; display: block; }
 .ios-resume .page a { position: absolute; }
+.ios-resume .meta { margin: 0; font: 400 13px var(--font); color: #8a8a8f; }
+.ios-nav-btn { display: grid; place-items: center; width: 40px; height: 40px; margin-right: -6px; border-radius: 10px; color: inherit; }
+.ios-nav-btn svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.ios-nav-btn:active { opacity: .45; }
 .ios-pill { display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: 22px; background: #000; color: #fff !important; font: 600 16px var(--font); }
 .ios-pill:active { opacity: .7; }
 
@@ -329,6 +335,7 @@
 .ios-snake { position: relative; height: 100%; touch-action: none; background: #1c1d21; }
 .ios-snake canvas { position: absolute; left: 0; top: 0; display: block; }
 .ios-snake .hud { position: absolute; top: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 18px; font: 500 13px var(--font); color: rgba(255,255,255,.55); pointer-events: none; font-variant-numeric: tabular-nums; }
+.ios-snake .wall-hint { position: absolute; left: 0; right: 0; bottom: calc(var(--bot) + 46px); margin: 0; text-align: center; font: 600 15px var(--font); color: rgba(255,255,255,.7); pointer-events: none; animation: ios-pulse 2.6s ease-in-out infinite; }
 .ios-snake .hud b { color: #fff; font-weight: 700; }
 .ios-snake .card { position: absolute; left: 50%; top: 42%; transform: translate(-50%,-50%); width: min(300px, 82%); padding: 22px 20px 20px; border-radius: 22px; text-align: center;
   background: rgba(28,29,33,.86); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: inset 0 0 0 .5px rgba(255,255,255,.12); pointer-events: none; }
@@ -339,6 +346,7 @@
 
 /* desktop reading pages inside the phone: phone-sized rhythm */
 .ios .cs-nav { display: none; }
+.ios .cs { --cs-gutter: 20px; overflow-x: clip; } /* full-bleed blocks stop at the screen edge: no sideways scroll */
 .ios .cs-section { padding: 40px 20px 44px; }
 .ios .cs-title { margin-bottom: 24px; font-size: 21px; }
 .ios .cs-intro { gap: 0; }
@@ -352,26 +360,14 @@
 .ios .cs-callout { margin-inline: -20px; }
 .ios .cs-fig.wide { margin-inline: -20px; }
 
-/* short screens (browser bars in, iPhone SE / mini): tighter Home */
-@media (max-height: 700px) {
-  .ios.phone .ios-widget { height: calc(var(--cell) * 4.3); }
-  .ios.phone .ios-widget .txt > span { display: none; }
-  .ios.phone .ios-grid { margin-top: calc(var(--cell) * .55); row-gap: calc(var(--cell) * .4); }
-  .ios.phone .ios-lock .clock { font-size: 76px; }
-  .ios.phone .ios-lock .ios-hi { display: none; }
-}
-@media (max-height: 590px) {
-  .ios.phone { --ic: calc(var(--cell) * 1.78); }
-  .ios.phone .ios-widget { height: calc(var(--cell) * 3.4); }
-  .ios.phone .ios-widget b { font-size: 21px; margin-top: 6px; }
-  .ios.phone .ios-dots { display: none; }
-}
+/* short screens: the lock clock gets smaller (Home sizes itself from the grid) */
+@media (max-height: 700px) { .ios.phone .ios-lock .clock { font-size: 76px; } }
 .ios .cs-p:has(+ .cs-item) { margin-top: -10px; margin-bottom: 20px; }
 .ios .cs-item { gap: 18px; padding: 28px 0; }
 .ios .cs-item h4 { font-size: 20px; }
 .ios .cs-apps { padding: 24px 12px; }
-.ios-hi { transition: opacity .25s; }
-.ios:has(.ios-folder) .ios-home .ios-hi { opacity: 0; } /* a folder blurs Home on iOS; where blur is unavailable, at least the wallpaper art steps back */
+.ios-art { transition: opacity .25s; }
+.ios:has(.ios-folder) .ios-home .ios-art { opacity: 0; } /* a folder blurs Home on iOS; where blur is unavailable, at least the wallpaper art steps back */
 
 /* a hosted game unloaded in the background */
 .ios-frame-idle { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #0e0f11; color: rgba(255,255,255,.85); font: 600 17px var(--font); }
@@ -383,3 +379,65 @@
 .ios-sw-label { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 8px; color: #fff; font: 600 14px var(--font); pointer-events: none; will-change: transform; white-space: nowrap; }
 .ios-sw-label .ios-ic { border-radius: 7px; flex: none; }
 .ios.switching .ios-home::after { opacity: .62; }
+
+/* ---------- wallpaper snake (src/mobile/wallpapers.ts): cells on the Home grid ---------- */
+.ios-art { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 0; pointer-events: none; }
+.ios-art i, .ios-art .eyes, .ios-art .apple { position: absolute; }
+.ios-art i::before, .ios-art .eyes::before { content: ""; position: absolute; inset: 1.5px; border-radius: calc(var(--cell) * .1); background: var(--green); }
+.ios-art .eyes span { position: absolute; z-index: 1; width: 23%; height: 23%; top: 18%; margin-left: -11.5%; border-radius: 50%; background: #fafafa; }
+.ios-art .eyes span:first-child { left: 30%; } .ios-art .eyes span:last-child { left: 70%; }
+.ios-art .eyes span::after { content: ""; position: absolute; left: 28%; top: 6%; width: 46%; height: 46%; border-radius: 50%; background: #222; }
+.ios-art .apple { background: url("../assets/icons/b/apple.png") center / 88% no-repeat; }
+.ios-art small { position: absolute; width: calc(var(--cell) * 9); text-align: center; font: 500 12px var(--font); color: rgba(255,255,255,.5); }
+.ios-art.playable i, .ios-art.playable .eyes { pointer-events: auto; cursor: pointer; }
+.ios-lock .ios-art { opacity: .9; }
+.ios-lock .ios-art small { display: none; }
+.ios-home .page { pointer-events: none; } .ios-home .page > * { pointer-events: auto; }
+
+/* ---------- About Me on the phone ---------- */
+/* path: full-width rows; the "Open … →" link sits under the text instead of a 190px right gutter */
+.ios-about .am-path .stop { padding: 14px 0; }
+.ios-about .am-path .go { position: static; display: inline-block; margin-top: 10px; transform: none; opacity: 1; }
+.ios-about .am-path .y { padding-top: 16px; font-size: 44px; }
+.ios-about .am-path .head { flex-direction: column; gap: 6px; }
+.ios-about .am-sec, .ios-about .am-foot { padding-inline: 22px; }
+
+/* the opening: the same pieces (meta, name, lead, actions, photo) in four arrangements */
+.ios-about .am-hero { height: auto; padding: 18px 22px 30px; }
+.ios-about .am-in { height: auto; display: flex; flex-direction: column; }
+.ios-about .am-name { margin-top: 26px; font-size: 58px; }
+.ios-about .am-lead { margin-top: 18px; max-width: none; font-size: 17px; }
+.ios-about .am-cta { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ios-about .am-cta a, .ios-about .am-cta button { justify-content: center; }
+.ios-about .am-photo { position: relative; right: auto; bottom: auto; width: 100%; opacity: 1; }
+.ios-about .am-glow { right: -30%; bottom: auto; top: 10%; width: 120%; height: 420px; }
+
+/* 1 · Cover: the photo leads, the name sits on its lower edge */
+.ios-about.h1 .am-photo { order: -1; width: calc(100% + 44px); margin: 6px -22px 0; }
+.ios-about.h1 .am-meta { order: -2; }
+.ios-about.h1 .am-name { margin-top: -70px; z-index: 3; text-shadow: 0 4px 30px rgba(0,0,0,.6); }
+.ios-about.h1 .am-photo::after { content: ""; position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; height: 45%; background: linear-gradient(transparent, var(--am-bg)); }
+
+/* 2 · Name first: name, then the photo as a wide stage, then the words */
+.ios-about.h2 .am-photo { order: 2; width: 112%; margin: 6px -6% -10px; }
+.ios-about.h2 .am-name { order: 1; }
+.ios-about.h2 .am-lead { order: 3; }
+.ios-about.h2 .am-cta { order: 4; }
+
+/* 3 · Side by side: the photo stands at the right of the name, text runs full width below */
+.ios-about.h3 .am-in { display: grid; grid-template-columns: 1fr 44%; column-gap: 0; }
+.ios-about.h3 .am-meta { grid-column: 1 / -1; }
+.ios-about.h3 .am-name { grid-column: 1; grid-row: 2; align-self: end; font-size: 50px; }
+.ios-about.h3 .am-photo { grid-column: 2; grid-row: 2; width: 165%; margin-left: -45%; margin-top: 18px; align-self: start; }
+.ios-about.h3 .am-name .eric { color: color-mix(in srgb, var(--am-ink) 45%, transparent); }
+.ios-about.h3 .am-lead, .ios-about.h3 .am-cta { grid-column: 1 / -1; }
+
+/* 4 · Centred: a portrait medallion, everything on one axis */
+.ios-about.h4 .am-in { align-items: center; text-align: center; }
+.ios-about.h4 .am-meta { align-self: stretch; }
+.ios-about.h4 .am-photo { order: 1; width: 230px; height: 230px; margin-top: 22px; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--am-ac) 26%, #15161a), #15161a 70%); box-shadow: 0 0 0 1px rgba(255,255,255,.08); }
+.ios-about.h4 .am-photo img { width: 190%; max-width: none; margin: 14px 0 0 -38%; }
+.ios-about.h4 .am-shadow { display: none; }
+.ios-about.h4 .am-name { order: 2; font-size: 52px; }
+.ios-about.h4 .am-lead { order: 3; text-wrap: balance; }
+.ios-about.h4 .am-cta { order: 4; align-self: stretch; }
