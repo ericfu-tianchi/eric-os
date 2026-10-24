@@ -11,8 +11,9 @@ import appleIcon from "../assets/icons/b/apple.png";
  */
 type P = { x: number; y: number };
 const GREEN = "#06C268";
-const BEST_KEY = "eric-os-mobile-snake-best";
-const readBest = () => { try { return Number(localStorage.getItem(BEST_KEY)) || 0; } catch { return 0; } };
+/** the phone keeps its own best, apart from the desktop */
+export const BEST_KEY = "eric-os-mobile-snake-best";
+export const readBest = () => { try { return Number(localStorage.getItem(BEST_KEY)) || 0; } catch { return 0; } };
 
 /** start: the wallpaper snake's pose and apple in device grid cells (col from the left line, row from the top line).
     full: the Home Screen itself is the board: no frame, no own grid (the wallpaper's shows through), walls at the screen's safe edges. */

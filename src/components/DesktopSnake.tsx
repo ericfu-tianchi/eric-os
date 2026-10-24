@@ -16,7 +16,9 @@ import { cachedSnakeRecord, fetchSnakeRecord, submitSnakeRecord, type SnakeRecor
  * behind the head (newest closest). ESC exits. Dev QA: ?snakedemo=1.
  */
 export const GREEN = "#06C268";
-const TONGUE = "#F04E38";
+export const TONGUE = "#F04E38";
+/** the forked tongue in 44-unit head-local coordinates, from the head's front edge (shared with the phone) */
+export const TONGUE_PATH = "M0 -1.4 C10 -2.2 15 -5 23 -12.5 C18 -5.5 14 -2.6 8 -0.6 C15 1.2 20 4.5 27 10 C18 4.8 11 2.2 0 1.6 Z";
 
 // Eric's hand-drawn "hello" — FINAL (pose-drafts/hello-eric-v4.json, 84 cells, verbatim).
 // The full hello: h with its two-wide ascender, a real looped e (entered at
@@ -512,7 +514,7 @@ export function DesktopSnake({ frozen = false, windowsOpen = false }: { frozen?:
         )}
         {/* head decor: tongue, eyes, hat */}
         <g transform={`translate(${cx + d.x * (cellW / 2 + 1)},${cy + d.y * (cellH / 2 + 1)}) rotate(${ang}) scale(${cellH / 44})`}>
-          <path d="M0 -1.4 C10 -2.2 15 -5 23 -12.5 C18 -5.5 14 -2.6 8 -0.6 C15 1.2 20 4.5 27 10 C18 4.8 11 2.2 0 1.6 Z" fill={TONGUE} />
+          <path d={TONGUE_PATH} fill={TONGUE} />
         </g>
         {eyeCenters.current.map((E, i) => {
           // during the intro the snake eyes the apple; otherwise they look where it's going
