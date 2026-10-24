@@ -221,12 +221,36 @@ async function record(req: Request, env: Env) {
   return json({ ok: true, record: next });
 }
 
+/**
+ * /media/*: the static assets layer ignores Range and always answers 200 with the whole file. iOS Safari won't play
+ * a video that way (it asks for bytes=0-1 first and waits for a 206), so the clip sits at 0:00. Serve byte ranges here,
+ * and let phones keep media for a week instead of revalidating every image on every visit.
+ */
+async function media(req: Request, env: Env) {
+  const res = await env.ASSETS.fetch(new Request(req.url, { method: "GET" }));
+  if (!res.ok) return res;
+  const headers = new Headers(res.headers);
+  headers.set("Accept-Ranges", "bytes");
+  headers.set("Cache-Control", "public, max-age=604800");
+  const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.get("Range") ?? "");
+  if (!m || (m[1] === "" && m[2] === "")) return new Response(req.method === "HEAD" ? null : res.body, { status: 200, headers });
+  const buf = await res.arrayBuffer(), size = buf.byteLength;
+  let start = m[1] === "" ? Math.max(0, size - Number(m[2])) : Number(m[1]);
+  let end = m[1] !== "" && m[2] !== "" ? Number(m[2]) : size - 1;
+  end = Math.min(end, size - 1);
+  if (start >= size || start > end) { headers.set("Content-Range", `bytes */${size}`); return new Response(null, { status: 416, headers }); }
+  headers.set("Content-Range", `bytes ${start}-${end}/${size}`);
+  headers.set("Content-Length", String(end - start + 1));
+  return new Response(req.method === "HEAD" ? null : buf.slice(start, end + 1), { status: 206, headers });
+}
+
 export default {
   async fetch(req: Request, env: Env) {
     const url = new URL(req.url);
     if (url.pathname === "/api/ask" && req.method === "POST") return ask(req, env);
     if (url.pathname === "/api/record" && (req.method === "GET" || req.method === "POST")) return record(req, env);
     if (url.pathname.startsWith("/api/")) return json({ error: "not_found" }, 404);
+    if (url.pathname.startsWith("/media/")) return media(req, env);
     return env.ASSETS.fetch(req);
   },
 };

@@ -134,8 +134,18 @@ export function IOSShell() {
       setZoom(framed ? Math.min(1, (window.innerHeight - 92) / 852) : 1);
     };
     f();
+    // Re-measure whenever the screen's box changes, not only on window resize: iOS Safari can lay the page out
+    // at a wrong height on reload or when coming back to the tab (address bar, keyboard, back/forward cache)
+    // and then never fire resize, which left the whole Home laid out in the top half of the screen.
+    const ro = new ResizeObserver(f);
+    if (device.current) ro.observe(device.current);
+    const vv = window.visualViewport;
     window.addEventListener("resize", f);
-    return () => window.removeEventListener("resize", f);
+    window.addEventListener("pageshow", f);
+    window.addEventListener("orientationchange", f);
+    vv?.addEventListener("resize", f);
+    const late = window.setTimeout(f, 400); // and once more after the browser chrome settles
+    return () => { ro.disconnect(); window.removeEventListener("resize", f); window.removeEventListener("pageshow", f); window.removeEventListener("orientationchange", f); vv?.removeEventListener("resize", f); window.clearTimeout(late); };
   }, [framed]);
   /**
    * One grid for the whole phone: 12 columns, offset by half a cell so icons, widgets and the Dock sit exactly on its lines.
