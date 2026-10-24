@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppState } from "./nav";
 import type { Cell } from "./wallpapers";
+import { SnakeHead, angleOf } from "./SnakeHead";
 import appleIcon from "../assets/icons/b/apple.png";
 
 /**
@@ -30,6 +31,10 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
   const shownRef = useRef(shown); shownRef.current = shown;
   const loop = useRef<{ start: () => void; stop: () => void } | null>(null);
   const apple = useRef<HTMLImageElement | null>(null);
+  const headEl = useRef<SVGSVGElement>(null);
+  const angRef = useRef(0);
+  const [ang, setAng] = useState(0);
+  const [cellPx, setCellPx] = useState(30);
   const phaseRef = useRef(phase);
   phaseRef.current = phase;
 
@@ -45,7 +50,7 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
     let offL = 0, offT = 0; // where this board sits on the device, in device pixels
     if (dev) { const z = parseFloat(getComputedStyle(dev).zoom) || 1, a = el.getBoundingClientRect(), d = dev.getBoundingClientRect(); offL = (a.left - d.left) / z; offT = (a.top - d.top) / z; }
     const hud = full ? top + 40 : 36; // the score line stays clear of the board
-    s.cell = cell;
+    s.cell = cell; setCellPx(cell);
     s.ox = (((gx - offL) % cell) + cell) % cell;
     s.oy = (((gy - offT) % cell) + cell) % cell; while (s.oy < hud) s.oy += cell;
     s.cols = Math.max(8, Math.floor((w - s.ox + 0.5) / cell)); s.rows = Math.max(10, Math.floor((h - s.oy - (full ? bottom + 30 : 12)) / cell));
@@ -71,9 +76,10 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
     const w = wallPose.current;
     if (w) {
       const all = w.cells.map(([c, r]: Cell) => ({ x: c - s.lineCol, y: r - s.lineRow })).reverse(); // head first
-      const cut = all.findIndex((p) => p.x < 0 || p.y < 0 || p.x >= s.cols || p.y >= s.rows);
-      const body = cut === -1 ? all : all.slice(0, cut); // the tail runs off the screen edge: keep what's on the board
-      if (body.length >= 2) {
+      // the whole snake, page-2 body included: off the board to the right, it slides in behind the head as it goes
+      const body = all;
+      const h0 = body[0];
+      if (body.length >= 2 && h0.x >= 0 && h0.y >= 0 && h0.x < s.cols && h0.y < s.rows) {
         s.snake = body; s.dir = s.next = { x: w.dir[0], y: -w.dir[1] }; // canvas rows count up, board rows count down
       }
     }
@@ -144,21 +150,25 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
         for (let y = 0; y <= s.rows; y++) { ctx.moveTo(s.ox, s.oy + y * C + 0.5); ctx.lineTo(s.ox + s.cols * C, s.oy + y * C + 0.5); }
         ctx.stroke();
       }
-      ctx.strokeStyle = full ? "rgba(255,255,255,.12)" : "rgba(255,255,255,.16)"; ctx.strokeRect(s.ox + 0.5, s.oy + 0.5, s.cols * C, s.rows * C);
+      // the walls: outside the board goes a shade darker, and the edge is a crisp 1px line on the same pixel rows as the wallpaper's grid lines
+      const dpr = c.width / W, snap = (v: number) => Math.round(v * dpr) / dpr;
+      const L0 = snap(s.ox), T0 = snap(s.oy), R0 = snap(s.ox + s.cols * C), B0 = snap(s.oy + s.rows * C);
+      if (full) {
+        ctx.fillStyle = "rgba(0,0,0,.32)";
+        ctx.fillRect(0, 0, W, T0); ctx.fillRect(0, B0 + 1, W, H - B0 - 1); ctx.fillRect(0, T0, L0, B0 - T0 + 1); ctx.fillRect(R0 + 1, T0, W - R0 - 1, B0 - T0 + 1);
+      }
+      ctx.fillStyle = full ? "rgba(255,255,255,.2)" : "rgba(255,255,255,.16)";
+      ctx.fillRect(L0, T0, R0 - L0 + 1, 1); ctx.fillRect(L0, B0, R0 - L0 + 1, 1); ctx.fillRect(L0, T0, 1, B0 - T0 + 1); ctx.fillRect(R0, T0, 1, B0 - T0 + 1);
       if (apple.current?.complete && s.food.x >= 0 && !(blinking && Math.floor(t / 140) % 2)) ctx.drawImage(apple.current, s.ox + s.food.x * C + C * 0.05, s.oy + s.food.y * C + C * 0.05, C * 0.9, C * 0.9);
       ctx.fillStyle = GREEN;
       s.snake.forEach((p) => {
         const r = C * 0.1, x = s.ox + p.x * C + 1.5, y = s.oy + p.y * C + 1.5, w = C - 3;
         ctx.beginPath(); ctx.roundRect(x, y, w, w, r); ctx.fill();
       });
-      // eyes look where it's going
-      const h = s.snake[0], d = s.dir;
-      const cx = s.ox + h.x * C + C / 2, cy = s.oy + h.y * C + C / 2;
-      const fx = d.x * C * 0.18, fy = d.y * C * 0.18, sx = -d.y * C * 0.2, sy = d.x * C * 0.2;
-      [1, -1].forEach((k) => {
-        ctx.fillStyle = "#fafafa"; ctx.beginPath(); ctx.arc(cx + fx + sx * k, cy + fy + sy * k, C * 0.12, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = "#222"; ctx.beginPath(); ctx.arc(cx + fx * 1.35 + sx * k, cy + fy * 1.35 + sy * k, C * 0.055, 0, Math.PI * 2); ctx.fill();
-      });
+      // the head decor (tongue, eyes, hat) is an SVG laid over the head cell, like the desktop snake
+      const h = s.snake[0], d = s.dir, hel = headEl.current;
+      if (hel) hel.style.transform = `translate3d(${s.ox + h.x * C - C}px, ${s.oy + h.y * C - C}px, 0)`;
+      const a = angleOf(d.x, d.y); if (a !== angRef.current) { angRef.current = a; setAng(a); }
     };
     loop.current = {
       start: () => { if (!raf) { g.current.last = performance.now(); g.current.dirty = true; raf = requestAnimationFrame(frame); } },
@@ -206,6 +216,7 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
   return (
     <div className={`ios-snake ${full ? "full" : ""}`} ref={wrap} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={() => (sw.current = null)}>
       <canvas ref={cv} />
+      <SnakeHead ref={headEl} size={cellPx} ang={ang} style={{ left: 0, top: 0 }} />
       <div className="hud"><span>Score <b>{score}</b></span><span>Best <b>{Math.max(best, score)}</b></span></div>
       {fromWall && phase === "ready" && !full && <p className="wall-hint">Swipe to go</p>}
       {phase !== "playing" && !(fromWall && phase === "ready") && (

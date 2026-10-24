@@ -20,6 +20,8 @@ import {
 } from "./desktopGrid";
 import { DesktopSnake } from "./DesktopSnake";
 import { SnakeGuide } from "./SnakeGuide";
+/** touch screens (a phone or tablet on the desktop site) get no hover menu on the snake's head */
+const NO_HOVER = typeof window !== "undefined" && window.matchMedia("(hover: none)").matches;
 
 type Point = { x: number; y: number };
 type Marquee = { start: Point; end: Point };
@@ -312,7 +314,7 @@ export function Desktop({ children }: { children?: React.ReactNode }) {
     >
       <div className="gridlayer" aria-hidden />
       {!snakeMode && <DesktopSnake frozen />}
-      {!snakeMode && <SnakeGuide />}
+      {!snakeMode && !NO_HOVER && <SnakeGuide />}
       {!snakeMode && ICONS.map((icon) => (
         <DesktopIcon
           key={icon.key}
