@@ -47,7 +47,7 @@
    when the content under it happens to match (a black video under a white bar, a white page under a black one) */
 .ios-homebar i { width: 134px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.92); box-shadow: 0 0 0 .5px rgba(0,0,0,.28), 0 0 5px rgba(0,0,0,.35); transition: background .2s, opacity .2s, box-shadow .2s; }
 .ios-homebar.dark i { background: rgba(0,0,0,.86); box-shadow: 0 0 0 .5px rgba(255,255,255,.5), 0 0 5px rgba(255,255,255,.6); }
-.ios-homebar.idle { pointer-events: none; }
+
 .ios-homebar.locked { pointer-events: none; } /* the whole lock screen takes the swipe; the bar shows where it starts */
 
 .ios-homebar.idle i { opacity: .5; }
