@@ -8,7 +8,7 @@ import { ALBUMS, HOME, HOME_FOLDERS, appKey, type HomeItem, type Route } from ".
 import { AppTile, ItemTile } from "./icons";
 import { AppState, NavBar, NavContext, type Nav, type Screen } from "./nav";
 import { screenFor } from "./routes";
-import { WALLPAPERS, headDir, page1Part, wallpaperFor, type Cell, type Wallpaper } from "./wallpapers";
+import { currentWallpaper, headDir, page1Part, type Cell, type Wallpaper } from "./wallpapers";
 import { SnakeGame } from "./SnakeGame";
 import "./ios.css";
 
@@ -151,8 +151,7 @@ export function IOSShell() {
   const freeBottom = dockTop - cell; // the row above the Dock holds the page dots
   const freeRows = Math.round((freeBottom - padTop) / cell);
   const widgetRows = freeRows >= 13 ? 5 : freeRows >= 11 ? 4 : 3; // the About widget shrinks on short screens
-  const wallId = useMemo(() => { const n = Number(new URLSearchParams(window.location.search).get("wall")); return WALLPAPERS.some((w) => w.id === n) ? n : 1; }, []);
-  const art = wallpaperFor(wallId);
+  const art = useMemo(currentWallpaper, []);
 
 
   const frontApp = apps.find((a) => a.key === front) ?? null;
@@ -336,7 +335,7 @@ export function IOSShell() {
     const onPop = () => {
       if (skipPop.current > 0) { skipPop.current--; return; }
       if (switcherRef.current) { depth.current = Math.max(0, depth.current - 1); switcherHomeRef.current(); return; }
-      if (snakeRef.current) { depth.current = Math.max(0, depth.current - 1); setSnake(false); return; }
+      if (snakeRef.current) { depth.current = Math.max(0, depth.current - 1); exitSnakeRef.current(true); return; }
       if (depth.current > 0) depth.current--;
       backRef.current();
     };
@@ -439,7 +438,7 @@ export function IOSShell() {
      drag up and pause = the app switcher (from Home too, once an app has run) ---------- */
   const hb = useRef<{ x: number; y: number; t: number; ly: number; lt: number; vy: number; axis?: "x" | "y" } | null>(null);
   const hbDown = (e: React.PointerEvent) => {
-    if (snakeRef.current) { hb.current = { x: e.clientX, y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 }; return; }
+    if (snakeRef.current) { hb.current = { x: e.clientX, y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 }; (e.currentTarget as Element).setPointerCapture(e.pointerId); return; }
     if (switcherRef.current) { hb.current = { x: e.clientX, y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 }; return; }
     if (!frontRef.current && !appsRef.current.length) return;
     hb.current = { x: e.clientX, y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 };
@@ -447,6 +446,12 @@ export function IOSShell() {
   };
   const hbMove = (e: React.PointerEvent) => {
     const s = hb.current, k = frontRef.current; if (!s || switcherRef.current) return;
+    if (snakeRef.current) { // the board lifts and shrinks under your finger, the icons start coming back
+      const dy = Math.min(0, (e.clientY - s.y) / zoom), p = Math.min(1, -dy / 320);
+      const ov = device.current?.querySelector<HTMLElement>(".ios-snake-home");
+      if (ov) { ov.style.transition = "none"; ov.style.transform = `translate3d(0, ${dy * 0.35}px, 0) scale(${1 - p * 0.14})`; ov.style.opacity = String(1 - p * 0.55); }
+      return;
+    }
     const now = Date.now(); s.vy = ((e.clientY - s.ly) / zoom) / Math.max(1, now - s.lt); s.ly = e.clientY; s.lt = now;
     if (!k) return; // on Home the gesture only decides on release
     const rawX = (e.clientX - s.x) / zoom, rawY = (e.clientY - s.y) / zoom;
@@ -483,7 +488,13 @@ export function IOSShell() {
   const hbUp = (e: React.PointerEvent) => {
     const s = hb.current, k = frontRef.current; hb.current = null;
     if (!s) return;
-    if (snakeRef.current) { exitSnake(); return; } // tap or swipe up: back to Home
+    if (snakeRef.current) { // a tap, a flick or a long enough drag goes Home; a short one springs back
+      const dy = (e.clientY - s.y) / zoom, v = dy / Math.max(1, Date.now() - s.t);
+      const ov = device.current?.querySelector<HTMLElement>(".ios-snake-home");
+      if (Math.abs(dy) < 6 || dy < -60 || v < -0.4) exitSnake();
+      else if (ov) { ov.style.transition = `transform .3s ${EASE}, opacity .3s`; ov.style.transform = ""; ov.style.opacity = ""; }
+      return;
+    }
     const dy = (e.clientY - s.y) / zoom, v = dy / Math.max(1, Date.now() - s.t);
     const paused = Date.now() - s.lt > 90 || s.vy > -0.35; // the finger slowed down or stopped before letting go
     if (switcherRef.current) { if (Math.abs(dy) < 6) switcherHome(); return; }
@@ -684,17 +695,44 @@ export function IOSShell() {
     }
   };
 
-  /* ---------- Snake on Home: icons, Dock and dots fade away, the wallpaper snake starts moving ---------- */
+  /* ---------- Snake on Home: the icons clear away in a ripple from the snake's head, then Home is the board ----------
+     iOS-style: each item shrinks and fades on one spring, a few ms later the farther it is from the head. Leaving plays it backwards. */
+  const SNAKE_IN = 420; // ms until the last item is gone and the apple blinks in
+  const homeItems = () => {
+    const d = device.current; if (!d) return [];
+    return [...d.querySelectorAll<HTMLElement>(".ios-home .page:first-child .ios-widget, .ios-home .page:first-child .ios-icon, .ios-dock .ios-icon, .ios-dock, .ios-dots")];
+  };
+  const ripple = (out: boolean) => {
+    const d = device.current; if (!d) return;
+    const dr = d.getBoundingClientRect(), z = zoomRef.current;
+    const hx = startPose.cells.length ? gx + (startPose.cells[startPose.cells.length - 1][0] + 0.5) * cell : size.w / 2;
+    const hy = startPose.cells.length ? gy + (startPose.cells[startPose.cells.length - 1][1] + 0.5) * cell : size.h / 2;
+    homeItems().forEach((el) => {
+      el.getAnimations().forEach((a) => a.cancel());
+      const r = el.getBoundingClientRect(), cx = (r.left + r.width / 2 - dr.left) / z, cy = (r.top + r.height / 2 - dr.top) / z;
+      const dist = Math.hypot(cx - hx, cy - hy) / Math.hypot(size.w, size.h); // 0 near the head … ~1 far away
+      const gone = { opacity: 0, transform: "scale(.72)", filter: "blur(2px)" }, here = { opacity: 1, transform: "none", filter: "blur(0)" };
+      el.animate(out ? [here, gone] : [gone, here], { duration: out ? 300 : 420, delay: (out ? dist : 1 - dist) * 140, easing: SPRING, fill: "both" });
+    });
+  };
   const enterSnake = () => {
     if (snakeRef.current) return;
-    setPage(0);
+    if (page !== 0) setPage(0);
+    ripple(true);
     setSnake(true);
     history.pushState({ ios: depth.current + 1 }, ""); depth.current++;
   };
-  const exitSnake = () => {
+  /** back to Home: the board fades, the snake returns to the wallpaper, the icons ripple back in */
+  const exitSnake = (fromPop = false) => {
     if (!snakeRef.current) return;
-    setSnake(false);
-    if (depth.current > 0) { skipPop.current++; history.back(); depth.current--; }
+    const ov = device.current?.querySelector<HTMLElement>(".ios-snake-home");
+    const done = () => {
+      setSnake(false);
+      ripple(false);
+      window.setTimeout(() => homeItems().forEach((el) => el.getAnimations().forEach((a) => a.cancel())), 620);
+    };
+    if (ov) { ov.style.transition = "opacity .2s ease-out, transform .2s ease-out"; ov.style.opacity = "0"; window.setTimeout(done, 200); } else done();
+    if (!fromPop && depth.current > 0) { skipPop.current++; history.back(); depth.current--; }
   };
   const exitSnakeRef = useRef(exitSnake); exitSnakeRef.current = exitSnake;
   const startPose = useMemo(() => {
@@ -756,7 +794,10 @@ export function IOSShell() {
         {/* Snake on Home: a full-screen board over the wallpaper, lined up with its grid */}
         {snake && (
           <div className="ios-snake-home">
-            <SnakeGame full start={startPose} apple={startPose.apple} top={insets.top} bottom={insets.bot} />
+            <SnakeGame full start={startPose} apple={startPose.apple} top={insets.top} bottom={insets.bot} intro={SNAKE_IN} />
+            <button type="button" className="ios-snake-homebtn" onClick={() => exitSnake()}>
+              <svg viewBox="0 0 24 24" aria-hidden><path d="M3.5 10.6 12 3.8l8.5 6.8" /><path d="M5.8 9v10.2h4.4v-5.6h3.6v5.6h4.4V9" /></svg><span>Home</span>
+            </button>
           </div>
         )}
 
