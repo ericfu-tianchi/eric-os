@@ -30,6 +30,12 @@ export const useNav = () => {
   return n;
 };
 
+/** Whether this app is on screen. Apps in the background stop their loops and media so a long visit never slows down.
+    shown: drawn (the front app, or a card in the app switcher). front: the one being used.
+    alive: may keep heavy content (a game's iframe) while in the background; only the most recent games do. */
+export const AppState = createContext<{ shown: boolean; front: boolean; alive: boolean }>({ shown: true, front: true, alive: true });
+export const useAppState = () => useContext(AppState);
+
 /** The screen's own scroll container, so a screen can listen to it (large titles). */
 export const ScrollContext = createContext<React.RefObject<HTMLDivElement | null> | null>(null);
 

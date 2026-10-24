@@ -4,9 +4,9 @@ import { mediaItem } from "../data/media";
 import { PROJECTS } from "../data/projects";
 import { MiniHead } from "../components/SnakeGuide";
 import portrait from "../assets/about/portrait.webp";
-import { ALBUMS, HOME, appKey, type HomeItem, type Route } from "./model";
+import { ALBUMS, HOME, HOME_FOLDERS, appKey, type HomeItem, type Route } from "./model";
 import { AppTile, ItemTile } from "./icons";
-import { NavBar, NavContext, type Nav, type Screen } from "./nav";
+import { AppState, NavBar, NavContext, type Nav, type Screen } from "./nav";
 import { screenFor } from "./routes";
 import "./ios.css";
 
@@ -39,6 +39,13 @@ function springEasing(damping = 1, response = 0.34, dur = 0.5) {
 const SPRING_MS = 500;
 const SPRING = typeof CSS !== "undefined" && CSS.supports("transition-timing-function", "linear(0, 1)") ? springEasing() : "cubic-bezier(.2,.95,.25,1)";
 const LOCK_KEY = "eric-os-phone-unlocked";
+/** Running apps kept in memory, like iOS: the oldest is closed when a new one opens past this. */
+const MAX_APPS = 6;
+/** Hosted games that stay loaded at once (the front one plus the last one you used); older ones reload when you return. */
+const LIVE_GAMES = 2;
+/** The Home Screen item for a running app: its icon and name in the app switcher. */
+const ALL_ITEMS: HomeItem[] = [...HOME.page1, ...HOME.dock, ...HOME_FOLDERS.flatMap((f) => (f.kind === "folder" ? f.items : [f]))];
+const itemFor = (key: string) => ALL_ITEMS.find((i) => i.kind === "app" && i.id === key) as Extract<HomeItem, { kind: "app" }> | undefined;
 const BANNER_KEY = "eric-os-phone-banner";
 const isTouch = () => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
 const session = { get: (k: string) => { try { return sessionStorage.getItem(k); } catch { return "1"; } }, set: (k: string) => { try { sessionStorage.setItem(k, "1"); } catch { /* private mode */ } } };
@@ -97,6 +104,8 @@ export function IOSShell() {
   const [sheet, setSheet] = useState(false);
   const [banner, setBanner] = useState(false);
   const [anim, setAnim] = useState<{ kind: "push" | "pop"; app: string } | null>(null);
+  const [switcher, setSwitcher] = useState(false);
+  const switcherRef = useRef(switcher); switcherRef.current = switcher;
   const appsRef = useRef(apps); appsRef.current = apps;
   const frontRef = useRef(front); frontRef.current = front;
   const zoomRef = useRef(zoom); zoomRef.current = zoom;
@@ -208,8 +217,11 @@ export function IOSShell() {
     if (!from?.closest(".ios-folder")) setFolder(null); // launched from a folder: it stays open underneath, like iOS
     const opener = frontRef.current && frontRef.current !== key ? frontRef.current : undefined;
     const existing = appsRef.current.find((a) => a.key === key);
-    if (!existing) setApps((xs) => [...xs, { key, route, stack: [{ key: sk(), ...screenFor(route) }], opener }]);
-    else setApps((xs) => xs.map((a) => (a.key === key ? { ...a, opener } : a)));
+    // apps are kept most-recent-last; past MAX_APPS the oldest one quietly closes
+    setApps((xs) => {
+      const next = existing ? [...xs.filter((a) => a.key !== key), { ...existing, opener }] : [...xs, { key, route, stack: [{ key: sk(), ...screenFor(route) }], opener }];
+      return next.length > MAX_APPS ? next.slice(next.length - MAX_APPS) : next;
+    });
     setFront(key);
     pushHistory();
     requestAnimationFrame(() => requestAnimationFrame(() => { const el = layerOf(key); if (el) { el.hidden = false; flight(el, from, "in"); } homeTo(true); }));
@@ -281,9 +293,11 @@ export function IOSShell() {
 
   // the browser's back (Android back button, Safari's edge swipe) = one level back
   const backRef = useRef(backOne); backRef.current = backOne;
+  const switcherHomeRef = useRef(() => {});
   useEffect(() => {
     const onPop = () => {
       if (skipPop.current > 0) { skipPop.current--; return; }
+      if (switcherRef.current) { depth.current = Math.max(0, depth.current - 1); switcherHomeRef.current(); return; }
       if (depth.current > 0) depth.current--;
       backRef.current();
     };
@@ -382,11 +396,19 @@ export function IOSShell() {
     </button>
   );
 
-  /* ---------- home indicator: tap = Home; drag up = the app shrinks under your finger ---------- */
-  const hb = useRef<{ y: number; t: number } | null>(null);
-  const hbDown = (e: React.PointerEvent) => { if (!frontRef.current) return; hb.current = { y: e.clientY, t: Date.now() }; (e.currentTarget as Element).setPointerCapture(e.pointerId); };
+  /* ---------- home indicator: tap = Home; drag up = the app shrinks under your finger;
+     drag up and pause = the app switcher (from Home too, once an app has run) ---------- */
+  const hb = useRef<{ y: number; t: number; ly: number; lt: number; vy: number } | null>(null);
+  const hbDown = (e: React.PointerEvent) => {
+    if (switcherRef.current) { hb.current = { y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 }; return; }
+    if (!frontRef.current && !appsRef.current.length) return;
+    hb.current = { y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 };
+    (e.currentTarget as Element).setPointerCapture(e.pointerId);
+  };
   const hbMove = (e: React.PointerEvent) => {
-    const s = hb.current, k = frontRef.current; if (!s || !k) return;
+    const s = hb.current, k = frontRef.current; if (!s || switcherRef.current) return;
+    const now = Date.now(); s.vy = ((e.clientY - s.ly) / zoom) / Math.max(1, now - s.lt); s.ly = e.clientY; s.lt = now;
+    if (!k) return; // on Home the gesture only decides on release
     const dy = Math.min(0, (e.clientY - s.y) / zoom);
     const el = layerOf(k); if (!el) return;
     const p = Math.min(1, -dy / 420), sc = 1 - p * 0.42;
@@ -400,11 +422,16 @@ export function IOSShell() {
   };
   const hbUp = (e: React.PointerEvent) => {
     const s = hb.current, k = frontRef.current; hb.current = null;
-    if (!s || !k) return;
+    if (!s) return;
     const dy = (e.clientY - s.y) / zoom, v = dy / Math.max(1, Date.now() - s.t);
+    const paused = Date.now() - s.lt > 90 || s.vy > -0.35; // the finger slowed down or stopped before letting go
+    if (switcherRef.current) { if (Math.abs(dy) < 6) switcherHome(); return; }
+    if (!k) { if (dy < -40) enterSwitcher(); return; }
     const el = layerOf(k);
     const home = device.current?.querySelector<HTMLElement>(".ios-home");
-    if (Math.abs(dy) < 6 || dy < -70 || v < -0.4) goHome(); // the flight picks up from the dragged pose
+    if (Math.abs(dy) < 6) goHome();
+    else if (dy < -60 && paused && appsRef.current.length) enterSwitcher(); // the dragged app becomes a card
+    else if (dy < -70 || v < -0.4) goHome(); // a flick: the flight picks up from the dragged pose
     else if (el) {
       if (home) homeTo(true);
       el.style.transition = `transform .35s ${EASE}, border-radius .35s`; el.style.transform = "translate3d(0,0,0) scale(1)"; el.style.borderRadius = "";
@@ -450,12 +477,149 @@ export function IOSShell() {
     }
   };
 
+  /* ---------- app switcher: swipe up from the bottom and pause ----------
+     The cards are the running apps themselves, scaled down: no screenshots, nothing re-rendered.
+     Everything moves on the compositor (transform + opacity) and React only renders when you enter or leave. */
+  const SW = 0.62; // card scale
+  const swPan = useRef(0); // 0 = the most recent app centered; 1 = the one before it, …
+  const swGeo = () => {
+    const cw = size.w * SW, ch = size.h * SW;
+    return { cw, ch, step: cw + 22, x0: (size.w - cw) / 2, y: (size.h - ch) / 2 + 14 };
+  };
+  const recent = () => [...appsRef.current].reverse(); // most recent first
+  /** place every card (and its label) for a pan position; `t` = transition, `lift` = one card dragged up */
+  const placeCards = (pan: number, t = "", lift?: { key: string; dy: number }) => {
+    const g = swGeo();
+    recent().forEach((a, i) => {
+      const el = layerOf(a.key); if (!el) return;
+      const x = g.x0 + (pan - i) * g.step, dy = lift?.key === a.key ? lift.dy : 0;
+      el.hidden = false;
+      el.style.transition = t ? `transform ${t}, border-radius ${t}, opacity ${t}` : "none";
+      el.style.transformOrigin = "0 0";
+      el.style.transform = `translate3d(${x}px, ${g.y + dy}px, 0) scale(${SW})`;
+      el.style.borderRadius = `${26 / SW}px`;
+      el.style.opacity = dy < 0 ? String(Math.max(0.2, 1 + dy / (g.ch * 1.4))) : "1";
+      const lbl = device.current?.querySelector<HTMLElement>(`.ios-sw-label[data-app="${CSS.escape(a.key)}"]`);
+      if (lbl) { lbl.style.transition = t ? `transform ${t}, opacity ${t}` : "none"; lbl.style.transform = `translate3d(${x}px, ${g.y - 36 + dy}px, 0)`; lbl.style.opacity = dy < 0 ? "0" : "1"; }
+    });
+  };
+  const SW_T = `.42s ${EASE}`;
+  const enterSwitcher = () => {
+    if (!appsRef.current.length) return;
+    setMenu(null); setFolder(null); setBanner(false);
+    swPan.current = 0;
+    setSwitcher(true);
+    homeTo(true);
+  };
+  // first frame of the switcher: cards glide from wherever they are (a dragged app, or below the screen) into place
+  useLayoutEffect(() => {
+    if (!switcher) return;
+    const g = swGeo();
+    recent().forEach((a, i) => {
+      const el = layerOf(a.key); if (!el || a.key === frontRef.current) return;
+      el.hidden = false; el.style.transition = "none"; el.style.transformOrigin = "0 0";
+      el.style.transform = `translate3d(${g.x0 - i * g.step}px, ${size.h}px, 0) scale(${SW})`; el.style.borderRadius = `${26 / SW}px`;
+    });
+    device.current?.offsetWidth; // commit the start poses before the transition
+    placeCards(0, SW_T);
+  }, [switcher]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const clearCard = (el: HTMLElement) => { el.style.transition = ""; el.style.transform = ""; el.style.transformOrigin = ""; el.style.borderRadius = ""; el.style.opacity = ""; };
+  /** tap a card: it grows back to full screen and becomes the front app */
+  const switchTo = (key: string) => {
+    const el = layerOf(key); if (!el) return;
+    el.style.zIndex = "41";
+    el.style.transition = `transform ${SW_T}, border-radius ${SW_T}`;
+    el.style.transform = "translate3d(0,0,0) scale(1)"; el.style.borderRadius = framed ? "55px" : "0px";
+    device.current?.querySelectorAll<HTMLElement>(".ios-sw-label").forEach((l) => { l.style.transition = "opacity .2s"; l.style.opacity = "0"; });
+    window.setTimeout(() => {
+      appsRef.current.forEach((a) => { const l = layerOf(a.key); if (l) { clearCard(l); l.style.zIndex = ""; l.hidden = a.key !== key; } });
+      setApps((xs) => [...xs.filter((a) => a.key !== key), ...xs.filter((a) => a.key === key)]);
+      setFront(key); setSwitcher(false);
+    }, 430);
+  };
+  /** tap outside the cards, or the home bar: back to Home */
+  const switcherHome = () => {
+    recent().forEach((a, i) => {
+      const el = layerOf(a.key); if (!el) return;
+      const g = swGeo();
+      el.style.transition = `transform .34s ${EASE}, opacity .26s`;
+      el.style.transform = `translate3d(${g.x0 + (swPan.current - i) * g.step}px, ${g.y + 60}px, 0) scale(${SW * 0.92})`; el.style.opacity = "0";
+    });
+    device.current?.querySelectorAll<HTMLElement>(".ios-sw-label").forEach((l) => { l.style.transition = "opacity .2s"; l.style.opacity = "0"; });
+    homeTo(false);
+    if (depth.current > 0) { skipPop.current++; history.go(-depth.current); depth.current = 0; }
+    window.setTimeout(() => {
+      appsRef.current.forEach((a) => { const l = layerOf(a.key); if (l) { clearCard(l); l.hidden = true; } });
+      setFront(null); setSwitcher(false);
+    }, 340);
+  };
+  switcherHomeRef.current = switcherHome;
+  /** flick a card up: the app quits */
+  const closeApp = (key: string) => {
+    const el = layerOf(key);
+    if (el) { el.style.transition = `transform .3s ${EASE}, opacity .3s`; el.style.transform = `translate3d(${el.style.transform.match(/translate3d\(([-\d.]+)px/)?.[1] ?? 0}px, ${-size.h * 0.7}px, 0) scale(${SW})`; el.style.opacity = "0"; }
+    window.setTimeout(() => {
+      const left = appsRef.current.filter((a) => a.key !== key);
+      if (frontRef.current === key) setFront(null);
+      setApps(left);
+      if (!left.length) { swPan.current = 0; switcherHome(); return; }
+      swPan.current = Math.min(swPan.current, left.length - 1);
+      requestAnimationFrame(() => placeCards(swPan.current, SW_T));
+    }, 280);
+  };
+  const swDrag = useRef<{ x: number; y: number; t: number; pan: number; key: string | null; axis?: "x" | "y"; vx: number; vy: number; lx: number; ly: number; lt: number } | null>(null);
+  const cardAt = (cx: number, cy: number) => {
+    const d = device.current!.getBoundingClientRect(), z = zoomRef.current, g = swGeo();
+    const x = (cx - d.left) / z, y = (cy - d.top) / z;
+    if (y < g.y - 40 || y > g.y + g.ch) return null;
+    return recent().find((_, i) => { const l = g.x0 + (swPan.current - i) * g.step; return x >= l && x <= l + g.cw; })?.key ?? null;
+  };
+  const swDown = (e: React.PointerEvent) => {
+    swDrag.current = { x: e.clientX, y: e.clientY, t: Date.now(), pan: swPan.current, key: cardAt(e.clientX, e.clientY), vx: 0, vy: 0, lx: e.clientX, ly: e.clientY, lt: Date.now() };
+    (e.currentTarget as Element).setPointerCapture(e.pointerId);
+  };
+  const swMove = (e: React.PointerEvent) => {
+    const s = swDrag.current; if (!s) return;
+    const dx = (e.clientX - s.x) / zoom, dy = (e.clientY - s.y) / zoom, now = Date.now();
+    const dt = Math.max(1, now - s.lt); s.vx = ((e.clientX - s.lx) / zoom) / dt; s.vy = ((e.clientY - s.ly) / zoom) / dt; s.lx = e.clientX; s.ly = e.clientY; s.lt = now;
+    if (!s.axis && Math.hypot(dx, dy) > 8) s.axis = Math.abs(dx) > Math.abs(dy) || !s.key ? "x" : "y";
+    const n = appsRef.current.length, g = swGeo();
+    if (s.axis === "x") {
+      let pan = s.pan + dx / g.step;
+      if (pan < 0) pan *= 0.3; else if (pan > n - 1) pan = n - 1 + (pan - (n - 1)) * 0.3; // rubber band at the ends
+      swPan.current = pan; placeCards(pan);
+    } else if (s.axis === "y" && s.key) placeCards(swPan.current, "", { key: s.key, dy: Math.min(0, dy) + Math.max(0, dy) * 0.15 });
+  };
+  const swUp = (e: React.PointerEvent) => {
+    const s = swDrag.current; swDrag.current = null; if (!s) return;
+    const dy = (e.clientY - s.y) / zoom, n = appsRef.current.length;
+    if (!s.axis) { if (s.key) switchTo(s.key); else switcherHome(); return; }
+    if (s.axis === "x") {
+      const target = Math.round(Math.max(0, Math.min(n - 1, swPan.current + s.vx * 0.9))); // a flick carries to the next card
+      swPan.current = target; placeCards(target, SW_T);
+    } else if (s.key) {
+      if (dy < -swGeo().ch * 0.3 || s.vy < -0.5) closeApp(s.key);
+      else placeCards(swPan.current, SW_T);
+    }
+  };
+
   /* ---------- widgets ---------- */
   const featured = useMemo(() => { const all = ALBUMS.flatMap((a) => a.items); return all[Math.floor(Math.random() * all.length)]; }, []);
   const bestLine = useMemo(() => {
     let best = 0; try { best = Number(localStorage.getItem("eric-os-mobile-snake-best")) || 0; } catch { /* */ }
     return best > 0 ? `Your best: ${best}` : "Swipe to play";
   }, [front]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* which apps may keep heavy content alive: the newest LIVE_GAMES games */
+  const liveGames = useMemo(() => new Set(apps.filter((a) => a.route.app === "game").slice(-LIVE_GAMES).map((a) => a.key)), [apps]);
+  const stateCache = useRef(new Map<string, { shown: boolean; front: boolean; alive: boolean }>());
+  const appState = (a: App) => {
+    const v = { shown: a.key === front || switcher, front: a.key === front && !switcher, alive: a.route.app !== "game" || liveGames.has(a.key) };
+    const old = stateCache.current.get(a.key);
+    if (old && old.shown === v.shown && old.front === v.front && old.alive === v.alive) return old; // same object: no re-render of the app
+    stateCache.current.set(a.key, v); return v;
+  };
 
   /* ---------- render ---------- */
   const now = useClock();
@@ -464,11 +628,11 @@ export function IOSShell() {
 
   return (
     <div className={`ios-stage ${framed ? "framed" : "phone"}`}>
-      <div className={`ios ${framed ? "framed" : "phone"}`} ref={device} style={{ zoom, "--cell": `${cell}px` } as React.CSSProperties}>
+      <div className={`ios ${framed ? "framed" : "phone"} ${switcher ? "switching" : ""}`} ref={device} style={{ zoom, "--cell": `${cell}px` } as React.CSSProperties}>
         <div className="ios-wall" aria-hidden />
 
         {/* Home */}
-        <div className={`ios-home ${front ? "behind" : ""} ${locked ? "hidden" : ""}`} aria-hidden={!!front || locked}
+        <div className={`ios-home ${front || switcher ? "behind" : ""} ${locked ? "hidden" : ""}`} aria-hidden={!!front || switcher || locked}
           onPointerDown={pageDown} onPointerMove={pageMove} onPointerUp={pageUp} onPointerCancel={pageUp}>
           <div className="pages" ref={pagesEl}>
             <section className="page" aria-label="Home page 1">
@@ -507,7 +671,8 @@ export function IOSShell() {
         {/* running apps keep their state; only the front one shows */}
         <NavContext.Provider value={nav}>
           {apps.map((a) => (
-            <div key={a.key} className="ios-layer" data-app={a.key} hidden={a.key !== front}
+            <AppState.Provider key={a.key} value={appState(a)}>
+            <div className="ios-layer" data-app={a.key} hidden={a.key !== front && !switcher}
               onPointerDown={edgeDown} onPointerMove={edgeMove} onPointerUp={edgeUp} onPointerCancel={edgeUp}>
               {a.stack.map((s, i) => {
                 const n = a.stack.length, isTop = i === n - 1, isUnder = i === n - 2;
@@ -516,8 +681,23 @@ export function IOSShell() {
                 return <ScreenView key={s.key} screen={s} prev={i > 0 ? a.stack[i - 1] : undefined} cls={cls} visible={isTop || (isUnder && moving)} onBack={back} onHome={goHome} />;
               })}
             </div>
+            </AppState.Provider>
           ))}
         </NavContext.Provider>
+
+        {/* app switcher: a touch surface over the cards, and each card's icon and name */}
+        {switcher && (
+          <div className="ios-switcher" onPointerDown={swDown} onPointerMove={swMove} onPointerUp={swUp} onPointerCancel={swUp}>
+            {[...apps].reverse().map((a) => {
+              const it = itemFor(a.key);
+              return (
+                <span key={a.key} className="ios-sw-label" data-app={a.key}>
+                  <AppTile id={it?.id ?? a.key} size={26} /><b>{it?.label ?? a.stack[0].title}</b>
+                </span>
+              );
+            })}
+          </div>
+        )}
 
         {/* folder */}
         {folder && (
@@ -593,7 +773,7 @@ export function IOSShell() {
 
         {framed && <StatusBar tone={ink} />}
         {!locked && (
-          <div className={`ios-homebar ${ink === "dark" ? "dark" : ""} ${front ? "" : "idle"}`}
+          <div className={`ios-homebar ${ink === "dark" && !switcher ? "dark" : ""} ${front || switcher || apps.length ? "" : "idle"}`}
             onPointerDown={hbDown} onPointerMove={hbMove} onPointerUp={hbUp} onPointerCancel={hbUp} aria-hidden><i /></div>
         )}
       </div>

@@ -14,7 +14,7 @@ import docIcon from "../assets/icons/b/doc.png";
 import pdfIcon from "../assets/icons/b/pdf.png";
 import { ALBUMS, VIDEOS, filesChildren, filesNode, filesRoot, routeForNode, type Route } from "./model";
 import { AppTile } from "./icons";
-import { LargeTitle, useNav, useTap } from "./nav";
+import { LargeTitle, useAppState, useNav, useTap } from "./nav";
 import { screenFor } from "./routes";
 
 const Chevron = () => <svg className="chev" viewBox="0 0 8 14" aria-hidden><path d="m1.5 1.5 5 5.5-5 5.5" /></svg>;
@@ -206,6 +206,9 @@ export function VideosScreen({ start }: { start?: string }) {
 
 function VideoPlayer({ v }: { v: MediaItem }) {
   const nav = useNav();
+  const { front } = useAppState();
+  const video = useRef<HTMLVideoElement>(null);
+  useEffect(() => { if (!front) video.current?.pause(); }, [front]); // leaving the app pauses it, like iOS; the position stays
   return (
     <div className="ios-player">
       <div className="vtop">
@@ -214,8 +217,8 @@ function VideoPlayer({ v }: { v: MediaItem }) {
       </div>
       <div className={`stage ${v.portrait ? "tall" : ""}`}>
         {v.youtube
-          ? <iframe src={`https://www.youtube-nocookie.com/embed/${v.youtube}?autoplay=1&playsinline=1&rel=0&modestbranding=1`} title={v.name} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
-          : <video src={v.src} poster={v.thumb} controls autoPlay playsInline />}
+          ? !front ? <img className="poster" src={v.thumb} alt="" /> : <iframe src={`https://www.youtube-nocookie.com/embed/${v.youtube}?autoplay=1&playsinline=1&rel=0&modestbranding=1`} title={v.name} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
+          : <video ref={video} src={v.src} poster={v.thumb} controls autoPlay playsInline />}
       </div>
       <div className="vbot"><b>{v.name}</b></div>
     </div>
@@ -320,6 +323,14 @@ export function ResumeScreen() {
 
 /* ================= Hosted web apps ================= */
 
+/** A hosted game keeps running in the background only while it's one of the most recent games; older ones unload and reload when you come back. */
 export function GameFrame({ id }: { id: ExternalGameId }) {
-  return <div className="ios-frame"><iframe src={EXTERNAL_GAMES[id].url} title={EXTERNAL_GAMES[id].name} allow="autoplay; fullscreen" allowFullScreen /></div>;
+  const { alive } = useAppState();
+  return (
+    <div className="ios-frame">
+      {alive
+        ? <iframe src={EXTERNAL_GAMES[id].url} title={EXTERNAL_GAMES[id].name} allow="autoplay; fullscreen" allowFullScreen />
+        : <div className="ios-frame-idle"><AppTile id={`game:${id}`} size={72} /><b>{EXTERNAL_GAMES[id].name}</b></div>}
+    </div>
+  );
 }

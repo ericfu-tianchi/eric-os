@@ -48,8 +48,10 @@
 
 /* ---------- home indicator ---------- */
 .ios-homebar { position: absolute; z-index: 95; left: 50%; bottom: var(--bot); width: 200px; margin-left: -100px; height: 30px; display: grid; place-items: center; cursor: pointer; touch-action: none; }
-.ios-homebar i { width: 134px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.9); transition: background .2s, opacity .2s; }
-.ios-homebar.dark i { background: rgba(0,0,0,.85); }
+/* readable on any screen: the bar takes the screen's tone, and a soft halo in the opposite tone keeps it visible
+   when the content under it happens to match (a black video under a white bar, a white page under a black one) */
+.ios-homebar i { width: 134px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.92); box-shadow: 0 0 0 .5px rgba(0,0,0,.28), 0 0 5px rgba(0,0,0,.35); transition: background .2s, opacity .2s, box-shadow .2s; }
+.ios-homebar.dark i { background: rgba(0,0,0,.86); box-shadow: 0 0 0 .5px rgba(255,255,255,.5), 0 0 5px rgba(255,255,255,.6); }
 .ios-homebar.idle { pointer-events: none; }
 .ios-homebar.idle i { opacity: .5; }
 
@@ -96,11 +98,11 @@
 .ios-icon:active .ios-ic { transform: scale(.9); filter: brightness(.82); }
 .ios-icon.lifted .ios-ic { transform: scale(1.08); }
 .ios-icon .lbl { max-width: calc(var(--ic) + 18px); font: 500 11.5px/1.2 var(--font); color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -.01em; }
-.ios-dots { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(var(--bot) + var(--ic) + 54px); display: flex; gap: 2px; padding: 5px 8px; border-radius: 99px; background: rgba(255,255,255,.08); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.ios-dots { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(var(--bot) + var(--ic) + 68px); display: flex; gap: 2px; padding: 5px 8px; border-radius: 99px; background: rgba(255,255,255,.08); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .ios-dots button { width: 16px; height: 16px; display: grid; place-items: center; }
 .ios-dots button::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.35); transition: background .25s; }
 .ios-dots button.on::before { background: #fff; }
-.ios-dock { position: absolute; left: 10px; right: 10px; bottom: calc(var(--bot) + 22px); height: calc(var(--ic) + 26px); border-radius: 32px; display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; justify-items: center; padding: 0 calc(var(--cell) * .55 - 10px);
+.ios-dock { position: absolute; left: 10px; right: 10px; bottom: calc(var(--bot) + 36px); height: calc(var(--ic) + 26px); border-radius: 32px; display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; justify-items: center; padding: 0 calc(var(--cell) * .55 - 10px);
   background: rgba(70,72,80,.38); backdrop-filter: blur(26px) saturate(1.6); -webkit-backdrop-filter: blur(26px) saturate(1.6); box-shadow: inset 0 0 0 .5px rgba(255,255,255,.12); }
 
 /* small widgets: Snake + a featured photo (tall screens only) */
@@ -370,3 +372,14 @@
 .ios .cs-apps { padding: 24px 12px; }
 .ios-hi { transition: opacity .25s; }
 .ios:has(.ios-folder) .ios-home .ios-hi { opacity: 0; } /* a folder blurs Home on iOS; where blur is unavailable, at least the wallpaper art steps back */
+
+/* a hosted game unloaded in the background */
+.ios-frame-idle { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #0e0f11; color: rgba(255,255,255,.85); font: 600 17px var(--font); }
+.ios-player .stage img.poster { width: 100%; height: 100%; object-fit: contain; }
+
+/* ---------- app switcher: the running apps as cards ---------- */
+.ios.switching .ios-layer { pointer-events: none; box-shadow: 0 18px 50px rgba(0,0,0,.5); will-change: transform, opacity; }
+.ios-switcher { position: absolute; inset: 0; z-index: 60; touch-action: none; }
+.ios-sw-label { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 8px; color: #fff; font: 600 14px var(--font); pointer-events: none; will-change: transform; white-space: nowrap; }
+.ios-sw-label .ios-ic { border-radius: 7px; flex: none; }
+.ios.switching .ios-home::after { opacity: .62; }
