@@ -65,8 +65,8 @@ export const HOME = {
   page1: [
     app("case:how-i-ai", "How I AI", { app: "case", slug: "how-i-ai", title: "How I AI" }),
     app("resume", "Resume", { app: "resume" }),
-    app("snake", "Snake", { app: "snake" }),
     app("videos", "Videos", { app: "videos" }),
+    app("snake", "Snake", { app: "snake" }),
     folder("ai"),
     folder("work"),
   ],
