@@ -421,3 +421,12 @@
   -webkit-mask-composite: source-in; mask-composite: intersect; }
 .ios-about .am-glow { top: 4%; opacity: .8; }
 .ios-about .am-name { margin-top: -96px; }
+
+/* ---------- Snake on Home: the board is the Home Screen itself ---------- */
+.ios-home .page, .ios-dock, .ios-dots { transition: opacity .3s cubic-bezier(.2,.9,.25,1); }
+.ios-home.snaking .page, .ios-home.snaking .ios-dock, .ios-home.snaking .ios-dots { opacity: 0; pointer-events: none; }
+.ios-home.snaking .ios-art { visibility: hidden; transition: visibility 0s .08s; } /* the game has drawn the same snake in the same cells by then */
+.ios-snake-home { position: absolute; inset: 0; z-index: 50; }
+.ios-snake.full { height: 100%; background: transparent; }
+.ios-snake.full .hud { top: calc(var(--top) + 14px); }
+.ios-snake.full .wall-hint { bottom: calc(var(--bot) + 44px); }

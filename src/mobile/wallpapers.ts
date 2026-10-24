@@ -1,25 +1,16 @@
-import { ERIC_POSE } from "../components/DesktopSnake";
-
 /**
  * Wallpaper snakes for the phone's Home Screen, drawn on the same grid as everything else.
  * Coordinates live on a 24-column canvas that spans both Home pages (12 columns each):
  * col 0–11 = page 1, col 12–23 = page 2; rows count up from the bottom of the free area (0 = lowest).
- * The last cell of `cells` is the head. Pick one while reviewing with ?wall=1…5.
+ *
+ * Every design keeps the head on page 1, low, in the free rows under the icons (so the game can start
+ * from it without a cut), and lets the body run off to the right into page 2, where it makes the picture.
+ * The last cell of `cells` is the head. Pick one while reviewing with ?wall=1…5 (and ?apple=0 to drop the apple).
  */
 export type Cell = [number, number];
-export type Wallpaper = {
-  id: number;
-  name: string;
-  cells: Cell[];
-  apples: Cell[];
-  /** the art uses page 1's lower rows, so page 1 drops its small widgets */
-  page1: boolean;
-  /** tap the snake to play: the game starts from exactly this pose */
-  playable?: boolean;
-  hint?: string;
-};
+export type Wallpaper = { id: number; name: string; cells: Cell[]; apples: Cell[] };
 
-const path = (start: Cell, moves: string): Cell[] => {
+const walk = (start: Cell, moves: string): Cell[] => {
   const out: Cell[] = [start];
   let [x, y] = start;
   for (const m of moves.replace(/\s/g, "")) {
@@ -28,43 +19,58 @@ const path = (start: Cell, moves: string): Cell[] => {
   }
   return out;
 };
+const dedupe = (cells: Cell[]) => cells.filter((c, i) => cells.findIndex((d) => d[0] === c[0] && d[1] === c[1]) === i);
 
-// 1 · the desktop's own cursive "hello", 24 cells wide: exactly two pages
-const hello: Cell[] = ERIC_POSE.map(([x, y]) => [x, 11 - y] as Cell);
+/** page 1: the body comes in from the right edge, steps up once, and the head looks left at the apple */
+const PAGE1: Cell[] = walk([11, 1], "LLL U LLL"); // ends at (5, 2), heading left
+const APPLE1: Cell = [2, 2];
 
-// 2 · a long snake slides from page 1 into page 2, after an apple
-const chase = path([0, 1], "RRR U RRR D RRR UU RRR D RRR D RRR UU RR");
+/** page 2 patterns; each ends at (12, 1), right where page 1 picks up */
+const hi: Cell[] = dedupe([
+  ...walk([15, 8], "DDDDDDD"), // h stem
+  ...walk([16, 5], "RR"), ...walk([18, 4], "DDD"), // h shoulder and leg
+  ...walk([19, 1], "RR"), // the join into the i
+  ...walk([21, 2], "UUU"), // i stem; its dot is an apple
+  ...walk([14, 1], "LL"), // out to page 1
+]);
+const HI_DOT: Cell = [21, 7];
 
-// 3 · page 2: a snake runs the border of the page, head right behind its own tail
-const loop: Cell[] = [
-  ...path([13, 8], "RRRRRRRRR"),
-  ...path([22, 7], "DDDDDD"),
-  ...path([21, 1], "LLLLLLLL"),
-  ...path([13, 2], "UUUU"),
-];
+/** one clean bend: up the page and over */
+const bend: Cell[] = walk([20, 7], "DDDDDD LLLLLLL");
 
-// 4 · page 2: TF, set by the snake
-const tf: Cell[] = [
-  ...path([13, 7], "RRRR"), // T bar
-  ...path([15, 6], "DDDDD"), // T stem (down to row 1)
-  ...path([15, 0], "RRRR"), // the join along the bottom
-  ...path([19, 1], "UUUUUU"), // F stem
-  ...path([20, 4], "R"), // F middle bar
-  ...path([20, 7], "RR"), // F top bar: the head ends here
-];
+/** just a short tail on page 2: the quietest version */
+const short: Cell[] = walk([15, 1], "LL");
 
-// 5 · page 2: a game, paused mid-run; tap the snake and it carries on
-const game = path([14, 2], "UU RRR UU R");
+/** one long wave across page 2 */
+const wave: Cell[] = (() => {
+  const out: Cell[] = [];
+  for (let x = 23; x >= 12; x--) {
+    const y = Math.round(4 + 2.6 * Math.sin((x - 12) / 1.9));
+    const prev = out[out.length - 1];
+    if (prev) for (let k = prev[1]; k !== y; k += Math.sign(y - k)) if (k !== prev[1]) out.push([prev[0], k]);
+    out.push([x, y]);
+  }
+  const end = out[out.length - 1]; // drop the last column down to row 1 to meet page 1
+  for (let k = end[1] - 1; k >= 1; k--) out.push([12, k]);
+  return out;
+})();
+
+/** a ring around an apple, closing at the bottom where the body leaves for page 1 */
+const ring: Cell[] = walk([16, 1], "RRRR UUUUUU LLLLLL DDDDDD LL");
 
 export const WALLPAPERS: Wallpaper[] = [
-  { id: 1, name: "Hello, across both pages", cells: hello, apples: [], page1: true },
-  { id: 2, name: "The chase", cells: chase, apples: [[23, 4]], page1: true },
-  { id: 3, name: "Head meets tail", cells: loop, apples: [[17, 4]], page1: false },
-  { id: 4, name: "TF", cells: tf, apples: [[22, 2]], page1: false },
-  { id: 5, name: "Paused game", cells: game, apples: [[21, 6], [15, 9]], page1: false, playable: true, hint: "Tap the snake to play" },
+  { id: 1, name: "hi", cells: [...hi, ...PAGE1], apples: [HI_DOT] },
+  { id: 2, name: "Bend", cells: [...bend, ...PAGE1], apples: [] },
+  { id: 3, name: "Short", cells: [...short, ...PAGE1], apples: [] },
+  { id: 4, name: "Wave", cells: [...wave, ...PAGE1], apples: [] },
+  { id: 5, name: "Ring", cells: [...ring, ...PAGE1], apples: [[17, 4]] },
 ];
 
-export const wallpaperFor = (id: number) => WALLPAPERS.find((w) => w.id === id) ?? WALLPAPERS[0];
+const query = typeof window === "undefined" ? new URLSearchParams() : new URLSearchParams(window.location.search);
+export const wallpaperFor = (id: number): Wallpaper => {
+  const w = WALLPAPERS.find((x) => x.id === id) ?? WALLPAPERS[0];
+  return query.get("apple") === "0" ? w : { ...w, apples: [...w.apples, APPLE1] };
+};
 
 /** direction of travel at the head: [dx, dy] in canvas units (dy up = +1) */
 export const headDir = (cells: Cell[]): Cell => {
@@ -72,6 +78,9 @@ export const headDir = (cells: Cell[]): Cell => {
   return [Math.sign(b[0] - a[0]), Math.sign(b[1] - a[1])];
 };
 
-/** handed from the wallpaper to the Snake game: the pose in device grid cells (col from the left grid line, row from the top one) */
-export let pendingStart: { cells: Cell[]; dir: Cell } | null = null;
-export const setPendingStart = (v: typeof pendingStart) => { pendingStart = v; };
+/** the part of the snake on page 1 (head end): what the game picks up */
+export const page1Part = (cells: Cell[]) => {
+  let i = cells.length - 1;
+  while (i > 0 && cells[i - 1][0] <= 11) i--;
+  return cells.slice(i);
+};
