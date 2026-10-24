@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppState } from "./nav";
-import { pendingStart, setPendingStart, type Cell } from "./wallpapers";
+import type { Cell } from "./wallpapers";
 import appleIcon from "../assets/icons/b/apple.png";
 
 /**
@@ -13,7 +13,9 @@ const GREEN = "#06C268";
 const BEST_KEY = "eric-os-mobile-snake-best";
 const readBest = () => { try { return Number(localStorage.getItem(BEST_KEY)) || 0; } catch { return 0; } };
 
-export function SnakeGame() {
+/** start: the wallpaper snake's pose and apple in device grid cells (col from the left line, row from the top line).
+    full: the Home Screen itself is the board: no frame, no own grid (the wallpaper's shows through), walls at the screen's safe edges. */
+export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, bottom = 0 }: { start?: { cells: Cell[]; dir: Cell }; apple?: Cell; full?: boolean; top?: number; bottom?: number } = {}) {
   const wrap = useRef<HTMLDivElement>(null);
   const cv = useRef<HTMLCanvasElement>(null);
   const [phase, setPhase] = useState<"ready" | "playing" | "over">("ready");
@@ -21,7 +23,8 @@ export function SnakeGame() {
   const [best, setBest] = useState(readBest);
   const g = useRef({ cols: 13, rows: 20, cell: 30, ox: 0, oy: 0, snake: [] as P[], dir: { x: 1, y: 0 }, next: { x: 1, y: 0 }, food: { x: 0, y: 0 }, step: 150, acc: 0, last: 0, grow: 0, dirty: true, lineCol: 0, lineRow: 0, base: 3 });
   // started from the wallpaper: carry on from the snake's exact pose (taken once, at launch)
-  const wallPose = useRef(pendingStart); if (pendingStart) setPendingStart(null);
+  const wallPose = useRef(startPose ?? null);
+  const wallApple = useRef(startApple ?? null);
   const [fromWall, setFromWall] = useState(!!wallPose.current);
   const { shown } = useAppState();
   const shownRef = useRef(shown); shownRef.current = shown;
@@ -41,11 +44,11 @@ export function SnakeGame() {
     const s = g.current;
     let offL = 0, offT = 0; // where this board sits on the device, in device pixels
     if (dev) { const z = parseFloat(getComputedStyle(dev).zoom) || 1, a = el.getBoundingClientRect(), d = dev.getBoundingClientRect(); offL = (a.left - d.left) / z; offT = (a.top - d.top) / z; }
-    const hud = 36; // the score line stays clear of the board
+    const hud = full ? top + 40 : 36; // the score line stays clear of the board
     s.cell = cell;
     s.ox = (((gx - offL) % cell) + cell) % cell;
     s.oy = (((gy - offT) % cell) + cell) % cell; while (s.oy < hud) s.oy += cell;
-    s.cols = Math.max(8, Math.floor((w - s.ox + 0.5) / cell)); s.rows = Math.max(10, Math.floor((h - s.oy - 12) / cell));
+    s.cols = Math.max(8, Math.floor((w - s.ox + 0.5) / cell)); s.rows = Math.max(10, Math.floor((h - s.oy - (full ? bottom + 30 : 12)) / cell));
     s.lineCol = Math.round((offL + s.ox - gx) / cell); s.lineRow = Math.round((offT + s.oy - gy) / cell); // board (0,0) as a device grid cell
     const dpr = Math.min(3, window.devicePixelRatio || 1);
     c.width = w * dpr; c.height = h * dpr; c.style.width = `${w}px`; c.style.height = `${h}px`;
@@ -67,13 +70,17 @@ export function SnakeGame() {
     s.dir = { x: 1, y: 0 }; s.next = { x: 1, y: 0 };
     const w = wallPose.current;
     if (w) {
-      const body = w.cells.map(([c, r]: Cell) => ({ x: c - s.lineCol, y: r - s.lineRow })).reverse(); // head first
-      if (body.every((p) => p.x >= 0 && p.y >= 0 && p.x < s.cols && p.y < s.rows)) {
+      const all = w.cells.map(([c, r]: Cell) => ({ x: c - s.lineCol, y: r - s.lineRow })).reverse(); // head first
+      const cut = all.findIndex((p) => p.x < 0 || p.y < 0 || p.x >= s.cols || p.y >= s.rows);
+      const body = cut === -1 ? all : all.slice(0, cut); // the tail runs off the screen edge: keep what's on the board
+      if (body.length >= 2) {
         s.snake = body; s.dir = s.next = { x: w.dir[0], y: -w.dir[1] }; // canvas rows count up, board rows count down
       }
     }
     s.base = s.snake.length; s.step = 175; s.acc = 0; s.grow = 0; s.last = performance.now(); s.dirty = true;
-    placeFood();
+    const wa = wallApple.current; // the wallpaper's apple stays where it was, as the first one to eat
+    const f = w && wa ? { x: wa[0] - s.lineCol, y: wa[1] - s.lineRow } : null;
+    if (f && f.x >= 0 && f.y >= 0 && f.x < s.cols && f.y < s.rows) s.food = f; else placeFood();
   };
   const start = () => { reset(); setScore(0); setPhase("playing"); wallPose.current = null; setFromWall(false); };
   /** from the wallpaper the snake is already on the board: the first swipe just sets it moving */
@@ -127,12 +134,15 @@ export function SnakeGame() {
       const ctx = c.getContext("2d")!;
       const W = c.clientWidth, H = c.clientHeight, C = s.cell;
       ctx.clearRect(0, 0, W, H);
-      ctx.strokeStyle = "rgba(255,255,255,.055)"; ctx.lineWidth = 1;
-      ctx.beginPath();
-      for (let x = 0; x <= s.cols; x++) { ctx.moveTo(s.ox + x * C + 0.5, s.oy); ctx.lineTo(s.ox + x * C + 0.5, s.oy + s.rows * C); }
-      for (let y = 0; y <= s.rows; y++) { ctx.moveTo(s.ox, s.oy + y * C + 0.5); ctx.lineTo(s.ox + s.cols * C, s.oy + y * C + 0.5); }
-      ctx.stroke();
-      ctx.strokeStyle = "rgba(255,255,255,.16)"; ctx.strokeRect(s.ox + 0.5, s.oy + 0.5, s.cols * C, s.rows * C);
+      ctx.lineWidth = 1;
+      if (!full) { // full screen: the wallpaper's own grid is the board, only the walls are drawn
+        ctx.strokeStyle = "rgba(255,255,255,.055)";
+        ctx.beginPath();
+        for (let x = 0; x <= s.cols; x++) { ctx.moveTo(s.ox + x * C + 0.5, s.oy); ctx.lineTo(s.ox + x * C + 0.5, s.oy + s.rows * C); }
+        for (let y = 0; y <= s.rows; y++) { ctx.moveTo(s.ox, s.oy + y * C + 0.5); ctx.lineTo(s.ox + s.cols * C, s.oy + y * C + 0.5); }
+        ctx.stroke();
+      }
+      ctx.strokeStyle = full ? "rgba(255,255,255,.12)" : "rgba(255,255,255,.16)"; ctx.strokeRect(s.ox + 0.5, s.oy + 0.5, s.cols * C, s.rows * C);
       if (apple.current?.complete) ctx.drawImage(apple.current, s.ox + s.food.x * C + C * 0.05, s.oy + s.food.y * C + C * 0.05, C * 0.9, C * 0.9);
       ctx.fillStyle = GREEN;
       s.snake.forEach((p) => {
@@ -183,7 +193,7 @@ export function SnakeGame() {
   };
 
   return (
-    <div className="ios-snake" ref={wrap} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={() => (sw.current = null)}>
+    <div className={`ios-snake ${full ? "full" : ""}`} ref={wrap} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={() => (sw.current = null)}>
       <canvas ref={cv} />
       <div className="hud"><span>Score <b>{score}</b></span><span>Best <b>{Math.max(best, score)}</b></span></div>
       {fromWall && phase === "ready" && <p className="wall-hint">Swipe to go</p>}

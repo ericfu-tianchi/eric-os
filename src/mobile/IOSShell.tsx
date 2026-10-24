@@ -8,7 +8,8 @@ import { ALBUMS, HOME, HOME_FOLDERS, appKey, type HomeItem, type Route } from ".
 import { AppTile, ItemTile } from "./icons";
 import { AppState, NavBar, NavContext, type Nav, type Screen } from "./nav";
 import { screenFor } from "./routes";
-import { WALLPAPERS, headDir, setPendingStart, wallpaperFor, type Cell, type Wallpaper } from "./wallpapers";
+import { WALLPAPERS, headDir, page1Part, wallpaperFor, type Cell, type Wallpaper } from "./wallpapers";
+import { SnakeGame } from "./SnakeGame";
 import "./ios.css";
 
 /**
@@ -54,17 +55,16 @@ const session = { get: (k: string) => { try { return sessionStorage.getItem(k); 
 /* ---------------- wallpaper ---------------- */
 
 /** The wallpaper snake: cells on the Home grid. `x0`/`y0` = the pixel position of canvas col 0 / the bottom line of the free area. */
-function WallArt({ art, cols, c, x0, bottom, onPlay }: { art: Wallpaper; cols: [number, number]; c: number; x0: number; bottom: number; onPlay?: () => void }) {
+function WallArt({ art, cols, c, x0, bottom }: { art: Wallpaper; cols: [number, number]; c: number; x0: number; bottom: number }) {
   const at = ([x, y]: Cell) => ({ left: x0 + (x - cols[0]) * c, top: bottom - (y + 1) * c, width: c, height: c });
   const inView = (p: Cell) => p[0] >= cols[0] && p[0] <= cols[1];
   const head = art.cells[art.cells.length - 1], [dx, dy] = headDir(art.cells);
   const turn = dx === 1 ? 90 : dx === -1 ? -90 : dy === -1 ? 180 : 0;
   return (
-    <div className={`ios-art ${onPlay ? "playable" : ""}`} aria-hidden onClick={onPlay}>
+    <div className="ios-art" aria-hidden>
       {art.cells.slice(0, -1).filter(inView).map((p, i) => <i key={i} style={at(p)} />)}
       {inView(head) && <b className="eyes" style={{ ...at(head), transform: `rotate(${turn}deg)` }}><span /><span /></b>}
       {art.apples.filter(inView).map((p, i) => <em key={i} className="apple" style={at(p)} />)}
-      {art.hint && inView(head) && <small style={{ left: x0 + (head[0] - cols[0] - 4) * c, top: bottom - (head[1] + 2) * c - 6 }}>{art.hint}</small>}
     </div>
   );
 }
@@ -106,6 +106,9 @@ export function IOSShell() {
   const [banner, setBanner] = useState(false);
   const [anim, setAnim] = useState<{ kind: "push" | "pop"; app: string } | null>(null);
   const [switcher, setSwitcher] = useState(false);
+  /** the Snake easter egg: Home itself becomes the board, starting from the wallpaper snake */
+  const [snake, setSnake] = useState(false);
+  const snakeRef = useRef(snake); snakeRef.current = snake;
   const switcherRef = useRef(switcher); switcherRef.current = switcher;
   const appsRef = useRef(apps); appsRef.current = apps;
   const frontRef = useRef(front); frontRef.current = front;
@@ -150,7 +153,7 @@ export function IOSShell() {
   const widgetRows = freeRows >= 13 ? 5 : freeRows >= 11 ? 4 : 3; // the About widget shrinks on short screens
   const wallId = useMemo(() => { const n = Number(new URLSearchParams(window.location.search).get("wall")); return WALLPAPERS.some((w) => w.id === n) ? n : 1; }, []);
   const art = wallpaperFor(wallId);
-  const showMini = !art.page1 && freeRows >= widgetRows + 1 + 6 + 1 + 5; // the Snake + photo widgets, when they fit and the art leaves room
+
 
   const frontApp = apps.find((a) => a.key === front) ?? null;
   const top = frontApp?.stack[frontApp.stack.length - 1];
@@ -257,6 +260,11 @@ export function IOSShell() {
     }));
   };
   const open = (route: Route, from?: Element | null) => {
+    if (route.app === "snake") { // Snake isn't an app here: Home turns into the board
+      setMenu(null); setFolder(null); setSheet(false); setBanner(false);
+      if (frontRef.current) { goHome(); window.setTimeout(enterSnake, SPRING_MS + 60); } else enterSnake();
+      return;
+    }
     // keyboard games: ask first on touch screens
     if (route.app === "game" && route.id === "soul-blade" && isTouch()) { setMenu(null); setFolder(null); setSheet(true); return; }
     launch(route, from);
@@ -328,6 +336,7 @@ export function IOSShell() {
     const onPop = () => {
       if (skipPop.current > 0) { skipPop.current--; return; }
       if (switcherRef.current) { depth.current = Math.max(0, depth.current - 1); switcherHomeRef.current(); return; }
+      if (snakeRef.current) { depth.current = Math.max(0, depth.current - 1); setSnake(false); return; }
       if (depth.current > 0) depth.current--;
       backRef.current();
     };
@@ -430,6 +439,7 @@ export function IOSShell() {
      drag up and pause = the app switcher (from Home too, once an app has run) ---------- */
   const hb = useRef<{ x: number; y: number; t: number; ly: number; lt: number; vy: number; axis?: "x" | "y" } | null>(null);
   const hbDown = (e: React.PointerEvent) => {
+    if (snakeRef.current) { hb.current = { x: e.clientX, y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 }; return; }
     if (switcherRef.current) { hb.current = { x: e.clientX, y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 }; return; }
     if (!frontRef.current && !appsRef.current.length) return;
     hb.current = { x: e.clientX, y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 };
@@ -473,6 +483,7 @@ export function IOSShell() {
   const hbUp = (e: React.PointerEvent) => {
     const s = hb.current, k = frontRef.current; hb.current = null;
     if (!s) return;
+    if (snakeRef.current) { exitSnake(); return; } // tap or swipe up: back to Home
     const dy = (e.clientY - s.y) / zoom, v = dy / Math.max(1, Date.now() - s.t);
     const paused = Date.now() - s.lt > 90 || s.vy > -0.35; // the finger slowed down or stopped before letting go
     if (switcherRef.current) { if (Math.abs(dy) < 6) switcherHome(); return; }
@@ -673,21 +684,27 @@ export function IOSShell() {
     }
   };
 
-  /* ---------- the wallpaper comes alive: tap the paused game on page 2 and Snake carries on from that exact pose ---------- */
-  const playFromWall = () => {
-    if (suppressTap.current) { suppressTap.current = false; return; }
-    if (appsRef.current.some((a) => a.key === "snake")) { open({ app: "snake" }); return; }
-    const rowOf = (y: number) => Math.round((freeBottom - (y + 1) * cell - gy) / cell); // canvas row → grid row from the top line
-    setPendingStart({ cells: art.cells.map(([x, y]) => [x - 12, rowOf(y)] as Cell), dir: headDir(art.cells) });
-    launch({ app: "snake" }, null, true);
+  /* ---------- Snake on Home: icons, Dock and dots fade away, the wallpaper snake starts moving ---------- */
+  const enterSnake = () => {
+    if (snakeRef.current) return;
+    setPage(0);
+    setSnake(true);
+    history.pushState({ ios: depth.current + 1 }, ""); depth.current++;
   };
+  const exitSnake = () => {
+    if (!snakeRef.current) return;
+    setSnake(false);
+    if (depth.current > 0) { skipPop.current++; history.back(); depth.current--; }
+  };
+  const exitSnakeRef = useRef(exitSnake); exitSnakeRef.current = exitSnake;
+  const startPose = useMemo(() => {
+    const rowOf = (y: number) => Math.round((freeBottom - (y + 1) * cell - gy) / cell); // canvas row → grid row from the top line
+    const part = page1Part(art.cells);
+    const apple = art.apples.find(([x]) => x <= 11);
+    return { cells: part.map(([x, y]) => [x, rowOf(y)] as Cell), dir: headDir(art.cells), apple: apple ? [apple[0], rowOf(apple[1])] as Cell : undefined };
+  }, [art, freeBottom, cell, gy]);
 
   /* ---------- widgets ---------- */
-  const featured = useMemo(() => { const all = ALBUMS.flatMap((a) => a.items); return all[Math.floor(Math.random() * all.length)]; }, []);
-  const bestLine = useMemo(() => {
-    let best = 0; try { best = Number(localStorage.getItem("eric-os-mobile-snake-best")) || 0; } catch { /* */ }
-    return best > 0 ? `Your best: ${best}` : "Swipe to play";
-  }, [front]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* which apps may keep heavy content alive: the newest LIVE_GAMES games */
   const liveGames = useMemo(() => new Set(apps.filter((a) => a.route.app === "game").slice(-LIVE_GAMES).map((a) => a.key)), [apps]);
@@ -710,7 +727,7 @@ export function IOSShell() {
         <div className="ios-wall" aria-hidden />
 
         {/* Home */}
-        <div className={`ios-home ${front || switcher ? "behind" : ""} ${locked ? "hidden" : ""}`} aria-hidden={!!front || switcher || locked}
+        <div className={`ios-home ${front || switcher ? "behind" : ""} ${locked ? "hidden" : ""} ${snake ? "snaking" : ""}`} aria-hidden={!!front || switcher || locked}
           onPointerDown={pageDown} onPointerMove={pageMove} onPointerUp={pageUp} onPointerCancel={pageUp}>
           <div className="pages" ref={pagesEl}>
             <section className="page" aria-label="Home page 1">
@@ -724,27 +741,24 @@ export function IOSShell() {
                 <img src={portrait} alt="" draggable={false} />
               </button>
               <div className="ios-grid">{HOME.page1.map((it) => icon(it))}</div>
-              {showMini && <div className="ios-widgets">
-                <button type="button" className="ios-mini snake" onClick={(e) => { if (suppressTap.current) { suppressTap.current = false; return; } open({ app: "snake" }, e.currentTarget); }}>
-                  <span className="board" aria-hidden>{[[0, 3], [1, 3], [2, 3], [2, 2], [2, 1], [3, 1], [4, 1]].map(([x, y], i) => <i key={i} style={{ left: `${x * 20}%`, top: `${y * 20}%` }} />)}<em style={{ left: "80%", top: "60%" }} /></span>
-                  <span className="cap"><b>Snake</b><small>{bestLine}</small></span>
-                </button>
-                <button type="button" className="ios-mini photo" onClick={(e) => { if (suppressTap.current) { suppressTap.current = false; return; } open({ app: "photos", item: featured.id }, e.currentTarget); }}>
-                  <img src={featured.thumb} alt="" draggable={false} />
-                  <span className="cap"><small>Featured photo</small><b>{featured.name}</b></span>
-                </button>
-              </div>}
             </section>
             <section className="page" aria-label="Home page 2">
               <div className="ios-grid">{HOME.page2.map((it) => icon(it))}</div>
             </section>
-            <WallArt art={art} cols={[0, 23]} c={cell} x0={gx} bottom={freeBottom} onPlay={art.playable ? playFromWall : undefined} />
+            <WallArt art={art} cols={[0, 23]} c={cell} x0={gx} bottom={freeBottom} />
           </div>
           <div className="ios-dots" role="tablist" aria-label="Home Screen pages">
             {[0, 1].map((i) => <button type="button" key={i} role="tab" aria-selected={page === i} aria-label={`Page ${i + 1}`} className={page === i ? "on" : ""} onClick={() => setPage(i)} />)}
           </div>
           <div className="ios-dock">{HOME.dock.map((it) => icon(it, true))}</div>
         </div>
+
+        {/* Snake on Home: a full-screen board over the wallpaper, lined up with its grid */}
+        {snake && (
+          <div className="ios-snake-home">
+            <SnakeGame full start={startPose} apple={startPose.apple} top={insets.top} bottom={insets.bot} />
+          </div>
+        )}
 
         {/* running apps keep their state; only the front one shows */}
         <NavContext.Provider value={nav}>
@@ -851,7 +865,7 @@ export function IOSShell() {
 
         {framed && <StatusBar tone={ink} />}
         {!locked && (
-          <div className={`ios-homebar ${ink === "dark" && !switcher ? "dark" : ""} ${front || switcher || apps.length ? "" : "idle"}`}
+          <div className={`ios-homebar ${ink === "dark" && !switcher && !snake ? "dark" : ""} ${front || switcher || snake || apps.length ? "" : "idle"}`}
             onPointerDown={hbDown} onPointerMove={hbMove} onPointerUp={hbUp} onPointerCancel={hbUp} aria-hidden><i /></div>
         )}
       </div>
