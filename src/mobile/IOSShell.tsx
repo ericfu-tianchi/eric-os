@@ -152,8 +152,6 @@ export function IOSShell() {
   const freeRows = Math.round((freeBottom - padTop) / cell);
   const widgetRows = freeRows >= 13 ? 5 : freeRows >= 11 ? 4 : 3; // the About widget shrinks on short screens
   const art = useMemo(currentWallpaper, []);
-  /** page-1 top row tile backgrounds while reviewing: ?ib=1…3 */
-  const iconBg = useMemo(() => { const n = Number(new URLSearchParams(window.location.search).get("ib")); return n >= 1 && n <= 3 ? n : 1; }, []);
 
 
   const frontApp = apps.find((a) => a.key === front) ?? null;
@@ -498,13 +496,14 @@ export function IOSShell() {
       const home = device.current?.querySelector<HTMLElement>(".ios-home"), dim = device.current?.querySelector<HTMLElement>(".ios-dim");
       if (home) { home.style.transition = "none"; home.style.transform = `scale(${1 - 0.06 * p})`; }
       if (dim) { dim.style.transition = "none"; dim.style.opacity = String(0.62 * p); }
-      const g = swGeo();
+      // the cards slide in from the left edge, as on iOS: the most recent one travels from just off-screen to the centre
+      const g = swGeo(), off = g.x0 + g.cw + 12;
       recent().forEach((a, i) => {
         const el = layerOf(a.key); if (!el || i > 2) return;
         el.hidden = false; el.dataset.peek = "1";
         el.style.transition = "none"; el.style.transformOrigin = "0 0";
-        el.style.transform = `translate3d(${g.x0 - i * g.step}px, ${g.y + (size.h - g.y) * (1 - p) * 0.9}px, 0) scale(${SW})`;
-        el.style.borderRadius = `${26 / SW}px`; el.style.opacity = String(Math.min(1, p * 1.6));
+        el.style.transform = `translate3d(${g.x0 - i * g.step - off * (1 - p)}px, ${g.y}px, 0) scale(${SW})`;
+        el.style.borderRadius = `${26 / SW}px`; el.style.opacity = "1";
       });
       return;
     }
@@ -561,7 +560,8 @@ export function IOSShell() {
       const T = `.32s ${EASE}`;
       if (home) { home.style.transition = `transform ${T}`; home.style.transform = ""; }
       if (dim) { dim.style.transition = `opacity ${T}`; dim.style.opacity = ""; }
-      appsRef.current.forEach((a) => { const el = layerOf(a.key); if (!el?.dataset.peek) return; el.style.transition = `transform ${T}, opacity ${T}`; el.style.transform = `translate3d(${el.style.transform.match(/translate3d\(([-\d.]+)px/)?.[1] ?? 0}px, ${size.h}px, 0) scale(${SW})`; el.style.opacity = "0"; });
+      const g = swGeo(), off = g.x0 + g.cw + 12; // not far enough: the cards slide back out to the left
+      recent().forEach((a, i) => { const el = layerOf(a.key); if (!el?.dataset.peek) return; el.style.transition = `transform ${T}`; el.style.transform = `translate3d(${g.x0 - i * g.step - off}px, ${g.y}px, 0) scale(${SW})`; });
       window.setTimeout(() => {
         if (home) home.style.transition = ""; if (dim) dim.style.transition = "";
         appsRef.current.forEach((a) => { const el = layerOf(a.key); if (!el?.dataset.peek) return; delete el.dataset.peek; el.style.cssText = ""; el.hidden = a.key !== frontRef.current; });
@@ -833,7 +833,7 @@ export function IOSShell() {
 
   return (
     <div className={`ios-stage ${framed ? "framed" : "phone"}`}>
-      <div className={`ios ${framed ? "framed" : "phone"} ${switcher ? "switching" : ""} ib${iconBg}`} ref={device} style={{ zoom, "--cell": `${cell}px`, "--gx": `${gx}px`, "--gy": `${gy}px`, "--pad-top": `${padTop}px`, "--dock-top": `${dockTop}px`, "--wrows": widgetRows } as React.CSSProperties}>
+      <div className={`ios ${framed ? "framed" : "phone"} ${switcher ? "switching" : ""}`} ref={device} style={{ zoom, "--cell": `${cell}px`, "--gx": `${gx}px`, "--gy": `${gy}px`, "--pad-top": `${padTop}px`, "--dock-top": `${dockTop}px`, "--wrows": widgetRows } as React.CSSProperties}>
         <span className="ios-probe t" /><span className="ios-probe b" />
         <div className="ios-wall" aria-hidden />
 

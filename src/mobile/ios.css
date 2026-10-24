@@ -104,7 +104,7 @@
 .ios-icon:active .ios-ic { transform: scale(.9); filter: brightness(.82); }
 .ios-icon.lifted .ios-ic { transform: scale(1.08); }
 .ios-icon .lbl { position: absolute; left: 50%; top: calc(var(--ic) + 5px); transform: translateX(-50%); max-width: calc(var(--cell) * 3 - 4px); font: 500 11.5px/1.2 var(--font); color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -.01em; }
-.ios-dots { position: absolute; left: 50%; transform: translate(-50%, -50%); top: calc(var(--dock-top) - var(--cell) * 1.5); display: flex; gap: 2px; padding: 5px 8px; border-radius: 99px; background: rgba(255,255,255,.08); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.ios-dots { position: absolute; left: 50%; transform: translate(-50%, -50%); top: calc(var(--dock-top) - 21px); display: flex; gap: 2px; padding: 5px 8px; border-radius: 99px; background: rgba(255,255,255,.08); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .ios-dots button { width: 16px; height: 16px; display: grid; place-items: center; }
 .ios-dots button::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.35); transition: background .25s; }
 .ios-dots button.on::before { background: #fff; }
@@ -139,10 +139,10 @@
 .ios-ic.folder .ios-ic { width: 100%; height: auto; aspect-ratio: 1; border-radius: 22%; box-shadow: none; }
 
 /* folder open */
-.ios-folder { position: absolute; inset: 0; z-index: 25; /* under running apps: an app opened from here lands back in it */ display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 22px 40px;
+.ios-folder { position: absolute; inset: 0; z-index: 25; /* under running apps: an app opened from here lands back in it */ display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 0 40px;
   background: rgba(14,15,18,.72); backdrop-filter: blur(26px) saturate(1.4); -webkit-backdrop-filter: blur(26px) saturate(1.4); animation: ios-fade .28s both; } /* dark enough on its own where the blur is unavailable */
 .ios-folder h3 { margin: 0 0 18px; font: 700 30px var(--font); letter-spacing: -.01em; text-align: center; }
-.ios-folder .box { width: auto; padding: 22px 20px 6px; border-radius: 38px; background: rgba(78,80,88,.72); display: grid; grid-template-columns: repeat(3, var(--ic)); column-gap: calc(var(--cell) * .9); row-gap: 14px; justify-items: center;
+.ios-folder .box { width: calc(100% - 28px); max-width: 360px; padding: 26px 14px 12px; border-radius: 40px; background: rgba(78,80,88,.72); display: grid; grid-template-columns: repeat(3, 1fr); row-gap: 20px; justify-items: center;
   animation: ios-pop .38s cubic-bezier(.25,1.3,.45,1) both; }
 @keyframes ios-pop { from { transform: scale(.35); opacity: 0; } }
 @keyframes ios-fade { from { opacity: 0; } }
@@ -486,7 +486,7 @@
 /* folder slots: icon + its label inside the slot (the Home grid hangs labels below the icon) */
 .ios-folder .ios-icon { height: calc(var(--ic) + 30px); }
 .ios-folder .ios-icon .ios-ic { position: absolute; left: 0; top: 0; }
-.ios-folder .ios-icon .lbl { top: auto; bottom: 4px; }
+.ios-folder .ios-icon .lbl { top: auto; bottom: 4px; max-width: calc(var(--ic) * 1.55); }
 
 /* lock screen: the home bar breathes, to show where the swipe starts */
 .ios-homebar.locked i { animation: ios-bar-breathe 2.2s ease-in-out infinite; }
@@ -495,11 +495,3 @@
   50% { opacity: 1; transform: scaleX(1.06); box-shadow: 0 0 0 .5px rgba(0,0,0,.28), 0 0 14px rgba(255,255,255,.55); }
 }
 
-/* page-1 top row tiles: three treatments to compare (?ib=1…3) */
-.ios.ib1 .ios-home [data-id="videos"] .ios-ic, .ios.ib1 .ios-home [data-id="snake"] .ios-ic { background: linear-gradient(180deg,#ffffff,#e9ebef) !important; }
-.ios.ib2 .ios-home [data-id="resume"] .ios-ic { background: linear-gradient(180deg,#2a2c31,#141518) !important; }
-.ios.ib2 .ios-home [data-id="case:how-i-ai"] .ios-ic img { filter: invert(1) hue-rotate(180deg); }
-.ios.ib2 .ios-home [data-id="case:how-i-ai"] .ios-ic { background: #0e0f11 !important; }
-.ios.ib3 .ios-home [data-id="videos"] .ios-ic { background: linear-gradient(180deg,#ffb3a3,#ff7a62) !important; }
-.ios.ib3 .ios-home [data-id="snake"] .ios-ic { background: linear-gradient(180deg,#d9f8e6,#9fe8bd) !important; }
-.ios.ib3 .ios-home [data-id="resume"] .ios-ic { background: linear-gradient(180deg,#e6efff,#b9cff8) !important; }
