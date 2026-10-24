@@ -1,8 +1,6 @@
 import { forwardRef } from "react";
 import { useOS } from "../store";
-import { Hat } from "../components/DesktopSnake";
-
-const TONGUE = "#F04E38";
+import { Hat, TONGUE, TONGUE_PATH } from "../components/DesktopSnake";
 
 /**
  * The phone snake's head decor, the same as the desktop's: forked tongue, eyes and the hat from the wardrobe.
@@ -17,7 +15,7 @@ export const SnakeHead = forwardRef<SVGSVGElement, { size: number; ang: number; 
       <svg ref={ref} className={className} width={size * 3} height={size * 3} viewBox="-66 -66 132 132" overflow="visible" aria-hidden
         style={{ position: "absolute", pointerEvents: "none", ...style }}>
         <g className="rot" transform={`rotate(${ang})`}>
-          <g transform="translate(23,0)"><path d="M0 -1.4 C10 -2.2 15 -5 23 -12.5 C18 -5.5 14 -2.6 8 -0.6 C15 1.2 20 4.5 27 10 C18 4.8 11 2.2 0 1.6 Z" fill={TONGUE} /></g>
+          <g transform="translate(23,0)"><path d={TONGUE_PATH} fill={TONGUE} /></g>
           {[-1, 1].map((k) => (
             <g key={k}>
               <circle cx={fa} cy={pb * k} r={er} fill="#fafafa" />

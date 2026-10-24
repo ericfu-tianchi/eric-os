@@ -15,6 +15,7 @@ import { ALBUMS, VIDEOS, filesChildren, filesNode, filesRoot, routeForNode, type
 import { AppTile } from "./icons";
 import { LargeTitle, useAppState, useNav, useTap } from "./nav";
 import { screenFor } from "./routes";
+import { readBest } from "./SnakeGame";
 
 const Chevron = () => <svg className="chev" viewBox="0 0 8 14" aria-hidden><path d="m1.5 1.5 5 5.5-5 5.5" /></svg>;
 
@@ -332,7 +333,7 @@ export function SettingsScreen({ page }: { page?: "snake" | "os" }) {
 }
 
 function AboutOS() {
-  const best = (() => { try { return Number(localStorage.getItem("eric-os-mobile-snake-best")) || 0; } catch { return 0; } })(); // the phone keeps its own Snake score, apart from the desktop
+  const best = readBest();
   const specs: [string, string][] = [
     ["Name", "Tianchi OS"], ["Owner", "Tianchi (Eric) Fu"], ["Chip", "Tianchi T1 Pro"], ["Memory", "18 GB"],
     ["Your Snake best", best > 0 ? `${best} ${best === 1 ? "apple" : "apples"}` : "Not played yet"], ["Version", "1.0 (2026)"],

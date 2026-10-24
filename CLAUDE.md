@@ -54,6 +54,7 @@ v2 已实装:炭灰台 `--paper:#1c1d21` + 永远白窗 `--surface:#fff`(Light �
   4. z-index = `order` 数组下标,聚焦=挪到数组尾。
 - **像素系统**:`src/components/Pixel.tsx` 仍提供网格 SVG 图标与 `PixelWordmark`；当前选用的精致像素 Icon 是 `src/assets/icons/b/` 下的 PNG 资产。新 Icon 先复用 / 替换这套资产，除非 Eric 明确要求回到代码绘制。
 - **移动端 = iOS 形态(src/mobile/)**:由 `gridSpec` 决定；少于 27 列或 13 行即显示 `IOSShell`(桌面 = macOS,手机 = iOS)。`?ios` 在大屏用手机外框预览,`?desktop`(或 `?forceDesktop=1`)在手机上强制桌面。
+  - **维护原则**:内容只写一份(data 文件、案例渲染器、About、蛇对话、帽子、舌头等常量),两端各自只写外壳和交互(窗口 vs 全屏 app、hover vs 滚动/手势)。手机端特有的差异是刻意的,不要为了“一致”把桌面交互搬到手机。两条蛇是两套实现(桌面吃文件、手机全屏网格),共用帽子/舌头/配色常量。
   - 只共享内容层,不共享外壳:`model.ts` 从 `filesystem.ts / projects.ts / media.ts` 派生主屏文件夹、Files、Photos、Videos —— **新增项目/文件夹/图片/视频只改数据文件,手机端自动出现**;只有系统 app 和主屏顺序(`HOME`)手写。新顶级桌面目录加进 `DESKTOP_FOLDER_IDS` 即自动成为主屏文件夹(长名在 `SHORT` 里给短名)。
   - 路由:`Route` → `routes.tsx` 的 `screenFor`;app 内部 `useNav().push` 压栈。返回:导航栏 Back/Home、底部横条(点按或上拉)、左边缘右滑、浏览器返回键(history 同步)全部可用。桌面组件里调用的 `useOS().open()` 会被转成手机路由。
   - 网格 `--cell` = 屏宽 / 12,横向偏半格(`--gx`),纵向以 Dock 底边对线(`--gy`):图标 2 格、间距 1 格,About widget、小组件、Dock、页码点全部压在网格线上;Snake 棋盘用同一网格同一对线(`SnakeGame.tsx`)。壁纸蛇在 `wallpapers.ts`:Tianchi 用 `/wall-studio.html` 自己画的 hi(蛇头在一屏图标下方,身子到二屏写 hi);改壁纸就用 studio 导出 JSON 替换 `HI`,`?wall=custom` 预览。点 Snake 不是开 app:一屏图标/Dock 以蛇头为圆心涟漪式缩小淡出 → 随机苹果闪烁 → 蛇从壁纸原位自己出发、由慢到快;左上 Home 按钮 + Home Bar 可拖拽上滑退出(反向涟漪回来)。
