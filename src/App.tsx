@@ -72,8 +72,9 @@ export default function App() {
   const isMobile = useIsMobile();
   // analytics: the phone shell lives at /phone, the desktop at /, so Cloudflare Web Analytics counts them apart
   useEffect(() => {
-    const want = IOS || isMobile ? "/phone" : "/";
-    if (window.location.pathname !== want && (window.location.pathname === "/" || window.location.pathname === "/phone"))
+    const me = window.location.pathname.startsWith("/me/") ? "/me" : ""; // Tianchi's own visits (index.html)
+    const want = me + (IOS || isMobile ? "/phone" : "/");
+    if (window.location.pathname !== want && ["/", "/phone", "/me/", "/me/phone"].includes(window.location.pathname))
       history.replaceState(history.state, "", want + window.location.search + window.location.hash);
   }, [isMobile]);
   const canvasStudy = new URLSearchParams(window.location.search).has("canvasStudy");
