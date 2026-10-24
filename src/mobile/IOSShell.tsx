@@ -477,7 +477,6 @@ export function IOSShell() {
   const hbDown = (e: React.PointerEvent) => {
     if (snakeRef.current) { hb.current = { x: e.clientX, y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 }; (e.currentTarget as Element).setPointerCapture(e.pointerId); return; }
     if (switcherRef.current) { hb.current = { x: e.clientX, y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 }; return; }
-    if (!frontRef.current && !appsRef.current.length) return;
     hb.current = { x: e.clientX, y: e.clientY, t: Date.now(), ly: e.clientY, lt: Date.now(), vy: 0 };
     (e.currentTarget as Element).setPointerCapture(e.pointerId);
   };
@@ -490,9 +489,10 @@ export function IOSShell() {
       return;
     }
     const now = Date.now(); s.vy = ((e.clientY - s.ly) / zoom) / Math.max(1, now - s.lt); s.ly = e.clientY; s.lt = now;
-    if (!k) { // on Home: Home recedes and dims, and the recent apps rise in as cards, all with the finger
-      if (!appsRef.current.length) return;
-      const dy = Math.min(0, (e.clientY - s.y) / zoom), p = Math.min(1, -dy / 260);
+    if (!k) { // on Home: Home recedes and dims with the finger, and the recent apps slide in from the left
+      const raw = Math.min(0, (e.clientY - s.y) / zoom);
+      const dy = appsRef.current.length ? raw : -260 * (1 - Math.exp(raw / 260)) * 0.6; // nothing running: it resists, like iOS
+      const p = Math.min(1, -dy / 260);
       const home = device.current?.querySelector<HTMLElement>(".ios-home"), dim = device.current?.querySelector<HTMLElement>(".ios-dim");
       if (home) { home.style.transition = "none"; home.style.transform = `scale(${1 - 0.06 * p})`; }
       if (dim) { dim.style.transition = "none"; dim.style.opacity = String(0.62 * p); }
@@ -554,7 +554,7 @@ export function IOSShell() {
     const paused = Date.now() - s.lt > 90 || s.vy > -0.35; // the finger slowed down or stopped before letting go
     if (switcherRef.current) { if (Math.abs(dy) < 6) switcherHome(); return; }
     if (!k) {
-      if (dy < -40 || (dy < -16 && s.vy < -0.3)) { enterSwitcher(); return; } // the peeking cards glide on into place
+      if (appsRef.current.length && (dy < -40 || (dy < -16 && s.vy < -0.3))) { enterSwitcher(); return; } // the peeking cards glide on into place
       // not far enough: Home comes back, the cards sink away
       const home = device.current?.querySelector<HTMLElement>(".ios-home"), dim = device.current?.querySelector<HTMLElement>(".ios-dim");
       const T = `.32s ${EASE}`;
@@ -782,7 +782,8 @@ export function IOSShell() {
       el.getAnimations().forEach((a) => a.cancel());
       const r = el.getBoundingClientRect(), cx = (r.left + r.width / 2 - dr.left) / z, cy = (r.top + r.height / 2 - dr.top) / z;
       const dist = Math.hypot(cx - hx, cy - hy) / Math.hypot(size.w, size.h); // 0 near the head … ~1 far away
-      const gone = { opacity: 0, transform: "scale(.72)", filter: "blur(2px)" }, here = { opacity: 1, transform: "none", filter: "blur(0)" };
+      const base = el.classList.contains("ios-dots") ? "translate(-50%, -50%) " : ""; // the dots are centred with a translate: keep it, or they jump
+      const gone = { opacity: 0, transform: `${base}scale(.72)`, filter: "blur(2px)" }, here = { opacity: 1, transform: `${base}scale(1)`, filter: "blur(0)" };
       el.animate(out ? [here, gone] : [gone, here], { duration: out ? 300 : 420, delay: (out ? dist : 1 - dist) * 140, easing: SPRING, fill: "both" });
     });
   };
