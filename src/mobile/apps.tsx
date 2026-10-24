@@ -335,7 +335,7 @@ export function SettingsScreen({ page }: { page?: "snake" | "os" }) {
 function AboutOS() {
   const best = readBest();
   const specs: [string, string][] = [
-    ["Name", "Tianchi OS"], ["Owner", "Tianchi (Eric) Fu"], ["Chip", "Tianchi T1 Pro"], ["Memory", "18 GB"],
+    ["Name", "Tianchi OS"], ["Owner", "Tianchi (Eric) Fu"], ["Model", "Tianchi Phone"], ["Chip", "Tianchi T1"], ["Capacity", "256 GB"],
     ["Your Snake best", best > 0 ? `${best} ${best === 1 ? "apple" : "apples"}` : "Not played yet"], ["Version", "1.0 (2026)"],
   ];
   return (

@@ -10,7 +10,6 @@ import legoIcon from "../assets/icons/b/lego-world.svg";
 import folderIcon from "../assets/icons/b/folder.png";
 import photosIcon from "../assets/icons/m/photos.png";
 import videosIcon from "../assets/icons/m/videos.png";
-import robotIcon from "../assets/icons/m/robot.png";
 import { coverOf } from "../data/projectAssets";
 import type { HomeItem } from "./model";
 
@@ -22,7 +21,6 @@ type Tile = { img?: string; bg: string; fit?: "glyph" | "cover" | "pixel"; scale
 
 const TILES: Record<string, Tile> = {
   about: { img: portrait, bg: "#101113", fit: "cover", pos: "32% 12%" },
-  "case:how-i-ai": { img: robotIcon, bg: "linear-gradient(160deg,#16301f,#0b1a11)", scale: 0.74 },
   resume: { img: pdfIcon, bg: "linear-gradient(180deg,#ffffff,#e9ebef)", scale: 0.66 },
   snake: { img: snakeIcon, bg: "linear-gradient(180deg,#2a2c31,#141518)", scale: 0.78 },
   "game:soul-blade": { img: soulBladeIcon, bg: "linear-gradient(160deg,#2a0b10,#0d0406)", scale: 0.84 },
@@ -36,7 +34,12 @@ const TILES: Record<string, Tile> = {
   folder: { img: folderIcon, bg: "linear-gradient(180deg,#e8f1ff,#bcd3fb)", scale: 0.7 },
 };
 
+/** case pages: a square crop of the page's own banner (src/assets/icons/m/cases), no text under the picture */
+const CASE_ICONS = import.meta.glob("../assets/icons/m/cases/*.webp", { eager: true, import: "default" }) as Record<string, string>;
+const caseIcon = (slug: string) => CASE_ICONS[`../assets/icons/m/cases/${slug}.webp`];
+
 export function tileFor(id: string): Tile {
+  if (id.startsWith("case:") && caseIcon(id.slice(5))) return { img: caseIcon(id.slice(5)), bg: "#fff", fit: "cover", pos: "50% 50%" };
   if (TILES[id]) return TILES[id];
   if (id.startsWith("case:")) {
     const cover = coverOf(id.slice(5));

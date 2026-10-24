@@ -47,7 +47,7 @@ const MAX_APPS = 6;
 /** Hosted games that stay loaded at once (the front one plus the last one you used); older ones reload when you return. */
 const LIVE_GAMES = 2;
 /** The Home Screen item for a running app: its icon and name in the app switcher. */
-const ALL_ITEMS: HomeItem[] = [...HOME.page1, ...HOME.dock, ...HOME_FOLDERS.flatMap((f) => (f.kind === "folder" ? f.items : [f]))];
+const ALL_ITEMS: HomeItem[] = [...HOME.page1, ...HOME.page2, ...HOME.dock, ...HOME_FOLDERS.flatMap((f) => (f.kind === "folder" ? f.items : [f]))];
 const itemFor = (key: string) => ALL_ITEMS.find((i) => i.kind === "app" && i.id === key) as Extract<HomeItem, { kind: "app" }> | undefined;
 const BANNER_KEY = "eric-os-phone-banner";
 const isTouch = () => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
@@ -152,6 +152,8 @@ export function IOSShell() {
   const freeRows = Math.round((freeBottom - padTop) / cell);
   const widgetRows = freeRows >= 13 ? 5 : freeRows >= 11 ? 4 : 3; // the About widget shrinks on short screens
   const art = useMemo(currentWallpaper, []);
+  /** About widget layout while reviewing: ?aw=1…3 */
+  const aboutWidget = useMemo(() => { const n = Number(new URLSearchParams(window.location.search).get("aw")); return n >= 1 && n <= 3 ? n : 1; }, []);
 
 
   const frontApp = apps.find((a) => a.key === front) ?? null;
@@ -288,6 +290,8 @@ export function IOSShell() {
     home.style.transform = ""; home.style.transition = "";
     home.classList.toggle("behind", behind);
     home.animate([{ transform: from === "none" ? "scale(1)" : from }, { transform: behind ? "scale(.94)" : "scale(1)" }], { duration: SPRING_MS, easing: SPRING });
+    const dim = device.current?.querySelector<HTMLElement>(".ios-dim"); // the dim rides the same spring from wherever the finger left it
+    if (dim) { const o = getComputedStyle(dim).opacity; dim.style.transition = ""; dim.style.opacity = ""; dim.classList.toggle("on", behind); dim.animate([{ opacity: o }, { opacity: behind ? 0.45 : 0 }], { duration: SPRING_MS, easing: SPRING }); }
   };
   const toHome = (k: string) => {
     const el = layerOf(k);
@@ -367,8 +371,37 @@ export function IOSShell() {
   }, [order, nav]);
 
   /* ---------- lock screen ---------- */
+  const introHome = useMemo(() => !!session.get(LOCK_KEY), []); // already unlocked this visit: Home just zooms in on load
   const unlock = () => { session.set(LOCK_KEY); setLocked(false); };
-  const lockDrag = useRef<{ y: number; t: number } | null>(null);
+  const lockDrag = useRef<{ y: number; t: number; ly: number; lt: number; v: number } | null>(null);
+  /** one gesture drives both layers: the lock slides up 1:1 with the finger, Home zooms in from 1.08 and fades up underneath */
+  const lockPose = (dy: number, t = "") => {
+    const lock = device.current?.querySelector<HTMLElement>(".ios-lock"), home = device.current?.querySelector<HTMLElement>(".ios-home");
+    const p = Math.min(1, -dy / (size.h * 0.55));
+    if (lock) { lock.style.transition = t ? `transform ${t}` : "none"; lock.style.transform = `translate3d(0, ${dy}px, 0)`; }
+    if (home) { home.style.transition = t ? `transform ${t}, opacity ${t}` : "none"; home.style.opacity = String(p); home.style.transform = `scale(${1.08 - 0.08 * p})`; }
+    const bar = device.current?.querySelector<HTMLElement>(".ios-homebar"); if (bar) { bar.style.transition = t ? `transform ${t}` : "none"; bar.style.transform = `translate3d(0, ${Math.max(dy * 0.18, -26)}px, 0)`; }
+  };
+  const lockDown = (e: React.PointerEvent) => { const n = Date.now(); lockDrag.current = { y: e.clientY, t: n, ly: e.clientY, lt: n, v: 0 }; (e.currentTarget as Element).setPointerCapture(e.pointerId); };
+  const lockMove = (e: React.PointerEvent) => {
+    const s = lockDrag.current; if (!s) return;
+    const n = Date.now(); s.v = ((e.clientY - s.ly) / zoom) / Math.max(1, n - s.lt); s.ly = e.clientY; s.lt = n;
+    const raw = (e.clientY - s.y) / zoom;
+    lockPose(raw < 0 ? raw : raw * 0.12); // a little give downwards, like a rubber band
+  };
+  const lockUp = (e: React.PointerEvent) => {
+    const s = lockDrag.current; lockDrag.current = null; if (!s) return;
+    const dy = (e.clientY - s.y) / zoom;
+    const T = `${SPRING_MS}ms ${SPRING}`;
+    if (dy < -size.h * 0.16 || (dy < -24 && s.v < -0.35)) { // far enough, or flicked: finish the same motion
+      lockPose(-size.h, T);
+      window.setTimeout(() => {
+        const home = device.current?.querySelector<HTMLElement>(".ios-home"), bar = device.current?.querySelector<HTMLElement>(".ios-homebar");
+        [home, bar].forEach((x) => { if (x) { x.style.transition = ""; x.style.transform = ""; x.style.opacity = ""; } });
+        unlock();
+      }, SPRING_MS);
+    } else lockPose(0, `${380}ms ${EASE}`); // not far enough: everything settles back
+  };
 
   // the snake says hi once, a while after you land on Home
   useEffect(() => {
@@ -482,8 +515,10 @@ export function IOSShell() {
       n.style.transform = `translate3d(${tx - (i + 1) * (W * sc + 22)}px, ${ty}px, 0) scale(${sc})`;
       n.style.borderRadius = `${40 / Math.max(sc, 0.5)}px`; n.style.opacity = String(fade);
     });
-    const home = device.current?.querySelector<HTMLElement>(".ios-home");
-    if (home) { home.style.transition = "none"; home.style.transform = `scale(${0.94 + 0.03 * p})`; } // Home starts coming forward under your finger
+    const home = device.current?.querySelector<HTMLElement>(".ios-home"), dim = device.current?.querySelector<HTMLElement>(".ios-dim");
+    const q = Math.min(1, p * 1.7); // Home comes forward and brightens with your finger, done well before the top
+    if (home) { home.style.transition = "none"; home.style.transform = `scale(${0.94 + 0.06 * q})`; }
+    if (dim) { dim.style.transition = "none"; dim.style.opacity = String(0.45 * (1 - q)); }
   };
   const hbUp = (e: React.PointerEvent) => {
     const s = hb.current, k = frontRef.current; hb.current = null;
@@ -767,11 +802,11 @@ export function IOSShell() {
         <div className="ios-wall" aria-hidden />
 
         {/* Home */}
-        <div className={`ios-home ${front || switcher ? "behind" : ""} ${locked ? "hidden" : ""} ${snake ? "snaking" : ""}`} aria-hidden={!!front || switcher || locked}
+        <div className={`ios-home ${front || switcher ? "behind" : ""} ${locked ? "under-lock" : ""} ${introHome ? "intro" : ""} ${snake ? "snaking" : ""}`} aria-hidden={!!front || switcher || locked}
           onPointerDown={pageDown} onPointerMove={pageMove} onPointerUp={pageUp} onPointerCancel={pageUp}>
           <div className="pages" ref={pagesEl}>
             <section className="page" aria-label="Home page 1">
-              <button type="button" className="ios-widget" data-id="about"
+              <button type="button" className={`ios-widget aw${aboutWidget}`} data-id="about"
                 onClick={(e) => { if (suppressTap.current) { suppressTap.current = false; return; } open({ app: "about" }, e.currentTarget); }}>
                 <span className="txt">
                   <small><i />Now · AI PM · Singapore</small>
@@ -792,6 +827,9 @@ export function IOSShell() {
           </div>
           <div className="ios-dock">{HOME.dock.map((it) => icon(it, true))}</div>
         </div>
+
+        {/* the dim over Home while an app is open: full screen and never scaled, so there's no dark box around Home */}
+        <div className={`ios-dim ${front || switcher ? "on" : ""} ${switcher ? "deep" : ""}`} aria-hidden />
 
         {/* Snake on Home: a full-screen board over the wallpaper, lined up with its grid */}
         {snake && (
@@ -882,35 +920,26 @@ export function IOSShell() {
           </button>
         )}
 
-        {/* Lock Screen: tap or swipe up */}
+        {/* Lock Screen: swipe up to open (no tap): Home rises underneath with your finger, so the gesture teaches the home bar */}
         {locked && (
           <div className="ios-lock"
-            onPointerDown={(e) => { lockDrag.current = { y: e.clientY, t: Date.now() }; (e.currentTarget as HTMLElement).style.transition = "none"; }}
-            onPointerMove={(e) => { const s = lockDrag.current; if (s) (e.currentTarget as HTMLElement).style.transform = `translate3d(0, ${Math.min(0, (e.clientY - s.y) / zoom)}px, 0)`; }}
-            onPointerUp={(e) => {
-              const s = lockDrag.current; lockDrag.current = null; if (!s) return;
-              const el = e.currentTarget as HTMLElement;
-              const dy = (e.clientY - s.y) / zoom, v = dy / Math.max(1, Date.now() - s.t);
-              el.style.transition = `transform .44s ${EASE}`;
-              if (Math.abs(dy) < 8 || dy < -size.h * 0.18 || v < -0.4) { el.style.transform = "translate3d(0,-100%,0)"; window.setTimeout(unlock, 420); }
-              else el.style.transform = "";
-            }}>
+            onPointerDown={(e) => { lockDown(e); }}
+            onPointerMove={lockMove}
+            onPointerUp={lockUp} onPointerCancel={lockUp}>
             <div className="date">{now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
             <div className="clock">{hhmm(now)}</div>
             <div className="notes">
               <div className="ios-note"><img className="av" src={portrait} alt="" /><div><span className="h"><b>Tianchi Fu</b><small>now</small></span><p>Hi, I'm Tianchi, an AI PM at OpusClip in Singapore. My work, side projects and a snake are inside.</p></div></div>
-              <div className="ios-note"><span className="av snake"><MiniHead hat={hat} size={28} /></span><div><span className="h"><b>Tianchi's snake</b><small>now</small></span><p>Tap anywhere to come in.</p></div></div>
+              <div className="ios-note"><span className="av snake"><MiniHead hat={hat} size={28} /></span><div><span className="h"><b>Tianchi's snake</b><small>now</small></span><p>Swipe up from the bottom to come in.</p></div></div>
             </div>
             <WallArt art={art} cols={[12, 23]} c={cell} x0={gx} bottom={freeBottom} />
-            <div className="hint">Swipe up or tap to open</div>
+            <div className="hint">Swipe up to open</div>
           </div>
         )}
 
         {framed && <StatusBar tone={ink} />}
-        {!locked && (
-          <div className={`ios-homebar ${ink === "dark" && !switcher && !snake ? "dark" : ""} ${front || switcher || snake || apps.length ? "" : "idle"}`}
-            onPointerDown={hbDown} onPointerMove={hbMove} onPointerUp={hbUp} onPointerCancel={hbUp} aria-hidden><i /></div>
-        )}
+        <div className={`ios-homebar ${ink === "dark" && !switcher && !snake ? "dark" : ""} ${locked ? "locked" : front || switcher || snake || apps.length ? "" : "idle"}`}
+          onPointerDown={hbDown} onPointerMove={hbMove} onPointerUp={hbUp} onPointerCancel={hbUp} aria-hidden><i /></div>
       </div>
       {framed && (
         <aside className="ios-caption">
