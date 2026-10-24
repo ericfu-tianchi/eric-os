@@ -8,15 +8,13 @@ import { AlbumsScreen, FilesScreen, GameFrame, MessagesScreen, ResumeScreen, Set
 import { SnakeGame } from "./SnakeGame";
 
 const noop = () => {};
-/** About's opening layout on the phone; compare with ?amh=1…4 while reviewing */
-const aboutHero = (() => { const n = Number(typeof window === "undefined" ? 0 : new URLSearchParams(window.location.search).get("amh")); return n >= 1 && n <= 4 ? n : 1; })();
 /** Desktop views ask for window chrome (title trails); on the phone the nav bar owns the title. */
 const Hosted = ({ children }: { children: React.ReactNode }) => <WindowChromeProvider setChrome={noop}>{children}</WindowChromeProvider>;
 
 /** The first screen of each app. */
 export function screenFor(r: Route): Omit<Screen, "key"> {
   switch (r.app) {
-    case "about": return { title: "About Me", tone: "dark", node: <Hosted><div className={`ios-about h${aboutHero}`}><AboutApp /></div></Hosted> };
+    case "about": return { title: "About Me", tone: "dark", node: <Hosted><div className="ios-about"><AboutApp /></div></Hosted> };
     case "case": return { title: r.title, tone: "light", node: <Hosted><ProjectDetailApp slug={r.slug} /></Hosted> };
     case "resume": return {
       title: "Resume", tone: "light", node: <ResumeScreen />,
