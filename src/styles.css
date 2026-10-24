@@ -1923,7 +1923,8 @@ button { font-family: inherit; color: inherit; }
 .am-bring article { position: relative; display: flex; flex-direction: column; padding: 24px 26px 8px 0; }
 .am-bring article + article { padding-left: 26px; border-left: 1px solid var(--am-line); }
 .am-bring article::before { content: ""; position: absolute; left: 0; top: -1px; height: 2px; width: 0; background: var(--am-ac); transition: width 0.5s cubic-bezier(.2,.8,.2,1); }
-.am-bring article:hover::before { width: 100%; }
+.am-bring article.on::before { width: 100%; } /* .on = crossing the middle of a touch screen; hover only where hover exists (a tap leaves :hover stuck on phones) */
+@media (hover: hover) { .am-bring article:hover::before { width: 100%; } .am-path .yr:hover .y { color: var(--am-ac); } .am-off .off-item.link:hover { border-color: color-mix(in srgb, var(--am-ac) 55%, transparent); } }
 .am-bring .n { font: 700 12px var(--font-mono); color: var(--am-ac); }
 .am-bring h3 { margin: 14px 0 10px; font: 700 24px/1.1 var(--font-display); letter-spacing: -0.02em; }
 .am-bring p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--am-soft); }
@@ -1936,7 +1937,7 @@ button { font-family: inherit; color: inherit; }
 .am-path .yr { display: grid; grid-template-columns: 200px 1fr; gap: 24px; padding: 6px 0; border-top: 1px solid var(--am-line); }
 .am-path .yr:last-child { border-bottom: 1px solid var(--am-line); }
 .am-path .y { padding-top: 10px; font: 800 56px/1 var(--font-display); letter-spacing: -0.04em; color: color-mix(in srgb, var(--am-ink) 16%, transparent); transition: color 0.3s; }
-.am-path .yr:hover .y { color: var(--am-ac); }
+.am-path .yr.on .y { color: var(--am-ac); }
 .am-path .y small { font: 700 12px var(--font-mono); color: var(--am-faint); margin-left: 6px; letter-spacing: 0; }
 .am-path .stop { position: relative; width: 100%; display: block; padding: 12px 190px 12px 0; text-align: left; background: none; border: 0; }
 .am-path .stop + .stop { border-top: 1px dashed var(--am-line); }
@@ -1958,7 +1959,7 @@ button { font-family: inherit; color: inherit; }
 .am-off .tx small { font-size: 13px; color: var(--am-faint); }
 .am-off .off-item.link { cursor: pointer; }
 .am-off .off-item.link small { color: var(--am-ac); }
-.am-off .off-item.link:hover { border-color: color-mix(in srgb, var(--am-ac) 55%, transparent); }
+.am-off .off-item.link.on { border-color: color-mix(in srgb, var(--am-ac) 55%, transparent); }
 .am-off .off-cards .off-item { border: 1px solid var(--am-line); background: rgba(255,255,255,.035); }
 
 /* footer: one quiet line, no extra rules */
