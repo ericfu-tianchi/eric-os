@@ -975,7 +975,7 @@ export function IOSShell() {
             <div className="clock">{hhmm(now)}</div>
             <div className="notes">
               {/* notifications from people, as iOS draws them: the sender's round avatar */}
-              <div className="ios-note"><span className="av"><span className="ph"><img src={portrait} alt="" /></span></span><div><span className="h"><b>Tianchi Fu</b><small>now</small></span><p>Hi, I'm Tianchi, an AI PM in Singapore. My work, side projects and a snake are inside.</p></div></div>
+              <div className="ios-note"><span className="av"><span className="ph"><img src={portrait} alt="" /></span></span><div><span className="h"><b>Tianchi Fu</b><small>now</small></span><p>Hi, I'm Tianchi, an AI PM in Singapore. Inside: products I've shipped, things I've built with AI, and a snake.</p></div></div>
               <div className="ios-note"><span className="av snake"><span className="ph"><MiniHead hat={hat} size={38} tongue /></span></span><div><span className="h"><b>Tianchi's snake</b><small>now</small></span><p>Swipe up from the bottom to come in.</p></div></div>
             </div>
             <div className="hint">Swipe up to open</div>
