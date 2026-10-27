@@ -205,7 +205,7 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
   if (b.t === "compare")
     return (
       <div className="cs-compare">
-        {[b.before, b.after].map((x, i) => <figure key={x.src}><img src={detailImg(x.src)} alt={x.label} loading="lazy" decoding="async" draggable={false} /><figcaption><span className={i ? "tag on" : "tag"}>{i ? "After" : "Before"}</span>{x.label}</figcaption></figure>)}
+        {[b.before, b.after].map((x, i) => <figure key={x.src}><img src={detailImg(x.src)} alt={x.label} loading="lazy" decoding="async" draggable={false} /><figcaption><span className={i ? "tag on" : "tag"}>{b.tags?.[i] ?? (i ? "After" : "Before")}</span>{x.label}</figcaption></figure>)}
       </div>
     );
   if (b.t === "beats") {
@@ -313,6 +313,29 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
         {b.note && <p className="note"><Rich text={b.note} /></p>}
       </div>
     );
+  if (b.t === "scores") {
+    const [lo, hi] = b.scale, at = (v: number) => `${((v - lo) / (hi - lo)) * 100}%`;
+    const ticks = Array.from({ length: hi - lo + 1 }, (_, i) => lo + i);
+    return (
+      <figure className="cs-scores">
+        <div className="key"><span className="a">{b.legend[0]}</span><span className="b">{b.legend[1]}</span></div>
+        <ul>
+          {b.items.map((x) => {
+            const down = x.after < x.before, l = Math.min(x.before, x.after), r = Math.max(x.before, x.after);
+            return (
+              <li key={x.label} className={down ? "down" : undefined}>
+                <span className="l"><Rich text={x.label} /></span>
+                <span className="track"><i className="span" style={{ left: at(l), width: `calc(${at(r)} - ${at(l)})` }} /><i className="dot a" style={{ left: at(x.before) }} /><i className="dot b" style={{ left: at(x.after) }} /></span>
+                <span className="v">{x.before.toFixed(1)} → {x.after.toFixed(1)}</span>
+              </li>
+            );
+          })}
+        </ul>
+        <div className="axis"><span /><span className="ticks">{ticks.map((t) => <span key={t} style={{ left: at(t) }}>{t}</span>)}</span><span /></div>
+        {b.note && <figcaption><Rich text={b.note} /></figcaption>}
+      </figure>
+    );
+  }
   if (b.t === "part")
     return <div className="cs-part"><span className="n">{String(n).padStart(2, "0")}</span><div><h3>{b.title}</h3>{b.text && <p><Rich text={b.text} /></p>}</div></div>;
   if (b.t === "timeline")

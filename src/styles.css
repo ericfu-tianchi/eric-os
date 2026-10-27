@@ -1159,6 +1159,34 @@ button { font-family: inherit; color: inherit; }
 @container (max-width: 560px) { .cs-metrics ol { grid-template-columns: 1fr; } }
 
 /* stats: 2–4 big numbers in one row (impact) */
+/* scores: before → after on one shared scale (a dumbbell chart); the hollow gray dot is before, the accent dot after */
+.cs-scores { margin: 40px 0 44px; }
+.cs-scores .key { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 22px; margin-bottom: 12px; font: 14px/1.4 var(--font-sans); color: #555; }
+.cs-scores .key span::before { content: ""; display: inline-block; width: 11px; height: 11px; margin-right: 8px; border-radius: 50%; vertical-align: -1px; }
+.cs-scores .key .a::before { background: #fff; box-shadow: inset 0 0 0 2px #a9a9b1; }
+.cs-scores .key .b::before { background: var(--cs); }
+.cs-scores ul { list-style: none; margin: 0; padding: 0; }
+.cs-scores li, .cs-scores .axis { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr) 96px; gap: 22px; align-items: center; }
+.cs-scores li { padding: 12px 0; border-top: 1px solid #ececef; }
+.cs-scores .l { font: 600 15px/1.35 var(--font-sans); color: #181818; }
+.cs-scores .track { position: relative; height: 14px; }
+.cs-scores .track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: #e4e4e8; }
+.cs-scores .span { position: absolute; top: 50%; height: 3px; margin-top: -1.5px; border-radius: 2px; background: color-mix(in srgb, var(--cs) 45%, transparent); }
+.cs-scores li.down .span { background: #cfcfd5; }
+.cs-scores .dot { position: absolute; top: 50%; width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px; border-radius: 50%; }
+.cs-scores .dot.a { background: #fff; box-shadow: inset 0 0 0 2px #a9a9b1; }
+.cs-scores .dot.b { background: var(--cs); }
+.cs-scores .v { font: 700 15px/1 var(--font-display); color: #181818; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cs-scores li.down .v { color: #8a8a92; }
+.cs-scores .axis { border-top: 1px solid #ececef; padding-top: 8px; }
+.cs-scores .ticks { position: relative; height: 16px; font: 12.5px/1 var(--font-sans); color: #999; }
+.cs-scores .ticks span { position: absolute; transform: translateX(-50%); }
+.cs-scores figcaption { margin-top: 16px; font: 14px/1.5 var(--font-sans); color: #777; text-align: center; }
+@container (max-width: 600px) {
+  .cs-scores li, .cs-scores .axis { grid-template-columns: minmax(0, 1fr) 84px; gap: 6px 16px; }
+  .cs-scores .l { grid-column: 1 / -1; }
+  .cs-scores .axis > span:first-child { display: none; }
+}
 .cs-stats { margin: 40px 0 48px; }
 .cs-stats dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 28px; margin: 0; }
 .cs-stats dl > div { padding-top: 18px; border-top: 1px solid #d9d9de; }
