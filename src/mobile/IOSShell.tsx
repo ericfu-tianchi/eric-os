@@ -669,7 +669,7 @@ export function IOSShell() {
       el.style.borderRadius = `${26 / SW}px`;
       el.style.opacity = dy < 0 ? String(Math.max(0.2, 1 + dy / (g.ch * 1.4))) : "1";
       const lbl = device.current?.querySelector<HTMLElement>(`.ios-sw-label[data-app="${CSS.escape(a.key)}"]`);
-      if (lbl) { lbl.style.transition = t ? `transform ${t}, opacity ${t}` : "none"; lbl.style.transform = `translate3d(${x}px, ${g.y - 36 + dy}px, 0)`; lbl.style.opacity = dy < 0 ? "0" : "1"; }
+      if (lbl) { lbl.style.transition = t ? `transform ${t}, opacity ${t}` : "none"; lbl.style.transform = `translate3d(${x}px, ${g.y - 36 + dy}px, 0)`; lbl.style.maxWidth = `${g.cw}px`; lbl.style.opacity = dy < 0 ? "0" : "1"; }
     });
   };
   const SW_T = `.42s ${EASE}`;
@@ -978,8 +978,9 @@ export function IOSShell() {
             <div className="date">{now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
             <div className="clock">{hhmm(now)}</div>
             <div className="notes">
-              <div className="ios-note"><img className="av" src={portrait} alt="" /><div><span className="h"><b>Tianchi Fu</b><small>now</small></span><p>Hi, I'm Tianchi, an AI PM at OpusClip in Singapore. My work, side projects and a snake are inside.</p></div></div>
-              <div className="ios-note"><span className="av snake"><MiniHead hat={hat} size={28} /></span><div><span className="h"><b>Tianchi's snake</b><small>now</small></span><p>Swipe up from the bottom to come in.</p></div></div>
+              {/* communication notifications, as iOS draws them: the sender's round avatar + the app's badge */}
+              <div className="ios-note"><span className="av"><span className="ph"><img src={portrait} alt="" /></span><AppTile id="messages" size={17} /></span><div><span className="h"><b>Tianchi Fu</b><small>now</small></span><p>Hi, I'm Tianchi, an AI PM in Singapore. My work, side projects and a snake are inside.</p></div></div>
+              <div className="ios-note"><span className="av snake"><span className="ph"><MiniHead hat={hat} size={38} tongue /></span><AppTile id="messages" size={17} /></span><div><span className="h"><b>Tianchi's snake</b><small>now</small></span><p>Swipe up from the bottom to come in.</p></div></div>
             </div>
             <div className="hint">Swipe up to open</div>
           </div>
@@ -1002,10 +1003,31 @@ export function IOSShell() {
 /** One screen inside an app: nav bar + scrolling body, or a bare screen that draws its own chrome. */
 function ScreenView({ screen, prev, cls, visible, onBack, onHome }: { screen: Screen; prev?: Screen; cls: string; visible: boolean; onBack: () => void; onHome: () => void }) {
   const body = useRef<HTMLDivElement>(null);
+  const bar = useRef<HTMLElement>(null);
+  // iOS scroll indicator: a thin pill that shows while the page moves and fades a moment after it stops
+  useEffect(() => {
+    const el = body.current, b = bar.current;
+    if (!el || !b) return;
+    let idle = 0;
+    const onScroll = () => {
+      const { scrollTop: y, scrollHeight: H, clientHeight: h } = el;
+      if (H <= h + 1) return;
+      const track = h - 6 - parseFloat(getComputedStyle(el).paddingBottom) * 0.5, max = H - h;
+      const over = y < 0 ? -y : y > max ? y - max : 0; // rubber band: the pill squashes against the end
+      const len = Math.max(7, Math.max(36, (track * h) / H) - over);
+      b.style.height = `${len}px`;
+      b.style.transform = `translateY(${el.offsetTop + 3 + (track - len) * Math.min(1, Math.max(0, y / max))}px)`;
+      b.classList.add("on");
+      clearTimeout(idle); idle = window.setTimeout(() => b.classList.remove("on"), 700);
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => { el.removeEventListener("scroll", onScroll); clearTimeout(idle); };
+  }, []);
   return (
     <div className={`ios-screen tone-${screen.tone} ${cls} ${screen.bare ? "bare" : ""}`} style={{ visibility: visible ? undefined : "hidden" }}>
       {!screen.bare && <NavBar screen={screen} prev={prev} onBack={onBack} onHome={onHome} scroller={body} />}
       <div className="win-body ios-body" ref={body}>{screen.node}</div>
+      <i className="ios-scroll" ref={bar} aria-hidden />
     </div>
   );
 }

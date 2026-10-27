@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useOS, type SnakeHat } from "../store";
 import { PixIcon } from "./Pixel";
-import { Hat } from "./DesktopSnake";
+import { Hat, TONGUE, TONGUE_PATH } from "./DesktopSnake";
 import chatIcon from "../assets/icons/b/chat.png";
 import { useGridSpec } from "./desktopGrid";
 import { SnakeChat, digestAfterGame, type ChatAction } from "./SnakeChat";
@@ -55,18 +55,23 @@ const rand = ([a, b]: number[]) => (a + Math.random() * (b - a)) * 1000;
 
 /** The snake's head on its own, wearing a hat — used in the picker and the dress bubble.
     One viewBox for every hat (the NY brim reaches -40), so all heads render the same size. */
-export function MiniHead({ hat, size = 40 }: { hat: SnakeHat; size?: number }) {
+/** `tongue`: tongue out, facing left like the phone wallpaper's head (turned, not mirrored, so hat logos still read) */
+export function MiniHead({ hat, size = 40, tongue }: { hat: SnakeHat; size?: number; tongue?: boolean }) {
   const c = 44, er = c * 0.125, pr = er * 0.42, fa = c / 2 - er * 1.5, pb = c * 0.21;
+  const ang = tongue ? 180 : 0;
   return (
-    <svg width={size} height={size} viewBox="-40 -37 76 74" overflow="visible" aria-hidden>
-      <rect x={-21} y={-21} width={42} height={42} rx={4.4} style={{ fill: "var(--snake)" }} />
-      {[-1, 1].map((s) => (
-        <g key={s}>
-          <circle cx={fa} cy={pb * s} r={er} fill="#fafafa" />
-          <circle cx={fa + pr * 0.8} cy={pb * s} r={pr} fill="#363636" />
-        </g>
-      ))}
-      <Hat hat={hat} />
+    <svg width={size} height={size} viewBox={tongue ? "-50 -38 88 88" : "-40 -37 76 74"} overflow="visible" aria-hidden>
+      <g transform={`rotate(${ang})`}>
+        {tongue && <g transform="translate(20,0)"><path d={TONGUE_PATH} fill={TONGUE} /></g>}
+        <rect x={-21} y={-21} width={42} height={42} rx={4.4} style={{ fill: "var(--snake)" }} />
+        {[-1, 1].map((s) => (
+          <g key={s}>
+            <circle cx={fa} cy={pb * s} r={er} fill="#fafafa" />
+            <circle cx={fa + pr * 0.8} cy={pb * s} r={pr} fill="#363636" />
+          </g>
+        ))}
+        <Hat hat={hat} ang={ang} />
+      </g>
     </svg>
   );
 }

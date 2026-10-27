@@ -61,17 +61,22 @@
   background-position: 0 0, var(--gx, 0) var(--gy, 0), var(--gx, 0) var(--gy, 0);
   box-shadow: 0 18px 40px rgba(0,0,0,.45); }
 .ios-lock { will-change: transform; }
-.ios-lock .date { font: 600 19px var(--font); color: rgba(255,255,255,.88); }
-.ios-lock .clock { font: 700 92px/1 var(--font); letter-spacing: -.035em; margin-top: 2px; font-variant-numeric: tabular-nums; }
-.ios-lock .notes { width: calc(100% - 20px); margin-top: 26px; display: grid; gap: 8px; }
-.ios-note { display: flex; gap: 11px; padding: 13px 14px; border-radius: 22px; background: rgba(36,37,41,.78); backdrop-filter: blur(24px) saturate(1.4); -webkit-backdrop-filter: blur(24px) saturate(1.4); animation: ios-rise .6s .35s both; text-align: left; }
+.ios-lock .date { font: 600 20px/1.2 var(--font); color: rgba(255,255,255,.9); letter-spacing: -.01em; }
+.ios-lock .clock { font: 700 94px/1 var(--font); letter-spacing: -.04em; margin-top: 1px; font-variant-numeric: tabular-nums; }
+/* notifications sit on the grid: inset half a cell, the same line the Home icons start on */
+.ios-lock .notes { width: calc(100% - var(--cell)); margin-top: 30px; display: grid; gap: 8px; }
+.ios-note { display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 12px; border-radius: 22px; background: rgba(44,45,50,.72); box-shadow: inset 0 0 0 .5px rgba(255,255,255,.06); backdrop-filter: blur(24px) saturate(1.4); -webkit-backdrop-filter: blur(24px) saturate(1.4); animation: ios-rise .6s .35s both; text-align: left; }
 .ios-note + .ios-note { animation-delay: .55s; }
-.ios-note .av { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; object-position: 32% 12%; background: #0e0f11; flex: none; }
-.ios-note .av.snake { display: grid; place-items: center; border-radius: 10px; }
-.ios-note > div { flex: 1; min-width: 0; font-size: 14.5px; line-height: 1.32; }
-.ios-note .h { display: flex; justify-content: space-between; gap: 8px; }
+/* the avatar: a 38px circle; the app's badge hangs off its lower right, ringed in the plate's colour */
+.ios-note .av { position: relative; width: 38px; height: 38px; flex: none; align-self: flex-start; }
+.ios-note .av .ph { display: block; width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #0e0f11; }
+.ios-note .av .ph img { width: 100%; height: 100%; object-fit: cover; object-position: 32% 12%; transform: scale(1.45); transform-origin: 50% 24%; }
+.ios-note .av.snake svg { display: block; }
+.ios-note .av .ios-ic { position: absolute; right: -3px; bottom: -3px; border-radius: 5px; box-shadow: 0 0 0 1.5px #2c2d32; }
+.ios-note > div { flex: 1; min-width: 0; font-size: 15px; line-height: 1.33; letter-spacing: -.005em; }
+.ios-note .h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .ios-note b { font-weight: 600; } .ios-note small { color: rgba(255,255,255,.5); font-size: 13px; }
-.ios-note p { margin: 1px 0 0; color: rgba(255,255,255,.88); }
+.ios-note p { margin: 1px 0 0; color: rgba(255,255,255,.9); }
 @keyframes ios-rise { from { opacity: 0; transform: translateY(14px) scale(.97); } }
 .ios-lock .hint { position: absolute; bottom: calc(var(--bot) + 30px); font: 500 14px var(--font); color: rgba(255,255,255,.62); animation: ios-pulse 2.6s ease-in-out infinite; }
 @keyframes ios-pulse { 50% { opacity: .3; } }
@@ -199,6 +204,11 @@
 
 .ios-body { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding-bottom: calc(var(--bot) + 34px); }
 .bare .ios-body { padding-bottom: 0; }
+/* the scroll indicator is ours (iOS's thin pill), the same in Safari and in the framed preview */
+.ios-body { scrollbar-width: none; } .ios-body::-webkit-scrollbar { display: none; }
+.ios-scroll { position: absolute; z-index: 3; top: 0; right: 3px; width: 3px; border-radius: 3px; background: rgba(0,0,0,.36); opacity: 0; pointer-events: none; transition: opacity .35s; }
+.ios-scroll.on { opacity: 1; transition: opacity .1s; }
+.tone-dark .ios-scroll, .tone-black .ios-scroll { background: rgba(255,255,255,.42); }
 
 /* nav bar */
 .ios-nav { position: relative; z-index: 5; flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; padding: var(--top) 8px 0; height: calc(var(--top) + 46px);
@@ -387,6 +397,7 @@
 .ios-switcher { position: absolute; inset: 0; z-index: 60; touch-action: none; }
 .ios-sw-label { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 8px; color: #fff; font: 600 14px var(--font); pointer-events: none; will-change: transform; white-space: nowrap; }
 .ios-sw-label .ios-ic { border-radius: 7px; flex: none; }
+.ios-sw-label b { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 
 
 /* ---------- wallpaper snake (src/mobile/wallpapers.ts): cells on the Home grid ---------- */
