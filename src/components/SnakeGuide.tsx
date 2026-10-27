@@ -60,7 +60,7 @@ export function MiniHead({ hat, size = 40, tongue }: { hat: SnakeHat; size?: num
   const c = 44, er = c * 0.125, pr = er * 0.42, fa = c / 2 - er * 1.5, pb = c * 0.21;
   const ang = tongue ? 180 : 0;
   return (
-    <svg width={size} height={size} viewBox={tongue ? "-50 -38 88 88" : "-40 -37 76 74"} overflow="visible" aria-hidden>
+    <svg width={size} height={size} viewBox={tongue ? "-55 -42 84 84" : "-40 -37 76 74"} overflow="visible" aria-hidden>
       <g transform={`rotate(${ang})`}>
         {tongue && <g transform="translate(20,0)"><path d={TONGUE_PATH} fill={TONGUE} /></g>}
         <rect x={-21} y={-21} width={42} height={42} rx={4.4} style={{ fill: "var(--snake)" }} />
