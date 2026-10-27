@@ -36,7 +36,8 @@ export type CaseBlock =
   | { t: "links"; items: { text: string; href: string; primary?: boolean }[] } // small pill buttons in a row, right under the text they belong to
   | { t: "gallery"; items: { src: string; caption?: string }[]; cols?: 2 | 3 } // screenshots in an even grid
   | { t: "evolve"; items: { src: string; label: string; note?: string }[] } // numbered iteration strip, the last item is the shipped one
-  | { t: "compare"; before: { src: string; label: string }; after: { src: string; label: string } } // wireframe vs shipped, side by side
+  | { t: "compare"; before: { src: string; label: string }; after: { src: string; label: string }; tags?: [string, string] } // wireframe vs shipped, side by side; tags replace "Before" / "After"
+  | { t: "scores"; scale: [number, number]; legend: [string, string]; items: { label: string; before: number; after: number }[]; note?: string } // before → after scores per row on one shared scale (dumbbell chart)
   | { t: "beats"; chapters: { title: string; steps: string[] }[] } // a sequence grouped into chapters (tutorial beats)
   | { t: "script"; title?: string; lines: { who?: string; say?: string; act?: string }[] } // a screenplay excerpt: spoken lines + stage directions
   | { t: "cards"; items: { title: string; text: string }[]; numbers?: boolean } // 2–4 equal cards (findings, takeaways, roles); numbered unless numbers: false

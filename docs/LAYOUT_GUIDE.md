@@ -24,7 +24,7 @@ Every new page starts by stating which format it uses, and why.
 | **Markdown** | Not used today | Markdown cannot express callouts, feature rows, stats or the meta rail without custom syntax. If we add it later, it must compile to case blocks, never to raw HTML. |
 
 Current inventory:
-- Case studies (HomesOffCampus, Neurobot, Connectr, …) → case blocks.
+- Case studies (HomesOffCampus, Neurobot, Connectr, …) → case blocks. Neurobot and RefugeeOne are the references for a rebuilt UX case: results and the real-world outcome in the Overview, then the story. Animated WebP works anywhere an image does (recordings of prototypes and shipped apps).
 - `About Me` → a hand-built React view (`AboutApp.tsx`), a dark one-page profile with its own styles (`.aboutme`).
 - My Lego World "How I Built It" → case blocks (`lego-world` in `cases.ts`). It is the reference for non-UX pages: no research/design arc, a set gallery and numbered steps instead.
 
@@ -142,7 +142,8 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `links` | Small pill links in a row (one may be `primary`, ink) | Source links right under the text they belong to: Steam, GitHub, a demo. Put them in the Overview, where every reader sees them; many readers stop after it, so never park the only links at the end of the page |
 | `gallery` | Screenshots in an even 2- or 3-column grid with captions | A set of equal screens (game screenshots) |
 | `evolve` | Numbered iteration strip; the last item is the shipped one, shown large | Layout iterations that end in a shipped screen |
-| `compare` | Two images side by side, tagged Before / After | Wireframe vs shipped |
+| `compare` | Two images side by side, tagged Before / After (`tags` renames them, e.g. "2022 · Our prototype" / "2026 · SpikerBot") | Wireframe vs shipped; our design vs what later shipped |
+| `scores` | A dumbbell chart: one row per task, a hollow gray dot (before) and an accent dot (after) on one shared scale, the two values at the right; rows that got worse turn gray. A legend names both sides; `note` explains the scale | Before/after ratings of the same tasks (usability scores across two test rounds). Show the regressions too |
 | `beats` / `script` | Chapters of numbered beats; a screenplay excerpt | Tutorial flows and story scripts (Subtension) |
 | `cards` | 2–4 equal cards, numbered unless `numbers: false` | Findings, takeaways, the roles someone played |
 | `sprints` | A gantt of weeks, phases and tracks | A sprint plan |
