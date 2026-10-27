@@ -67,12 +67,11 @@
 .ios-lock .notes { width: calc(100% - var(--cell)); margin-top: 30px; display: grid; gap: 8px; }
 .ios-note { display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 12px; border-radius: 22px; background: rgba(44,45,50,.72); box-shadow: inset 0 0 0 .5px rgba(255,255,255,.06); backdrop-filter: blur(24px) saturate(1.4); -webkit-backdrop-filter: blur(24px) saturate(1.4); animation: ios-rise .6s .35s both; text-align: left; }
 .ios-note + .ios-note { animation-delay: .55s; }
-/* the avatar: a 38px circle; the app's badge hangs off its lower right, ringed in the plate's colour */
+/* the avatar: a 38px circle */
 .ios-note .av { position: relative; width: 38px; height: 38px; flex: none; align-self: flex-start; }
 .ios-note .av .ph { display: block; width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #0e0f11; }
 .ios-note .av .ph img { width: 100%; height: 100%; object-fit: cover; object-position: 32% 12%; transform: scale(1.45); transform-origin: 50% 24%; }
 .ios-note .av.snake svg { display: block; }
-.ios-note .av .ios-ic { position: absolute; right: -3px; bottom: -3px; border-radius: 5px; box-shadow: 0 0 0 1.5px #2c2d32; }
 .ios-note > div { flex: 1; min-width: 0; font-size: 15px; line-height: 1.33; letter-spacing: -.005em; }
 .ios-note .h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .ios-note b { font-weight: 600; } .ios-note small { color: rgba(255,255,255,.5); font-size: 13px; }
@@ -179,7 +178,7 @@
 /* the snake's banner */
 .ios-banner { position: absolute; z-index: 88; left: 8px; right: 8px; top: calc(var(--top) + 8px); display: flex; gap: 11px; align-items: center; padding: 12px 14px; border-radius: 22px;
   background: rgba(40,41,46,.82); backdrop-filter: blur(26px) saturate(1.5); -webkit-backdrop-filter: blur(26px) saturate(1.5); box-shadow: 0 12px 34px rgba(0,0,0,.35);
-  animation: ios-drop .55s cubic-bezier(.2,1.2,.35,1) both; text-align: left; }
+  animation: ios-drop .55s cubic-bezier(.2,1.2,.35,1) backwards; text-align: left; touch-action: none; user-select: none; -webkit-user-select: none; }
 @keyframes ios-drop { from { transform: translateY(-140%); } }
 .ios-banner .ios-ic { --ic: 38px; border-radius: 9px; }
 .ios-banner .tx { flex: 1; min-width: 0; font-size: 14.5px; line-height: 1.32; color: rgba(255,255,255,.9); }
@@ -207,7 +206,9 @@
 /* the scroll indicator is ours (iOS's thin pill), the same in Safari and in the framed preview */
 .ios-body { scrollbar-width: none; } .ios-body::-webkit-scrollbar { display: none; }
 .ios-scroll { position: absolute; z-index: 3; top: 0; right: 3px; width: 3px; border-radius: 3px; background: rgba(0,0,0,.36); opacity: 0; pointer-events: none; transition: opacity .35s; }
-.ios-scroll.on { opacity: 1; transition: opacity .1s; }
+.ios-scroll.on { opacity: 1; transition: opacity .1s, width .15s, right .15s; pointer-events: auto; touch-action: none; }
+.ios-scroll::before { content: ""; position: absolute; inset: -8px -3px -8px -22px; } /* a finger-sized grab area */
+.ios-scroll.drag { width: 6px; right: 2px; }
 .tone-dark .ios-scroll, .tone-black .ios-scroll { background: rgba(255,255,255,.42); }
 
 /* nav bar */

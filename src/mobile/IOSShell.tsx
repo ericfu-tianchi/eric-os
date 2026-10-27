@@ -423,7 +423,6 @@ export function IOSShell() {
     const a = window.setTimeout(() => { if (!frontRef.current) { setBanner(true); session.set(BANNER_KEY); } }, 6000);
     return () => window.clearTimeout(a);
   }, [locked]);
-  useEffect(() => { if (!banner) return; const t = window.setTimeout(() => setBanner(false), 7000); return () => window.clearTimeout(t); }, [banner]);
 
   /* ---------- Home: two pages that follow the finger ---------- */
   const pg = useRef<{ x: number; y: number; t: number; axis?: "x" | "y" } | null>(null);
@@ -961,10 +960,7 @@ export function IOSShell() {
 
         {/* the snake's hello */}
         {banner && !front && (
-          <button type="button" className="ios-banner" onClick={() => open({ app: "messages" })}>
-            <AppTile id="messages" size={38} />
-            <span className="tx"><span className="h"><b>Tianchi's snake</b><small>now</small></span><span>Psst. Ask me anything about Tianchi. I know his work inside out.</span></span>
-          </button>
+          <Banner onOpen={() => open({ app: "messages" })} onGone={() => setBanner(false)} />
         )}
 
         {/* Lock Screen: swipe up to open (no tap): Home rises underneath with your finger, so the gesture teaches the home bar */}
@@ -978,9 +974,9 @@ export function IOSShell() {
             <div className="date">{now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</div>
             <div className="clock">{hhmm(now)}</div>
             <div className="notes">
-              {/* communication notifications, as iOS draws them: the sender's round avatar + the app's badge */}
-              <div className="ios-note"><span className="av"><span className="ph"><img src={portrait} alt="" /></span><AppTile id="messages" size={17} /></span><div><span className="h"><b>Tianchi Fu</b><small>now</small></span><p>Hi, I'm Tianchi, an AI PM in Singapore. My work, side projects and a snake are inside.</p></div></div>
-              <div className="ios-note"><span className="av snake"><span className="ph"><MiniHead hat={hat} size={38} tongue /></span><AppTile id="messages" size={17} /></span><div><span className="h"><b>Tianchi's snake</b><small>now</small></span><p>Swipe up from the bottom to come in.</p></div></div>
+              {/* notifications from people, as iOS draws them: the sender's round avatar */}
+              <div className="ios-note"><span className="av"><span className="ph"><img src={portrait} alt="" /></span></span><div><span className="h"><b>Tianchi Fu</b><small>now</small></span><p>Hi, I'm Tianchi, an AI PM in Singapore. My work, side projects and a snake are inside.</p></div></div>
+              <div className="ios-note"><span className="av snake"><span className="ph"><MiniHead hat={hat} size={38} tongue /></span></span><div><span className="h"><b>Tianchi's snake</b><small>now</small></span><p>Swipe up from the bottom to come in.</p></div></div>
             </div>
             <div className="hint">Swipe up to open</div>
           </div>
@@ -1000,28 +996,93 @@ export function IOSShell() {
   );
 }
 
+/** The snake's hello, a banner like iOS's: tap to open Messages, flick it up to put it away; it leaves by itself after 7 s. */
+function Banner({ onOpen, onGone }: { onOpen: () => void; onGone: () => void }) {
+  const el = useRef<HTMLButtonElement>(null);
+  const drag = useRef<{ y: number; t: number; dy: number } | null>(null);
+  const moved = useRef(false);
+  const gone = useRef(onGone); gone.current = onGone;
+  const leave = useCallback((ms = 320) => {
+    const b = el.current;
+    if (!b) return gone.current();
+    b.style.animation = "none";
+    b.style.transition = `transform ${ms}ms cubic-bezier(.3,.7,.3,1)`;
+    b.style.transform = "translateY(calc(-100% - 80px))";
+    window.setTimeout(() => gone.current(), ms);
+  }, []);
+  useEffect(() => { const t = window.setTimeout(() => { if (!drag.current) leave(); }, 7000); return () => window.clearTimeout(t); }, [leave]);
+  return (
+    <button type="button" className="ios-banner" ref={el}
+      onPointerDown={(e) => {
+        drag.current = { y: e.clientY, t: performance.now(), dy: 0 }; moved.current = false;
+        e.currentTarget.setPointerCapture(e.pointerId);
+        e.currentTarget.style.animation = "none"; e.currentTarget.style.transition = "none";
+      }}
+      onPointerMove={(e) => {
+        const d = drag.current; if (!d) return;
+        d.dy = e.clientY - d.y;
+        if (Math.abs(d.dy) > 6) moved.current = true;
+        // up follows the finger; down resists, the way a banner only stretches a little
+        e.currentTarget.style.transform = `translateY(${d.dy < 0 ? d.dy : d.dy * 0.2}px)`;
+      }}
+      onPointerUp={(e) => {
+        const d = drag.current; drag.current = null; if (!d) return;
+        const v = d.dy / Math.max(1, performance.now() - d.t);
+        if (moved.current && (d.dy < -28 || v < -0.4)) return leave(220);
+        e.currentTarget.style.transition = "transform .4s cubic-bezier(.2,1.2,.35,1)";
+        e.currentTarget.style.transform = "";
+      }}
+      onPointerCancel={(e) => { drag.current = null; e.currentTarget.style.transition = "transform .4s cubic-bezier(.2,1.2,.35,1)"; e.currentTarget.style.transform = ""; }}
+      onClick={() => { if (!moved.current) onOpen(); }}>
+      <AppTile id="messages" size={38} />
+      <span className="tx"><span className="h"><b>Tianchi's snake</b><small>now</small></span><span>Psst. Ask me anything about Tianchi. I know his work inside out.</span></span>
+    </button>
+  );
+}
+
 /** One screen inside an app: nav bar + scrolling body, or a bare screen that draws its own chrome. */
 function ScreenView({ screen, prev, cls, visible, onBack, onHome }: { screen: Screen; prev?: Screen; cls: string; visible: boolean; onBack: () => void; onHome: () => void }) {
   const body = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLElement>(null);
-  // iOS scroll indicator: a thin pill that shows while the page moves and fades a moment after it stops
+  // iOS scroll indicator: a thin pill that shows while the page moves and fades a moment after it stops.
+  // While it shows, it can be grabbed and dragged to scrub through the page, like iOS.
   useEffect(() => {
     const el = body.current, b = bar.current;
     if (!el || !b) return;
-    let idle = 0;
-    const onScroll = () => {
+    let idle = 0, grab: { y: number; top: number; k: number } | null = null;
+    const geo = () => {
       const { scrollTop: y, scrollHeight: H, clientHeight: h } = el;
-      if (H <= h + 1) return;
       const track = h - 6 - parseFloat(getComputedStyle(el).paddingBottom) * 0.5, max = H - h;
+      return { y, H, h, track, max, len: Math.max(36, (track * h) / H) };
+    };
+    const hideLater = () => { clearTimeout(idle); idle = window.setTimeout(() => { if (!grab) b.classList.remove("on"); }, 900); };
+    const onScroll = () => {
+      const { y, H, h, track, max, len: full } = geo();
+      if (H <= h + 1) return;
       const over = y < 0 ? -y : y > max ? y - max : 0; // rubber band: the pill squashes against the end
-      const len = Math.max(7, Math.max(36, (track * h) / H) - over);
+      const len = Math.max(7, full - over);
       b.style.height = `${len}px`;
       b.style.transform = `translateY(${el.offsetTop + 3 + (track - len) * Math.min(1, Math.max(0, y / max))}px)`;
       b.classList.add("on");
-      clearTimeout(idle); idle = window.setTimeout(() => b.classList.remove("on"), 700);
+      hideLater();
     };
+    const down = (e: PointerEvent) => {
+      if (!b.classList.contains("on")) return;
+      e.preventDefault(); e.stopPropagation();
+      const { track, max, len } = geo();
+      grab = { y: e.clientY, top: el.scrollTop, k: max / Math.max(1, track - len) };
+      b.setPointerCapture(e.pointerId); b.classList.add("drag"); clearTimeout(idle);
+    };
+    const move = (e: PointerEvent) => { if (grab) el.scrollTop = grab.top + (e.clientY - grab.y) * grab.k; };
+    const up = () => { if (!grab) return; grab = null; b.classList.remove("drag"); hideLater(); };
     el.addEventListener("scroll", onScroll, { passive: true });
-    return () => { el.removeEventListener("scroll", onScroll); clearTimeout(idle); };
+    b.addEventListener("pointerdown", down); b.addEventListener("pointermove", move);
+    b.addEventListener("pointerup", up); b.addEventListener("pointercancel", up);
+    return () => {
+      el.removeEventListener("scroll", onScroll); clearTimeout(idle);
+      b.removeEventListener("pointerdown", down); b.removeEventListener("pointermove", move);
+      b.removeEventListener("pointerup", up); b.removeEventListener("pointercancel", up);
+    };
   }, []);
   return (
     <div className={`ios-screen tone-${screen.tone} ${cls} ${screen.bare ? "bare" : ""}`} style={{ visibility: visible ? undefined : "hidden" }}>
