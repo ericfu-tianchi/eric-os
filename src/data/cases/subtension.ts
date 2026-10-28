@@ -105,7 +105,7 @@ export const subtension: CaseStudy = {
     ] },
     { id: "takeaways", label: "Takeaways", blocks: [
       { t: "cards", items: [
-        { title: "No one ships a game alone", text: "Art, design, programming, direction and sound all had to meet in the middle. Even a small game is ==a whole team's work==, and it taught me how much a team can do that no one person can." },
+        { title: "It takes a whole team", text: "Art, design, programming, direction and sound all had to meet in the middle. Even a small game is ==a whole team's work==, and it taught me how much a team can do that no one person can." },
         { title: "My first real sprints", text: "Each squad met every week across design, art, code and audio, and every few weeks we closed a sprint, reviewed it together and planned the next. It was my first taste of agile development, and ==one of the happiest stretches of my time at Michigan==." },
         { title: "The work you don't see", text: "Every visual, mechanic and number in a game this size was argued over and revisited. Great work rests on ==a lot of invisible thinking==, which is why I sweat the details: what you ship should be finished, not just done." },
       ] },
