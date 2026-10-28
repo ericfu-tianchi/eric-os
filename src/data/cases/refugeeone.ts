@@ -159,7 +159,7 @@ const handoff: CaseBlock = {
 const hats: CaseBlock = {
   t: "cards", numbers: false, items: [
     { title: "Product designer", text: "Research synthesis, workflows for three roles, wireframes through high fidelity, and the style guide." },
-    { title: "Frontend developer", text: "Search and filters, the onboarding screens and the mobile layout." },
+    { title: "Developer", text: "Frontend for search and filters, the onboarding screens and the mobile layout." },
     { title: "Scrum master", text: "Standups three times a week, the Jira board, and sprint planning with the team." },
     { title: "Demo lead", text: "Every demo, to the team, the class and RefugeeOne, and turning what the client said into tickets." },
   ],
