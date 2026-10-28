@@ -1165,6 +1165,9 @@ button { font-family: inherit; color: inherit; }
 @container (max-width: 560px) { .cs-metrics ol { grid-template-columns: 1fr; } }
 
 /* stats: 2–4 big numbers in one row (impact) */
+/* aside: a small dated note added after the fact, set off by an accent hairline */
+.cs-aside { margin: 4px 0 22px; padding: 2px 0 2px 16px; border-left: 2px solid color-mix(in srgb, var(--cs) 55%, transparent); font: 15px/1.6 var(--font-sans); color: #666; max-width: 760px; }
+.cs-aside b { display: block; margin-bottom: 2px; font: 700 12px/1.4 var(--font-display); letter-spacing: .06em; text-transform: uppercase; color: var(--cs-band, var(--cs)); }
 /* formula: a scoring rule as an equation; the result is the accent tile */
 .cs-formula { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 14px; margin: 34px 0 22px; }
 .cs-formula .t { display: grid; gap: 4px; justify-items: center; min-width: 116px; padding: 14px 18px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px var(--hairline); text-align: center; }
