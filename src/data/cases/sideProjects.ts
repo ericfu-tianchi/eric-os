@@ -126,6 +126,23 @@ export const legoWorld: CaseStudy = {
       { t: "sub", text: "Lego Forge" },
       { t: "p", text: "Afterwards I packed the method into [Lego Forge](https://github.com/ericfu-tianchi/lego-forge), an open-source skill that lets any coding agent turn an idea or a photo into a buildable LEGO set: a garden, an F1 car, even my two cats." },
     ] },
+    { id: "public", label: "Build in Public", blocks: [
+      { t: "h", text: "Build in Public" },
+      { t: "p", text: "I posted every set on Xiaohongshu as I built it: one post per city, plus the how-to and Lego Forge. People followed along and asked how it worked. Sharing also changed the project. Xiaohongshu rewards posts that help people, so I turned the method into Lego Forge for anyone to use." },
+      { t: "posts", href: "https://www.xiaohongshu.com/user/profile/5befd952f7e8b93b68ea98db", items: [
+        { src: "lego-world/xhs-astra.webp", title: "From now on, Astra builds my LEGO", likes: 84, video: true },
+        { src: "lego-world/xhs-unlimited.webp", title: "AI just gave me unlimited LEGO", likes: 33, video: true },
+        { src: "lego-world/xhs-paris.webp", title: "Rebuild Paris in LEGO, with AI", likes: 30, video: true },
+        { src: "lego-world/xhs-forge.webp", title: "One sentence, one real LEGO set", likes: 25 },
+        { src: "lego-world/xhs-howto.webp", title: "I asked AI how it builds LEGO", likes: 24, video: true },
+        { src: "lego-world/xhs-pattaya.webp", title: "I moved Pattaya into LEGO", likes: 15, video: true },
+        { src: "lego-world/xhs-neuschwanstein.webp", title: "Can't afford Neuschwanstein? Build it", likes: 14, video: true },
+        { src: "lego-world/xhs-la.webp", title: "Missing LA? A LEGO Los Angeles", likes: 12, video: true },
+        { src: "lego-world/xhs-prague.webp", title: "AI builds LEGO cities: Prague", likes: 9, video: true },
+        { src: "lego-world/xhs-seoul.webp", title: "AI brought BTS to LEGO Seoul", likes: 8, video: true },
+      ] },
+      { t: "links", items: [{ text: "Follow along on Xiaohongshu", href: "https://www.xiaohongshu.com/user/profile/5befd952f7e8b93b68ea98db" }] },
+    ] },
     { id: "learned", label: "What I Learned", blocks: [
       { t: "h", text: "What I Learned" },
       { t: "sub", text: "Try it anyway" },

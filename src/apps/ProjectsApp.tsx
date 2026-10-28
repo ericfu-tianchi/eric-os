@@ -204,6 +204,18 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
     );
   if (b.t === "links")
     return <div className="cs-links">{b.items.map((l) => <a key={l.href} className={l.primary ? "primary" : ""} href={l.href} target="_blank" rel="noopener noreferrer" onClick={l.app ? (e) => { e.preventDefault(); openApp(l.app!, { title: EXTERNAL_GAMES[l.app!].name, maximized: true }); } : undefined}>{l.text}{!l.app && <span aria-hidden>↗</span>}</a>)}</div>;
+  if (b.t === "posts")
+    return (
+      <div className="cs-posts">
+        {b.items.map((x) => (
+          <a key={x.src} href={b.href} target="_blank" rel="noopener noreferrer">
+            <span className="cov"><img src={detailImg(x.src)} alt="" loading="lazy" decoding="async" draggable={false} />{x.video && <i aria-hidden>▶</i>}</span>
+            <b>{x.title}</b>
+            <small><svg viewBox="0 0 24 24" aria-hidden><path d="M12 20s-7-4.3-9-8.6C1.6 8.1 3.5 4.5 7 4.5c2 0 3.4 1.1 5 2.8 1.6-1.7 3-2.8 5-2.8 3.5 0 5.4 3.6 4 6.9C19 15.7 12 20 12 20z" /></svg>{x.likes}</small>
+          </a>
+        ))}
+      </div>
+    );
   if (b.t === "video") {
     const src = detailImg(b.src);
     return src ? (

@@ -36,6 +36,7 @@ export type CaseBlock =
   | { t: "row"; items: { src: string; w: number }[]; caption?: string } // 2–3 images side by side at their old-site widths
   | { t: "img"; src: string; caption?: string; w?: number; frame?: boolean } // src = "<slug>/NN.png"; w = display width in px at 1440 (old-site size)
   | { t: "links"; items: { text: string; href: string; primary?: boolean; app?: ExternalGameId }[] } // small pill buttons in a row, right under the text they belong to; app = open that app inside the OS instead of a new tab
+  | { t: "posts"; href: string; items: { src: string; title: string; likes: number; video?: boolean }[] } // social posts as a feed of cover cards (cover, title, likes), each linking to the profile at href
   | { t: "video"; src: string; poster?: string; caption?: string; w?: number } // a film with controls and sound (src = "<slug>/name.mp4"); w = display width in px
   | { t: "gallery"; items: { src: string; caption?: string }[]; cols?: 2 | 3 } // screenshots in an even grid
   | { t: "evolve"; items: { src: string; label: string; note?: string }[] } // numbered iteration strip, the last item is the shipped one
