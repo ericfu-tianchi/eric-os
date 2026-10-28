@@ -143,7 +143,7 @@ const oz: CaseBlock[] = [
     { who: "Wizards", title: "Build it live", text: "Drag the matching neuron, arrow or menu in from our library." },
     { who: "Student", title: "Rates it", text: "Sees the new screen, carries on, and rates the task 1 to 7." },
   ] },
-  { t: "p", text: "I proposed the method and led it. ==Milly and I built the component library behind it==: every neuron, connection, menu and state, ready to drag in. It only works if the wizards are fast enough that the student forgets anyone is there, so I ran our rehearsals, and the two of us practiced every task until each new screen took seconds." },
+  { t: "p", text: "==I proposed the method and led it==. Milly and I built the component library behind it: every neuron, connection, menu and state, ready to drag in. It only works if the wizards are fast enough that the student forgets anyone is there, so ==I ran our rehearsals, and the two of us practiced every task until each new screen took seconds==." },
   { t: "img", src: "neurobot/oz-session.webp", w: 760, frame: true, caption: "One real session, sped up: everything on this screen was placed by hand, live, as the student described it" },
 ];
 
