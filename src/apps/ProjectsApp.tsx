@@ -96,7 +96,7 @@ function Rich({ text }: { text: string }) {
 }
 
 /** An image, or a short silent loop when the file is an .mp4: it plays only while on screen and while its app is in front. */
-function Media({ src, className, alt = "" }: { src: string; className?: string; alt?: string }) {
+function Media({ src, className, alt = "", style }: { src: string; className?: string; alt?: string; style?: React.CSSProperties }) {
   const ref = useRef<HTMLVideoElement>(null);
   const { shown } = useAppState();
   const [inView, setInView] = useState(false);
@@ -107,8 +107,8 @@ function Media({ src, className, alt = "" }: { src: string; className?: string; 
     io.observe(v); return () => io.disconnect();
   }, [video]);
   useEffect(() => { const v = ref.current; if (!v) return; if (inView && shown) v.play().catch(() => {}); else v.pause(); }, [inView, shown]);
-  if (!video) return <img className={className} src={src} alt={alt} loading="lazy" decoding="async" draggable={false} />;
-  return <video ref={ref} className={className} src={src} muted loop playsInline preload="metadata" aria-label={alt || undefined} />;
+  if (!video) return <img className={className} src={src} alt={alt} loading="lazy" decoding="async" draggable={false} style={style} />;
+  return <video ref={ref} className={className} src={src} muted loop playsInline preload="metadata" aria-label={alt || undefined} style={style} />;
 }
 
 /** Accent bands carry white text: a light accent (Connectr's mint) is deepened until white reads on it (just enough for large white text; deeper looked heavy). */
@@ -192,11 +192,11 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
     );
   if (b.t === "row")
     return (
-      <figure className="cs-row">
+      <figure className={`cs-row ${b.frame ? "frame" : ""}`}>
         <div>
           {b.items.map((item, i) => {
             const src = detailImg(item.src);
-            return src ? <img key={i} src={src} alt="" loading="lazy" decoding="async" draggable={false} style={{ flexBasis: item.w, maxWidth: item.w }} /> : null;
+            return src ? <Media key={i} src={src} style={{ flexBasis: item.w, maxWidth: item.w }} /> : null;
           })}
         </div>
         {b.caption && <figcaption>{b.caption}</figcaption>}
@@ -441,7 +441,7 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
     const src = detailImg(b.src);
     return src ? (
       <figure className={`cs-fig ${b.w && b.w > 880 ? "wide" : ""} ${b.frame ? "frame" : ""}`} style={b.w ? ({ "--w": `${b.w}px` } as React.CSSProperties) : undefined}>
-        <img src={src} alt={b.caption ?? ""} loading="lazy" decoding="async" draggable={false} />
+        <Media src={src} alt={b.caption ?? ""} />
         {b.caption && <figcaption>{b.caption}</figcaption>}
       </figure>
     ) : null;

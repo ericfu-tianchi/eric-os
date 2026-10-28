@@ -147,6 +147,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `formula` | A scoring rule as an equation: the result as an accent tile, then `=` and the terms joined by `×`, each a white tile with a one-line note | A method worth seeing at a glance (Neurobot's severity = criticality × impact × frequency). One per page |
 | `table` | A small white table: a few example rows, numbers right-aligned from column `num`, the last column in the accent, `more` adds a quiet "… 39 more" row | Showing what a method produced without pasting the whole sheet. 3–5 rows, never the full data |
 | `posts` | Social posts as a feed of 3:4 cover cards (cover, title, likes, ▶ for videos), 5 across, 2 on phones; every card links to the profile at `href` | Build-in-public proof: the posts made along the way (Lego World's Xiaohongshu posts). Translate titles to English; show real counts |
+| `row` with `frame` | Bare screens side by side with round corners and a soft shadow | Phone captures and phone loops (Twist Solver's mobile screens) |
 | `video` | A film with controls and sound, centered at `w` px (default 360, fits a vertical 9:16 film), with an optional `poster` and caption. With `steps` (or `text`) the film sits on the left (sticky on desktop) and the film's own numbered steps run down the right, each with a small square picture and one line; on phones they stack | A short explainer or demo film people choose to play (Lego World's 80-second Paris walkthrough) |
 | `scores` | A dumbbell chart: one row per task, a hollow gray dot (before) and an accent dot (after) on one shared scale, the two values at the right; rows that got worse turn gray. A legend names both sides; `note` explains the scale | Before/after ratings of the same tasks (usability scores across two test rounds). Pick the rows that tell the story; `more` adds a quiet "… 19 more tasks" row |
 | `beats` / `script` | Chapters of numbered beats; a screenplay excerpt | Tutorial flows and story scripts (Subtension) |
@@ -160,7 +161,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `versus` | Two cards: the quiet "before" and the accented "after", each a title + bullets | What the client asked for vs what was built |
 | `flow` | 3–4 cards left to right, each tagged with who acts | One thing moving through several people (a job: employer → staff → refugee) |
 
-`feature` and `cards` also take an `.mp4` as `src`: a short silent loop that plays only while on screen and while its app is in front (Lego World's rotating sets). Keep loops under ~2 MB.
+`feature`, `cards`, `img` and `row` also take an `.mp4` as `src`: a short silent loop that plays only while on screen and while its app is in front (Lego World's rotating sets). Keep loops under ~2 MB.
 
 `feature` and `item` take `bare: true` when the image brings its own frame and shadow (device mockups).
 
