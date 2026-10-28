@@ -83,8 +83,8 @@ export const legoWorld: CaseStudy = {
   sections: [
     { id: "overview", label: "Overview", blocks: [
       { t: "h", text: "Why LEGO" },
-      { t: "p", text: "It started as a test. I wanted to see where today's models break, and LEGO looked like a good place to look: every part has to exist, and every brick has to click onto another. I gave a few models the same brief and expected a mess." },
-      { t: "p", text: "The results got good enough that I wanted to keep them. So the test became a real project: every country I've been to, rebuilt as a floating island of ==3,000 to 11,000 real LEGO parts== on a brick-built globe. Pick a pin and the city builds itself." },
+      { t: "p", text: "It started as a test. Building LEGO felt like exactly the kind of task AI still couldn't do: creative, precise and unforgiving in 3D. Every part has to be real, and every brick has to click onto another. I gave a few models the same brief and expected a mess." },
+      { t: "p", text: "The results got good enough that I wanted to keep them. So the test became a real project: every country I've been to, rebuilt as a floating island of ==around 7,000 real LEGO parts== on a brick-built globe. Pick a pin and the city builds itself." },
       { t: "links", items: [
         { text: "Open My Lego World", href: "https://ericfu-lego-world.pages.dev/", primary: true, app: "lego-world" },
         { text: "GitHub", href: "https://github.com/ericfu-tianchi/my-lego-world" },
@@ -116,15 +116,15 @@ export const legoWorld: CaseStudy = {
     { id: "pipeline", label: "The Pipeline", blocks: [
       { t: "h", text: "The Pipeline" },
       { t: "p", text: "Every city goes through the same steps, under three rules: every part is a real LEGO part in an official color, every piece clicks onto something, and nothing is glued into shapes LEGO doesn't make." },
-      { t: "p", text: "Here is Paris, from first reference to final set, in 80 seconds." },
-      { t: "video", src: "lego-world/howto-paris.mp4", poster: "lego-world/howto-paris-poster.jpg", caption: "How a city becomes LEGO, with Paris as the example" },
-      { t: "item", src: "lego-world/pipe-research.webp", title: "Research the place", text: "Pick four or five landmarks the island can hold, each with a minifigure doing something local. Colors come from real photos, heights from real proportions.\n\nThen study how others built them: official sets, LEGOLAND, fan builds. If our own attempt fails twice, borrow the technique that already works." },
-      { t: "item", src: "lego-world/pipe-blockout.webp", title: "Block it out", text: "Before any detail, plain boxes at the right heights, viewed from the same camera as the reference. It's the cheapest moment to catch a tower that's too short or a river in the wrong place." },
-      { t: "item", src: "lego-world/pipe-eiffel.webp", title: "Build every landmark at once", text: "Each landmark gets its own agent and its own copy of the code, so five build in parallel without stepping on each other.\n\nSome take a while. The Eiffel Tower took 26 versions before it looked right." },
-      { t: "item", src: "lego-world/pipe-check.webp", title: "Check every brick", text: "Code checks that every piece is a real part, sits on a real stud and passes through nothing. A tree that floats one plate above the ground fails the build, however good it looks." },
-      { t: "item", src: "lego-world/pipe-judge.webp", title: "The judge, then me", text: "A separate judge agent sees only renders, never code, and scores eight things from silhouette to buildability. Paris scored 6.97 in round two, with notes like “the Wallace fountain reads as a mailbox.” Below 8, it goes back to build.\n\nMy review comes last, and it outranks the score." },
+      { t: "video", src: "lego-world/howto-paris.mp4", poster: "lego-world/howto-paris-poster.jpg", caption: "Paris, from first reference to final set, in 80 seconds", steps: ["Find references", "Pick the landmarks", "Set colors and heights", "Block it out", "Real parts only", "Build, compare, rebuild", "Check and score", "One last human look"] },
+      { t: "item", src: "lego-world/pipe-research.webp", title: "Research the place", text: "Pick the four or five landmarks the island can hold, each with a minifigure doing something local. Colors come from real photos and heights from real proportions.\n\nOfficial sets and fan builds show what already works in bricks." },
+      { t: "item", src: "lego-world/pipe-blockout.webp", title: "Block it out", text: "Plain boxes first, at the right heights, next to the reference. It's the cheapest moment to catch a tower that's too short." },
+      { t: "item", src: "lego-world/pipe-parallel.webp", title: "Build every landmark at once", text: "Each landmark gets its own agent, so the Eiffel Tower, Notre-Dame, the café corner and the bridge all get built at the same time." },
+      { t: "item", src: "lego-world/pipe-check.webp", title: "Check every brick", text: "Code makes sure every piece is a real part, sits on a real stud and passes through nothing. A floating tree fails, however good it looks." },
+      { t: "item", src: "lego-world/pipe-judge.webp", title: "The judge, then me", text: "An AI judge looks only at the pictures and scores likeness, looks, buildability and detail. Below 8 out of 10, it goes back.\n\nMy review comes last, and it outranks the score." },
       { t: "sub", text: "Lego Forge" },
-      { t: "p", text: "Afterwards I packed the method into [Lego Forge](https://github.com/ericfu-tianchi/lego-forge), an open-source skill that lets any coding agent turn an idea or a photo into a buildable LEGO set: a garden, an F1 car, even my two cats." },
+      { t: "p", text: "Afterwards I packed the method into [Lego Forge](https://github.com/ericfu-tianchi/lego-forge), an open-source skill that lets any coding agent turn an idea or a photo into a buildable LEGO set." },
+      { t: "img", src: "lego-world/forge.webp", caption: "Built with Lego Forge: a Japanese garden, a treehouse, an F1 car and a bakery" },
     ] },
     { id: "public", label: "Build in Public", blocks: [
       { t: "h", text: "Build in Public" },
@@ -146,10 +146,9 @@ export const legoWorld: CaseStudy = {
     { id: "learned", label: "What I Learned", blocks: [
       { t: "h", text: "What I Learned" },
       { t: "sub", text: "Try it anyway" },
-      { t: "p", text: "I started out sure that models couldn't build LEGO. If I had trusted that, there would be no project. The only way to find a model's limit is to walk up to it, and it was further away than I thought. A month later there were nine cities." },
+      { t: "p", text: "I started out sure that models couldn't build LEGO, and if I had trusted that, there would be no project. ==The only way to find a model's limit is to walk up to it.== This one was much further away than I thought: a month after that first test, there were nine cities on the globe." },
       { t: "sub", text: "When building is solved, the fun is what's left" },
-      { t: "p", text: "Models get better every few months. I expect that within a year or two, AI will build any LEGO set simply and perfectly. When that happens, building stops being the hard part. What gets rare is the feeling of building: watching a city come together brick by brick, taking it apart, putting it back. Designing for that feeling takes human judgment about experience, not just output, and ==that's the part I want to work on.==" },
-      { t: "p", text: "LEGO® is a trademark of the LEGO Group, which does not sponsor or endorse this project. Part geometry: LDraw.org, CC BY 2.0." },
+      { t: "p", text: "Models get better every few months. Within a year or two, I expect AI to build any LEGO set simply and perfectly. Then building stops being the hard part, and what's rare is the feeling of watching a city come together brick by brick. ==Designing for that feeling is the part I want to work on.==" },
     ] },
   ],
 };

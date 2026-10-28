@@ -1225,6 +1225,7 @@ button { font-family: inherit; color: inherit; }
   .cs-scores .axis > span:first-child { display: none; }
 }
 .cs-stats { margin: 40px 0 48px; }
+.cs-intro + .cs-col > .cs-stats:first-child { margin-top: 40px; } /* numbers right under the intro keep their gap from the links above */
 .cs-stats dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 28px; margin: 0; }
 .cs-stats dl > div { padding-top: 18px; border-top: 1px solid #d9d9de; }
 .cs-stats dt { font-family: var(--font-display); font-weight: 800; font-size: 36px; line-height: 1.2; color: var(--cs-band, var(--cs)); font-variant-numeric: tabular-nums; }
@@ -1321,6 +1322,13 @@ button { font-family: inherit; color: inherit; }
 @container (max-width: 700px) { .cs-posts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .cs-video { margin: 36px auto; width: min(100%, var(--w, 360px)); }
 .cs-video video { display: block; width: 100%; height: auto; border-radius: 10px; background: #111; box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 12px 32px rgba(0,0,0,0.12); }
+.cs-video.split { width: 100%; display: grid; grid-template-columns: var(--w, 320px) minmax(0, 1fr); gap: 56px; align-items: center; }
+.cs-video .side p { margin: 0 0 18px; font-family: var(--font-sans); font-size: 18px; line-height: 1.7; color: #494949; }
+.cs-video .side ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.cs-video .side li { display: flex; gap: 16px; align-items: baseline; padding: 13px 0; border-top: 1px solid var(--hairline); font-family: var(--font-sans); font-size: 17px; font-weight: 600; color: #181818; }
+.cs-video .side li:last-child { border-bottom: 1px solid var(--hairline); }
+.cs-video .side li span { font: 800 15px var(--font-display); color: var(--cs); }
+@container (max-width: 760px) { .cs-video.split { grid-template-columns: 1fr; gap: 28px; } .cs-video.split .film { width: min(100%, 360px); margin: 0 auto; } }
 .cs-video figcaption { margin-top: 12px; text-align: center; font-family: var(--font-sans); font-size: 14px; line-height: 1.5; color: #777; }
 .cs-feature img.bare, .cs-item > img.bare { border-radius: 0; box-shadow: none; }
 .cs-feature img.bare { max-height: 680px; } /* device mockups bring their own frame and shadow */

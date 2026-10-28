@@ -219,9 +219,17 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
   if (b.t === "video") {
     const src = detailImg(b.src);
     return src ? (
-      <figure className="cs-video" style={b.w ? ({ "--w": `${b.w}px` } as React.CSSProperties) : undefined}>
-        <video src={src} poster={b.poster ? detailImg(b.poster) : undefined} controls playsInline preload="none" />
-        {b.caption && <figcaption>{b.caption}</figcaption>}
+      <figure className={`cs-video ${b.text || b.steps ? "split" : ""}`} style={b.w ? ({ "--w": `${b.w}px` } as React.CSSProperties) : undefined}>
+        <div className="film">
+          <video src={src} poster={b.poster ? detailImg(b.poster) : undefined} controls playsInline preload="none" />
+          {b.caption && <figcaption>{b.caption}</figcaption>}
+        </div>
+        {(b.text || b.steps) && (
+          <div className="side">
+            {b.text?.split("\n\n").map((t, i) => <p key={i}><Rich text={t} /></p>)}
+            {b.steps && <ol>{b.steps.map((x, i) => <li key={x}><span>{String(i + 1).padStart(2, "0")}</span>{x}</li>)}</ol>}
+          </div>
+        )}
       </figure>
     ) : null;
   }
@@ -530,7 +538,7 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
           </section>
         );
       })}
-      {p.link && !cs.sections.some((s) => s.blocks.some((b) => b.t === "link")) && (
+      {p.link && !cs.sections.some((s) => s.blocks.some((b) => b.t === "link" || (b.t === "links" && b.items.some((l) => l.href === p.link)))) && (
         <section className="cs-section cs-end"><a className="cs-pill" href={p.link} target="_blank" rel="noopener noreferrer">Open live project</a></section>
       )}
     </div>
