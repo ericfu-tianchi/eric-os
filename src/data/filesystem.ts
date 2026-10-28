@@ -87,9 +87,9 @@ export const FILE_NODES: FileNode[] = [
   { id: "school", parent: "desktop", name: "School Projects", kind: "folder", description: "6 items" },
   { id: "refugeeone", parent: "school", name: "RefugeeOne Job Finding Website", kind: "project", projectSlug: "refugeeone" },
   { id: "neurobot", parent: "school", name: "Neurobot", kind: "project", projectSlug: "neurobot" },
+  { id: "subtension", parent: "school", name: "Subtension Game", kind: "project", projectSlug: "subtension" },
   { id: "homesoffcampus", parent: "school", name: "Homes Off Campus", kind: "project", projectSlug: "homesoffcampus" },
   { id: "connectr", parent: "school", name: "Connectr App", kind: "project", projectSlug: "connectr" },
-  { id: "subtension", parent: "school", name: "Subtension Game", kind: "project", projectSlug: "subtension" },
   { id: "rutabagga", parent: "school", name: "Rutabagga Logo", kind: "project", projectSlug: "rutabagga" },
 
   { id: "work", parent: "desktop", name: "Work", kind: "folder", description: "2 folders" },
