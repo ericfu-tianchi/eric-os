@@ -338,6 +338,8 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
       </table></div>
     );
   }
+  if (b.t === "aside")
+    return <aside className="cs-aside"><b>{b.label}</b><Rich text={b.text} /></aside>;
   if (b.t === "scores") {
     const [lo, hi] = b.scale, at = (v: number) => `${((v - lo) / (hi - lo)) * 100}%`;
     const ticks = Array.from({ length: hi - lo + 1 }, (_, i) => lo + i);

@@ -20,6 +20,7 @@ import { refugeeone } from "./cases/refugeeone";
     Block vocabulary and spacing rules: docs/LAYOUT_GUIDE.md. */
 export type CaseBlock =
   | { t: "p"; text: string }
+  | { t: "aside"; label: string; text: string } // a small dated note added after the fact (e.g. "Update, 2026"), set apart from the story
   | { t: "h"; text: string } // label, e.g. "QUICK BACKGROUND"
   | { t: "sub"; text: string } // sub-heading, ink with a pixel-square marker
   | { t: "callout"; label?: string; text: string } // full-width accent band

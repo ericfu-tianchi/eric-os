@@ -113,7 +113,7 @@ const workshop: CaseBlock[] = [
   { t: "p", text: "We ran a brainstorming workshop with Backyard Brains' CEO and the engineer who built the app. With Google's and IDEO's methods and rounds of Crazy 8s, the room produced ==more than 100 ideas==, then dot-voted for the ones to pursue." },
   { t: "row", items: [{ src: "neurobot/workshop-room.webp", w: 500 }, { src: "neurobot/workshop-wall.webp", w: 374 }], caption: "The workshop: one wall per question, sketches on sticky notes, votes on top" },
   { t: "p", text: "Some ideas went straight into the design: a library of example brains, filters for groups of neurons, a separate play mode. Others ran ahead of our prototype, like an AI assistant on the side, or hovering a behavior to see, step by step, which neurons make it happen." },
-  { t: "p", text: "That last one looked out of reach in 2022, so we kept it as a far-reach goal. ==In 2026, SpikerBot shipped it==: annotations that take a brain apart and walk through it one step at a time." },
+  { t: "aside", label: "Update, 2026", text: "That last idea looked out of reach in 2022, so we kept it as a far-reach goal. SpikerBot has since shipped it: annotations that take a brain apart and walk through it one step at a time." },
   { t: "p", text: "We then split into two groups for parallel low-fi designs, critiqued each other's, and merged the strongest parts into one flow: connect the robot, build a brain, play it." },
   { t: "img", src: "neurobot/15.png", w: 939, caption: "The merged low-fi flow: connect the robot, build a brain, play it" },
 ];

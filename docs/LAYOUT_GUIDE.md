@@ -127,6 +127,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `h` | Label, uppercase accent | Starting a topic: Quick Background, Persona, Design Preview |
 | `sub` | ■ Sub-heading (pixel square + ink text) | Steps inside a topic: Problem, Goal |
 | `p` | Body paragraph | Default text. Keep to 2–4 lines in the column. |
+| `aside` | A small gray note with an accent hairline and a label ("Update, 2026") | Something learned after the project, added to the story without rewriting it |
 | `callout` | Full accent band, white 19px text | The one problem statement per page (max 1–2 per page) |
 | `quote` | Pull quote: centered, 20px weight 600, two 48px hairlines above and below. `label` adds a small accent kicker; `derived` swaps the top hairline for a connector line, for a statement that follows from the blocks right above it | A definition: problem statement, design principle |
 | `list` | Bullets in a tinted panel; `plain: true` for ordinary bullets | Panel only when the findings deserve emphasis; most lists are plain |
