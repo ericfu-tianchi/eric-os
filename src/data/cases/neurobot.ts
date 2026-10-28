@@ -71,7 +71,10 @@ const teacher: CaseBlock[] = [
 
 const benchmark: CaseBlock[] = [
   { t: "p", text: "Next we tested the old app with five University of Michigan students from non-STEM majors, standing in for high schoolers. The tasks came straight from the curriculum's first two labs. Students thought aloud and rated every task from 1 to 7." },
-  { t: "row", items: [{ src: "neurobot/lab-1.webp", w: 430 }, { src: "neurobot/lab-2.webp", w: 430 }], caption: "Lab 1: wire one active neuron to four quiet ones and find the weakest connection that makes them fire. Lab 2: make the robot chase a red ball, back away when it gets too close, and beep while it does." },
+  { t: "gallery", cols: 2, items: [
+    { src: "neurobot/lab-1.webp", caption: "Lab 1: wire one active neuron to four quiet ones, and find the weakest connection that makes them fire" },
+    { src: "neurobot/lab-2.webp", caption: "Lab 2: make the robot chase a red ball, back away when it gets too close, and beep while it does" },
+  ] },
   { t: "p", text: "Then we ranked every problem we saw by how much it hurt:" },
   { t: "formula", result: { name: "Severity" }, terms: [
     { name: "Criticality", note: "how essential the task is, 1–4" },
@@ -101,7 +104,7 @@ const findings: CaseBlock = {
 
 const question: CaseBlock = {
   t: "quote", derived: true, label: "So the question became",
-  text: "How might students think about what the robot should do before which neuron to click, and try ideas without paying for every mistake?",
+  text: "How might we make building a brain so direct that students think about behaviors, not buttons, and try ideas without paying for every mistake?",
 };
 
 // ---------- brainstorm ----------
@@ -117,21 +120,17 @@ const workshop: CaseBlock[] = [
 
 // ---------- the redesign ----------
 
-const redesign: CaseBlock[] = [
-  { t: "p", text: "One idea holds the design together: **point at it, change it.** The brain is a canvas. Tools live in one toolbar, and whatever you click opens its settings right where it is." },
-  { t: "sub", text: "Build a brain on a canvas" },
-  { t: "p", text: "Pick the neuron tool and click to place one. Draw from an eye to a neuron and choose the color it should see; draw to a wheel and drag the strength. Every connection is an arrow, and undo is one click away." },
-  { t: "img", src: "neurobot/proto-build.webp", w: 1040, caption: "Scenario two from the test, built in the redesign: each eye crosses to the opposite wheel at strength 15" },
-  { t: "sub", text: "Start from a working brain" },
-  { t: "p", text: "A brain library replaces the dropdown of cryptic names: templates for each lab next to your own brains, each with a preview, and a name and description for every new one." },
-  { t: "img", src: "neurobot/proto-library.webp", w: 880 },
-  { t: "sub", text: "Find any neuron, change many at once" },
-  { t: "p", text: "A layers panel lists every neuron. Filter it by circuit or by type, select several, and edit them together." },
-  { t: "img", src: "neurobot/proto-filter.webp", w: 1040, caption: "Filtering by circuit fades everything else" },
-  { t: "sub", text: "Play shows only what the lesson needs" },
-  { t: "p", text: "Play mode puts the robot's two camera views beside the brain, with just the charts the lesson asks about and the dopamine button for the reward lab." },
-  { t: "img", src: "neurobot/proto-play.webp", w: 1040 },
+const redesignLead: CaseBlock = { t: "p", text: "One idea holds the design together: **point at it, change it.** The brain is a canvas. Tools live in one toolbar, and whatever you click opens its settings right where it is." };
+
+const redesignParts = [
+  { src: "neurobot/proto-build.webp", title: "Build a brain on a canvas", text: "Pick the neuron tool and click to place one. Draw from an eye to a neuron and choose the color it should see; draw to a wheel and drag the strength. Every connection is an arrow, and undo is one click away." },
+  { src: "neurobot/proto-library.webp", title: "Start from a working brain", text: "A brain library replaces the dropdown of cryptic names: templates for each lab next to your own brains, each with a preview, and a name and description for every new one." },
+  { src: "neurobot/proto-filter.webp", title: "Find any neuron, change many at once", text: "A layers panel lists every neuron. Filter it by circuit or by type, select several, and edit them together." },
+  { src: "neurobot/proto-play.webp", title: "Play is its own mode", text: "Building and running are kept apart. Press Play and the brain takes over the robot: its two camera views sit beside the brain, with just the charts the lesson asks about and the dopamine button for the reward lab." },
 ];
+
+// alternating rows, like RefugeeOne (the 2×2 alternative: { t: "cards", cols: 2, items: redesignParts })
+const redesign: CaseBlock[] = [redesignLead, ...redesignParts.map((x): CaseBlock => ({ t: "feature", ...x }))];
 
 // ---------- wizard of oz ----------
 

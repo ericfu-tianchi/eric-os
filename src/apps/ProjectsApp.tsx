@@ -231,7 +231,7 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
       </div>
     );
   if (b.t === "cards")
-    return <div className="cs-cards">{b.items.map((c, i) => <article key={c.title}>{b.numbers !== false && <span className="n">{String(i + 1).padStart(2, "0")}</span>}<h4>{c.title}</h4><p><Rich text={c.text} /></p></article>)}</div>;
+    return <div className={`cs-cards ${b.cols === 2 ? "c2" : ""} ${b.items.some((c) => c.src) ? "pics" : ""}`}>{b.items.map((c, i) => <article key={c.title}>{c.src && <img src={detailImg(c.src)} alt="" loading="lazy" decoding="async" draggable={false} />}{b.numbers !== false && <span className="n">{String(i + 1).padStart(2, "0")}</span>}<h4>{c.title}</h4><p><Rich text={c.text} /></p></article>)}</div>;
   if (b.t === "sprints") {
     const tpl = { gridTemplateColumns: `120px repeat(${b.weeks.length}, minmax(0, 1fr))` };
     const at = (from: number, to: number, row = 1) => ({ gridColumn: `${from + 2} / ${to + 3}`, gridRow: row });
