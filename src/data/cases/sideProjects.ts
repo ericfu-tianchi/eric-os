@@ -47,29 +47,42 @@ export const soulBlade: CaseStudy = {
 
 export const twistSolver: CaseStudy = {
   accent: "#2f8f4e",
-  sub: "I used to solve the cube. I'd forgotten how, and didn't want to relearn it.",
-  role: "Solo builder, with Claude Code",
-  timeline: "Jul 2026 · 5 days",
-  tools: "Claude Code · three.js · cubejs · HTML / CSS / JS",
+  sub: "A Rubik's cube solver you follow one turn at a time.",
+  role: "Solo builder",
+  timeline: "7 days",
+  tools: "Claude Code",
   sections: [
     { id: "overview", label: "Overview", blocks: [
       { t: "h", text: "The Problem" },
-      { t: "p", text: "I could solve a Rubik's cube once. Years later I could only do one face. I didn't want to sit through tutorials again, so I asked Claude Code to build ==something I could just follow, one move at a time.==" },
-      { t: "img", src: "twist-solver/01.png", caption: "The layer to turn glows, and black arrows show which way", w: 880 },
-      { t: "link", text: "Try Twist Solver", href: "https://twist-solver.pages.dev" },
+      { t: "p", text: "I used to be able to solve a Rubik's cube. Years later, I picked one up at the office and couldn't get it back. I was about to look up a tutorial, then thought: why relearn it myself when AI could learn it for me? So I built a tool instead. It was ==my first vibe coding project==." },
+      { t: "links", items: [
+        { text: "Try Twist Solver", href: "https://twist-solver.pages.dev/", primary: true, app: "twist-solver" },
+        { text: "GitHub", href: "https://github.com/ericfu-tianchi/twist-solver" },
+      ] },
+      { t: "stats", items: [
+        { value: "7\u00a0days", label: "from the first prompt to a live site" },
+        { value: "2", label: "ways to solve: shortest, or layer by layer" },
+        { value: "2,000", label: "random scrambles passed in tests" },
+      ] },
     ] },
     { id: "build", label: "How It Came Together", blocks: [
       { t: "h", text: "How It Came Together" },
-      { t: "step", title: "A cube you can trust", text: "Day one: a 3D cube you can turn, a model that rejects impossible cubes, and a layer-by-layer solver tested on 2,000 random scrambles." },
-      { t: "step", title: "Make it followable", text: "Moves on the back were invisible, so the camera settled on a fixed three-quarter view. A second mode gives the shortest solution, about 20 moves." },
-      { t: "step", title: "Design by test page", text: "Throwaway lab pages compared ways to show a move, until we landed on dimming everything except the turning layer." },
-      { t: "step", title: "Ship it, on phones too", text: "Name, logo, a polished desktop UI, a separate mobile layout, then live on Cloudflare Pages." },
-      { t: "img", src: "twist-solver/02.png", caption: "Mid-solve on a phone: step 59 of 118", w: 320 },
+      { t: "item", src: "twist-solver/tw-first-draft.webp", title: "A first draft from one wish", text: "I asked for a Rubik's cube solver and had a working one on day one: a 3D cube, a color editor and a solver that passed every test. It also looked like AI slop, all dark navy and glowing blue buttons." },
+      { t: "item", src: "twist-solver/tw-style.webp", title: "Pick a visual style", text: "We moved toward a Figma-style toolbar: light, quiet panels and borderless actions. A little arcade flavor stayed in the chunky offset shadows and the pixel wordmark." },
+      { t: "item", src: "twist-solver/tw-methods.webp", title: "Two ways to solve", text: "Shortest gives about 20 moves for people who just want it solved. Beginner goes layer by layer, about 130 moves, the way people learn by hand." },
+      { t: "item", src: "twist-solver/tw-arrow-lab.webp", title: "Polish every detail", text: "Throwaway test pages compared arrows and highlights side by side until one read instantly: black arrows on the glowing layer. Then came the corner radii, the logo and a long list of small bugs." },
+      { t: "item", src: "twist-solver/tw-mobile-trio.webp", title: "Then the phone", text: "Last came a separate mobile layout over the same engine: one-thumb controls, pinch to zoom, and a color editor that fits on one screen." },
     ] },
-    { id: "takeaway", label: "What Surprised Me", blocks: [
-      { t: "h", text: "What Surprised Me" },
-      { t: "p", text: "How good the modelling was. Claude built a cube state that always matches the animation, a checker that knows which cubes can't exist, and two solvers, then checked its own work with screenshots before showing me." },
-      { t: "p", text: "I never relearned the cube. ==I learned that I didn't have to.==" },
+    { id: "devices", label: "Desktop and Mobile", blocks: [
+      { t: "h", text: "Desktop and Mobile" },
+      { t: "p", text: "One engine, two front ends. On desktop you get a toolbar, the full move list and keyboard shortcuts. On a phone, everything sits under one thumb. Press Auto and the cube solves itself one move at a time." },
+      { t: "img", src: "twist-solver/tw-loop-desktop.mp4", caption: "Desktop: the glowing layer turns, the move list follows", frame: true, w: 880 },
+      { t: "row", frame: true, items: [{ src: "twist-solver/tw-loop-mobile.mp4", w: 250 }, { src: "twist-solver/tw-mobile-edit.webp", w: 250 }, { src: "twist-solver/tw-mobile-home.webp", w: 250 }], caption: "Mobile: solving on Auto, entering your own cube, and the home screen" },
+    ] },
+    { id: "learned", label: "What I Learned", blocks: [
+      { t: "h", text: "What I Learned" },
+      { t: "sub", text: "Start iterating early" },
+      { t: "p", text: "Twist Solver was my first vibe coding project, and the first surprise was how good AI already is: one wish, and a working solver came back. It looked like AI slop, but I was too excited to stop, and every round made it better. ==What finishes a project is starting to iterate early, and having the patience to keep going.==" },
     ] },
   ],
 };

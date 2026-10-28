@@ -1014,7 +1014,8 @@ button { font-family: inherit; color: inherit; }
 .cs-fig { margin: 40px 0; }
 .cs-row { margin: 40px 0; }
 .cs-row > div { display: flex; gap: 24px; justify-content: center; align-items: center; }
-.cs-row img { display: block; flex: 0 1 auto; min-width: 0; height: auto; }
+.cs-row.frame img, .cs-row.frame video { border-radius: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 12px 32px rgba(0,0,0,0.12); }
+.cs-row img, .cs-row video { display: block; flex: 0 1 auto; min-width: 0; height: auto; }
 .cs-row figcaption { margin-top: 12px; text-align: center; font-family: var(--font-sans); font-size: 14px; line-height: 1.5; color: #777; }
 .cs-embed { margin: 40px calc(-1 * min(80px, var(--cs-gutter))); }
 .cs-embed > div { position: relative; width: 100%; max-width: 1040px; margin: 0 auto; background: #f1f1f3; border-radius: 6px; overflow: hidden; }
@@ -1025,8 +1026,8 @@ button { font-family: inherit; color: inherit; }
 .cs-callout a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .cs-fig.wide { margin-inline: calc(-1 * min(80px, var(--cs-gutter))); }
 
-.cs-fig img { display: block; width: var(--w, auto); max-width: 100%; height: auto; margin: 0 auto; }
-.cs-fig.frame img { border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 12px 32px rgba(0,0,0,0.12); } /* a screen recording without its own frame */
+.cs-fig img, .cs-fig video { display: block; width: var(--w, auto); max-width: 100%; height: auto; margin: 0 auto; }
+.cs-fig.frame img, .cs-fig.frame video { border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 12px 32px rgba(0,0,0,0.12); } /* a screen recording without its own frame */
 .cs-fig figcaption { margin-top: 12px; text-align: center; font-family: var(--font-sans); font-size: 14px; line-height: 1.5; color: #777; }
 
 .cs-feature { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 56px; align-items: center; margin: 72px calc(-1 * min(80px, var(--cs-gutter))); }

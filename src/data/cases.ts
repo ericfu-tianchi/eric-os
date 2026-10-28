@@ -33,7 +33,7 @@ export type CaseBlock =
   | { t: "step"; title: string; text: string } // numbered step (01, 02 …) for how-to sequences
   | { t: "link"; text: string; href: string } // accent pill button (external)
   | { t: "embed"; src: string; kind: "youtube" | "figma" | "web"; caption?: string; ratio?: number } // live iframe; ratio = w/h
-  | { t: "row"; items: { src: string; w: number }[]; caption?: string } // 2–3 images side by side at their old-site widths
+  | { t: "row"; items: { src: string; w: number }[]; caption?: string; frame?: boolean } // 2–3 images side by side at their old-site widths; frame = round corners + soft shadow for bare screens (phone captures, .mp4 loops)
   | { t: "img"; src: string; caption?: string; w?: number; frame?: boolean } // src = "<slug>/NN.png"; w = display width in px at 1440 (old-site size)
   | { t: "links"; items: { text: string; href: string; primary?: boolean; app?: ExternalGameId }[] } // small pill buttons in a row, right under the text they belong to; app = open that app inside the OS instead of a new tab
   | { t: "posts"; href: string; items: { src: string; title: string; likes: number; video?: boolean }[] } // social posts as a feed of cover cards (cover, title, likes), each linking to the profile at href
