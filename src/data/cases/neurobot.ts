@@ -137,12 +137,12 @@ const redesign: CaseBlock[] = [redesignLead, ...redesignParts.map((x): CaseBlock
 const oz: CaseBlock[] = [
   { t: "p", text: "Our canvas was too open for a clickable Figma prototype: every student builds a different brain, in a different order. So instead of wiring every possible path, ==we became the computer==." },
   { t: "flow", items: [
-    { who: "Student", title: "Says what they'd do", text: "\"I'd pick the neuron tool and click on the left side.\" They see the prototype on a shared screen." },
-    { who: "Moderator", title: "Keeps it on script", text: "Reads the same tasks as the benchmark and keeps the student thinking aloud." },
-    { who: "Wizards", title: "Build the next screen live", text: "Drop the matching neuron, arrow or menu into place from a ready-made component library, in seconds." },
-    { who: "Student", title: "Sees it, keeps going", text: "And rates every task on the same 1 to 7 scale as before." },
+    { who: "Student", title: "Thinks aloud", text: "\"I'd pick the neuron tool and click on the left side.\"" },
+    { who: "Moderator", title: "Reads the task", text: "The same tasks as the benchmark, word for word." },
+    { who: "Wizards", title: "Build it live", text: "Drag the matching neuron, arrow or menu in from our library." },
+    { who: "Student", title: "Rates it", text: "Sees the new screen, carries on, and rates the task 1 to 7." },
   ] },
-  { t: "p", text: "I proposed the method, and a teammate and I built the component library behind it: every neuron, connection, menu and state, ready to drag in. It only works when the wizards are fast enough that the student forgets anyone is there. On April 2 we ran it with four students over Zoom." },
+  { t: "p", text: "I proposed the method and led it. ==Milly and I built the component library behind it==: every neuron, connection, menu and state, ready to drag in. It only works if the wizards are fast enough that the student forgets anyone is there, so I ran our rehearsals, and the two of us practiced every task until each new screen took seconds. On April 2 we ran it with four students over Zoom." },
   { t: "img", src: "neurobot/oz-session.webp", w: 1040, caption: "One real session, sped up: everything on this screen was placed by hand, live, as the student described it" },
 ];
 

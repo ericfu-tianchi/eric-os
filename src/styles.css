@@ -946,6 +946,7 @@ button { font-family: inherit; color: inherit; }
 .cs-title { margin: 0 0 56px; text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 28px; line-height: 1.4; color: #494949; }
 .cs-col { max-width: var(--cs-col); margin: 0 auto; min-width: 0; }
 .cs-col > :first-child { margin-top: 0; }
+.cs-col > :last-child { margin-bottom: 0; } /* the band's own padding is the gap to the next section */
 
 /* Overview: story on the left, Role / Timeline / Tools rail on the right */
 .cs-intro { max-width: var(--cs-col); margin: 0 auto 8px; display: grid; grid-template-columns: minmax(0, 1fr) 200px; gap: 64px; }
