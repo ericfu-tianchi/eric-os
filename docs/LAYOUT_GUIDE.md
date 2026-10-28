@@ -143,6 +143,8 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `gallery` | Screenshots in an even 2- or 3-column grid with captions | A set of equal screens (game screenshots) |
 | `evolve` | Numbered iteration strip; the last item is the shipped one, shown large | Layout iterations that end in a shipped screen |
 | `compare` | Two images side by side, tagged Before / After (`tags` renames them, e.g. "2022 · Our prototype" / "2026 · SpikerBot") | Wireframe vs shipped; our design vs what later shipped |
+| `formula` | A scoring rule as an equation: the result as an accent tile, then `=` and the terms joined by `×`, each a white tile with a one-line note | A method worth seeing at a glance (Neurobot's severity = criticality × impact × frequency). One per page |
+| `table` | A small white table: a few example rows, numbers right-aligned from column `num`, the last column in the accent, `more` adds a quiet "… 39 more" row | Showing what a method produced without pasting the whole sheet. 3–5 rows, never the full data |
 | `scores` | A dumbbell chart: one row per task, a hollow gray dot (before) and an accent dot (after) on one shared scale, the two values at the right; rows that got worse turn gray. A legend names both sides; `note` explains the scale | Before/after ratings of the same tasks (usability scores across two test rounds). Show the regressions too |
 | `beats` / `script` | Chapters of numbered beats; a screenplay excerpt | Tutorial flows and story scripts (Subtension) |
 | `cards` | 2–4 equal cards, numbered unless `numbers: false` | Findings, takeaways, the roles someone played |

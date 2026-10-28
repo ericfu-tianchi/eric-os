@@ -18,7 +18,7 @@ const meta = {
 // ---------- shared pieces ----------
 
 const intro: CaseBlock[] = [
-  { t: "p", text: "[Backyard Brains](https://backyardbrains.com) makes hands-on neuroscience kits for classrooms. Its [Neurorobot](https://github.com/BackyardBrains/neurorobot) pairs a palm-sized robot, with cameras for eyes, a microphone, a speaker and wheels, with an app where students build the robot's brain out of virtual neurons." },
+  { t: "p", text: "[Backyard Brains](https://backyardbrains.com) makes hands-on neuroscience kits for classrooms. Its [Neurorobot](https://backyardbrains.com/products/spikerbot) pairs a palm-sized robot, with cameras for eyes, a microphone, a speaker and wheels, with an app where students build the robot's brain out of virtual neurons." },
   { t: "p", text: "Wire its eyes to its wheels and it chases anything red. Add a distance sensor and it backs away before it bumps into you. Reward it with dopamine and it picks up a habit. Each lab teaches one idea about how real brains work, and high schoolers were the first students." },
   { t: "p", text: "In winter 2022, five of us from UMSI (Milly Dai, Bahar Shahmammadova, Emma West, Fan Xu and I) redesigned the app with Backyard Brains." },
 ];
@@ -43,13 +43,13 @@ const results: CaseBlock = {
   items: [
     { value: "5.6 → 6.4", label: "average task ease, out of 7" },
     { value: "~60%", label: "fewer steps to build a lab's brain" },
-    { value: "#1", label: "Best Project, 2022 UMSI Student Project Exposition" },
+    { value: "#1", label: "Best Project, [2022 UMSI Student Project Exposition](https://www.si.umich.edu/about-umsi/news/2022-umsi-student-project-exposition-award-recipients-announced)" },
     { value: "2026", label: "SpikerBot ships, built on our redesign" },
   ],
 };
 
 const spikerbotIntro: CaseBlock = {
-  t: "p", text: "In 2026, Backyard Brains launched **SpikerBot**, the Neurorobot's successor, free on the web, Windows, Mac, iPhone, iPad, Android and Chromebook. It has a fresh, hand-drawn look, and underneath it carries what we found and fixed in 2022: point at any part of the brain and change it right there, arrows that show where every signal goes, a library of example brains to start from, and a separate mode to run the brain.",
+  t: "p", text: "In 2026, Backyard Brains launched **SpikerBot**, the Neurorobot's successor, free on the web, Windows, Mac, iPhone, iPad, Android and Chromebook. ==It has a fresh, hand-drawn look, and underneath it carries what we found and fixed in 2022==: point at any part of the brain and change it right there, arrows that show where every signal goes, a library of example brains to start from, and a separate mode to run the brain.",
 };
 
 const spikerbotGif: CaseBlock = {
@@ -70,8 +70,21 @@ const teacher: CaseBlock[] = [
 ];
 
 const benchmark: CaseBlock[] = [
-  { t: "p", text: "Next we tested the old app with five University of Michigan students from non-STEM majors, standing in for high schoolers. The tasks came straight from the curriculum's first two labs: wire one highly active neuron to four quiet ones and find the weakest connection that makes them fire, then make the robot chase a red object, back away when it gets too close, and beep while it does. Students thought aloud and rated every task from 1 to 7." },
-  { t: "p", text: "We scored each problem by **criticality × impact × frequency**, and ran a heuristic evaluation against Nielsen's ten principles alongside it: 43 usability problems, ranked." },
+  { t: "p", text: "Next we tested the old app with five University of Michigan students from non-STEM majors, standing in for high schoolers. The tasks came straight from the curriculum's first two labs. Students thought aloud and rated every task from 1 to 7." },
+  { t: "row", items: [{ src: "neurobot/lab-1.webp", w: 430 }, { src: "neurobot/lab-2.webp", w: 430 }], caption: "Lab 1: wire one active neuron to four quiet ones and find the weakest connection that makes them fire. Lab 2: make the robot chase a red ball, back away when it gets too close, and beep while it does." },
+  { t: "p", text: "Then we ranked every problem we saw by how much it hurt:" },
+  { t: "formula", result: { name: "Severity" }, terms: [
+    { name: "Criticality", note: "how essential the task is, 1–4" },
+    { name: "Impact", note: "how badly it breaks, 1–5" },
+    { name: "Frequency", note: "share of students hit" },
+  ] },
+  { t: "table", head: ["Problem", "Criticality", "Impact", "Frequency", "Severity"], num: 1, rows: [
+    ["Can't tell active neurons from quiet ones", "4", "4", "5 of 5", "16"],
+    ["Can't see which way a signal flows", "4", "5", "4 of 5", "16"],
+    ["Must redraw a connection to change its strength", "3", "5", "5 of 5", "15"],
+    ["A stray click adds a neuron", "4", "3", "5 of 5", "12"],
+  ], more: "… 39 more" },
+  { t: "p", text: "A heuristic evaluation against Nielsen's ten principles ran alongside it. Together: 43 usability problems, ranked." },
   { t: "links", items: [
     { text: "Test script", href: "https://docs.google.com/document/d/1OfInRc5aOTu1itdyAQXb96eSmhNhu0IL5P7XVCrXchE/edit?usp=sharing" },
     { text: "Scoring sheet", href: "https://docs.google.com/spreadsheets/d/1MZRLX3JZAVq5ntOn1JgLvpdQ60CPk12m4TxH-xNmpTE/edit?usp=sharing" },
@@ -80,9 +93,9 @@ const benchmark: CaseBlock[] = [
 
 const findings: CaseBlock = {
   t: "cards", items: [
-    { title: "Mistakes were expensive", text: "One stray click in the brain added a neuron, and it happened to all five students. Changing a connection's strength meant drawing it again; deleting one meant setting its strength to 0. There was no undo." },
-    { title: "Everything lived in memory", text: "Every type of neuron looked the same, so ==all five lost track of which neuron was which==. Connections had no arrows, and four couldn't tell which way a signal flowed." },
-    { title: "Buttons named after the code", text: "\"Add many neurons\" loaded a whole other brain, and four of five tried it. \"Edit its properties\" edited the neuron, not the connection. \"Stop\" quietly closed the brain." },
+    { title: "Mistakes cost the lesson", text: "One stray click dropped a new neuron into the brain. Changing a connection meant drawing it again; deleting one meant setting it to 0. With no undo, ==every slip had to be rebuilt by hand==." },
+    { title: "Memory did all the work", text: "Every neuron looked the same and connections had no arrows, so students had to remember which was which and where signals went. ==Most lost track and rewired from scratch==." },
+    { title: "Labels spoke engineer", text: "\"Add many neurons\" replaced the whole brain. \"Edit its properties\" edited the neuron, not the connection. \"Stop\" closed the brain without a word. ==The labels led students straight into mistakes==." },
   ],
 };
 
@@ -96,9 +109,10 @@ const question: CaseBlock = {
 const workshop: CaseBlock[] = [
   { t: "p", text: "We ran a brainstorming workshop with Backyard Brains' CEO and the engineer who built the app. With Google's and IDEO's methods and rounds of Crazy 8s, the room produced ==more than 100 ideas==, then dot-voted for the ones to pursue." },
   { t: "row", items: [{ src: "neurobot/workshop-room.webp", w: 500 }, { src: "neurobot/workshop-wall.webp", w: 374 }], caption: "The workshop: one wall per question, sketches on sticky notes, votes on top" },
-  { t: "p", text: "Some ideas went straight into the design: a library of example brains, filters for groups of neurons, a separate play mode. Others ran ahead of our prototype, like an AI assistant on the side, or ==hovering a behavior to see, step by step, which neurons make it happen==." },
-  { t: "p", text: "We then split into two groups for parallel low-fi designs, critiqued each other's, and merged the strongest parts into one." },
-  { t: "img", src: "neurobot/15.png", w: 939, caption: "Low-fi screens from the two parallel designs" },
+  { t: "p", text: "Some ideas went straight into the design: a library of example brains, filters for groups of neurons, a separate play mode. Others ran ahead of our prototype, like an AI assistant on the side, or hovering a behavior to see, step by step, which neurons make it happen." },
+  { t: "p", text: "That last one looked out of reach in 2022, so we kept it as a far-reach goal. ==In 2026, SpikerBot shipped it==: annotations that take a brain apart and walk through it one step at a time." },
+  { t: "p", text: "We then split into two groups for parallel low-fi designs, critiqued each other's, and merged the strongest parts into one flow: connect the robot, build a brain, play it." },
+  { t: "img", src: "neurobot/15.png", w: 939, caption: "The merged low-fi flow: connect the robot, build a brain, play it" },
 ];
 
 // ---------- the redesign ----------
