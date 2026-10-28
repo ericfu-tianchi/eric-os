@@ -110,7 +110,7 @@ Whitespace is the design. When unsure, add space rather than a divider line.
 - **Every page gets an accent.** If Eric names one, use it; otherwise pick the one that best
   fits the subject (a brand or signature color of the thing itself, e.g. LEGO brick red) and say so.
 - **One accent per project** (`accent` in the case data), taken from the old site where
-  one exists: HomesOffCampus `#4f7cac`, Neurobot `#ff9d1f`, Connectr `#04dac6`,
+  one exists: HomesOffCampus `#4f7cac`, Neurobot `#1A8CF0` (SpikerBot blue), Connectr `#04dac6`,
   Rutabagga `#764c99`, Huawei `#e71b23`, ECE `#0c2649`, Hand-coded site `#494949`, RefugeeOne `#e8650f` (its brand orange, one step deeper).
 - The accent is used only for: labels, the sub-heading square, meta labels, stat numbers,
   feature titles, the callout band, the pill button, the active nav dot.

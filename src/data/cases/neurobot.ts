@@ -8,7 +8,7 @@ import type { CaseBlock, CaseStudy } from "../cases";
  */
 
 const meta = {
-  accent: "#ff9d1f",
+  accent: "#1A8CF0", // SpikerBot's canvas blue, one step deeper so labels read on white
   sub: "A brain-building app for a robot that teaches neuroscience.",
   role: "UX Designer\nUsability Researcher",
   timeline: "Jan – Apr 2022",
@@ -18,17 +18,18 @@ const meta = {
 // ---------- shared pieces ----------
 
 const intro: CaseBlock[] = [
-  { t: "p", text: "[Backyard Brains](https://backyardbrains.com) makes neuroscience kits for students. Its **Neurorobot** is a small rover with cameras, a speaker and wheels, and no code inside: students give it a brain by wiring virtual neurons in an app, then watch it chase a red cup or back away from a wall." },
-  { t: "p", text: "That app ran in MATLAB, built by the engineers who built the robot. In winter 2022, five of us from the University of Michigan (Milly Dai, Bahar Shahmammadova, Emma West, Fan Xu and I) took on its redesign through UMSI's Design Clinic." },
+  { t: "p", text: "[Backyard Brains](https://backyardbrains.com) makes hands-on neuroscience kits for classrooms. Its **Neurorobot** pairs a palm-sized robot, with cameras for eyes, a microphone, a speaker and wheels, with an app where students build the robot's brain out of virtual neurons." },
+  { t: "p", text: "Wire its eyes to its wheels and it chases anything red. Add a distance sensor and it backs away before it bumps into you. Reward it with dopamine and it picks up a habit. Each lab teaches one idea about how real brains work, and high schoolers were the first students." },
+  { t: "p", text: "In winter 2022, five of us from the University of Michigan (Milly Dai, Bahar Shahmammadova, Emma West, Fan Xu and I) redesigned that app with Backyard Brains through UMSI's Design Clinic." },
 ];
 
 const problem: CaseBlock = {
   t: "callout", label: "The problem",
-  text: "Students spent the lesson learning the interface, not the brain. One teacher needed a full 55-minute class just to walk students through the first lab, and groups that got it wrong early gave up.",
+  text: "The app was built in MATLAB by the engineers who built the robot. Students spent the class learning the interface instead of the brain: one teacher needed a full 55-minute period just to get his class through the first lab.",
 };
 
 const whatWeDid: CaseBlock = {
-  t: "p", text: "We measured the old app with students, rebuilt it as ==a canvas where you point at any part of the brain and change it==, like a Miro board, and tested the new design on the same tasks. The canvas was too open-ended to prototype, so we ran that test Wizard of Oz style, building each student's next screen live as they spoke.",
+  t: "p", text: "We tested the old app with students to find exactly where they got stuck, then rebuilt it around one idea: **point at it, change it.** Place a neuron, draw an arrow to wire it, click anything to tune it. Then we tested the redesign on the same tasks, ==building each screen live, Wizard of Oz style==.",
 };
 
 const beforeAfter: CaseBlock = {
@@ -40,16 +41,16 @@ const beforeAfter: CaseBlock = {
 const results: CaseBlock = {
   t: "stats",
   items: [
-    { value: "5.6 → 6.4", label: "average ease score across 25 tasks, out of 7" },
-    { value: "2.2 → 5.0", label: "the hardest task: changing a connection's strength" },
+    { value: "5.6 → 6.4", label: "average task ease, out of 7" },
+    { value: "~60%", label: "fewer steps to build a lab's brain" },
     { value: "#1", label: "Best Project, 2022 UMSI Student Project Exposition" },
     { value: "2026", label: "Backyard Brains ships SpikerBot on the same ideas" },
   ],
-  note: "Ease scores are the Single Ease Question (1 = very difficult, 7 = very easy), asked after every task: five students on the old app, then the same tasks on our prototype.",
+  note: "Task ease is the Single Ease Question (1 = very difficult, 7 = very easy), asked after each of 25 tasks: five students on the old app, then the same tasks on our prototype. Steps are our estimate from walking through Lab 1's brain (one active neuron wired to four quiet ones at four strengths) click by click: about 50 in the old app, about 20 in the redesign.",
 };
 
 const spikerbotIntro: CaseBlock = {
-  t: "p", text: "In 2026 Backyard Brains launched **SpikerBot**, the Neurorobot's successor, with a free app for the web, Windows, Mac, iPhone, iPad, Android and Chromebook. It looks nothing like our grayscale prototype. It works the way we argued it should: drag neurons onto a brain, pull an arrow to connect them, tune a neuron right beside it, start from a library of example brains, then press Play.",
+  t: "p", text: "In 2026, Backyard Brains launched **SpikerBot**, the Neurorobot's successor, free on the web, Windows, Mac, iPhone, iPad, Android and Chromebook. It looks nothing like our grayscale prototype, but it works the way we argued it should: drag neurons onto a brain, pull an arrow to wire them, tune a neuron right beside it, start from a library of example brains, press Play.",
 };
 
 const spikerbotGif: CaseBlock = {
