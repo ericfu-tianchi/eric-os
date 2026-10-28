@@ -137,8 +137,8 @@ const redesign: CaseBlock[] = [redesignLead, ...redesignParts.map((x): CaseBlock
 const oz: CaseBlock[] = [
   { t: "p", text: "Our canvas was too open for a clickable Figma prototype: every student builds a different brain, in a different order. So instead of wiring every possible path, ==we became the computer==." },
   { t: "flow", items: [
-    { who: "Moderator", title: "Reads the task", text: "The same tasks as the benchmark, word for word." },
-    { who: "Student", title: "Thinks aloud", text: "\"I'd pick the neuron tool and click on the left side.\"" },
+    { who: "Moderator", title: "Reads the task", text: "Reads each task from the benchmark script, word for word, and nothing more." },
+    { who: "Student", title: "Thinks aloud", text: "\"I'd pick the neuron tool and click on the left side of the brain.\"" },
     { who: "Wizards", title: "Build it live", text: "Drag the matching neuron, arrow or menu in from our library." },
     { who: "Student", title: "Rates it", text: "Sees the new screen, carries on, and rates the task 1 to 7." },
   ] },
