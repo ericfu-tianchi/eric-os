@@ -18,14 +18,14 @@ const meta = {
 // ---------- shared pieces ----------
 
 const intro: CaseBlock[] = [
-  { t: "p", text: "[Backyard Brains](https://backyardbrains.com) makes hands-on neuroscience kits for classrooms. Its **Neurorobot** pairs a palm-sized robot, with cameras for eyes, a microphone, a speaker and wheels, with an app where students build the robot's brain out of virtual neurons." },
+  { t: "p", text: "[Backyard Brains](https://backyardbrains.com) makes hands-on neuroscience kits for classrooms. Its [Neurorobot](https://github.com/BackyardBrains/neurorobot) pairs a palm-sized robot, with cameras for eyes, a microphone, a speaker and wheels, with an app where students build the robot's brain out of virtual neurons." },
   { t: "p", text: "Wire its eyes to its wheels and it chases anything red. Add a distance sensor and it backs away before it bumps into you. Reward it with dopamine and it picks up a habit. Each lab teaches one idea about how real brains work, and high schoolers were the first students." },
-  { t: "p", text: "In winter 2022, five of us from the University of Michigan (Milly Dai, Bahar Shahmammadova, Emma West, Fan Xu and I) redesigned that app with Backyard Brains through UMSI's Design Clinic." },
+  { t: "p", text: "In winter 2022, five of us from UMSI (Milly Dai, Bahar Shahmammadova, Emma West, Fan Xu and I) redesigned the app with Backyard Brains." },
 ];
 
 const problem: CaseBlock = {
   t: "callout", label: "The problem",
-  text: "The app was built in MATLAB by the engineers who built the robot. Students spent the class learning the interface instead of the brain: one teacher needed a full 55-minute period just to get his class through the first lab.",
+  text: "The app was built by engineers, for engineers: every feature was there, but nothing guided a student through it. So students spent class learning the interface instead of the brain, and told us it was hard to use. One teacher had to give up a full 55-minute period just to get his class through the first lab, before anyone built a brain.",
 };
 
 const whatWeDid: CaseBlock = {
@@ -44,18 +44,17 @@ const results: CaseBlock = {
     { value: "5.6 → 6.4", label: "average task ease, out of 7" },
     { value: "~60%", label: "fewer steps to build a lab's brain" },
     { value: "#1", label: "Best Project, 2022 UMSI Student Project Exposition" },
-    { value: "2026", label: "Backyard Brains ships SpikerBot on the same ideas" },
+    { value: "2026", label: "SpikerBot ships, built on our redesign" },
   ],
-  note: "Task ease is the Single Ease Question (1 = very difficult, 7 = very easy), asked after each of 25 tasks: five students on the old app, then the same tasks on our prototype. Steps are our estimate from walking through Lab 1's brain (one active neuron wired to four quiet ones at four strengths) click by click: about 50 in the old app, about 20 in the redesign.",
 };
 
 const spikerbotIntro: CaseBlock = {
-  t: "p", text: "In 2026, Backyard Brains launched **SpikerBot**, the Neurorobot's successor, free on the web, Windows, Mac, iPhone, iPad, Android and Chromebook. It looks nothing like our grayscale prototype, but it works the way we argued it should: drag neurons onto a brain, pull an arrow to wire them, tune a neuron right beside it, start from a library of example brains, press Play.",
+  t: "p", text: "In 2026, Backyard Brains launched **SpikerBot**, the Neurorobot's successor, free on the web, Windows, Mac, iPhone, iPad, Android and Chromebook. It has a fresh, hand-drawn look, and underneath it carries what we found and fixed in 2022: point at any part of the brain and change it right there, arrows that show where every signal goes, a library of example brains to start from, and a separate mode to run the brain.",
 };
 
 const spikerbotGif: CaseBlock = {
   t: "img", src: "neurobot/spikerbot-build.webp", w: 880,
-  caption: "SpikerBot's web app, recorded in October 2026: drag in a neuron, select it, pull an arrow to the next one and on to a wheel",
+  caption: "SpikerBot's web app, recorded in October 2026: add a neuron, wire the eye to it and choose what it looks for, then wire it to a wheel and the speaker and pick a note",
 };
 
 const spikerbotLinks: CaseBlock = { t: "links", items: [
@@ -178,7 +177,7 @@ const later: CaseBlock[] = [
   { t: "compare", tags, before: { src: "neurobot/proto-build-still.webp", label: "Click a connection, edit it where it is" }, after: { src: "neurobot/spikerbot-tune.webp", label: "Select a neuron, tune it beside it, in plain words" } },
   { t: "compare", tags, before: { src: "neurobot/proto-play-still.webp", label: "Play mode: cameras and just the charts you need" }, after: { src: "neurobot/spikerbot-play.webp", label: "Play mode: the camera and the neurons you pin" } },
   { t: "compare", tags, before: { src: "neurobot/brainstorm-steps.webp", label: "Our workshop: hover a behavior to see its steps" }, after: { src: "neurobot/spikerbot-annotations.webp", label: "Annotations walk a brain step by step, lighting up each part" } },
-  { t: "p", text: "We never saw SpikerBot's design process, and good teams often reach the same answers. Still, the problems we measured in 2022 are the ones it solves: arrows on every connection, settings next to whatever you click, and a library to start from instead of a blank brain." },
+  { t: "p", text: "The problems we measured in 2022 are the ones it solves: arrows on every connection, settings next to whatever you click, and a library to start from instead of a blank brain." },
 ];
 
 // ---------- reflection ----------
