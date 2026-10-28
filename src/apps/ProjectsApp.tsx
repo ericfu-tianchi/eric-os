@@ -355,6 +355,7 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
               </li>
             );
           })}
+          {b.more && <li className="more">{b.more}</li>}
         </ul>
         <div className="axis"><span /><span className="ticks">{ticks.map((t) => <span key={t} style={{ left: at(t) }}>{t}</span>)}</span><span /></div>
         {b.note && <figcaption><Rich text={b.note} /></figcaption>}
@@ -384,7 +385,7 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
   if (b.t === "img") {
     const src = detailImg(b.src);
     return src ? (
-      <figure className={`cs-fig ${b.w && b.w > 880 ? "wide" : ""}`} style={b.w ? ({ "--w": `${b.w}px` } as React.CSSProperties) : undefined}>
+      <figure className={`cs-fig ${b.w && b.w > 880 ? "wide" : ""} ${b.frame ? "frame" : ""}`} style={b.w ? ({ "--w": `${b.w}px` } as React.CSSProperties) : undefined}>
         <img src={src} alt={b.caption ?? ""} loading="lazy" decoding="async" draggable={false} />
         {b.caption && <figcaption>{b.caption}</figcaption>}
       </figure>

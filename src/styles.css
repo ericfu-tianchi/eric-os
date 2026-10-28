@@ -1026,6 +1026,7 @@ button { font-family: inherit; color: inherit; }
 .cs-fig.wide { margin-inline: calc(-1 * min(80px, var(--cs-gutter))); }
 
 .cs-fig img { display: block; width: var(--w, auto); max-width: 100%; height: auto; margin: 0 auto; }
+.cs-fig.frame img { border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 12px 32px rgba(0,0,0,0.12); } /* a screen recording without its own frame */
 .cs-fig figcaption { margin-top: 12px; text-align: center; font-family: var(--font-sans); font-size: 14px; line-height: 1.5; color: #777; }
 
 .cs-feature { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 56px; align-items: center; margin: 72px calc(-1 * min(80px, var(--cs-gutter))); }
@@ -1189,6 +1190,7 @@ button { font-family: inherit; color: inherit; }
 .cs-scores ul { list-style: none; margin: 0; padding: 0; }
 .cs-scores li, .cs-scores .axis { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 1fr) 96px; gap: 22px; align-items: center; }
 .cs-scores li { padding: 12px 0; border-top: 1px solid #ececef; }
+.cs-scores li.more { display: block; padding: 10px 0; color: #999; font: 14px/1 var(--font-sans); letter-spacing: .08em; text-align: center; }
 .cs-scores .l { font: 600 15px/1.35 var(--font-sans); color: #181818; }
 .cs-scores .track { position: relative; height: 14px; }
 .cs-scores .track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: #e4e4e8; }
