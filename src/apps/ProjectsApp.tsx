@@ -227,7 +227,12 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
         {(b.text || b.steps) && (
           <div className="side">
             {b.text?.split("\n\n").map((t, i) => <p key={i}><Rich text={t} /></p>)}
-            {b.steps && <ol>{b.steps.map((x, i) => <li key={x}><span>{String(i + 1).padStart(2, "0")}</span>{x}</li>)}</ol>}
+            {b.steps && <ol>{b.steps.map((x, i) => (
+              <li key={x.title}>
+                {x.src && <img src={detailImg(x.src)} alt="" loading="lazy" decoding="async" draggable={false} />}
+                <div><h4><span>{String(i + 1).padStart(2, "0")}</span>{x.title}</h4>{x.text && <p><Rich text={x.text} /></p>}</div>
+              </li>
+            ))}</ol>}
           </div>
         )}
       </figure>
