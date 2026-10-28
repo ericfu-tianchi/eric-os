@@ -81,8 +81,8 @@ export const twistSolver: CaseStudy = {
     ] },
     { id: "learned", label: "What I Learned", blocks: [
       { t: "h", text: "What I Learned" },
-      { t: "sub", text: "Start iterating early" },
-      { t: "p", text: "Twist Solver was my first vibe coding project, and the first surprise was how good AI already is: one wish, and a working solver came back. It looked like AI slop, but I was too excited to stop, and every round made it better. ==What finishes a project is starting to iterate early, and having the patience to keep going.==" },
+      { t: "sub", text: "Iteration is the process" },
+      { t: "p", text: "People ask how I built Twist Solver. Honestly, I just kept iterating. The first version came back on day one and looked like AI slop, so I changed one thing, then the next, for seven days. ==Start iterating early. The iterating is the work.==" },
     ] },
   ],
 };
