@@ -313,6 +313,31 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
         {b.note && <p className="note"><Rich text={b.note} /></p>}
       </div>
     );
+  if (b.t === "formula")
+    return (
+      <div className="cs-formula">
+        <div className="t res"><b>{b.result.name}</b>{b.result.note && <span>{b.result.note}</span>}</div>
+        <i className="op">=</i>
+        {b.terms.map((x, k) => (
+          <Fragment key={x.name}>
+            {k > 0 && <i className="op">×</i>}
+            <div className="t"><b>{x.name}</b>{x.note && <span>{x.note}</span>}</div>
+          </Fragment>
+        ))}
+      </div>
+    );
+  if (b.t === "table") {
+    const num = b.num ?? b.head.length;
+    return (
+      <div className="cs-table"><table>
+        <thead><tr>{b.head.map((h, k) => <th key={h} className={k >= num ? "n" : undefined}>{h}</th>)}</tr></thead>
+        <tbody>
+          {b.rows.map((r) => <tr key={r[0]}>{r.map((c, k) => <td key={k} className={k >= num ? (k === r.length - 1 ? "n last" : "n") : undefined}><Rich text={c} /></td>)}</tr>)}
+          {b.more && <tr className="more"><td colSpan={b.head.length}>{b.more}</td></tr>}
+        </tbody>
+      </table></div>
+    );
+  }
   if (b.t === "scores") {
     const [lo, hi] = b.scale, at = (v: number) => `${((v - lo) / (hi - lo)) * 100}%`;
     const ticks = Array.from({ length: hi - lo + 1 }, (_, i) => lo + i);

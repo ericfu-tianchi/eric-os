@@ -37,6 +37,8 @@ export type CaseBlock =
   | { t: "gallery"; items: { src: string; caption?: string }[]; cols?: 2 | 3 } // screenshots in an even grid
   | { t: "evolve"; items: { src: string; label: string; note?: string }[] } // numbered iteration strip, the last item is the shipped one
   | { t: "compare"; before: { src: string; label: string }; after: { src: string; label: string }; tags?: [string, string] } // wireframe vs shipped, side by side; tags replace "Before" / "After"
+  | { t: "formula"; result: { name: string; note?: string }; terms: { name: string; note?: string }[] } // a scoring rule as an equation: result = term × term × term, each with a one-line note
+  | { t: "table"; head: string[]; rows: string[][]; more?: string; num?: number } // a small example table; columns from num on are numbers (right-aligned, last one accented); more = a closing "…" row
   | { t: "scores"; scale: [number, number]; legend: [string, string]; items: { label: string; before: number; after: number }[]; note?: string } // before → after scores per row on one shared scale (dumbbell chart)
   | { t: "beats"; chapters: { title: string; steps: string[] }[] } // a sequence grouped into chapters (tutorial beats)
   | { t: "script"; title?: string; lines: { who?: string; say?: string; act?: string }[] } // a screenplay excerpt: spoken lines + stage directions
