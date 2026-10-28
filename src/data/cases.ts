@@ -51,7 +51,7 @@ export type CaseBlock =
   | { t: "metrics"; primary: { title: string; note?: string }[]; secondary: string[] } // key metrics as numbered cards, the rest as a quiet row
   | { t: "chat"; q: string; qFace: string; a: { h: string; text: string }[]; aFace: string } // old-site speech bubbles: a question, then an answer bubble with headed paragraphs
   | { t: "panels"; items: { icon: "mbti" | "group" | "puzzle" | "compass"; color: string; title: string; text: string; subs?: { h: string; text: string }[] }[] } // old-site feature panels: round icon + tinted panel per feature, highlights in its color
-  | { t: "item"; title: string; text: string; src?: string; bare?: boolean; apps?: AppKey[]; plus?: boolean } // numbered text + visual row, sides alternate; no src = the apps as big linked icons (plus: joined by "+"), else linked app chips under the text; "\n\n" splits paragraphs
+  | { t: "item"; title: string; text: string; src?: string; bare?: boolean; frame?: boolean; apps?: AppKey[]; plus?: boolean } // numbered text + visual row, sides alternate; frame = hairline + soft shadow even on the mist band (light screenshots); no src = the apps as big linked icons (plus: joined by "+"), else linked app chips under the text; "\n\n" splits paragraphs
   | { t: "stats"; items: { value: string; label: string }[]; note?: string } // 2–4 big numbers in one row, a hairline above (impact)
   | { t: "timeline"; items: { date: string; title: string; text?: string }[]; compact?: boolean } // dated milestones on a vertical line; compact = one light horizontal row (date + title)
   | { t: "stack"; items: { logo: string; name: string; role: string }[] } // tools as logo tiles; logo = file name in src/assets/logos
