@@ -13,7 +13,7 @@ const fileIcons = import.meta.glob("../assets/file-icons/*.webp", { eager: true,
 export const fileIconOf = (key: string): string | undefined => fileIcons[`../assets/file-icons/${key}.webp`];
 
 // inline case-study section images, referenced as "<slug>/NN.png"
-// (re-exported originals are .webp; content keeps referencing "<slug>/NN.png")
-const detail = import.meta.glob("../assets/old-site/detail/**/*.{png,webp}", { eager: true, import: "default" }) as Record<string, string>;
+// (re-exported originals are .webp; content keeps referencing "<slug>/NN.png"); short loops and films are .mp4
+const detail = import.meta.glob("../assets/old-site/detail/**/*.{png,webp,jpg,mp4}", { eager: true, import: "default" }) as Record<string, string>;
 export const detailImg = (src: string): string | undefined =>
   detail[`../assets/old-site/detail/${src.replace(/\.png$/, ".webp")}`] ?? detail[`../assets/old-site/detail/${src}`];
