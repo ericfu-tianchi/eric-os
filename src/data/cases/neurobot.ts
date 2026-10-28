@@ -134,16 +134,17 @@ const redesign: CaseBlock[] = [redesignLead, ...redesignParts.map((x): CaseBlock
 
 // ---------- wizard of oz ----------
 
+
 const oz: CaseBlock[] = [
-  { t: "p", text: "Our canvas was too open for a clickable Figma prototype: every student builds a different brain, in a different order. So instead of wiring every possible path, ==we became the computer==." },
+  { t: "p", text: "Our canvas was too open for a clickable Figma prototype: every student builds a different brain, in a different order. So we ran the second round of testing over Zoom, and instead of wiring every possible path, ==we became the computer==." },
   { t: "flow", items: [
     { who: "Moderator", title: "Reads the task", text: "Reads each task from the benchmark script, word for word, and nothing more." },
     { who: "Student", title: "Thinks aloud", text: "\"I'd pick the neuron tool and click on the left side of the brain.\"" },
     { who: "Wizards", title: "Build it live", text: "Drag the matching neuron, arrow or menu in from our library." },
     { who: "Student", title: "Rates it", text: "Sees the new screen, carries on, and rates the task 1 to 7." },
   ] },
-  { t: "p", text: "I proposed the method and led it. ==Milly and I built the component library behind it==: every neuron, connection, menu and state, ready to drag in. It only works if the wizards are fast enough that the student forgets anyone is there, so I ran our rehearsals, and the two of us practiced every task until each new screen took seconds. On April 2 we ran it with four students over Zoom." },
-  { t: "img", src: "neurobot/oz-session.webp", w: 1040, caption: "One real session, sped up: everything on this screen was placed by hand, live, as the student described it" },
+  { t: "p", text: "I proposed the method and led it. ==Milly and I built the component library behind it==: every neuron, connection, menu and state, ready to drag in. It only works if the wizards are fast enough that the student forgets anyone is there, so I ran our rehearsals, and the two of us practiced every task until each new screen took seconds." },
+  { t: "img", src: "neurobot/oz-session.webp", w: 760, frame: true, caption: "One real session, sped up: everything on this screen was placed by hand, live, as the student described it" },
 ];
 
 // ---------- results ----------
@@ -157,9 +158,8 @@ const scores: CaseBlock = {
     { label: "Add four quiet neurons", before: 3.2, after: 5.0 },
     { label: "Connect neurons to the wheels", before: 4.2, after: 5.7 },
     { label: "Run the brain and watch it", before: 4.8, after: 7.0 },
-    { label: "Add the first neuron", before: 4.8, after: 2.7 },
-    { label: "Make a new brain", before: 7.0, after: 4.7 },
   ],
+  more: "… 19 more tasks",
   note: "Single Ease Question per task, 1 = very difficult, 7 = very easy. Four students tested the prototype; three scored these tasks.",
 };
 
@@ -167,10 +167,12 @@ const outcome: CaseBlock[] = [
   { t: "p", text: "Across all 25 tasks, the average ease score rose from **5.6 to 6.4**, and the biggest gains landed where the benchmark hurt most." },
   scores,
   { t: "p", text: "Problems with a severity above 5 fell from **14 to 6**, and five of the six had a one-line fix: a missing label, a menu without a title, a hover hint that never fired in Figma." },
-  { t: "sub", text: "Two steps got harder" },
-  { t: "p", text: "Adding the first neuron fell to 2.7: students didn't know to pick the neuron tool first, and the hover hint meant to tell them didn't fire in our prototype. Making a new brain fell to 4.7, because design mode had no way back home. Both went on the fix list we handed over." },
-  { t: "sub", text: "Handoff and recognition" },
-  { t: "p", text: "We gave Backyard Brains everything they needed to keep testing without us: the script, the note-taking template, the scoring sheet, the heuristic evaluation and the prototype. The project won **Best Project** at the [2022 UMSI Student Project Exposition](https://si.umich.edu/about-umsi/news/2022-umsi-student-project-exposition-award-recipients-announced), out of more than 60 projects." },
+  { t: "links", items: [
+    { text: "Round two scoring sheet", href: "https://docs.google.com/spreadsheets/d/1hFsH2WtGEkzWpvtHMKLBOLr5eFVoT3Td/edit?usp=sharing&ouid=105525715448113364555&rtpof=true&sd=true" },
+  ] },
+  { t: "sub", text: "What came next" },
+  { t: "p", text: "We closed by walking the Backyard Brains team through everything we had learned, from the test findings to the redesign. Together we planned the next steps, and ==our work set the direction for how they explored the product's next version==." },
+  { t: "p", text: "The project also won **Best Project** at the [2022 UMSI Student Project Exposition](https://si.umich.edu/about-umsi/news/2022-umsi-student-project-exposition-award-recipients-announced), out of more than 60 projects." },
 ];
 
 // ---------- four years later ----------
@@ -244,7 +246,7 @@ export const neurobot: CaseStudy = {
       ...oz,
     ] },
     { id: "results", label: "Results", blocks: [
-      { t: "h", text: "Same tasks, easier" },
+      { t: "h", text: "Biggest gains where students struggled most" },
       ...outcome,
     ] },
     { id: "later", label: "Four Years Later", blocks: [
