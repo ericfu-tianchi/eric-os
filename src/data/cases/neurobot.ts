@@ -136,7 +136,7 @@ const redesign: CaseBlock[] = [redesignLead, ...redesignParts.map((x): CaseBlock
 
 
 const oz: CaseBlock[] = [
-  { t: "p", text: "Our canvas was too open for a clickable Figma prototype: every student builds a different brain, in a different order. So we ran the second round of testing over Zoom, and instead of wiring every possible path, ==we became the computer==." },
+  { t: "p", text: "Our canvas was too open for a clickable Figma prototype: every student builds a different brain, in a different order. So we ran the second round of testing over Zoom, and instead of wiring every possible path, ==we built each screen by hand, live, as the student asked for it==." },
   { t: "flow", items: [
     { who: "Moderator", title: "Reads the task", text: "Reads each task from the benchmark script, word for word, and nothing more." },
     { who: "Student", title: "Thinks aloud", text: "\"I'd pick the neuron tool and click on the left side of the brain.\"" },
@@ -199,7 +199,7 @@ const later: CaseBlock[] = [
 
 const lessons: CaseBlock[] = [
   { t: "sub", text: "The most fun test I've run" },
-  { t: "p", text: "A fixed Figma prototype would only have tested the paths we guessed, so we thought outside the box and became the computer. ==Let the problem pick the method, then do the work that makes it hold up==: a complete component library and hours of rehearsal made it feel seamless." },
+  { t: "p", text: "A fixed Figma prototype would only have tested the paths we guessed. We wanted to preserve the open nature of the problem, so we thought outside the box. ==Let the problem pick the method, then do the work that makes it hold up==: a complete component library and hours of rehearsal made it feel seamless." },
   { t: "sub", text: "Bring the client into the room" },
   { t: "p", text: "We invited Backyard Brains' CEO and the engineer behind the app to brainstorm with us. Ideas they helped draw were ideas they wanted to build, and ==that sense of ownership did more for the project's impact than any slide==." },
   { t: "sub", text: "A team that became friends" },
