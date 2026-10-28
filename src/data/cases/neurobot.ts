@@ -160,7 +160,7 @@ const scores: CaseBlock = {
     { label: "Run the brain and watch it", before: 4.8, after: 7.0 },
   ],
   more: "… 19 more tasks",
-  note: "Single Ease Question per task, 1 = very difficult, 7 = very easy. Four students tested the prototype; three scored these tasks.",
+  note: "Single Ease Question per task, 1 = very difficult, 7 = very easy. Four students tested the prototype.",
 };
 
 const outcome: CaseBlock[] = [
@@ -199,13 +199,11 @@ const later: CaseBlock[] = [
 
 const lessons: CaseBlock[] = [
   { t: "sub", text: "The most fun test I've run" },
-  { t: "p", text: "Wizard of Oz is still my favorite usability test. A clickable prototype couldn't carry the design, so we changed the method instead of shrinking the design. ==When the usual tool doesn't fit, find an unusual one==, then do the prep that makes it look effortless." },
+  { t: "p", text: "Our redesign was a canvas, open-ended by nature: every student builds a different brain, in a different order. A fixed Figma prototype would only have tested the paths we guessed. So we thought outside the box, ran the test Wizard of Oz style, and put in the prep to make it feel seamless: a complete component library and hours of rehearsal. ==Let the problem pick the method==, then do the work that makes the method hold up." },
   { t: "sub", text: "Bring the client into the room" },
   { t: "p", text: "We invited Backyard Brains' CEO and the engineer behind the app to brainstorm with us. Ideas they helped draw were ideas they wanted to build, and that sense of ownership did more for the project's impact than any slide." },
-  { t: "sub", text: "A prototype is part of the test" },
-  { t: "p", text: "One of the two steps that got harder came down to a hover hint that didn't fire in Figma. Next time I'd list the details a prototype has to carry before the first session, not after the last." },
   { t: "sub", text: "A team that became friends" },
-  { t: "p", text: "Most weeks the five of us worked out of one teammate's home, arguing about neurons and axons until late. We became good friends along the way, and ==it's one of my happiest stretches at Michigan==." },
+  { t: "p", text: "Most weeks the five of us gathered at one teammate's place to debate neurons, sketch screens and pick apart each other's ideas, with plenty of dinners and laughs in between. By April we were friends, and ==it's a time I still look back on fondly==." },
 ];
 
 // ---------- overview → research → brainstorm → redesign → wizard of oz → results → four years later → reflection ----------
