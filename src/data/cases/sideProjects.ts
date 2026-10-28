@@ -152,7 +152,7 @@ export const legoWorld: CaseStudy = {
       { t: "sub", text: "Try it anyway" },
       { t: "p", text: "I started out sure that models couldn't build LEGO, and if I had trusted that, there would be no project. ==The only way to find a model's limit is to walk up to it.== This one was much further away than I thought: a month after that first test, there were nine cities on the globe." },
       { t: "sub", text: "When building is solved, the fun is what's left" },
-      { t: "p", text: "Models get better every few months. Within a year or two, I expect AI to build any LEGO set simply and perfectly. Then building stops being the hard part, and what's rare is the feeling of watching a city come together brick by brick. ==Designing for that feeling is the part I want to work on.==" },
+      { t: "p", text: "Within a year or two, I expect AI to design any LEGO set simply and perfectly. What matters then is the build itself, the part LEGO cares about most: whether putting a set together by hand feels playful or repetitive. ==Designing that hands-on experience is the part I want to work on.==" },
     ] },
   ],
 };
