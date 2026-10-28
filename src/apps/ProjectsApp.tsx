@@ -6,6 +6,8 @@ import { PixIcon } from "../components/Pixel";
 import { useWindowChrome } from "../components/WindowChrome";
 import { coverOf, heroOf, detailImg } from "../data/projectAssets";
 import { APPS, appIcon, type AppKey } from "../data/apps";
+import { EXTERNAL_GAMES } from "../data/filesystem";
+import { useAppState } from "../mobile/nav";
 
 const CAT_COLOR: Record<Category, string> = {
   AI: "var(--green)",
@@ -93,6 +95,22 @@ function Rich({ text }: { text: string }) {
   );
 }
 
+/** An image, or a short silent loop when the file is an .mp4: it plays only while on screen and while its app is in front. */
+function Media({ src, className, alt = "" }: { src: string; className?: string; alt?: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const { shown } = useAppState();
+  const [inView, setInView] = useState(false);
+  const video = src.endsWith(".mp4");
+  useEffect(() => {
+    const v = ref.current; if (!v) return;
+    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.2 });
+    io.observe(v); return () => io.disconnect();
+  }, [video]);
+  useEffect(() => { const v = ref.current; if (!v) return; if (inView && shown) v.play().catch(() => {}); else v.pause(); }, [inView, shown]);
+  if (!video) return <img className={className} src={src} alt={alt} loading="lazy" decoding="async" draggable={false} />;
+  return <video ref={ref} className={className} src={src} muted loop playsInline preload="metadata" aria-label={alt || undefined} />;
+}
+
 /** Accent bands carry white text: a light accent (Connectr's mint) is deepened until white reads on it (just enough for large white text; deeper looked heavy). */
 function bandColor(hex: string) {
   const ch = (i: number) => parseInt(hex.slice(1 + i * 2, 3 + i * 2), 16) / 255;
@@ -118,6 +136,7 @@ const PANEL_ICON: Record<"mbti" | "group" | "puzzle" | "compass", React.ReactNod
 };
 
 function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number }) {
+  const openApp = useOS((s) => s.open);
   if (b.t === "p") return <p className="cs-p"><Rich text={b.text} /></p>;
   if (b.t === "h") return <h3 className="cs-label">{b.text}</h3>;
   if (b.t === "sub") return <h4 className="cs-sub">{b.text}</h4>;
@@ -157,7 +176,7 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
     const src = detailImg(b.src);
     return (
       <div className={`cs-feature ${flip ? "flip" : ""}`}>
-        {src && <img className={b.bare ? "bare" : undefined} src={src} alt={b.title} loading="lazy" decoding="async" draggable={false} />}
+        {src && <Media className={b.bare ? "bare" : undefined} src={src} alt={b.title} />}
         <div><h4>{b.title}</h4><p><Rich text={b.text} /></p></div>
       </div>
     );
@@ -184,7 +203,28 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
       </figure>
     );
   if (b.t === "links")
-    return <div className="cs-links">{b.items.map((l) => <a key={l.href} className={l.primary ? "primary" : ""} href={l.href} target="_blank" rel="noopener noreferrer">{l.text}<span aria-hidden>↗</span></a>)}</div>;
+    return <div className="cs-links">{b.items.map((l) => <a key={l.href} className={l.primary ? "primary" : ""} href={l.href} target="_blank" rel="noopener noreferrer" onClick={l.app ? (e) => { e.preventDefault(); openApp(l.app!, { title: EXTERNAL_GAMES[l.app!].name, maximized: true }); } : undefined}>{l.text}{!l.app && <span aria-hidden>↗</span>}</a>)}</div>;
+  if (b.t === "posts")
+    return (
+      <div className="cs-posts">
+        {b.items.map((x) => (
+          <a key={x.src} href={b.href} target="_blank" rel="noopener noreferrer">
+            <span className="cov"><img src={detailImg(x.src)} alt="" loading="lazy" decoding="async" draggable={false} />{x.video && <i aria-hidden>▶</i>}</span>
+            <b>{x.title}</b>
+            <small><svg viewBox="0 0 24 24" aria-hidden><path d="M12 20s-7-4.3-9-8.6C1.6 8.1 3.5 4.5 7 4.5c2 0 3.4 1.1 5 2.8 1.6-1.7 3-2.8 5-2.8 3.5 0 5.4 3.6 4 6.9C19 15.7 12 20 12 20z" /></svg>{x.likes}</small>
+          </a>
+        ))}
+      </div>
+    );
+  if (b.t === "video") {
+    const src = detailImg(b.src);
+    return src ? (
+      <figure className="cs-video" style={b.w ? ({ "--w": `${b.w}px` } as React.CSSProperties) : undefined}>
+        <video src={src} poster={b.poster ? detailImg(b.poster) : undefined} controls playsInline preload="none" />
+        {b.caption && <figcaption>{b.caption}</figcaption>}
+      </figure>
+    ) : null;
+  }
   if (b.t === "gallery")
     return (
       <div className={`cs-gallery c${b.cols ?? 2}`}>
@@ -231,7 +271,7 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
       </div>
     );
   if (b.t === "cards")
-    return <div className={`cs-cards ${b.cols === 2 ? "c2" : ""} ${b.items.some((c) => c.src) ? "pics" : ""}`}>{b.items.map((c, i) => <article key={c.title}>{c.src && <img src={detailImg(c.src)} alt="" loading="lazy" decoding="async" draggable={false} />}{b.numbers !== false && <span className="n">{String(i + 1).padStart(2, "0")}</span>}<h4>{c.title}</h4><p><Rich text={c.text} /></p></article>)}</div>;
+    return <div className={`cs-cards ${b.cols === 2 ? "c2" : ""} ${b.items.some((c) => c.src) ? "pics" : ""}`}>{b.items.map((c, i) => <article key={c.title}>{c.src && <Media src={detailImg(c.src) ?? ""} />}{b.numbers !== false && <span className="n">{String(i + 1).padStart(2, "0")}</span>}<h4>{c.title}</h4><p><Rich text={c.text} /></p></article>)}</div>;
   if (b.t === "sprints") {
     const tpl = { gridTemplateColumns: `120px repeat(${b.weeks.length}, minmax(0, 1fr))` };
     const at = (from: number, to: number, row = 1) => ({ gridColumn: `${from + 2} / ${to + 3}`, gridRow: row });

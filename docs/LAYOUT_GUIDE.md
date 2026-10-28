@@ -140,12 +140,14 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `img` | Centered figure + caption; `w` = display width in px at 1440; `frame` adds the screenshot shadow and radius (recordings that have no frame of their own) | Evidence, diagrams, logos. Copy `w` from the old site; above 880 the figure breaks out of the column (max 1040) |
 | `link` | Accent pill button | One call to action (prototype, slides, live site) |
 | `embed` | Live iframe, 16:9 (YouTube) or 16:10 (Figma), up to 1040px wide + caption | Videos and clickable prototypes. Use `youtube-nocookie.com/embed/<id>` and Figma's `figma.com/embed?embed_host=share&url=…` |
-| `links` | Small pill links in a row (one may be `primary`, ink) | Source links right under the text they belong to: Steam, GitHub, a demo. Put them in the Overview, where every reader sees them; many readers stop after it, so never park the only links at the end of the page |
+| `links` | Small pill links in a row (one may be `primary`, ink) | Source links right under the text they belong to: Steam, GitHub, a demo. Put them in the Overview, where every reader sees them; many readers stop after it, so never park the only links at the end of the page. A link with `app` (e.g. `lego-world`) opens that app inside the OS instead of a new tab, with no ↗ |
 | `gallery` | Screenshots in an even 2- or 3-column grid with captions | A set of equal screens (game screenshots) |
 | `evolve` | Numbered iteration strip; the last item is the shipped one, shown large | Layout iterations that end in a shipped screen |
 | `compare` | Two images side by side, tagged Before / After (`tags` renames them, e.g. "2022 · Our prototype" / "2026 · SpikerBot") | Wireframe vs shipped; our design vs what later shipped |
 | `formula` | A scoring rule as an equation: the result as an accent tile, then `=` and the terms joined by `×`, each a white tile with a one-line note | A method worth seeing at a glance (Neurobot's severity = criticality × impact × frequency). One per page |
 | `table` | A small white table: a few example rows, numbers right-aligned from column `num`, the last column in the accent, `more` adds a quiet "… 39 more" row | Showing what a method produced without pasting the whole sheet. 3–5 rows, never the full data |
+| `posts` | Social posts as a feed of 3:4 cover cards (cover, title, likes, ▶ for videos), 5 across, 2 on phones; every card links to the profile at `href` | Build-in-public proof: the posts made along the way (Lego World's Xiaohongshu posts). Translate titles to English; show real counts |
+| `video` | A film with controls and sound, centered at `w` px (default 360, fits a vertical 9:16 film), with an optional `poster` and caption | A short explainer or demo film people choose to play (Lego World's 80-second Paris walkthrough) |
 | `scores` | A dumbbell chart: one row per task, a hollow gray dot (before) and an accent dot (after) on one shared scale, the two values at the right; rows that got worse turn gray. A legend names both sides; `note` explains the scale | Before/after ratings of the same tasks (usability scores across two test rounds). Pick the rows that tell the story; `more` adds a quiet "… 19 more tasks" row |
 | `beats` / `script` | Chapters of numbered beats; a screenplay excerpt | Tutorial flows and story scripts (Subtension) |
 | `cards` | 2–4 equal cards, numbered unless `numbers: false`; `cols: 2` for a 2×2 grid, and an item `src` puts a picture on top of its card | Findings, takeaways, the roles someone played |
@@ -157,6 +159,8 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `timeline` | Dated milestones on a vertical line | How a project unfolded week to week |
 | `versus` | Two cards: the quiet "before" and the accented "after", each a title + bullets | What the client asked for vs what was built |
 | `flow` | 3–4 cards left to right, each tagged with who acts | One thing moving through several people (a job: employer → staff → refugee) |
+
+`feature` and `cards` also take an `.mp4` as `src`: a short silent loop that plays only while on screen and while its app is in front (Lego World's rotating sets). Keep loops under ~2 MB.
 
 `feature` and `item` take `bare: true` when the image brings its own frame and shadow (device mockups).
 
