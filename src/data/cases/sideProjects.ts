@@ -49,7 +49,7 @@ export const twistSolver: CaseStudy = {
   accent: "#2f8f4e",
   sub: "A Rubik's cube solver you follow one turn at a time.",
   role: "Solo builder",
-  timeline: "7 days",
+  timeline: "Jul 2026 · 7 days",
   tools: "Claude Code",
   sections: [
     { id: "overview", label: "Overview", blocks: [
@@ -67,11 +67,11 @@ export const twistSolver: CaseStudy = {
     ] },
     { id: "build", label: "How It Came Together", blocks: [
       { t: "h", text: "How It Came Together" },
-      { t: "item", src: "twist-solver/tw-first-draft.webp", title: "A first draft from one wish", text: "I asked for a Rubik's cube solver and had a working one on day one: a 3D cube, a color editor and a solver that passed every test. It also looked like AI slop, all dark navy and glowing blue buttons." },
-      { t: "item", src: "twist-solver/tw-style.webp", title: "Pick a visual style", text: "We moved toward a Figma-style toolbar: light, quiet panels and borderless actions. A little arcade flavor stayed in the chunky offset shadows and the pixel wordmark." },
-      { t: "item", src: "twist-solver/tw-methods.webp", title: "Two ways to solve", text: "Shortest gives about 20 moves for people who just want it solved. Beginner goes layer by layer, about 130 moves, the way people learn by hand." },
-      { t: "item", src: "twist-solver/tw-arrow-lab.webp", title: "Polish every detail", text: "Throwaway test pages compared arrows and highlights side by side until one read instantly: black arrows on the glowing layer. Then came the corner radii, the logo and a long list of small bugs." },
-      { t: "item", src: "twist-solver/tw-mobile-trio.webp", title: "Then the phone", text: "Last came a separate mobile layout over the same engine: one-thumb controls, pinch to zoom, and a color editor that fits on one screen." },
+      { t: "item", frame: true, src: "twist-solver/tw-first-draft.webp", title: "A first draft from one wish", text: "I asked for a Rubik's cube solver and had a working one on day one: a 3D cube, a color editor and a solver that passed every test. It also looked like AI slop, all dark navy and glowing blue buttons." },
+      { t: "item", frame: true, src: "twist-solver/tw-style.webp", title: "Pick a visual style", text: "We moved toward a Figma-style toolbar: light, quiet panels and borderless actions. A little arcade flavor stayed in the chunky offset shadows and the pixel wordmark." },
+      { t: "item", frame: true, src: "twist-solver/tw-methods.webp", title: "Two ways to solve", text: "Shortest gives about 20 moves for people who just want it solved. Beginner goes layer by layer, about 130 moves, the way people learn by hand." },
+      { t: "item", frame: true, src: "twist-solver/tw-arrow-lab.webp", title: "Polish every detail", text: "Throwaway test pages compared arrows and highlights side by side until one read instantly: black arrows on the glowing layer. Then came the corner radii, the logo and a long list of small bugs." },
+      { t: "item", frame: true, src: "twist-solver/tw-mobile-trio.webp", title: "Then the phone", text: "Last came a separate mobile layout over the same engine: one-thumb controls, pinch to zoom, and a color editor that fits on one screen." },
     ] },
     { id: "devices", label: "Desktop and Mobile", blocks: [
       { t: "h", text: "Desktop and Mobile" },

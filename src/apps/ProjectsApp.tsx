@@ -354,7 +354,7 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
           {src && b.apps && <div className="cs-chips">{b.apps.map((k) => app(k, false))}</div>}
         </div>
         {src
-          ? <img className={b.bare ? "bare" : undefined} src={src} alt="" loading="lazy" decoding="async" draggable={false} />
+          ? <img className={b.bare ? "bare" : b.frame ? "framed" : undefined} src={src} alt="" loading="lazy" decoding="async" draggable={false} />
           : <div className="cs-apps">{b.apps?.map((k, i) => <Fragment key={k}>{i > 0 && b.plus && <span className="plus" aria-hidden>+</span>}{app(k, true)}</Fragment>)}</div>}
       </div>
     );
