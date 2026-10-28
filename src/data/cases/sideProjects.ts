@@ -110,13 +110,13 @@ export const legoWorld: CaseStudy = {
     ] },
     { id: "models", label: "The Model Race", blocks: [
       { t: "h", text: "The Model Race" },
-      { t: "p", text: "Before building anything for real, I ran a race: same brief, different models. It turned out to be an unusual benchmark, and a fun one. You can't bluff your way through LEGO. A brick either clicks or it floats, and you can see the answer at a glance." },
+      { t: "p", text: "Before building anything for real, I ran a race: one brief, build Kyoto in LEGO, given to three models. It turned out to be an unusual benchmark, and a fun one. You can't bluff your way through LEGO. A brick either clicks or it floats, and you can see the answer at a glance." },
       { t: "cards", numbers: false, items: [
         { src: "lego-world/race-astra.webp", title: "Astra", text: "The prettiest app of the three. But its pieces sat on free coordinates, not a brick grid, so none of it could be built." },
-        { src: "lego-world/race-fable.webp", title: "Fable 5", text: "Real bricks on a real grid, but only about 60 basic shapes. Its Marina Bay Sands was three plain slabs." },
-        { src: "lego-world/race-opus.webp", title: "Opus 5.5", text: "Studied photos and real LEGO builds first, then reached for curved slopes, hinges and side studs." },
+        { src: "lego-world/race-fable.webp", title: "Fable 5", text: "Real bricks on a real grid and a proper pagoda. But it used only basic shapes, and one part in twelve was floating." },
+        { src: "lego-world/race-opus.webp", title: "Opus 5.5", text: "Real LDraw parts in official colors: a pagoda, a hill of torii and a golden pavilion on a pond, in one go." },
       ] },
-      { t: "p", text: "Opus 5.5 had the most LEGO talent by a distance. When its first Marina Bay Sands came back, my note to it was one line: ==“This is so much better than before!”== Every set from then on was built with Opus 5.5." },
+      { t: "p", text: "Opus 5.5 came out later, so it got the same brief in a rematch, and it had the most LEGO talent by a distance. When its first Marina Bay Sands came back, my note to it was one line: ==“This is so much better than before!”== Every set after that was built with it." },
     ] },
     { id: "sets", label: "The Sets", blocks: [
       { t: "feature", src: "lego-world/set-prague.mp4", title: "Czechia · Prague", text: "Charles Bridge, Týn Church, the Astronomical Clock and Old Town Square. 5,386 bricks in 25 colors." },
