@@ -180,11 +180,11 @@ const outcome: CaseBlock[] = [
 const tags: [string, string] = ["2022 · Our prototype", "2026 · SpikerBot"];
 
 const later: CaseBlock[] = [
-  { t: "p", text: "SpikerBot's app is free on every screen, and the robot it drives was funded on Kickstarter in under an hour: $38,933 from 122 backers, against a $5,500 goal. The MATLAB install is gone." },
+  { t: "p", text: "After years of pilots in a handful of classrooms, the Neurorobot has grown into SpikerBot, and its app is finally out for everyone: free, with no MATLAB to install, on almost any screen a student has." },
   { t: "stack", items: [
     { logo: "apple", name: "Apple", role: "Mac, iPhone and iPad" },
     { logo: "windows11", name: "Windows", role: "PCs and tablets" },
-    { logo: "android", name: "Android", role: "Phones, tablets, Chromebooks" },
+    { logo: "android", name: "Android", role: "Phones and tablets" },
     { logo: "chrome", name: "Web", role: "Any laptop browser" },
   ] },
   { t: "p", text: "Its look is new: hand-drawn, playful, bright blue. ==Its bones are the ones we proposed in 2022.==" },
