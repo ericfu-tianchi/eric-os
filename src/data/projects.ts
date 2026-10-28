@@ -78,7 +78,7 @@ export const PROJECTS: Project[] = [
     group: "selected",
     status: "award",
     statusLabel: "AWARD",
-    overview: "A client project for Backyard Brains: redesigning the app students use to wire a robot's brain.",
+    overview: "With Backyard Brains: redesigning the app students use to wire a robot's brain.",
     process: "Benchmarked the MATLAB app with students, rebuilt it as a canvas, and tested it Wizard of Oz style: average ease 5.6 → 6.4.",
     outcome: "Best Project at the 2022 UMSI Student Project Exposition; in 2026 Backyard Brains shipped SpikerBot on the same ideas.",
   },
