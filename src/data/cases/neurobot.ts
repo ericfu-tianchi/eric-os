@@ -34,7 +34,7 @@ const whatWeDid: CaseBlock = {
 
 const beforeAfter: CaseBlock = {
   t: "compare",
-  before: { src: "neurobot/07.png", label: "The MATLAB app: every neuron looks the same" },
+  before: { src: "neurobot/old-app-design.webp", label: "The MATLAB app, built by its engineers" },
   after: { src: "neurobot/proto-build-still.webp", label: "Our redesign: one toolbar, arrows on every connection" },
 };
 
@@ -93,6 +93,8 @@ const benchmark: CaseBlock[] = [
     { text: "Scoring sheet", href: "https://docs.google.com/spreadsheets/d/1MZRLX3JZAVq5ntOn1JgLvpdQ60CPk12m4TxH-xNmpTE/edit?usp=sharing" },
   ] },
 ];
+
+const oldApp: CaseBlock = { t: "img", src: "neurobot/old-app-annotated.webp", w: 880, frame: true, caption: "The 2022 app, mid-lesson: (1) any click in the brain adds a neuron, (2) every neuron looks the same, (3) \"Add many neurons\" replaces the whole brain" };
 
 const findings: CaseBlock = {
   t: "cards", items: [
@@ -231,6 +233,7 @@ export const neurobot: CaseStudy = {
       { t: "h", text: "A benchmark test" },
       ...benchmark,
       { t: "h", text: "What we found" },
+      oldApp,
       findings,
       question,
     ] },
