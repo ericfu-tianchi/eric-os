@@ -147,7 +147,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `table` | A small white table: a few example rows, numbers right-aligned from column `num`, the last column in the accent, `more` adds a quiet "… 39 more" row | Showing what a method produced without pasting the whole sheet. 3–5 rows, never the full data |
 | `scores` | A dumbbell chart: one row per task, a hollow gray dot (before) and an accent dot (after) on one shared scale, the two values at the right; rows that got worse turn gray. A legend names both sides; `note` explains the scale | Before/after ratings of the same tasks (usability scores across two test rounds). Show the regressions too |
 | `beats` / `script` | Chapters of numbered beats; a screenplay excerpt | Tutorial flows and story scripts (Subtension) |
-| `cards` | 2–4 equal cards, numbered unless `numbers: false` | Findings, takeaways, the roles someone played |
+| `cards` | 2–4 equal cards, numbered unless `numbers: false`; `cols: 2` for a 2×2 grid, and an item `src` puts a picture on top of its card | Findings, takeaways, the roles someone played |
 | `sprints` | A gantt of weeks, phases and tracks | A sprint plan |
 | `metrics` / `chat` / `panels` | Numbered metric cards; old-site speech bubbles; old-site feature panels | Connectr's research and metrics |
 | `part` | A numbered divider (01, 02 …) with a hairline, a 28px title and an optional one-line lead; feature rows restart on the left after it | Splitting one section into parallel parts, e.g. the three sides of a product. Give every part the same block form |

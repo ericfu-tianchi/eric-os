@@ -42,7 +42,7 @@ export type CaseBlock =
   | { t: "scores"; scale: [number, number]; legend: [string, string]; items: { label: string; before: number; after: number }[]; note?: string } // before → after scores per row on one shared scale (dumbbell chart)
   | { t: "beats"; chapters: { title: string; steps: string[] }[] } // a sequence grouped into chapters (tutorial beats)
   | { t: "script"; title?: string; lines: { who?: string; say?: string; act?: string }[] } // a screenplay excerpt: spoken lines + stage directions
-  | { t: "cards"; items: { title: string; text: string }[]; numbers?: boolean } // 2–4 equal cards (findings, takeaways, roles); numbered unless numbers: false
+  | { t: "cards"; items: { title: string; text: string; src?: string }[]; numbers?: boolean; cols?: 2 } // 2–4 equal cards (findings, takeaways, roles); numbered unless numbers: false
   | { t: "sprints"; weeks: string[]; phases: { name: string; from: number; to: number }[]; rows: { track: string; bars: { text: string; from: number; to: number; line?: 0 | 1; mine?: boolean }[] }[]; note?: string } // a sprint plan as a gantt: week columns, phases on top
   | { t: "metrics"; primary: { title: string; note?: string }[]; secondary: string[] } // key metrics as numbered cards, the rest as a quiet row
   | { t: "chat"; q: string; qFace: string; a: { h: string; text: string }[]; aFace: string } // old-site speech bubbles: a question, then an answer bubble with headed paragraphs
