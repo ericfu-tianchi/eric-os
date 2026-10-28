@@ -234,7 +234,7 @@ export const META: Record<string, ProjectMeta> = {
   "model-eval": { accent: "#2f9e57", sub: "Reusable infrastructure for evaluating AI video models", role: "AI PM", timeline: "2026 · Opus", tools: "Rubrics · Elo/WLT · Python" },
   jyi: { accent: "#17a89e", sub: "The origin story of an AI interview SaaS", role: "Product Manager & UX Designer", timeline: "Jan–Apr 2021", tools: "Figma · SQL" },
   huawei: { accent: "#e71b23", sub: "Window management for foldable PCs", role: "UX Designer", timeline: "May–Sep 2022", tools: "Figma" },
-  neurobot: { accent: "#ff9d1f", sub: "A brain-building app for a robot that teaches neuroscience", role: "UX Designer & Usability Researcher", timeline: "Jan–Apr 2022", tools: "Figma · Miro · MATLAB" },
+  neurobot: { accent: "#1A8CF0", sub: "A brain-building app for a robot that teaches neuroscience", role: "UX Designer & Usability Researcher", timeline: "Jan–Apr 2022", tools: "Figma · Miro · MATLAB" },
   refugeeone: { accent: "#f36c12", sub: "A three-sided hiring platform for a Chicago refugee resettlement non-profit", role: "Product Owner & Frontend Developer", timeline: "Jan – May 2023", tools: "Figma · Jira · React · Firebase" },
   "twist-solver": { accent: "#2f8f4e" },
   "lego-world": { accent: "#c91a09" },
