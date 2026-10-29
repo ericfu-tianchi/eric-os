@@ -23,7 +23,7 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
   const [phase, setPhase] = useState<"ready" | "playing" | "over">("ready");
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(readBest);
-  const g = useRef({ cols: 13, rows: 20, cell: 30, ox: 0, oy: 0, snake: [] as P[], dir: { x: 1, y: 0 }, next: { x: 1, y: 0 }, food: { x: 0, y: 0 }, step: 150, acc: 0, last: 0, grow: 0, dirty: true, lineCol: 0, lineRow: 0, base: 3, target: 175, appleAt: -1e9 });
+  const g = useRef({ cols: 13, rows: 20, cell: 30, ox: 0, oy: 0, snake: [] as P[], dir: { x: 1, y: 0 }, next: { x: 1, y: 0 }, food: { x: 0, y: 0 }, step: 150, acc: 0, last: 0, grow: 0, dirty: true, lineCol: 0, lineRow: 0, base: 3, target: 230, appleAt: -1e9 });
   /** the desktop's apple entrance: it drops in from above (820 ms, a little squash), then pulses twice (2 × 360 ms, from 900 ms) */
   const APPLE_IN = 1620;
   // started from the wallpaper: carry on from the snake's exact pose (taken once, at launch)
@@ -86,7 +86,7 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
         s.snake = body; s.dir = s.next = { x: w.dir[0], y: -w.dir[1] }; // canvas rows count up, board rows count down
       }
     }
-    s.base = s.snake.length; s.step = 175; s.target = 175; s.acc = 0; s.grow = 0; s.last = performance.now(); s.dirty = true;
+    s.base = s.snake.length; s.step = 230; s.target = 230; s.acc = 0; s.grow = 0; s.last = performance.now(); s.dirty = true;
     const wa = wallApple.current; // the wallpaper's apple stays where it was, as the first one to eat
     const f = w && wa ? { x: wa[0] - s.lineCol, y: wa[1] - s.lineRow } : null;
     if (f && f.x >= 0 && f.y >= 0 && f.x < s.cols && f.y < s.rows) s.food = f; else placeFood();
@@ -126,7 +126,7 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
         s.acc += Math.min(100, t - s.last);
         while (s.acc >= s.step) {
           s.acc -= s.step;
-          if (s.step > s.target) s.step = Math.max(s.target, s.step * 0.86); // the run starts slow and picks up speed
+          if (s.step > s.target) s.step = Math.max(s.target, s.step * 0.92); // the run starts slow and eases up to cruising speed
           s.dir = s.next;
           const head = { x: s.snake[0].x + s.dir.x, y: s.snake[0].y + s.dir.y };
           const hit = head.x < 0 || head.y < 0 || head.x >= s.cols || head.y >= s.rows || s.snake.some((p) => p.x === head.x && p.y === head.y);
@@ -139,7 +139,7 @@ export function SnakeGame({ start: startPose, apple: startApple, full, top = 0, 
           s.snake.unshift(head);
           if (head.x === s.food.x && head.y === s.food.y) {
             setScore(s.snake.length - s.base);
-            s.target = Math.max(105, s.target - 3);
+            s.target = Math.max(150, s.target - 2);
             navigator.vibrate?.(8);
             placeFood();
           } else s.snake.pop();
