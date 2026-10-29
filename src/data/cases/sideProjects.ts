@@ -12,7 +12,7 @@ export const soulBlade: CaseStudy = {
     { id: "overview", label: "Overview", blocks: [
       { t: "h", text: "How It Started" },
       { t: "p", text: "Fable 5 had just come out, and everyone was talking about how good it was, so I wanted to try it myself. I typed one sentence: “Make me a game like The King of Fighters.” It built the whole thing: two fighters, an AI opponent, combos, supers." },
-      { t: "p", text: "The first version was playable, and full of bugs. So I fixed a little here and patched a little there, and ==ten days later I had actually made a game.==" },
+      { t: "p", text: "The first version was playable and full of bugs, but it was enough to get me hooked. I fixed a little here and patched a little there, and ==ten days later I had actually made a game.==" },
       { t: "links", items: [
         { text: "Play Soul Blade", href: "https://soul-blade.pages.dev", primary: true, app: "soul-blade" },
         { text: "GitHub", href: "https://github.com/ericfu-tianchi/soul-blade" },
@@ -22,12 +22,8 @@ export const soulBlade: CaseStudy = {
     { id: "lab", label: "The Lab", blocks: [
       { t: "h", text: "Tools to Build With AI" },
       { t: "p", text: "A fighting game lives on feel: how far a slash reaches, how long a hit freezes, how a super lands. AI can't feel any of that, and I couldn't judge it inside a live match. So on day two I stopped asking for features and ==asked the AI to build its own game-dev tools.== We worked in them together from then on." },
-      { t: "sub", text: "Action Lab" },
-      { t: "p", text: "The real game engine, slowed to a quarter speed, one frame at a time, with hitboxes drawn on. I reviewed every move this way and sent notes as character, move and frame." },
-      { t: "img", src: "soul-blade/sb-actionlab.mp4", frame: true, w: 960 },
-      { t: "sub", text: "Hitbox Lab" },
-      { t: "p", text: "Slashes looked like they hit and still missed. This lab freezes the hit frame so I can drag the hit range against the blade by hand and watch it flip between HIT and MISS, then export it straight into the game." },
-      { t: "img", src: "soul-blade/sb-hitboxlab.mp4", frame: true, w: 960 },
+      { t: "feature", src: "soul-blade/sb-actionlab.mp4", title: "Action Lab", text: "The real game engine, slowed to a quarter speed, one frame at a time, with hitboxes drawn on. I reviewed every move this way and sent notes as character, move and frame." },
+      { t: "feature", src: "soul-blade/sb-hitboxlab.mp4", title: "Hitbox Lab", text: "Slashes looked like they hit and still missed. This lab freezes the hit frame so I can drag the hit range against the blade by hand, watch it flip between HIT and MISS, then export it into the game." },
       { t: "feature", src: "soul-blade/sb-assets.webp", title: "UI Asset Library", text: "Every piece of art Gemini made, about 100 in all: title emblems, portraits, banners, frames and result screens, compared side by side before anything shipped." },
       { t: "feature", src: "soul-blade/sb-titles.webp", title: "Design Labs", text: "Big decisions came as options on one page. Four title screens, four banners, four results screens, six ways to draw one sword swing. I picked, the AI built." },
       { t: "cards", numbers: false, items: [
@@ -38,13 +34,12 @@ export const soulBlade: CaseStudy = {
       ] },
     ] },
     { id: "game", label: "The Game", blocks: [
-      { t: "h", text: "The Game" },
+      { t: "h", text: "As a Game" },
       { t: "p", text: "A one-on-one sword fighter in modern pixel art, set in a Japanese town at dusk. Best of three, against an AI that gets very good." },
-      { t: "sub", text: "As a game" },
       { t: "item", frame: true, src: "soul-blade/sb-fighters.webp", title: "Two fighters, two styles", text: "Kenji is a heavy-sword samurai: slow, and he hits hard. Hayato is a swift ninja with longer reach and shuriken. Each has a super with its own cinematic." },
-      { t: "item", frame: true, src: "soul-blade/sb-super.webp", title: "Real fighting-game depth", text: "Blocking, a guard that breaks if you only defend, combos that cancel into each other, air juggles and a super meter. Twenty-four moves in all." },
-      { t: "item", frame: true, src: "soul-blade/sb-result.webp", title: "An AI that reads you", text: "Easy, normal and hard. Hard blocks the moment you press attack and punishes every jump. When the AI said it was maxed out, I asked for something absurd, and got it." },
-      { t: "sub", text: "Under the hood" },
+      { t: "item", frame: true, src: "soul-blade/sb-howto.webp", title: "Real fighting-game depth", text: "Blocking, a guard that breaks if you only defend, combos that cancel into each other, air juggles and a super meter. Twenty-four moves, each with a live demo in the move guide." },
+      { t: "item", frame: true, src: "soul-blade/sb-training.webp", title: "An AI that reads you", text: "Easy, normal and hard. Hard blocks the moment you press attack and punishes every jump. When the AI said it was maxed out, I asked for something absurd, and got it. Training mode is there to practice first." },
+      { t: "h", text: "Under the Hood" },
       { t: "stats", items: [
         { value: "6,600", label: "lines of plain JavaScript, no engine" },
         { value: "24", label: "moves built from two attack animations" },
