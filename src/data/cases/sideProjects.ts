@@ -22,8 +22,12 @@ export const soulBlade: CaseStudy = {
     { id: "lab", label: "The Lab", blocks: [
       { t: "h", text: "Tools to Build With AI" },
       { t: "p", text: "A fighting game lives on feel: how far a slash reaches, how long a hit freezes, how a super lands. AI can't feel any of that, and I couldn't judge it inside a live match. So on day two I stopped asking for features and ==asked the AI to build its own game-dev tools.== We worked in them together from then on." },
-      { t: "feature", src: "soul-blade/sb-actionlab.mp4", title: "Action Lab", text: "The real game engine, slowed to a quarter speed, one frame at a time, with hitboxes drawn on. I reviewed every move this way and sent notes as character, move and frame." },
-      { t: "feature", src: "soul-blade/sb-hitboxlab.mp4", title: "Hitbox Lab", text: "Slashes looked like they hit and still missed. This lab freezes the hit frame so I can stretch the hit range against the blade by hand, then exports it straight into the game." },
+      { t: "sub", text: "Action Lab" },
+      { t: "p", text: "The real game engine, slowed to a quarter speed, one frame at a time, with hitboxes drawn on. I reviewed every move this way and sent notes as character, move and frame." },
+      { t: "img", src: "soul-blade/sb-actionlab.mp4", frame: true, w: 960 },
+      { t: "sub", text: "Hitbox Lab" },
+      { t: "p", text: "Slashes looked like they hit and still missed. This lab freezes the hit frame so I can drag the hit range against the blade by hand and watch it flip between HIT and MISS, then export it straight into the game." },
+      { t: "img", src: "soul-blade/sb-hitboxlab.mp4", frame: true, w: 960 },
       { t: "feature", src: "soul-blade/sb-assets.webp", title: "UI Asset Library", text: "Every piece of art Gemini made, about 100 in all: title emblems, portraits, banners, frames and result screens, compared side by side before anything shipped." },
       { t: "feature", src: "soul-blade/sb-titles.webp", title: "Design Labs", text: "Big decisions came as options on one page. Four title screens, four banners, four results screens, six ways to draw one sword swing. I picked, the AI built." },
       { t: "cards", numbers: false, items: [

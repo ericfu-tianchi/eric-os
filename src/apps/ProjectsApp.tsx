@@ -100,7 +100,7 @@ function Media({ src, className, alt = "", style }: { src: string; className?: s
   const ref = useRef<HTMLVideoElement>(null);
   const { shown } = useAppState();
   const [inView, setInView] = useState(false);
-  const video = src.endsWith(".mp4");
+  const video = /\.mp4(\?|#|$)/.test(src);
   useEffect(() => {
     const v = ref.current; if (!v) return;
     const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.2 });

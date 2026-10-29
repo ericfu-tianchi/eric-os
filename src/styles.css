@@ -1227,6 +1227,7 @@ button { font-family: inherit; color: inherit; }
 }
 .cs-stats { margin: 40px 0 48px; }
 .cs-intro + .cs-col > .cs-stats:first-child { margin-top: 40px; } /* numbers right under the intro keep their gap from the links above */
+.cs-intro + .cs-col > figure:first-child { margin-top: 48px; } /* so does a picture */
 .cs-stats dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 28px; margin: 0; }
 .cs-stats dl > div { padding-top: 18px; border-top: 1px solid #d9d9de; }
 .cs-stats dt { font-family: var(--font-display); font-weight: 800; font-size: 36px; line-height: 1.2; color: var(--cs-band, var(--cs)); font-variant-numeric: tabular-nums; }
