@@ -15,9 +15,9 @@ const PHIL = "Tech is never the end, but a powerful means. I'm driven by the pos
 const KEY = new Set(["positive", "human", "impact"]);
 
 const BRING = [
-  { h: "Tech × Design", p: "A bilingual PM where tech meets design. I dig into the “why”, make complex logic intuitive, and bridge R&D, design, and business.", tags: ["PRD + Prototype"] },
-  { h: "AI Full-Stack", p: "3 years turning model capability into product: enterprise AI at Huawei Cloud, creative AI at OpusClip.", tags: ["PaaS → SaaS → Consumer"] },
-  { h: "Model Eval", p: "Building framework and platform for evaluating LLM, video, and image models, and using the results to drive what ships.", tags: ["LLM", "Video / Image", "Agent"] },
+  { h: "AI Full-Stack", p: "3 years turning AI capabilities into products — from enterprise AI at Huawei Cloud (AI PaaS to SaaS), to creative AI at OpusClip (video & image gen), to general-purpose AI agents at Manus.", tags: ["Enterprise → Creative → General-purpose"] },
+  { h: "Tech × Design", p: "A “bilingual” PM at the intersection of technology and design, driven by curiosity and a passion for intuitive experiences.", tags: ["PRD + Prototype"] },
+  { h: "AI Evaluation", p: "Building eval framework and platform for LLMs, multimodal models, and AI agents — using eval results to drive what ships.", tags: ["LLM", "Multimodal", "Agent"] },
 ];
 
 type Stop = { org: string; role: string; x: string; folder?: { id: string; title: string } };
@@ -36,7 +36,8 @@ export function AboutApp() {
 
   const PATH: { year: string; now?: boolean; stops: Stop[] }[] = [
     { year: "2026", now: true, stops: [
-      { org: "OpusClip", role: "AI Product Manager · Singapore", x: "Own model eval for video and image generation; ship AI music in Agent Opus.", folder: { id: "opus", title: "OpusClip" } },
+      { org: "Manus", role: "AI Product Manager · Singapore · Ongoing", x: "Using Manus to build a better Manus." },
+      { org: "OpusClip", role: "AI Product Manager · Singapore · 6 months", x: "Own model eval for video and image generation; ship AI music in Agent Opus.", folder: { id: "opus", title: "OpusClip" } },
       { org: "National University of Singapore", role: "MSc, AI & Innovation · Singapore", x: "Back in school, learning AI while building with it." },
     ] },
     { year: "2023", stops: [
