@@ -443,7 +443,7 @@ export function PixIcon({
     return (
       <span className={`glyph-wrap ${className ?? ""}`} style={{ display: "inline-flex", lineHeight: 0 }}>
         <img src={RASTER_ICONS[name]} width={size} height={size} draggable={false}
-          style={{ objectFit: "contain", pointerEvents: "none", userSelect: "none" }} alt="" aria-hidden />
+          style={{ width: size, height: size, objectFit: "contain", pointerEvents: "none", userSelect: "none" }} alt="" aria-hidden />
       </span>
     );
   }
