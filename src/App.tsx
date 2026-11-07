@@ -7,6 +7,8 @@ import { WindowFrame } from "./components/WindowFrame";
 import { DesktopSnake, ERIC_POSE } from "./components/DesktopSnake";
 import { gridSpec } from "./components/Pixel";
 import { PROJECTS } from "./data/projects";
+import { FILE_NODES } from "./data/filesystem";
+import { fileIconOf } from "./data/projectAssets";
 import { TOPBAR } from "./components/desktopGrid";
 import { BootSplash } from "./components/BootSplash";
 import { ScreenSaver } from "./components/ScreenSaver";
@@ -117,6 +119,16 @@ export default function App() {
     root.dataset.canvas = canvasVariant;
     return () => { delete root.dataset.canvas; };
   }, [canvasVariant, canvasStudy, theme]);
+
+  // Folder thumbnails load the moment a folder opens, which shows on a slow network.
+  // Fetch them all (about 0.5 MB) once the page has settled, so Finder opens with them in cache.
+  useEffect(() => {
+    const warm = () => FILE_NODES.forEach((n) => {
+      for (const src of [n.thumb, n.sidebarIcon, n.projectSlug && fileIconOf(n.projectSlug)]) if (src) new Image().src = src;
+    });
+    const t = window.setTimeout(() => ("requestIdleCallback" in window ? requestIdleCallback(warm) : warm()), 2500);
+    return () => clearTimeout(t);
+  }, []);
 
   // every visit starts with About Me open (once per browser session, only on an empty desktop),
   // placed so the snake's head still peeks out beside it: visitors notice there's a snake underneath.

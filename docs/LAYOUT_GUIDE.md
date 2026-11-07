@@ -204,5 +204,5 @@ In Finder icon view these thumbnails get a 104px slot (other icons stay 66px; a 
 contains thumbnails gives every item the taller slot so labels line up). Desktop and list view
 use the normal icon size.
 
-Files: `src/assets/file-icons/<slug>.webp` (416px = 4x of 104, `about.webp` for About), read by
+Files: `src/assets/file-icons/<slug>.webp` (208px = 2x of 104, small enough to open instantly, `about.webp` for About), read by
 `fileIconOf()`. Regenerate an icon when a page's cover changes.

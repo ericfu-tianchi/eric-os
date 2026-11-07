@@ -148,7 +148,7 @@ export function PlayerApp({ mediaId }: { mediaId?: string }) {
         ref={video}
         className="media-video"
         src={item.src}
-        poster={item.thumb}
+        poster={item.poster ?? item.thumb}
         autoPlay
         playsInline
         onClick={toggle}
