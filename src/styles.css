@@ -2021,8 +2021,8 @@ button { font-family: inherit; color: inherit; }
 .am-phil .w.in { opacity: 1; }
 .am-phil .w.k { color: var(--am-ac); }
 
-.am-bring .cols { margin-top: 22px; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--am-line); }
-.am-bring article { position: relative; display: flex; flex-direction: column; padding: 24px 26px 8px 0; }
+.am-bring .cols { margin-top: 22px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--am-line); } /* equal columns: a long tag can no longer widen its own */
+.am-bring article { position: relative; display: grid; grid-row: span 4; grid-template-rows: subgrid; row-gap: 0; padding: 24px 26px 8px 0; } /* number, title, text and tags share rows across the columns, so a title that wraps keeps the texts aligned */
 .am-bring article + article { padding-left: 26px; border-left: 1px solid var(--am-line); }
 .am-bring article::before { content: ""; position: absolute; left: 0; top: -1px; height: 2px; width: 0; background: var(--am-ac); transition: width 0.5s cubic-bezier(.2,.8,.2,1); }
 .am-bring article.on::before { width: 100%; } /* .on = crossing the middle of a touch screen; hover only where hover exists (a tap leaves :hover stuck on phones) */
@@ -2030,7 +2030,7 @@ button { font-family: inherit; color: inherit; }
 .am-bring .n { font: 700 12px var(--font-mono); color: var(--am-ac); }
 .am-bring h3 { margin: 14px 0 10px; font: 700 24px/1.1 var(--font-display); letter-spacing: -0.02em; }
 .am-bring p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--am-soft); }
-.am-bring .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 20px; } /* tags sit on one baseline across the three columns */
+.am-bring .tags { display: flex; flex-wrap: wrap; align-content: start; gap: 6px; padding-top: 20px; } /* tags start on one line across the three columns */
 .am-tag { display: inline-flex; align-items: center; height: 26px; padding: 0 9px; text-transform: uppercase; letter-spacing: 0.04em; border: 1px solid var(--am-line); border-radius: 4px; font: 500 11px var(--font-mono); color: var(--am-ink); white-space: nowrap; }
 
 .am-path .head { display: flex; justify-content: space-between; align-items: baseline; }

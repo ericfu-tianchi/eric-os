@@ -15,7 +15,7 @@ const PHIL = "Tech is never the end, but a powerful means. I'm driven by the pos
 const KEY = new Set(["positive", "human", "impact"]);
 
 const BRING = [
-  { h: "AI Full-Stack", p: "3 years turning AI into tools people create with: from enterprise AI at Huawei Cloud, to creative AI at OpusClip, to general-purpose AI agents at Manus.", tags: ["Enterprise → Creative → General-purpose"] },
+  { h: "AI Full-Stack", p: "3 years turning AI into tools people create with: from enterprise AI at Huawei Cloud, to creative AI at OpusClip, to general-purpose AI agents at Manus.", tags: ["Enterprise", "Creative", "General-purpose"] },
   { h: "Tech × Design", p: "A “bilingual” PM at the intersection of technology and design, driven by curiosity and a passion for intuitive experiences.", tags: ["PRD + Prototype"] },
   { h: "AI Evaluation", p: "Building eval framework and platform for LLMs, multimodal models, and AI agents — using eval results to drive what ships.", tags: ["LLM", "Multimodal", "Agent"] },
 ];
