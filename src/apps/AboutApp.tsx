@@ -37,7 +37,7 @@ export function AboutApp() {
   const PATH: { year: string; now?: boolean; stops: Stop[] }[] = [
     { year: "2026", now: true, stops: [
       { org: "Manus", role: "AI Product Manager · Singapore · Ongoing", x: "Using Manus to build a better Manus." },
-      { org: "OpusClip", role: "AI Product Manager · Singapore · 6 months", x: "Own model eval for video and image generation; ship AI music in Agent Opus.", folder: { id: "opus", title: "OpusClip" } },
+      { org: "OpusClip", role: "AI Product Manager · Singapore · 6 months", x: "Owned model eval for video and image generation; shipped AI music in Agent Opus.", folder: { id: "opus", title: "OpusClip" } },
       { org: "National University of Singapore", role: "MSc, AI & Innovation · Singapore", x: "Back in school, learning AI while building with it." },
     ] },
     { year: "2023", stops: [

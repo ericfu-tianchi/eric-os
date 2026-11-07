@@ -8,6 +8,7 @@ export type MediaItem = {
   name: string; // shown in Finder and the title bar, like a file name
   src: string; // full size (image) or mp4 (video)
   thumb?: string; // Finder icon; images default to <src>.thumb.webp
+  poster?: string; // video: the full-size still the player shows before it plays (thumb is the small list copy)
   youtube?: string; // video id: plays in the YouTube player instead of src
   credit?: string; // license / source line for photos that need one
   portrait?: boolean; // 9:16 video: the player opens as a tall window
@@ -54,11 +55,11 @@ export const MEDIA_FOLDERS: MediaFolder[] = [
   ] },
   // no notes on purpose: they speak for themselves
   { id: "vid-wall", name: "Videos", kind: "video", flat: true, items: [
-    { id: "vid-goggins", name: "The main purpose is YOU · David Goggins", src: "/media/videos/goggins-main-purpose.mp4", thumb: "/media/videos/goggins-main-purpose.webp", portrait: true },
-    { id: "vid-naval", name: "The only true test of intelligence · Naval", src: "/media/videos/naval-true-test.mp4", thumb: "/media/videos/naval-true-test.webp", portrait: true },
-    { id: "vid-jobs", name: "Steve Jobs on the Liberal Arts", src: "/media/videos/jobs-liberal-arts.mp4", thumb: "/media/videos/jobs-liberal-arts.webp" },
-    { id: "vid-heart", name: "Follow Your Heart: Stop Living Someone Else's Life", src: "/media/videos/follow-your-heart.mp4", thumb: "/media/videos/follow-your-heart.webp", portrait: true },
-    { id: "vid-youtuber", name: "I Never Gave Up on Becoming a YouTuber", src: "/media/videos/never-gave-up.mp4", thumb: "/media/videos/never-gave-up.webp", portrait: true },
+    { id: "vid-goggins", name: "The main purpose is YOU · David Goggins", src: "/media/videos/goggins-main-purpose.mp4", thumb: "/media/videos/goggins-main-purpose.thumb.webp", poster: "/media/videos/goggins-main-purpose.webp", portrait: true },
+    { id: "vid-naval", name: "The only true test of intelligence · Naval", src: "/media/videos/naval-true-test.mp4", thumb: "/media/videos/naval-true-test.thumb.webp", poster: "/media/videos/naval-true-test.webp", portrait: true },
+    { id: "vid-jobs", name: "Steve Jobs on the Liberal Arts", src: "/media/videos/jobs-liberal-arts.mp4", thumb: "/media/videos/jobs-liberal-arts.thumb.webp", poster: "/media/videos/jobs-liberal-arts.webp" },
+    { id: "vid-heart", name: "Follow Your Heart: Stop Living Someone Else's Life", src: "/media/videos/follow-your-heart.mp4", thumb: "/media/videos/follow-your-heart.thumb.webp", poster: "/media/videos/follow-your-heart.webp", portrait: true },
+    { id: "vid-youtuber", name: "I Never Gave Up on Becoming a YouTuber", src: "/media/videos/never-gave-up.mp4", thumb: "/media/videos/never-gave-up.thumb.webp", poster: "/media/videos/never-gave-up.webp", portrait: true },
   ] },
 ];
 

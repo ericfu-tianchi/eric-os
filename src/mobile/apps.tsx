@@ -246,7 +246,7 @@ function VideoPlayer({ v }: { v: MediaItem }) {
 
   return (
     <div className={`ios-reel ${paused ? "paused" : ""} ${ui || paused ? "ui" : ""} ${scrub.current ? "scrubbing" : ""}`}>
-      <video ref={video} src={v.src} poster={v.thumb} playsInline loop preload="auto" className={v.portrait ? "tall" : "wide"}
+      <video ref={video} src={v.src} poster={v.poster ?? v.thumb} playsInline loop preload="auto" className={v.portrait ? "tall" : "wide"}
         onClick={tapPicture} onTimeUpdate={(e) => !scrub.current && setT({ cur: e.currentTarget.currentTime, dur: e.currentTarget.duration || 0 })}
         onLoadedMetadata={(e) => setT({ cur: 0, dur: e.currentTarget.duration })} />
       <button type="button" className="reel-back" onClick={() => nav.pop()} aria-label="Back to Videos"><svg viewBox="0 0 12 20" aria-hidden><path d="M10 2 2 10l8 8" /></svg></button>
