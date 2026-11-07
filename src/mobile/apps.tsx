@@ -311,7 +311,7 @@ export function SettingsScreen({ page }: { page?: "snake" | "os" }) {
       <LargeTitle>Settings</LargeTitle>
       <div className="ios-group">
         <button type="button" className="ios-row profile" {...row(() => nav.push(screenFor({ app: "about" })))}>
-          <img src={portrait} alt="" /><span className="tx"><b>Tianchi (Eric) Fu</b><small>AI PM · OpusClip · Singapore</small></span><Chevron />
+          <img src={portrait} alt="" /><span className="tx"><b>Tianchi (Eric) Fu</b><small>AI PM · Manus · Singapore</small></span><Chevron />
         </button>
       </div>
       <div className="ios-group">
