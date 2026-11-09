@@ -26,9 +26,9 @@ const folderIcon = (key: "school" | "work" | "ai", cellRight: number, row: numbe
 /** Desktop = three project folders, the three games side by side, then About Me, the resume and How I AI (a 3×3 block). Tianchintosh HD lives in the Dock.
     Settings lives in the Dock (and Applications). Each folder opens the same node Tianchintosh HD exposes. */
 export const ICONS: IconDef[] = [
-  folderIcon("school", 8, 1),
-  folderIcon("work", 5, 1),
-  folderIcon("ai", 2, 1),
+  folderIcon("work", 8, 1),
+  folderIcon("ai", 5, 1),
+  folderIcon("school", 2, 1),
   { key: "soul-blade", label: "Soul Blade", icon: "soul-blade", app: "soul-blade", title: "Soul Blade", maximized: true, cellRight: 8, row: 4 },
   { key: "lego-world", label: "My Lego World", icon: "lego-world", app: "lego-world", title: "My Lego World", maximized: true, cellRight: 5, row: 4 },
   { key: "snake", label: "Snake", icon: "snake", app: "snake", title: "Snake", cellRight: 2, row: 4 },

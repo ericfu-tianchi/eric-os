@@ -37,11 +37,11 @@ export function AboutApp() {
   const PATH: { year: string; now?: boolean; stops: Stop[] }[] = [
     { year: "2026", now: true, stops: [
       { org: "Manus", role: "AI Product Manager · Singapore · Ongoing", x: "Using Manus to build a better Manus." },
-      { org: "OpusClip", role: "AI Product Manager · Singapore · 6 months", x: "Owned model eval for video and image generation; shipped AI music in Agent Opus.", folder: { id: "opus", title: "OpusClip" } },
+      { org: "OpusClip", role: "AI Product Manager · Singapore · 6 months", x: "Owned model eval for video and image generation; shipped AI music in Agent Opus.", folder: { id: "work", title: "Work" } },
       { org: "National University of Singapore", role: "MSc, AI & Innovation · Singapore", x: "Back in school, learning AI while building with it." },
     ] },
     { year: "2023", stops: [
-      { org: "Huawei Cloud", role: "AI Product Manager · Shenzhen", x: "Prompt Studio · Copilot Builder · Model Eval Center · AI SaaS (BI & Enterprise Search)", folder: { id: "huawei", title: "Huawei" } },
+      { org: "Huawei Cloud", role: "AI Product Manager · Shenzhen", x: "Prompt Studio · Copilot Builder · Model Eval Center · AI SaaS (BI & Enterprise Search)", folder: { id: "work", title: "Work" } },
     ] },
     { year: "2021", stops: [
       { org: "University of Michigan", role: "MSc, Human-Computer Interaction · Ann Arbor", x: "Where the design half comes from: RefugeeOne · Subtension · Neurobot · HomesOffCampus", folder: { id: "school", title: "School Projects" } },

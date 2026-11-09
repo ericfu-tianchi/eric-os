@@ -46,6 +46,15 @@ export const PROJECTS: Project[] = [
     outcome: "It became the team's default tool for model decisions, and the work that best shows what I do as an AI PM.",
   },
   {
+    slug: "huawei-ai",
+    name: "Huawei Enterprise AI",
+    desc: "Eight enterprise AI products across all three layers of the stack",
+    year: "2026",
+    cat: "AI",
+    group: "selected",
+    statusLabel: "SHIPPED",
+  },
+  {
     slug: "jyi",
     name: "JYI · AI Interview SaaS",
     desc: "An ATS + AI interview product, where my AI PM story began",
@@ -232,6 +241,7 @@ export interface ProjectMeta {
 }
 export const META: Record<string, ProjectMeta> = {
   "model-eval": { accent: "#2f9e57", sub: "Reusable infrastructure for evaluating AI video models", role: "AI PM", timeline: "2026 · Opus", tools: "Rubrics · Elo/WLT · Python" },
+  "huawei-ai": { accent: "#c60a26", sub: "Enterprise AI products, across all three layers of the stack" },
   jyi: { accent: "#17a89e", sub: "The origin story of an AI interview SaaS", role: "Product Manager & UX Designer", timeline: "Jan–Apr 2021", tools: "Figma · SQL" },
   huawei: { accent: "#e71b23", sub: "Window management for foldable PCs", role: "UX Designer", timeline: "May–Sep 2022", tools: "Figma" },
   neurobot: { accent: "#1A8CF0", sub: "A brain-building app for a robot that teaches neuroscience", role: "UX Designer & Usability Researcher", timeline: "Jan–Apr 2022", tools: "Figma · Miro · MATLAB" },

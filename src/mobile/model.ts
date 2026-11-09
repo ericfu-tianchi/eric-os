@@ -37,6 +37,7 @@ const game = (id: ExternalGameId, label = EXTERNAL_GAMES[id].name): HomeItem => 
 /** A file-tree node as a Home Screen item (folders of a game + its case page collapse into the game). */
 function nodeToItem(n: FileNode): HomeItem | null {
   if (n.kind === "project" && n.projectSlug) return { kind: "app", id: `case:${n.projectSlug}`, label: n.name, route: { app: "case", slug: n.projectSlug, title: n.name } };
+  if (n.kind === "placeholder" && n.thumb && n.parent) return { kind: "app", id: `case:${n.id}`, label: n.name, route: { app: "files", folder: n.parent } }; // shown, not built yet: tapping it lands in its folder
   if (n.kind === "game" && n.gameId) return game(n.gameId);
   if (n.kind === "folder") {
     const kids = filesystemChildren(n.id);
@@ -67,8 +68,8 @@ export const HOME = {
     app("resume", "Resume", { app: "resume" }),
     app("videos", "Videos", { app: "videos" }),
     app("snake", "Snake", { app: "snake" }),
-    folder("ai"),
     folder("work"),
+    folder("ai"),
   ],
   page2: [
     folder("school"),

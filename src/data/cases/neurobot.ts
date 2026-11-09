@@ -200,12 +200,9 @@ const later: CaseBlock[] = [
 // ---------- reflection ----------
 
 const lessons: CaseBlock[] = [
-  { t: "sub", text: "The most fun test I've run" },
-  { t: "p", text: "A fixed Figma prototype would only have tested the paths we guessed. We wanted to preserve the open nature of the problem, so we thought outside the box. ==Let the problem pick the method, then do the work that makes it hold up==: a complete component library and hours of rehearsal made it feel seamless." },
-  { t: "sub", text: "Bring the client into the room" },
-  { t: "p", text: "We invited Backyard Brains' CEO and the engineer behind the app to brainstorm with us. Ideas they helped draw were ideas they wanted to build, and ==that sense of ownership did more for the project's impact than any slide==." },
-  { t: "sub", text: "A team that became friends" },
-  { t: "p", text: "Most weeks the five of us gathered at one teammate's place to debate neurons, sketch screens and pick apart each other's ideas, with laughs in between. By April we were friends, and ==it's a time I still look back on fondly==." },
+  { t: "step", title: "The most fun test I've run", text: "A fixed Figma prototype would only have tested the paths we guessed. We wanted to preserve the open nature of the problem, so we thought outside the box. ==Let the problem pick the method, then do the work that makes it hold up==: a complete component library and hours of rehearsal made it feel seamless." },
+  { t: "step", title: "Bring the client into the room", text: "We invited Backyard Brains' CEO and the engineer behind the app to brainstorm with us. Ideas they helped draw were ideas they wanted to build, and ==that sense of ownership did more for the project's impact than any slide==." },
+  { t: "step", title: "A team that became friends", text: "Most weeks the five of us gathered at one teammate's place to debate neurons, sketch screens and pick apart each other's ideas, with laughs in between. By April we were friends, and ==it's a time I still look back on fondly==." },
 ];
 
 // ---------- overview → research → brainstorm → redesign → wizard of oz → results → four years later → reflection ----------

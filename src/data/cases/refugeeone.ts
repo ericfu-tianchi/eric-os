@@ -166,12 +166,9 @@ const hats: CaseBlock = {
 };
 
 const lessons: CaseBlock[] = [
-  { t: "sub", text: "Solve the problem, not the request" },
-  { t: "p", text: "The biggest call we made was not building the app we were asked for. Looking at the whole workflow, not just the refugee's screen, is what let refugees search on their own and gave staff back the hours they had spent walking clients through listings one by one." },
-  { t: "sub", text: "Walk through the data model with the client" },
-  { t: "p", text: "RefugeeOne discovered what it needed as it saw each screen, and every change rippled through the UI, the database and the logic. Next time I'd walk through the data model and each role's workflow with the client before the first sprint, not just the mockups." },
-  { t: "sub", text: "The whole product cycle" },
-  { t: "p", text: "This was my first time going all the way around the loop, from interviews to designs, code, sprints, a live launch and a handoff. I loved solving a real problem for real users, not stopping at a design file. ==It's still the project I'm proudest of from my time at Michigan.==" },
+  { t: "step", title: "Solve the problem, not the request", text: "The biggest call we made was not building the app we were asked for. Looking at the whole workflow, not just the refugee's screen, is what let refugees search on their own and gave staff back the hours they had spent walking clients through listings one by one." },
+  { t: "step", title: "Walk through the data model with the client", text: "RefugeeOne discovered what it needed as it saw each screen, and every change rippled through the UI, the database and the logic. Next time I'd walk through the data model and each role's workflow with the client before the first sprint, not just the mockups." },
+  { t: "step", title: "The whole product cycle", text: "This was my first time going all the way around the loop, from interviews to designs, code, sprints, a live launch and a handoff. I loved solving a real problem for real users, not stopping at a design file. ==It's still the project I'm proudest of from my time at Michigan.==" },
 ];
 
 // ---------- research → app to website → design → product → build → reflection ----------
