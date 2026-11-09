@@ -1,6 +1,7 @@
 import type { Project } from "./projects";
 import type { AppKey } from "./apps";
 import type { ExternalGameId } from "./filesystem";
+import type { CaseIconName } from "../components/CaseIcons";
 import { metaOf } from "./projects";
 import { EXTRA } from "./casesContent";
 import { howIAI } from "./cases/howIAI";
@@ -11,6 +12,7 @@ import { connectr } from "./cases/connectr";
 import { subtension } from "./cases/subtension";
 import { rutabagga } from "./cases/rutabagga";
 import { refugeeone } from "./cases/refugeeone";
+import { huaweiWork } from "./cases/huaweiWork";
 
 /**
  * Full case-study content, migrated verbatim from tianchi-fu.com, built natively
@@ -22,19 +24,19 @@ import { refugeeone } from "./cases/refugeeone";
 export type CaseBlock =
   | { t: "p"; text: string }
   | { t: "aside"; label: string; text: string } // a small dated note added after the fact (e.g. "Update, 2026"), set apart from the story
-  | { t: "h"; text: string } // label, e.g. "QUICK BACKGROUND"
+  | { t: "h"; text: string; icon?: CaseIconName; nav?: string } // label, e.g. "QUICK BACKGROUND"
   | { t: "sub"; text: string } // sub-heading, ink with a pixel-square marker
   | { t: "callout"; label?: string; text: string } // full-width accent band
   | { t: "quote"; text: string; label?: string; derived?: boolean } // pull quote: centered, between two short hairlines; label = a small kicker above; derived = it follows from the blocks above (a connector line replaces the top hairline)
   | { t: "list"; items: string[]; plain?: boolean } // bullets; tinted panel unless plain
   | { t: "status"; items: { s: "done" | "partly" | "todo"; text: string }[] } // priority-ordered plan with a status per row + summary bar
   | { t: "stat"; value: string; label: string } // big-number highlight
-  | { t: "feature"; src: string; title: string; text: string; bare?: boolean } // screen + caption, sides alternate; bare = the image brings its own frame (device mockups), so no shadow
+  | { t: "feature"; src: string; title: string; text: string; bare?: boolean; device?: boolean } // screen + caption, sides alternate; bare = the image brings its own frame (device mockups), so no shadow
   | { t: "step"; title: string; text: string } // numbered step (01, 02 …) for how-to sequences
   | { t: "link"; text: string; href: string } // accent pill button (external)
   | { t: "embed"; src: string; kind: "youtube" | "figma" | "web"; caption?: string; ratio?: number } // live iframe; ratio = w/h
   | { t: "row"; items: { src: string; w: number }[]; caption?: string; frame?: boolean } // 2–3 images side by side at their old-site widths; frame = round corners + soft shadow for bare screens (phone captures, .mp4 loops)
-  | { t: "img"; src: string; caption?: string; w?: number; frame?: boolean } // src = "<slug>/NN.png"; w = display width in px at 1440 (old-site size)
+  | { t: "img"; src: string; caption?: string; w?: number; frame?: boolean; device?: boolean; trim?: number } // src = "<slug>/NN.png"; w = display width in px at 1440 (old-site size)
   | { t: "links"; items: { text: string; href: string; primary?: boolean; app?: ExternalGameId }[] } // small pill buttons in a row, right under the text they belong to; app = open that app inside the OS instead of a new tab
   | { t: "posts"; href: string; items: { src: string; title: string; likes: number; video?: boolean }[] } // social posts as a feed of cover cards (cover, title, likes), each linking to the profile at href
   | { t: "video"; src: string; poster?: string; caption?: string; w?: number; text?: string; steps?: { title: string; text?: string; src?: string }[] } // a film with controls and sound (src = "<slug>/name.mp4"); w = display width in px; text and the film's numbered steps (small picture each) sit beside a vertical film
@@ -56,9 +58,12 @@ export type CaseBlock =
   | { t: "timeline"; items: { date: string; title: string; text?: string }[]; compact?: boolean } // dated milestones on a vertical line; compact = one light horizontal row (date + title)
   | { t: "stack"; items: { logo: string; name: string; role: string }[] } // tools as logo tiles; logo = file name in src/assets/logos
   | { t: "versus"; before: { label: string; title: string; items: string[] }; after: { label: string; title: string; items: string[] } } // what was asked for vs what was built
+  | { t: "layers"; items: { term: string; name: string; tag: string; plate: string; icon?: CaseIconName; to: string; products: { name: string; href?: string }[] }[] } // a stack of numbered layers, each with who it serves and its products as chips
+  | { t: "showcase"; items: { title: string; text: string; shots: { src: string; label?: string }[] }[] } // steps in a row that advance by themselves; the matching screen in a thin dark frame below
+  | { t: "impact"; value: string; title: string; text?: string; more?: { value: string; label: string }[] } // one big result between two rules
   | { t: "part"; title: string; text?: string } // a numbered divider that opens one part of a section (01 For refugees …)
-  | { t: "flow"; items: { who: string; title: string; text: string }[] }; // one thing moving through people, left to right (who = the actor tag)
-export interface CaseSection { id: string; label: string; blocks: CaseBlock[]; white?: boolean; dark?: boolean } // dark: a near-black band (game screenshots) // white: keep the band white (white-background slides)
+  | { t: "flow"; items: { who: string; title: string; text: string; icon?: CaseIconName }[]; also?: { title: string; text: string } }; // one thing moving through people, left to right (who = the actor tag)
+export interface CaseSection { id: string; label: string; sub?: string; icon?: CaseIconName; blocks: CaseBlock[]; white?: boolean; dark?: boolean } // dark: a near-black band (game screenshots) // white: keep the band white (white-background slides)
 export interface CaseStudy {
   accent: string;
   hero?: string; // a hero other than heroes/<slug> (e.g. "refugeeone-2")
@@ -78,6 +83,7 @@ export const CASES: Record<string, CaseStudy> = {
   homesoffcampus, neurobot, connectr, subtension, rutabagga,
   ...(refugeeone.sections.length ? { refugeeone } : {}),
   "lego-world": legoWorld,
+  "huawei-ai": huaweiWork,
   huawei: {
     accent: "#e71b23",
     sub: "Designing a window-management mechanism for foldable PCs.",

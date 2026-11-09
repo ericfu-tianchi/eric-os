@@ -12,6 +12,7 @@ import imagesSideIcon from "../assets/icons/b/sidebar-images-bold.png";
 import videosIcon from "../assets/icons/b/sidebar-videos.png";
 import videosSideIcon from "../assets/icons/b/sidebar-videos-bold.png";
 import { MEDIA_FOLDERS } from "./media";
+import { fileIconOf } from "./projectAssets";
 
 export type ExternalGameId = "soul-blade" | "twist-solver" | "lego-world";
 export type FileNodeKind = "folder" | "project" | "game" | "document" | "app" | "shortcut" | "placeholder" | "image" | "video";
@@ -84,20 +85,9 @@ export const FILE_NODES: FileNode[] = [
   { id: "lego-world-launcher", parent: "applications", name: "My Lego World", kind: "shortcut", targetId: "lego-world", description: "Playable app" },
   { id: "settings", parent: "applications", name: "Settings", kind: "app", app: "prefs", description: "System preferences" },
 
-  { id: "school", parent: "desktop", name: "School Projects", kind: "folder", description: "6 items" },
-  { id: "refugeeone", parent: "school", name: "RefugeeOne Job Finding Website", kind: "project", projectSlug: "refugeeone" },
-  { id: "neurobot", parent: "school", name: "Neurobot", kind: "project", projectSlug: "neurobot" },
-  { id: "subtension", parent: "school", name: "Subtension Game", kind: "project", projectSlug: "subtension" },
-  { id: "homesoffcampus", parent: "school", name: "Homes Off Campus", kind: "project", projectSlug: "homesoffcampus" },
-  { id: "connectr", parent: "school", name: "Connectr App", kind: "project", projectSlug: "connectr" },
-  { id: "rutabagga", parent: "school", name: "Rutabagga Logo", kind: "project", projectSlug: "rutabagga" },
-
-  { id: "work", parent: "desktop", name: "Work", kind: "folder", description: "2 folders" },
-  { id: "opus", parent: "work", name: "OpusClip", kind: "folder", description: "Empty folder" },
-  { id: "huawei", parent: "work", name: "Huawei", kind: "folder", description: "3 items" },
-  { id: "huawei-overview", parent: "huawei", name: "Work Overview", kind: "placeholder", description: "Coming soon" },
-  { id: "prompt-engineering", parent: "huawei", name: "Prompt Engineering Platform", kind: "placeholder", description: "Coming soon" },
-  { id: "data-workflow", parent: "huawei", name: "Data Workflow", kind: "placeholder", description: "Coming soon" },
+  { id: "work", parent: "desktop", name: "Work", kind: "folder", description: "2 items" },
+  { id: "huawei-overview", parent: "work", name: "Huawei", kind: "project", projectSlug: "huawei-ai" },
+  { id: "opusclip", parent: "work", name: "OpusClip", kind: "placeholder", description: "Coming soon", thumb: fileIconOf("opusclip") },
 
 
   { id: "website", parent: "documents", name: "My Website", kind: "folder", description: "1 item" },
@@ -113,6 +103,14 @@ export const FILE_NODES: FileNode[] = [
   { id: "twist-solver-app", parent: "ai", name: "Twist Solver App", kind: "folder", description: "2 items" },
   { id: "twist-solver", parent: "twist-solver-app", name: "Twist Solver", kind: "game", gameId: "twist-solver", description: "Playable app" },
   { id: "twist-solver-how", parent: "twist-solver-app", name: "How I Built It", kind: "project", projectSlug: "twist-solver" },
+
+  { id: "school", parent: "desktop", name: "School Projects", kind: "folder", description: "6 items" },
+  { id: "refugeeone", parent: "school", name: "RefugeeOne Job Finding Website", kind: "project", projectSlug: "refugeeone" },
+  { id: "neurobot", parent: "school", name: "Neurobot", kind: "project", projectSlug: "neurobot" },
+  { id: "subtension", parent: "school", name: "Subtension Game", kind: "project", projectSlug: "subtension" },
+  { id: "homesoffcampus", parent: "school", name: "Homes Off Campus", kind: "project", projectSlug: "homesoffcampus" },
+  { id: "connectr", parent: "school", name: "Connectr App", kind: "project", projectSlug: "connectr" },
+  { id: "rutabagga", parent: "school", name: "Rutabagga Logo", kind: "project", projectSlug: "rutabagga" },
 
   { id: "desktop-soul-blade", parent: "desktop", name: "Soul Blade", kind: "shortcut", targetId: "soul-blade", description: "Playable game" },
   { id: "desktop-lego-world", parent: "desktop", name: "My Lego World", kind: "shortcut", targetId: "lego-world", description: "Playable app" },
@@ -143,5 +141,5 @@ export function filesystemTrail(id: string): FileNode[] {
   return trail;
 }
 
-export const DESKTOP_FOLDER_IDS = ["school", "work", "ai"] as const;
+export const DESKTOP_FOLDER_IDS = ["work", "ai", "school"] as const;
 export const FINDER_ROOT_IDS = ["applications", "desktop", "documents", "images", "videos"] as const;

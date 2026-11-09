@@ -137,7 +137,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `step` | Auto-numbered 01, 02 … with title + text, hairline rules | How-to sequences and pipelines |
 | `item` | Auto-numbered 01, 02 … title + text beside a picture, sides alternate, hairline rules. `apps` adds linked app chips (icon + name ↗) under the text; with no `src` the apps become the picture as big linked icons (hover shows the name) | A list where every entry deserves a visual: tools, beliefs (How I AI) |
 | `row` | 2–3 images side by side, each at its old-site width, one caption | Product photo strips, before/after pairs, two-up wireframes |
-| `img` | Centered figure + caption; `w` = display width in px at 1440; `frame` adds the screenshot shadow and radius (recordings that have no frame of their own) | Evidence, diagrams, logos. Copy `w` from the old site; above 880 the figure breaks out of the column (max 1040) |
+| `img` | Centered figure + caption; `w` = display width in px at 1440; `trim` pulls the caption up by that many px when the image carries empty space below its content; `frame` adds the screenshot shadow and radius (recordings that have no frame of their own) | Evidence, diagrams, logos. Copy `w` from the old site; above 880 the figure breaks out of the column (max 1040) |
 | `link` | Accent pill button | One call to action (prototype, slides, live site) |
 | `embed` | Live iframe, 16:9 (YouTube) or 16:10 (Figma), up to 1040px wide + caption | Videos and clickable prototypes. Use `youtube-nocookie.com/embed/<id>` and Figma's `figma.com/embed?embed_host=share&url=…` |
 | `links` | Small pill links in a row (one may be `primary`, ink) | Source links right under the text they belong to: Steam, GitHub, a demo. Put them in the Overview, where every reader sees them; many readers stop after it, so never park the only links at the end of the page. A link with `app` (e.g. `lego-world`) opens that app inside the OS instead of a new tab, with no ↗ |
@@ -160,6 +160,9 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `stats` | 2–4 big accent numbers in one row, a hairline above each, optional note | The results band in an Overview |
 | `timeline` | Dated milestones on a vertical line | How a project unfolded week to week |
 | `versus` | Two cards: the quiet "before" and the accented "after", each a title + bullets | What the client asked for vs what was built |
+| `layers` | A stack of numbered layers: name, who it serves, products as chips | The map of a body of work organised in levels (Huawei: model, app, work) |
+| `showcase` | Steps in a row, the matching screen in a thin dark frame below them; advances every 6 s while on screen. A step with several `shots` gets a small toggle | A tour of 3–4 parts of one product (Huawei: import, process, label) |
+| `impact` | One big accent number between two rules, with a title and a line | A single result that has to land |
 | `flow` | 3–4 cards left to right, each tagged with who acts | One thing moving through several people (a job: employer → staff → refugee) |
 
 `feature`, `cards`, `img` and `row` also take an `.mp4` as `src`: a short silent loop that plays only while on screen and while its app is in front (Lego World's rotating sets). Keep loops under ~2 MB.

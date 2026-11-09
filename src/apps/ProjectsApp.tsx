@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { CaseIcon } from "../components/CaseIcons";
 import { GROUPS, PROJECTS, byGroup, metaOf, type Group, type Category } from "../data/projects";
 import { caseOf, type CaseBlock } from "../data/cases";
 import { useOS } from "../store";
@@ -135,10 +136,108 @@ const PANEL_ICON: Record<"mbti" | "group" | "puzzle" | "compass", React.ReactNod
   compass: <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="12.5" fill="#fff" /><path d="m25.5 14.5-3.6 7.4-7.4 3.6 3.6-7.4z" fill="var(--pc)" /><circle cx="20" cy="20" r="1.6" fill="#fff" /></svg>,
 };
 
-function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number }) {
+/** Steps in a row, the screen below them. Advances every 6 s, only while on screen and while its app is in front. */
+function ShowcaseBlock({ items }: { items: Extract<CaseBlock, { t: "showcase" }>["items"] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { shown } = useAppState();
+  const [cur, setCur] = useState(0);
+  const [shots, setShots] = useState<Record<number, number>>({});
+  const [inView, setInView] = useState(false);
+  const [tick, setTick] = useState(0); // restarts the timer and its red line after a click
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.4 });
+    io.observe(el); return () => io.disconnect();
+  }, []);
+  const running = inView && shown;
+  useEffect(() => {
+    if (!running) return;
+    const t = window.setTimeout(() => setCur((c) => (c + 1) % items.length), 6000);
+    return () => clearTimeout(t);
+  }, [running, cur, tick, items.length]);
+  const pick = (i: number) => { setCur(i); setTick((t) => t + 1); };
+  return (
+    <div className={`cs-showcase ${running ? "running" : ""}`} ref={ref}>
+      <ol>
+        {items.map((x, i) => (
+          <li key={x.title} className={i === cur ? "on" : ""}>
+            <button type="button" onClick={() => pick(i)} aria-expanded={i === cur}>
+              {i === cur && <i key={tick} />}
+              <h4>{x.title}</h4>
+              <p><Rich text={x.text} /></p>
+            </button>
+            {x.shots.length > 1 && (
+              <div className="shots">
+                {x.shots.map((sh, k) => <button type="button" key={sh.src} className={i === cur && k === (shots[i] ?? 0) ? "on" : ""} onClick={() => { setCur(i); setShots((m) => ({ ...m, [i]: k })); setTick((t) => t + 1); }}>{sh.label}</button>)}
+              </div>
+            )}
+          </li>
+        ))}
+      </ol>
+      <div className="frame">
+        <div className="stage">
+          {items.flatMap((x, i) => x.shots.map((s, k) => <img key={s.src} className={i === cur && k === (shots[i] ?? 0) ? "on" : ""} src={detailImg(s.src)} alt={s.label ? `${x.title}: ${s.label}` : x.title} draggable={false} decoding="async" />))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** The three layers: stacked like the banner until scrolled to, then they spread out and the text arrives. */
+function LayersBlock({ items }: { items: Extract<CaseBlock, { t: "layers" }>["items"] }) {
+  const ref = useRef<HTMLOListElement>(null);
+  const [still] = useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const [open, setOpen] = useState(still);
+  const [done, setDone] = useState(still); // once the entrance has played, its delays must not slow the hover
+  useEffect(() => {
+    const list = ref.current; if (!list || still) return;
+    const place = () => {
+      const rows = [...list.children] as HTMLElement[];
+      const center = (el: HTMLElement) => el.offsetTop + el.offsetHeight / 2;
+      const gap = (rows[0].querySelector("img")?.clientWidth ?? 240) * 0.3;
+      rows.forEach((row, i) => row.style.setProperty("--stack", `${center(rows[1]) + (i - 1) * gap - center(row)}px`));
+    };
+    place();
+    const size = new ResizeObserver(place); size.observe(list);
+    const enter = new IntersectionObserver(([e]) => { if (e.isIntersecting) setOpen(true); }, { threshold: 0.2, rootMargin: "0px 0px -22% 0px" });
+    const leave = new IntersectionObserver(([e]) => { if (!e.isIntersecting) setOpen(false); }); // fully off screen: stack up again for the next visit
+    enter.observe(list); leave.observe(list);
+    return () => { size.disconnect(); enter.disconnect(); leave.disconnect(); };
+  }, [still]);
+  useEffect(() => {
+    if (still) return;
+    if (!open) { setDone(false); return; }
+    const t = window.setTimeout(() => setDone(true), 1800);
+    return () => clearTimeout(t);
+  }, [open, still]);
+  return (
+    <ol ref={ref} className={`cs-layers ${open ? "open" : ""} ${done ? "done" : ""}`}>
+      {items.map((x) => {
+        const go = (e: React.MouseEvent) => {
+          const root = e.currentTarget.closest(".cs");
+          root?.querySelectorAll<HTMLImageElement>("img[loading='lazy']").forEach((img) => { img.loading = "eager"; }); // otherwise they load mid-scroll and push the target down
+          const to = () => root?.querySelector(`[id$="-${x.to}"]`)?.scrollIntoView({ behavior: "smooth" });
+          to(); [700, 1500].forEach((ms) => window.setTimeout(to, ms));
+        };
+        return (
+          <li key={x.term}>
+            <div className="plate" onClick={go}><img src={detailImg(x.plate)} alt="" draggable={false} /></div>
+            <div className="tx">
+              <button type="button" className="term" onClick={go}>{x.icon && <CaseIcon name={x.icon} />}<h4>{x.term}<small>{x.name}</small></h4></button>
+              <p>{x.tag}</p>
+              <div className="chips">{x.products.map((p) => p.href ? <a key={p.name} href={p.href} target="_blank" rel="noopener noreferrer">{p.name} ↗</a> : <span key={p.name}>{p.name}</span>)}</div>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+function CaseBlockView({ b, flip, n, navIndex }: { b: CaseBlock; flip: boolean; n: number; navIndex?: number }) {
   const openApp = useOS((s) => s.open);
   if (b.t === "p") return <p className="cs-p"><Rich text={b.text} /></p>;
-  if (b.t === "h") return <h3 className="cs-label">{b.text}</h3>;
+  if (b.t === "h") return <h3 className="cs-label" data-nav={navIndex}>{b.icon && <CaseIcon name={b.icon} />}{b.text}</h3>;
   if (b.t === "sub") return <h4 className="cs-sub">{b.text}</h4>;
   if (b.t === "callout")
     return <div className="cs-callout">{b.label && <p className="cs-callout-label">{b.label}</p>}<p><Rich text={b.text} /></p></div>;
@@ -175,7 +274,7 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
   if (b.t === "feature") {
     const src = detailImg(b.src);
     return (
-      <div className={`cs-feature ${flip ? "flip" : ""}`}>
+      <div className={`cs-feature ${flip ? "flip" : ""} ${b.device ? "device" : ""}`}>
         {src && <Media className={b.bare ? "bare" : undefined} src={src} alt={b.title} />}
         <div><h4>{b.title}</h4><p><Rich text={b.text} /></p></div>
       </div>
@@ -435,14 +534,22 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
         ))}
       </div>
     );
+  if (b.t === "showcase") return <ShowcaseBlock items={b.items} />;
+  if (b.t === "layers") return <LayersBlock items={b.items} />;
+  if (b.t === "impact") return <div className="cs-impact"><strong>{b.value}</strong><div><b>{b.title}</b>{b.text && <p><Rich text={b.text} /></p>}{b.more && <ul>{b.more.map((m) => <li key={m.label}><strong>{m.value}</strong>{m.label}</li>)}</ul>}</div></div>;
   if (b.t === "flow")
-    return <ol className="cs-flow">{b.items.map((x, i) => <li key={x.title}><span className="who">{String(i + 1).padStart(2, "0")} · {x.who}</span><h4>{x.title}</h4><p><Rich text={x.text} /></p></li>)}</ol>;
+    return (
+      <>
+        <ol className="cs-flow">{b.items.map((x, i) => <li key={x.title}>{x.icon && <CaseIcon name={x.icon} />}<span className="who">{String(i + 1).padStart(2, "0")} · {x.who}</span><h4>{x.title}</h4><p><Rich text={x.text} /></p></li>)}</ol>
+        {b.also && <div className="cs-also"><em>Also</em><b>{b.also.title}</b><span><Rich text={b.also.text} /></span></div>}
+      </>
+    );
   if (b.t === "img") {
     const src = detailImg(b.src);
     return src ? (
-      <figure className={`cs-fig ${b.w && b.w > 880 ? "wide" : ""} ${b.frame ? "frame" : ""}`} style={b.w ? ({ "--w": `${b.w}px` } as React.CSSProperties) : undefined}>
+      <figure className={`cs-fig ${b.w && b.w > 880 ? "wide" : ""} ${b.frame ? "frame" : ""} ${b.device ? "device" : ""}`} style={b.w ? ({ "--w": `${b.w}px` } as React.CSSProperties) : undefined}>
         <Media src={src} alt={b.caption ?? ""} />
-        {b.caption && <figcaption>{b.caption}</figcaption>}
+        {b.caption && <figcaption style={b.trim ? { marginTop: 12 - b.trim } : undefined}>{b.caption}</figcaption>}
       </figure>
     ) : null;
   }
@@ -454,6 +561,7 @@ function CaseBlockView({ b, flip, n }: { b: CaseBlock; flip: boolean; n: number 
 export function ProjectDetailApp({ slug }: { slug?: string }) {
   const p = PROJECTS.find((x) => x.slug === slug);
   const [active, setActive] = useState(0);
+  const [activeKid, setActiveKid] = useState(-1);
   const rootRef = useRef<HTMLDivElement>(null);
 
   // Scroll spy: the nav follows the section that has crossed the upper third of the window.
@@ -468,6 +576,10 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
       let current = 0;
       sections.forEach((s) => { if (atBottom || s.getBoundingClientRect().top <= line) current = Number(s.dataset.i); });
       setActive(current);
+      // which sub-topic of that section has been reached
+      let kid = -1;
+      sections.find((s) => Number(s.dataset.i) === current)?.querySelectorAll<HTMLElement>("[data-nav]").forEach((h) => { if (atBottom || h.getBoundingClientRect().top <= line) kid = Number(h.dataset.nav); });
+      setActiveKid(kid);
     };
     onScroll();
     scroller.addEventListener("scroll", onScroll, { passive: true });
@@ -479,15 +591,16 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
   const hero = heroOf(cs.hero ?? p.slug);
   // Jumping past lazy images used to stop short: they load mid-scroll and push the target down.
   // Load everything above the target first, then keep correcting until the section sits at the top.
-  const jump = (id: string) => {
+  const jump = (id: string, kid?: number) => {
     const root = rootRef.current;
     const scroller = root?.closest<HTMLElement>(".win-body");
-    const target = document.getElementById(`sec-${p.slug}-${id}`);
+    const section = document.getElementById(`sec-${p.slug}-${id}`);
+    const target = kid === undefined ? section : section?.querySelector<HTMLElement>(`[data-nav="${kid}"]`);
     if (!root || !scroller || !target) return;
     root.querySelectorAll<HTMLImageElement>("img[loading='lazy']").forEach((img) => {
       if (img.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING) img.loading = "eager";
     });
-    const offset = () => target.getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+    const offset = () => target.getBoundingClientRect().top - scroller.getBoundingClientRect().top - (kid === undefined ? 0 : 32);
     scroller.scrollTo({ top: scroller.scrollTop + offset(), behavior: "smooth" });
     let last = -1, checks = 0;
     const settle = () => {
@@ -512,25 +625,37 @@ export function ProjectDetailApp({ slug }: { slug?: string }) {
       {cs.sections.length > 1 && (
         <nav className="cs-nav" aria-label="Sections">
           <div>
-            {cs.sections.map((s, i) => (
-              <button key={s.id} className={i === active ? "on" : ""} onClick={() => jump(s.id)}>{s.label}</button>
-            ))}
+            {cs.sections.map((s, i) => {
+              const kids = s.blocks.filter((b) => b.t === "h" && b.nav).map((b) => (b as { nav?: string }).nav as string);
+              return (
+                <div key={s.id} className={`cs-nav-group ${i === active ? "on" : ""}`}>
+                  <button className={i === active ? "on" : ""} onClick={() => jump(s.id)}>{s.label}</button>
+                  {kids.length > 0 && (
+                    <div className="kids"><div>
+                      {kids.map((k, n) => <button key={k} className={i === active && n === activeKid ? "on" : ""} onClick={() => jump(s.id, n)}>{k}</button>)}
+                    </div></div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </nav>
       )}
       {cs.sections.map((s, si) => {
-        let features = 0, steps = 0, items = 0, parts = 0;
+        let features = 0, steps = 0, items = 0, parts = 0, navs = 0;
         const blocks = s.blocks.map((b, i) => {
           const n = b.t === "step" ? ++steps : b.t === "item" ? ++items : b.t === "part" ? ++parts : 0;
           if (b.t === "part") features = 0; // each part starts with its picture on the left
-          return <CaseBlockView key={i} b={b} flip={(b.t === "feature" && features++ % 2 === 1) || (b.t === "item" && n % 2 === 0)} n={n} />;
+          return <CaseBlockView key={i} b={b} navIndex={b.t === "h" && b.nav ? navs++ : undefined} flip={(b.t === "feature" && features++ % 2 === 1) || (b.t === "item" && n % 2 === 0)} n={n} />;
         });
         // The meta rail sits beside the opening text only; the first band/figure goes full width.
         const split = si === 0 && meta.length > 0 ? s.blocks.findIndex((b) => !["h", "sub", "p", "links"].includes(b.t)) : 0;
         const introEnd = split === -1 ? blocks.length : split;
         return (
           <section key={s.id} id={`sec-${p.slug}-${s.id}`} className={`cs-section ${s.white ? "white" : ""} ${s.dark ? "dark" : ""}`} data-i={si}>
-            <h2 className="cs-title">&lt;{s.label}/&gt;</h2>
+            {s.icon && <div className="cs-title-icon"><CaseIcon name={s.icon} /></div>}
+            <h2 className={`cs-title ${s.sub ? "has-sub" : ""}`}>&lt;{s.label}/&gt;</h2>
+            {s.sub && <p className="cs-title-sub">{s.sub}</p>}
             {introEnd > 0 && (
               <div className="cs-intro">
                 <div className="cs-col">{blocks.slice(0, introEnd)}</div>
