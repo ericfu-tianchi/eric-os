@@ -105,8 +105,8 @@ export const huaweiWork: CaseStudy = {
 
     { id: "reflection", label: "Reflection", blocks: [
       { t: "step", title: "A generalist early", text: "I feel lucky to have started as a generalist. At Huawei I could decide what a feature should be and then design how it works, as a product manager and a product designer at once. ==I found I love defining a product as much as designing it.==" },
-      { t: "step", title: "Taking systems apart", text: "A large AI platform is a system of many parts. ==I love taking one apart==, seeing what each part does and how they can run better together. Data Engineering, Model Evaluation, Prompt Engineering and Assistant Maker all started that way." },
-      { t: "step", title: "Moving fast", text: "AI moved faster than our roadmaps. Assistant Maker gave way to agents a year after launch. Prompt engineering, once the hard part, settled into infrastructure as models got stronger, and the focus moved on. Much of what I built became a step toward something else. So I've learned to ==ship what works now, learn fast and be ready to start again.==" },
+      { t: "step", title: "Taking systems apart", text: "A large AI platform is a system of many parts, and ==I love taking systems apart==: seeing what each part does and how they can run better together. Data Engineering, Model Evaluation, Prompt Engineering and Assistant Maker all started that way." },
+      { t: "step", title: "Moving fast", text: "AI moved faster than our roadmaps. Assistant Maker gave way to agents a year after launch. Prompt engineering, once the hard part, settled into infrastructure as models got stronger, and the focus moved on. Much of what I built became a step toward something else. So I ==plan for the models to come, but ship what works now, learn fast and be ready to start again.==" },
     ] },
   ],
 };
