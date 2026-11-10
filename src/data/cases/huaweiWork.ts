@@ -47,7 +47,7 @@ export const huaweiWork: CaseStudy = {
         { title: "Label", text: "Human or AI labeling across modalities.", shots: [{ src: "huawei-ai/de-label-text.png", label: "Text" }, { src: "huawei-ai/de-label-image.png", label: "Image" }] },
       ] },
       { t: "sub", text: "Data Workflow" },
-      { t: "p", text: "Each module worked well on its own, but they were isolated: every project started from zero, with data carried between them by hand. After 20+ customer interviews, I connected them into one human-in-the-loop workflow and ==set the 2.0 roadmap==." },
+      { t: "p", text: "Each module worked well on its own, but they were isolated: every project started from zero, with data carried between them by hand. After 20+ customer interviews, I connected them into one ==human-in-the-loop workflow== and ==set the 2.0 roadmap==." },
       { t: "img", src: "huawei-ai/wf-demo.mp4", w: 880, device: true, caption: "The 2.0 design behind the roadmap, tested with users: one run from start to finish, pausing at evaluation until a person approves." },
 
       { t: "h", text: "Model Training", nav: "Model Training" },
@@ -81,8 +81,8 @@ export const huaweiWork: CaseStudy = {
       { t: "impact", value: "10M+", title: "prompt calls a month", more: [{ value: "3.7×", label: "monthly active users" }, { value: "4.2×", label: "prompts on the platform" }, { value: "7.2 → 8.3", label: "satisfaction" }] },
 
       { t: "h", text: "Assistant Maker", nav: "Assistant Maker" },
-      { t: "p", text: "Each team was hand-coding its own assistant, on its own stack, with its own look. Meanwhile the AI capabilities they needed were scattered across different internal platforms. Assistant Maker is a low-code platform that packages those capabilities as skills, routes each question to the right one, and gives every assistant the same interface." },
-      { t: "p", text: "I worked on the platform from zero to one, through design and launch. The first version shipped in two months." },
+      { t: "p", text: "Each team was hand-coding its own assistant, on its own stack, with its own look. Meanwhile the AI capabilities they needed were scattered across different internal platforms. Assistant Maker is a ==low-code platform== that packages those capabilities as skills, routes each question to the right one, and gives every assistant the same interface." },
+      { t: "p", text: "I worked on the platform ==from zero to one==, through design and launch. The first version shipped in two months." },
       { t: "img", src: "huawei-ai/maker-concept.png", w: 880, trim: 25, caption: "Skills from different platforms go in; one assistant, with one consistent interface, comes out" },
       { t: "img", src: "huawei-ai/maker-demo.mp4", w: 880, device: true, caption: "Set up the basics, add and configure skills, then talk to it on the right. Rebuilt with sample content." },
       { t: "impact", value: "80+", title: "assistants built in the first year", more: [{ value: "5,400+", label: "monthly active users" }, { value: "1.1M+", label: "questions answered" }, { value: "Months → days", label: "to build an assistant" }] },
