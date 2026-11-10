@@ -536,6 +536,17 @@ function CaseBlockView({ b, flip, n, navIndex }: { b: CaseBlock; flip: boolean; 
     );
   if (b.t === "showcase") return <ShowcaseBlock items={b.items} />;
   if (b.t === "layers") return <LayersBlock items={b.items} />;
+  if (b.t === "speed")
+    return (
+      <div className="cs-speed">
+        <div className="big">
+          <div><span>{b.before.time}</span><small>{b.before.note}</small></div>
+          <i aria-hidden>→</i>
+          <div className="to"><span>{b.after.time}</span><small>{b.after.note}</small></div>
+        </div>
+        <b className="hd">{b.title}</b>
+      </div>
+    );
   if (b.t === "impact") return <div className="cs-impact"><strong>{b.value}</strong><div><b>{b.title}</b>{b.text && <p><Rich text={b.text} /></p>}{b.more && <ul>{b.more.map((m) => <li key={m.label}><strong>{m.value}</strong>{m.label}</li>)}</ul>}</div></div>;
   if (b.t === "flow")
     return (

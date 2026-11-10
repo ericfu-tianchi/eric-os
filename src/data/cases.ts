@@ -60,6 +60,7 @@ export type CaseBlock =
   | { t: "versus"; before: { label: string; title: string; items: string[] }; after: { label: string; title: string; items: string[] } } // what was asked for vs what was built
   | { t: "layers"; items: { term: string; name: string; tag: string; plate: string; icon?: CaseIconName; to: string; products: { name: string; href?: string }[] }[] } // a stack of numbered layers, each with who it serves and its products as chips
   | { t: "showcase"; items: { title: string; text: string; shots: { src: string; label?: string }[] }[] } // steps in a row that advance by themselves; the matching screen in a thin dark frame below
+  | { t: "speed"; title: string; before: { time: string; note: string }; after: { time: string; note: string } } // a big "before → after" time contrast with a short note under each side
   | { t: "impact"; value: string; title: string; text?: string; more?: { value: string; label: string }[] } // one big result between two rules
   | { t: "part"; title: string; text?: string } // a numbered divider that opens one part of a section (01 For refugees …)
   | { t: "flow"; items: { who: string; title: string; text: string; icon?: CaseIconName }[]; also?: { title: string; text: string } }; // one thing moving through people, left to right (who = the actor tag)

@@ -1334,11 +1334,20 @@ button { font-family: inherit; color: inherit; }
 .cs-also em { font: 700 11px var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: #8a8a92; }
 .cs-also b { flex: none; font: 700 15px var(--font-display); color: #181818; }
 .cs-also span { font: 14.5px/1.4 var(--font-sans); color: #555; }
+/* speed: a big "before → after" time contrast above a demo, with a short note under each side */
+.cs-speed { margin: 30px 0 26px; }
+.cs-speed .big { display: flex; align-items: flex-start; gap: 22px; }
+.cs-speed .big span { display: block; font: 800 72px/1 var(--font-display); letter-spacing: -.03em; color: #b4b4b9; }
+.cs-speed .big .to span { color: var(--cs-band, var(--cs)); }
+.cs-speed .big i { font: 500 46px/72px var(--font-display); font-style: normal; color: #c8c8cc; }
+.cs-speed .big small { display: block; margin-top: 12px; font: 15px/1.4 var(--font-sans); color: #8a8a90; }
+.cs-speed .big .to small { color: #181818; font-weight: 600; }
+.cs-speed .hd { display: block; margin-top: 18px; font: 700 13px/1.4 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: #8a8a90; }
 .cs-impact { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 34px; align-items: center; margin: 8px 0 0; padding: 30px 0; border-top: 2px solid var(--cs); }
 .cs-impact strong { font: 800 92px/1 var(--font-display); letter-spacing: -.03em; color: var(--cs-band, var(--cs)); }
 .cs-impact b { display: block; font: 700 23px/1.25 var(--font-display); color: #181818; }
 .cs-impact ul { display: flex; flex-wrap: wrap; gap: 6px 26px; list-style: none; margin: 10px 0 0; padding: 0; font: 15px/1.5 var(--font-sans); color: #494949; }
-.cs-impact ul strong { margin-right: 6px; font: 800 15px var(--font-display); letter-spacing: 0; color: #181818; }
+.cs-impact ul strong { margin-right: 6px; font: 800 15px var(--font-display); letter-spacing: 0; color: var(--cs-band, var(--cs)); }
 .cs-impact p { margin: 6px 0 0; font: 17px/1.5 var(--font-sans); color: #555; }
 @container (max-width: 700px) { .cs-also { flex-wrap: wrap; gap: 4px 10px; } .cs-impact { grid-template-columns: 1fr; gap: 12px; } .cs-impact strong { font-size: 68px; } }
 .cs-col > .cs-p:first-child + .cs-label { margin-top: 40px; } /* a one-paragraph section lead stays with what it introduces */
