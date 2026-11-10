@@ -5,7 +5,7 @@ import { Desktop } from "./components/Desktop";
 import { Dock } from "./components/Dock";
 import { WindowFrame } from "./components/WindowFrame";
 import { DesktopSnake, ERIC_POSE } from "./components/DesktopSnake";
-import { gridSpec } from "./components/Pixel";
+import { GRID_TARGET, gridSpec } from "./components/Pixel";
 import { PROJECTS } from "./data/projects";
 import { FILE_NODES } from "./data/filesystem";
 import { fileIconOf } from "./data/projectAssets";
@@ -54,7 +54,7 @@ function useIsMobile() {
   // whole while still leaving four cells below it. Below this, use the content view.
   const fitsDesktop = () => {
     if (typeof window === "undefined") return false;
-    const spec = gridSpec(window.innerWidth, window.innerHeight - TOPBAR);
+    const spec = gridSpec(window.innerWidth, window.innerHeight - TOPBAR, GRID_TARGET); // the phone switch keeps measuring in full-size cells
     return spec.cols >= 27 && spec.rows >= 13;
   };
   const [mobile, setMobile] = useState(() => !force && !fitsDesktop());

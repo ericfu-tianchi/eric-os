@@ -334,11 +334,14 @@ export function PixelWordmark({
 }
 
 export const GRID_TARGET = 44; // desired cell size (Eric's final spec)
+/** The "hello" wallpaper ends at column 23 and the 3x3 icon block takes the last nine columns, so a desktop
+    narrower than 35 cells of 44px (about 1540px, e.g. a MacBook Air) shrinks its cells until both fit side by side. */
+export const DESKTOP_MIN_COLS = 35;
 
 /** The grid: cells flex a little on BOTH axes so width and height divide into
     whole cells exactly — no partial cells anywhere, on any screen. */
-export function gridSpec(vw: number, vh: number) {
-  const rows = Math.max(8, Math.round(vh / GRID_TARGET));
+export function gridSpec(vw: number, vh: number, target = Math.min(GRID_TARGET, vw / DESKTOP_MIN_COLS)) {
+  const rows = Math.max(8, Math.round(vh / target));
   const cellH = vh / rows;
   const cols = Math.max(8, Math.round(vw / cellH));
   const cellW = vw / cols;
