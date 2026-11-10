@@ -90,17 +90,16 @@ export const huaweiWork: CaseStudy = {
     ] },
 
     { id: "work", label: "AI SaaS", sub: "Do the Work", icon: "saas", blocks: [
-      { t: "p", text: "The top layer is where AI meets people who don't care how it works: they have a question and want the answer." },
+      { t: "p", text: "At the top sit the AI apps people use at work. Delivered as cloud services, they let anyone put AI to work on their own tasks." },
 
-      { t: "h", text: "DataArts Insight", nav: "DataArts Insight" },
-      { t: "p", text: "[DataArts Insight](https://www.huaweicloud.com/product/dataartsinsight.html) is Huawei Cloud's business intelligence product. I went on site with customers in Beijing and Shanghai to find what it was missing before commercial launch, then shipped new charts, one shared configuration framework and a template market." },
-      { t: "sub", text: "From dashboards to asking" },
-      { t: "p", text: "As AI arrived, the first thing you see became a chat box. I contributed to Data Agent: ask in plain language and get the chart, the anomaly and what to do next." },
-      { t: "img", src: "huawei-ai/bi-demo.mp4", w: 880, device: true, caption: "Rebuilt from the high-fidelity design with sample data." },
+      { t: "h", text: "AI Business Intelligence", nav: "AI Business Intelligence" },
+      { t: "p", text: "[DataArts Insight](https://www.huaweicloud.com/product/dataartsinsight.html) is Huawei Cloud's business intelligence (BI) tool. Before its commercial launch, I joined two on-site customer visits and brought what we learned back into the product. I also worked on Data Agent, which brought AI into it: ==ask in plain language, get the chart and the insight==." },
+      { t: "speed", title: "Time to insight with Data Agent", before: { time: "Hours", note: "Request a report, then wait" }, after: { time: "Seconds", note: "Just ask" } },
+      { t: "img", src: "huawei-ai/bi-demo.mp4", w: 880, device: true, caption: "Ask a question, get the chart and the insight. Sample data." },
 
-      { t: "h", text: "KooSearch", nav: "KooSearch" },
-      { t: "p", text: "[KooSearch](https://www.huaweicloud.com/intl/en-us/product/css.html) is Huawei Cloud's enterprise AI search, built on RAG: admins connect a knowledge base, and employees get answers with sources. Over three releases I designed the setup flow and the search experience, including deep research." },
-      { t: "img", src: "huawei-ai/ks-demo.mp4", w: 880, device: true, caption: "Every claim links back to its source. Rebuilt from the high-fidelity design with a sample question." },
+      { t: "h", text: "Enterprise AI Search", nav: "Enterprise AI Search" },
+      { t: "p", text: "[KooSearch](https://www.huaweicloud.com/intl/en-us/product/css.html) is Huawei Cloud's enterprise AI search, built on RAG: admins connect a knowledge base, and employees get answers with sources. Over three releases, I enriched its RAG configuration and improved the search experience, including deep research." },
+      { t: "img", src: "huawei-ai/ks-demo.mp4", w: 880, device: true, caption: "Ask a question, get an answer with its sources. Sample question." },
     ] },
 
     { id: "reflection", label: "Reflection", blocks: [

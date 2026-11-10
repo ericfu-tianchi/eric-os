@@ -162,6 +162,7 @@ Inline marks in any text: `**bold**`, `==highlight==` (use for the one phrase a 
 | `versus` | Two cards: the quiet "before" and the accented "after", each a title + bullets | What the client asked for vs what was built |
 | `layers` | A stack of numbered layers: name, who it serves, products as chips | The map of a body of work organised in levels (Huawei: model, app, work) |
 | `showcase` | Steps in a row, the matching screen in a thin dark frame below them; advances every 6 s while on screen. A step with several `shots` gets a small toggle | A tour of 3–4 parts of one product (Huawei: import, process, label) |
+| `speed` | A big "Hours → Seconds" contrast with a short note under each side and a small label below | Above a demo, when the change is how fast a job gets done |
 | `impact` | One big accent number between two rules, with a title and a line | A single result that has to land |
 | `flow` | 3–4 cards left to right, each tagged with who acts | One thing moving through several people (a job: employer → staff → refugee) |
 
