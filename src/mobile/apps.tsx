@@ -366,12 +366,13 @@ export function ResumeScreen() {
 
 /* ================= Hosted web apps ================= */
 
-/** A hosted game keeps running in the background only while it's one of the most recent games; older ones unload and reload when you come back. */
+/** A hosted game runs only while it's on screen. It lives on another site, so its sound can't be paused from here:
+    once it goes to the background the frame unloads, and the game reloads when you come back. */
 export function GameFrame({ id }: { id: ExternalGameId }) {
-  const { alive } = useAppState();
+  const { alive, shown } = useAppState();
   return (
     <div className="ios-frame">
-      {alive
+      {alive && shown
         ? <iframe src={EXTERNAL_GAMES[id].url} title={EXTERNAL_GAMES[id].name} allow="autoplay; fullscreen" allowFullScreen />
         : <div className="ios-frame-idle"><AppTile id={`game:${id}`} size={72} /><b>{EXTERNAL_GAMES[id].name}</b></div>}
     </div>
